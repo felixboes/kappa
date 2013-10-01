@@ -58,6 +58,8 @@ void Fp::clean_up()
     inv.clear();
 }
 
+Fp::Fp(const int m) : n( ((m%base)+base)%base ) {}
+
 /*
  *--------------------------------------------------------------------------------------
  *       Class:  Fp
@@ -131,7 +133,7 @@ void const Fp::show()
  * Description:  prints a Fp to a String
  *--------------------------------------------------------------------------------------
  */
-std::string Fp::getString()
+std::string Fp::get_string()
 {
     std::ostringstream tmp;
     tmp << ((n%base)+base)%base;
@@ -154,25 +156,25 @@ bool Fp::operator==(const int b) const
 
 Fp& Fp::operator=(const int a)
 {
-    n = a;
+    n = ((a%base)+base)%base;
     return *this;
 }
 
 Fp& Fp::operator +=(Fp a)
 {
-    n += a.n;
+    n = (((n+a.n)%base)+base)%base;
     return *this;
 }
 
 Fp& Fp::operator -=(Fp a)
 {
-    n -= a.n;
+    n = (((n-a.n)%base)+base)%base;
     return *this;
 }
 
 Fp& Fp::operator *=(Fp a)
 {
-    n*=a.n;
+    n = (((n*a.n)%base)+base)%base;
     return *this;
 }
 
