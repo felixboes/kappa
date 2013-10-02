@@ -8,9 +8,7 @@
 /**
  *  In order to compute the homology of the chain complex
  *  \f[
- *      \begin{tikzcd}
- *          C_{n-1} \arrow{l}[swap]{\partial_{post}} & C_n \arrow{l}[swap]{\partial_{pre}} & C_{n-1}
- *      \end{tikzcd}
+ *          C_{n-1} \xleftarrow{\partial_{post}} C_n \xleftarrow{\partial_{pre}} C_{n-1}
  *  \f]
  *  at position \f$n\f$, it suffices to compute the dimension of the kernel and the image of the respective matrices.
  */
