@@ -1,6 +1,8 @@
 #ifndef DIAGONALIZER_FP_HPP
 #define DIAGONALIZER_FP_HPP
 
+#include <list>
+
 #include "matrix_fp.hpp"
 
 /**
