@@ -9,9 +9,8 @@ DiagonalizerZm::DiagonalizerZm(MatrixZm &out_differential, MatrixZm &in_differen
     if( Zm::is_field() )
     {
         // Defect equals #cols - rank
-        //def = out.size2() - diag_field(out);
-        //tors_coefficients = std::vector< Zm >( diag_field(in), Zm(1) );
-        diag_field(in);
+        def = out.size2() - diag_field(out);
+        tors_coefficients = std::vector< Zm >( diag_field(in), Zm(1) );
     }
 }
 
@@ -66,9 +65,9 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
         }
         
         // Iterate through columns. We may stop if the rank is maximal.
-        for (size_t col = 0; col < num_cols && rank < num_rows; col++ )
+        for ( size_t col = 0; col < num_cols && rank < num_rows; col++ )
         {
-            bool done = false;
+            bool done = false;  
             for( auto it = rows_to_check.begin(); !done && it != rows_to_check.end(); ++it )
             {
                 size_t row_1 = *it;
@@ -82,13 +81,14 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
                     // it will point to the next element in the list
                     for( ; it != rows_to_check.end(); ++it )
                     {
-                        size_t& row_2 = *it;
-                        if( !matrix(row_2,col) )
+                        size_t row_2 = *it;
+                        // Assume that the entry (row_2, col) differs from zero.
+                        // Performs a row operation to matrix to zeroise the entry (row_2, col) 
+                        // using the entry (row_1, col). 
+                        if( matrix( row_2, col ) )
                         {
-                            // Performs a row operation to matrix to zeroise the entry (row_2, col) 
-                            // using the entry (row_1, col).
-                            row_operation(in, row_1, row_2, col);
-                            //std::cout << matrix << std::endl;
+                            row_operation( matrix, row_1, row_2, col );
+                            std::cout << matrix << std::endl;
                         }
                     }
                 }

@@ -6,6 +6,7 @@
 #include <list>
 #include <vector>
 #include <stdint.h>
+#include <boost/numeric/ublas/io.hpp>
 
 #include "matrix_zm.hpp"
 
