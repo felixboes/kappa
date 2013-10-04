@@ -1,26 +1,30 @@
-#include "matrix_fp.hpp"
+#include "matrix_zm.hpp"
 
 /*
  *--------------------------------------------------------------------------------------
- *       Class:  Fp
+ *       Class:  Zm
  * Description:  initialize static members
  *--------------------------------------------------------------------------------------
  */
-int Fp::base;
-std::vector<int> Fp::inv;
+uint32_t Zm::prim;
+uint32_t Zm::expo;
+int32_t Zm::base;
+std::vector<int> Zm::inv;
 
 /*
  *--------------------------------------------------------------------------------------
- *       Class:  Fp
- *      Method:  Fp :: set_modulus
+ *       Class:  Zm
+ *      Method:  Zm :: set_modulus
  * Description:  calculate the inversetable of the ring Z/(p^k)
  *--------------------------------------------------------------------------------------
  */
 
-void Fp::set_modulus(unsigned int p, unsigned int k)
+void Zm::set_modulus(const uint p, const uint k)
 {
     // Wir benutzen: Der Koeffizient i ist in Z/(p^k) genau dann invertierbar, wenn i%p != 0 ist.
     // Nach dem Satz von Euler ist dann a^{p^k - p^{k-1} - 1} = a^{-1} in Z/(p^k)
+    prim = p;
+    expo = k;
     base = pow(p,k);
     inv.clear();
     inv.push_back(0);
@@ -52,36 +56,41 @@ void Fp::set_modulus(unsigned int p, unsigned int k)
     }
 }
 
-void Fp::clean_up()
+void Zm::clean_up()
 {
     base = 0;
     inv.clear();
 }
 
-Fp::Fp(const int m) : n( ((m%base)+base)%base ) {}
+bool Zm::is_field()
+{
+    return (prim > 0 && expo == 1);
+}
+
+Zm::Zm(const int m) : n( ((m%base)+base)%base ) {}
 
 /*
  *--------------------------------------------------------------------------------------
- *       Class:  Fp
- *      Method:  Fp :: print_modulus()
+ *       Class:  Zm
+ *      Method:  Zm :: print_modulus()
  * Description:  print out the moduls
  *--------------------------------------------------------------------------------------
  */
 
-void const Fp::print_modulus()
+void const Zm::print_modulus()
 {
     std::cout << "The Coefficientring is F_" << base << ".\n";
 }
 
 /*
  *--------------------------------------------------------------------------------------
- *       Class:  Fp
- *      Method:  Fp :: printf_inversetable()
+ *       Class:  Zm
+ *      Method:  Zm :: printf_inversetable()
  * Description:  print out the inversetable
  *--------------------------------------------------------------------------------------
  */
 
-void const Fp::print_inversetable()
+void const Zm::print_inversetable()
 {
     std::cout << "Printing inversetable:\n";
     for(int i = 1; i < base; i++)
@@ -90,126 +99,130 @@ void const Fp::print_inversetable()
 
 /*
  *--------------------------------------------------------------------------------------
- *       Class:  Fp
- *      Method:  Fp :: is_invertible
+ *       Class:  Zm
+ *      Method:  Zm :: is_invertible
  * Description:  true iff n is invertible in Z mod p^k
  *--------------------------------------------------------------------------------------
  */
 
-bool const Fp::is_invertible()
+bool const Zm::is_invertible()
 {
     return inv[((n % base)+base)%base];
 }
 
 /*
  *--------------------------------------------------------------------------------------
- *       Class:  Fp
- *      Method:  Fp :: inverse
- * Description:  returns the inverse of a Fpicient
+ *       Class:  Zm
+ *      Method:  Zm :: inverse
+ * Description:  returns the inverse of a Zmicient
  *--------------------------------------------------------------------------------------
  */
 
-Fp const Fp::inverse()
+Zm const Zm::inverse()
 {
-    return Fp(((n % base)+base)%base);
+    return Zm(((n % base)+base)%base);
 }
 
 /*
  *--------------------------------------------------------------------------------------
- *       Class:  Fp
- *      Method:  Fp :: print_Fp
- * Description:     prints our a Fpicient
+ *       Class:  Zm
+ *      Method:  Zm :: print_Zm
+ * Description:     prints our a Zmicient
  *--------------------------------------------------------------------------------------
  */
-void const Fp::show()
+void const Zm::show()
 {
     std::cout << ((n%base)+base)%base;
 }
 
 /*
  *--------------------------------------------------------------------------------------
- *       Class:  Fp
- *      Method:  Fp :: print_Fp
- * Description:  prints a Fp to a String
+ *       Class:  Zm
+ *      Method:  Zm :: print_Zm
+ * Description:  prints a Zm to a String
  *--------------------------------------------------------------------------------------
  */
-std::string Fp::get_string()
+std::string Zm::get_string()
 {
     std::ostringstream tmp;
     tmp << ((n%base)+base)%base;
     return tmp.str();
 }
 
+std::ostream& operator<< (std::ostream& stream, const Zm& coeff)
+{
+    return stream << coeff.n;
+}
 
 /*
  *--------------------------------------------------------------------------------------
- *       Class:  Fp
- *      Method:  Fp :: operator
+ *       Class:  Zm
+ *      Method:  Zm :: operator
  * Description:     operator+, ect...
  *--------------------------------------------------------------------------------------
  */
 
-bool Fp::operator==(const int b) const
+bool Zm::operator==(const int b) const
 {
     return (n - b) % base == 0;
 }
 
-Fp& Fp::operator=(const int a)
+Zm& Zm::operator=(const int a)
 {
     n = ((a%base)+base)%base;
     return *this;
 }
 
-Fp& Fp::operator +=(Fp a)
+Zm& Zm::operator +=(Zm a)
 {
     n = (((n+a.n)%base)+base)%base;
     return *this;
 }
 
-Fp& Fp::operator -=(Fp a)
+Zm& Zm::operator -=(Zm a)
 {
     n = (((n-a.n)%base)+base)%base;
     return *this;
 }
 
-Fp& Fp::operator *=(Fp a)
+Zm& Zm::operator *=(Zm a)
 {
     n = (((n*a.n)%base)+base)%base;
     return *this;
 }
 
-Fp Fp::operator-() const
+Zm Zm::operator-() const
 {
-    Fp r(-n);
+    Zm r(-n);
     return r;
 }
 
-Fp::operator bool() const
+Zm::operator bool() const
 {
     return n%base;
 }
 
 
-Fp operator+(Fp a, Fp b)
+Zm operator+(Zm a, Zm b)
 {
-    Fp r(a);
+    Zm r(a);
     return r += b;
 }
 
-Fp operator-(Fp a, Fp b)
+Zm operator-(Zm a, Zm b)
 {
-    Fp r(a);
+    Zm r(a);
     return r -= b;
 }
 
-Fp operator*(Fp a, Fp b)
+Zm operator*(Zm a, Zm b)
 {
-    Fp r(a);
+    Zm r(a);
     return r *= b;
 }
 
-Fp operator*(Fp a, const int b)
+Zm operator*(Zm a, const int b)
 {
-    Fp r(a);
-    return r *= Fp(b);
+    Zm r(a);
+    return r *= Zm(b);
 }
