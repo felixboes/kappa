@@ -1,12 +1,10 @@
 #ifndef DIAGONALIZER_ZM_HPP
 #define DIAGONALIZER_ZM_HPP
 
-#include <functional>
 #include <iostream>
 #include <list>
 #include <vector>
 #include <stdint.h>
-#include <boost/numeric/ublas/io.hpp>
 
 #include "matrix_zm.hpp"
 
@@ -34,7 +32,7 @@ private:
     void row_operation(MatrixZm &matrix, size_t row_1, size_t row_2, size_t col);
     
     /**
-     *  Compute the dimension of the image of in.
+     *  Compute the dimension of the image of matrix.
      *  This done by computing the number of lineary independant columns or rows.
      */
     uint32_t diag_field(MatrixZm& matrix);

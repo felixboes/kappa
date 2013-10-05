@@ -1,34 +1,31 @@
-#include "diagonalizer_zm.hpp"
+#include "diagonalizer_q.hpp"
 
-DiagonalizerZm::DiagonalizerZm(MatrixZm &out_differential, MatrixZm &in_differential ) :
+DiagonalizerQ::DiagonalizerQ(MatrixQ &out_differential, MatrixQ &in_differential ) :
     out(out_differential),
     in(in_differential),
     def(0),
-    tors_coefficients( TorsionVector(0,0) )
+    tor(0)
 {
-    if( Zm::is_field() )
-    {
-        // Defect equals #cols - rank
-        def = out.size2() - diag_field(out);
-        tors_coefficients = std::vector< Zm >( diag_field(in), Zm(1) );
-    }
+    // Defect equals #cols - rank
+    def = out.size2() - diag_field(out);
+    tor = diag_field(in);
 }
 
 /**
  *  Performs a row operation to matrix to zeroise the entry (row_2, col) using the entry (row_1, col).
  */
-void DiagonalizerZm::row_operation(MatrixZm & matrix, size_t row_1, size_t row_2, size_t col)
+void DiagonalizerQ::row_operation(MatrixQ & matrix, size_t row_1, size_t row_2, size_t col)
 {
     size_t num_cols = matrix.size2();
-    Zm c( - ( matrix(row_1,col).inverse() ) * matrix(row_2, col) );
-    MatrixZm row_op(2,2);
+    Q c( - ( 1 / matrix(row_1,col) ) * matrix(row_2, col) );
+    MatrixQ row_op(2,2);
     
     row_op(0,0) = 1;
     row_op(0,1) = 0;
     row_op(1,0) = c;
     row_op(1,1) = 1;    
    
-    MatrixZmSlice matrix_slice(matrix, slice_zm(row_1, row_2-row_1, 2), slice_zm(col,1, num_cols-col) );
+    MatrixQSlice matrix_slice(matrix, slice_q(row_1, row_2-row_1, 2), slice_q(col,1, num_cols-col) );
     matrix_slice = boost::numeric::ublas::prod( row_op, matrix_slice );
 }
 
@@ -36,7 +33,7 @@ void DiagonalizerZm::row_operation(MatrixZm & matrix, size_t row_1, size_t row_2
  *  Compute the dimension of the image of matrix.
  *  This done by computing the number of lineary independant columns or rows.
  */ 
-uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
+uint32_t DiagonalizerQ::diag_field(MatrixQ &matrix)
 {
     size_t num_rows = matrix.size1();
     size_t num_cols = matrix.size2();
@@ -69,7 +66,7 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
         {
             // Find first non-zero entry in the remaining rows.
             auto it = rows_to_check.begin();
-            for( ; it != rows_to_check.end() && matrix( *it, col ).is_invertible() == false; ++it )
+            for( ; it != rows_to_check.end() && matrix( *it, col ) == 0; ++it )
             {
             }
             
@@ -89,7 +86,7 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
                     // Assume that the entry (row_2, col) differs from zero.
                     // Performs a row operation to matrix to zeroise the entry (row_2, col) 
                     // using the entry (row_1, col). 
-                    if( matrix( row_2, col ) )
+                    if( matrix( row_2, col ) != 0 )
                     {
                         row_operation( matrix, row_1, row_2, col );
                     }
@@ -99,5 +96,3 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
     }
     return rank;
 }
-
-
