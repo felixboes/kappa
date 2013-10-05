@@ -42,7 +42,11 @@ private:
     void row_operation(MatrixZm &matrix, size_t row_1, size_t row_2, size_t col);
     
     /**
+<<<<<<< HEAD
      *  @return rank of matrix
+=======
+     *  \return rank of matrix
+>>>>>>> 53fd44b73bd886d5797890b01e6791511682daf7
      *  The matrix is diagonalized via Gauss to compute the number of linearly independant columns or rows.
      */
     uint32_t diag_field(MatrixZm& matrix);
