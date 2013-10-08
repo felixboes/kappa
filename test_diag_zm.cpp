@@ -1,12 +1,16 @@
-#include "matrix_zm.hpp"
-#include "diagonalizer_zm.hpp"
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <chrono>
+#include <cinttypes>
 #include <functional>
 #include <iostream>
 #include <limits>
+
+#include "chain_complex.hpp"
+#include "diagonalizer_zm.hpp"
+#include "homology_field.hpp"
+#include "matrix_zm.hpp"
 
 // This is a deterministic random generator.
 // The initial seed is the system time.
@@ -79,27 +83,30 @@ uint32_t test_rank_zm( uint32_t num_rounds, uint32_t max_num_rows, uint32_t max_
 
 void test_some_chain_complex_zm()
 {
+    typedef ChainComplex< Zm, MatrixZm, DiagonalizerZm, HomologyField > ChainComplexZm;
+    ChainComplexZm cc;
+    
     MatrixZm M(4,4);
     M(0,0) = 1;
     M(0,1) = 1;
     M(0,2) = 2;
     M(0,3) = 3;
-    
+
     M(1,0) = 0;
     M(1,1) = 0;
     M(1,2) = 0;
     M(1,3) = 0;
-    
+
     M(2,0) = 1;
     M(2,1) = 0;
     M(2,2) = 5;
     M(2,3) = 7;
-    
+
     M(3,0) = 0;
     M(3,1) = 0;
     M(3,2) = 0;
     M(3,3) = 0;
-    
+
     MatrixZm N(4,2);
     N(0,0) = -15;
     N(0,1) =  -7;
@@ -112,13 +119,16 @@ void test_some_chain_complex_zm()
     
     N(3,0) =   0;
     N(3,1) =   1;
+
+    cc[1] = M;
+    cc[0] = N;
     
-    std::cout << "M:    " << M << std::endl;
-    std::cout << "N:    " << N << std::endl;
-    std::cout << "Prod: " << prod( M, N ) << std::endl;
+    std::cout << "M:    " << cc[1] << std::endl;
+    std::cout << "N:    " << cc[0] << std::endl;
+    std::cout << "Prod: " << prod( cc[1], cc[0] ) << std::endl;
     
-    DiagonalizerZm D(M,N);
-    std::cout << D.defect() << " " << D.torsion() << std::endl;
+    HomologyField ho = cc.homology(0);
+    std::cout << ho << std::endl;
 }
 
 int main( int argc, char ** argv )
@@ -131,7 +141,8 @@ int main( int argc, char ** argv )
         return 1;
     }
     Zm::set_modulus(atoi(argv[1]),1);
-        
+    
+    /*
     uint32_t errors = 0;
     if( argc == 5 )
     {
@@ -147,6 +158,7 @@ int main( int argc, char ** argv )
         return 1;
     }
     std::cout << "Total number of errors: " << errors << std::endl;
-    
+    */
+    test_some_chain_complex_zm();
     return 0;
 }

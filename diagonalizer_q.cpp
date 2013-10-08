@@ -11,6 +11,21 @@ DiagonalizerQ::DiagonalizerQ(MatrixQ &out_differential, MatrixQ &in_differential
     tor = diag_field(in);
 }
 
+uint32_t DiagonalizerQ::defect()
+{
+    return def;
+}
+
+uint32_t DiagonalizerQ::kern()
+{
+    return def;
+}
+
+uint32_t DiagonalizerQ::torsion()
+{
+    return tor;
+}
+
 /**
  *  Performs a row operation to matrix to zeroise the entry (row_2, col) using the entry (row_1, col).
  */

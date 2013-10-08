@@ -1,10 +1,10 @@
 #ifndef DIAGONALIZER_Q_HPP
 #define DIAGONALIZER_Q_HPP
 
+#include <cinttypes>
 #include <iostream>
 #include <list>
 #include <vector>
-#include <stdint.h>
 
 #include "matrix_q.hpp"
 
@@ -16,8 +16,14 @@ public:
     
     /**  constructor */
     DiagonalizerQ(MatrixQ &out_differential, MatrixQ &in_differential );
-    uint32_t defect () { return def; }
-    uint32_t torsion() { return tor; }
+
+    /**  @return defect of the matrix out */
+    uint32_t defect();   
+    /**  @return defect of the matrix out */
+    uint32_t kern();
+    /**  @return rank of the matrix in */
+    uint32_t torsion();
+    
     /**
      *  Compute the dimension of the image of matrix.
      *  This done by computing the number of lineary independant columns or rows.

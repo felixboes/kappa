@@ -1,11 +1,11 @@
 #ifndef DIAGONALIZER_ZM_HPP
 #define DIAGONALIZER_ZM_HPP
 
+#include <cinttypes>
 #include <functional>
 #include <iostream>
 #include <list>
 #include <vector>
-#include <stdint.h>
 #include <boost/numeric/ublas/io.hpp>
 
 #include "matrix_zm.hpp"
@@ -30,8 +30,11 @@ public:
     DiagonalizerZm(MatrixZm &out_differential, MatrixZm &in_differential );
     
     /**  @return defect of the matrix out */
-    uint32_t defect() {return def;}
-    uint32_t torsion() { return tor; }
+    uint32_t defect();   
+    /**  @return defect of the matrix out */
+    uint32_t kern();
+    /**  @return rank of the matrix in */
+    uint32_t torsion();
     
     /**
      *  @return rank of matrix

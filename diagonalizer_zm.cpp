@@ -14,6 +14,21 @@ DiagonalizerZm::DiagonalizerZm(MatrixZm &out_differential, MatrixZm &in_differen
     }
 }
 
+uint32_t DiagonalizerZm::defect()
+{
+    return def;
+}
+
+uint32_t DiagonalizerZm::kern()
+{
+    return def;
+}
+
+uint32_t DiagonalizerZm::torsion()
+{
+    return tor;
+}
+
 /**
  *  Performs a row operation to matrix to zeroise the entry (row_2, col) using the entry (row_1, col).
  */

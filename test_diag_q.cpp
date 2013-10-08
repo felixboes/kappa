@@ -1,11 +1,16 @@
-#include "matrix_q.hpp"
-#include "diagonalizer_q.hpp"
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <chrono>
+#include <cinttypes>
 #include <functional>
 #include <iostream>
+
+#include "chain_complex.hpp"
+#include "diagonalizer_q.hpp"
+#include "homology_field.hpp"
+#include "matrix_q.hpp"
+
 
 // This is a deterministic random generator.
 // The initial seed is the system time.
@@ -79,6 +84,9 @@ uint32_t test_rank_q( uint32_t num_rounds, uint32_t max_num_rows, uint32_t max_n
 
 void test_some_chain_complex_q()
 {
+    typedef ChainComplex< Q, MatrixQ, DiagonalizerQ, HomologyField > ChainComplexQ;
+    ChainComplexQ cc;
+    
     MatrixQ M(4,4);
     M(0,0) = 1;
     M(0,1) = 1;
@@ -113,18 +121,22 @@ void test_some_chain_complex_q()
     N(3,0) =   0;
     N(3,1) =   1;
 
-    std::cout << "M:    " << M << std::endl;
-    std::cout << "N:    " << N << std::endl;
-    std::cout << "Prod: " << prod( M, N ) << std::endl;
+    cc[1] = M;
+    cc[0] = N;
     
-    DiagonalizerQ D(M,N);
-    std::cout << D.defect() << " " << D.torsion() << std::endl;
+    std::cout << "M:    " << cc[1] << std::endl;
+    std::cout << "N:    " << cc[0] << std::endl;
+    std::cout << "Prod: " << prod( cc[1], cc[0] ) << std::endl;
+    
+    HomologyField ho = cc.homology(0);
+    std::cout << ho << std::endl;
 }
 
 int main( int argc, char ** argv )
 {
     std::cout.setf(std::ios::unitbuf);
-    
+
+    /*    
     uint32_t errors = 0;
     if( argc == 4 )
     {
@@ -140,6 +152,8 @@ int main( int argc, char ** argv )
         return 1;
     }
     std::cout << "Total number of errors: " << errors << std::endl;
-
+    */
+    
+    test_some_chain_complex_q();
     return 0;
 }
