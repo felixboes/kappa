@@ -22,6 +22,7 @@ public:
     
     // arithmetic operators
     bool operator==(const int) const;
+    bool operator==(const Zm a) const;
     Zm& operator=(const int);
     Zm& operator+=(const Zm);
     Zm& operator-=(const Zm);
@@ -41,15 +42,19 @@ private:
     operator unsigned() const;
 };
 
+bool operator !=( const Zm, const Zm );
 Zm operator+(const Zm, const Zm);
 Zm operator-(const Zm, const Zm);
 Zm operator*(const Zm, const Zm);
 Zm operator*(const Zm, const int);
+
 
 std::ostream& operator<< (std::ostream& stream, const Zm& coeff);
 
 typedef boost::numeric::ublas::matrix< Zm > MatrixZm;
 typedef boost::numeric::ublas::matrix_slice< MatrixZm > MatrixZmSlice;
 typedef boost::numeric::ublas::slice slice_zm;
+
+MatrixZm MatrixZmIdentity(uint32_t rows);
 
 #endif // MATRIX_Zm_HPP

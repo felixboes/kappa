@@ -1,21 +1,22 @@
-#include "matrix_q.hpp"
-#include "diagonalizer_q.hpp"
+#include "matrix_zm.hpp"
+#include "diagonalizer_zm.hpp"
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <chrono>
 #include <functional>
 #include <iostream>
+#include <limits>
 
 // This is a deterministic random generator.
 // The initial seed is the system time.
-boost::random::mt19937 gen_q(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
+boost::random::mt19937 gen_zm(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
 
-bool create_random_matrix_q(uint32_t rows, uint32_t cols, uint32_t rank)
+bool create_random_matrix_zm(uint32_t rows, uint32_t cols, uint32_t rank)
 {
-    MatrixQ matrix(rows, cols);
-    MatrixQ row_ops = MatrixQIdentity(rows);
-    MatrixQ col_ops = MatrixQIdentity(cols);
+    MatrixZm matrix(rows, cols);
+    MatrixZm row_ops = MatrixZmIdentity(rows);
+    MatrixZm col_ops = MatrixZmIdentity(cols);
     
     if( rank > std::min(rows, cols) )
     {
@@ -28,14 +29,13 @@ bool create_random_matrix_q(uint32_t rows, uint32_t cols, uint32_t rank)
         matrix(i,i) = 1;
     }
     
-    boost::random::uniform_int_distribution<> numerator(-100, 100);
-    boost::random::uniform_int_distribution<> denominator(1, 100);
+    boost::random::uniform_int_distribution<> number(-100, 100);
     // row_ops = lower left diag.
     for( uint32_t i = 1; i < rows; ++i )
     {
         for( uint32_t j = 0; j <= i-1; ++j )
         {
-            row_ops(i,j) = Q( numerator(gen_q), denominator(gen_q) );
+            row_ops(i,j) = Zm( number(gen_zm) );
         }
     }
     
@@ -44,31 +44,31 @@ bool create_random_matrix_q(uint32_t rows, uint32_t cols, uint32_t rank)
     {
         for( uint32_t j = i+1; j < cols ; ++j )
         {
-            col_ops(i,j) = Q( numerator(gen_q), denominator(gen_q) );
+            col_ops(i,j) = Zm( number(gen_zm) );
         }
     }
     
     matrix = boost::numeric::ublas::prod( row_ops, matrix );
     matrix = boost::numeric::ublas::prod( matrix,  col_ops );
-    DiagonalizerQ diagonalizer;
+    DiagonalizerZm diagonalizer;
     
     return rank == diagonalizer.diag_field(matrix);
 }
 
-uint32_t test_rank_q( uint32_t num_rounds, uint32_t max_num_rows, uint32_t max_num_cols, uint32_t max_num_rank = std::numeric_limits<uint32_t>::max() )
+uint32_t test_rank_zm( uint32_t num_rounds, uint32_t max_num_rows, uint32_t max_num_cols, uint32_t max_num_rank = std::numeric_limits<uint32_t>::max() )
 {
     uint32_t number_of_errors = 0;
     boost::random::uniform_int_distribution<> rnd_rows(5, max_num_rows);
     boost::random::uniform_int_distribution<> rnd_cols(5, max_num_cols);
     for( uint32_t round = 0; round < num_rounds; ++round )
     {
-        uint32_t rows = rnd_rows(gen_q);
-        uint32_t cols = rnd_cols(gen_q);
+        uint32_t rows = rnd_rows(gen_zm);
+        uint32_t cols = rnd_cols(gen_zm);
         boost::random::uniform_int_distribution<> rnd_rank( 5, std::min( std::min ( rows, cols ), max_num_rank ) );
-        uint32_t rank = rnd_rank(gen_q);
+        uint32_t rank = rnd_rank(gen_zm);
         
         std::cout << "Round: " << round << "\r";
-        if( !create_random_matrix_q(rows, cols, rank) )
+        if( !create_random_matrix_zm(rows, cols, rank) )
         {
             std::cerr << "Error in Round: " << round << std::endl;
             number_of_errors++;
@@ -77,30 +77,30 @@ uint32_t test_rank_q( uint32_t num_rounds, uint32_t max_num_rows, uint32_t max_n
     return number_of_errors;
 }
 
-void test_some_chain_complex_q()
+void test_some_chain_complex_zm()
 {
-    MatrixQ M(4,4);
+    MatrixZm M(4,4);
     M(0,0) = 1;
     M(0,1) = 1;
     M(0,2) = 2;
     M(0,3) = 3;
-
+    
     M(1,0) = 0;
     M(1,1) = 0;
     M(1,2) = 0;
     M(1,3) = 0;
-
+    
     M(2,0) = 1;
     M(2,1) = 0;
     M(2,2) = 5;
     M(2,3) = 7;
-
+    
     M(3,0) = 0;
     M(3,1) = 0;
     M(3,2) = 0;
     M(3,3) = 0;
-
-    MatrixQ N(4,2);
+    
+    MatrixZm N(4,2);
     N(0,0) = -15;
     N(0,1) =  -7;
     
@@ -112,12 +112,12 @@ void test_some_chain_complex_q()
     
     N(3,0) =   0;
     N(3,1) =   1;
-
+    
     std::cout << "M:    " << M << std::endl;
     std::cout << "N:    " << N << std::endl;
     std::cout << "Prod: " << prod( M, N ) << std::endl;
     
-    DiagonalizerQ D(M,N);
+    DiagonalizerZm D(M,N);
     std::cout << D.defect() << " " << D.torsion() << std::endl;
 }
 
@@ -125,21 +125,28 @@ int main( int argc, char ** argv )
 {
     std::cout.setf(std::ios::unitbuf);
     
-    uint32_t errors = 0;
-    if( argc == 4 )
+    if( argc <= 1 )
     {
-        errors = test_rank_q( atoi(argv[1]), atoi(argv[2]), atoi(argv[3]) );
+        std::cerr << "Error: #Parameter = 0" << std::endl;
+        return 1;
     }
-    else if( argc >= 5 )
+    Zm::set_modulus(atoi(argv[1]),1);
+        
+    uint32_t errors = 0;
+    if( argc == 5 )
     {
-        errors = test_rank_q( atoi(argv[1]), atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) );
+        errors = test_rank_zm( atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) );
+    }
+    else if( argc >= 6 )
+    {
+        errors = test_rank_zm( atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]) );
     }
     else
     {
-        std::cerr << "Error: #Parameter < 3" << std::endl;
+        std::cerr << "Error: #Parameter < 4" << std::endl;
         return 1;
     }
     std::cout << "Total number of errors: " << errors << std::endl;
-
+    
     return 0;
 }

@@ -4,13 +4,13 @@ DiagonalizerZm::DiagonalizerZm(MatrixZm &out_differential, MatrixZm &in_differen
     out(out_differential),
     in(in_differential),
     def(0),
-    tors_coefficients( TorsionVector(0,0) )
+    tor(0)
 {
     if( Zm::is_field() )
     {
         // Defect equals #cols - rank
         def = out.size2() - diag_field(out);
-        tors_coefficients = std::vector< Zm >( diag_field(in), Zm(1) );
+        tor = diag_field(in);
     }
 }
 

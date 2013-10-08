@@ -43,13 +43,9 @@ uint32_t DiagonalizerQ::diag_field(MatrixQ &matrix)
     // if( num_rows <= num_cols )
     {
          // We avoid permutations of rows in the Gauss algorithm by performing the following steps:
-
          //   - Iterate through the columns.
- 
          //   - Iterate through a singly linked list of rows.
-
          //   - For a given column, remove a row from the list if the common entry of column and row is invertible.
-
          //   - Apply row operations to all rows beneath the row.
          
         std::list<size_t> rows_to_check;

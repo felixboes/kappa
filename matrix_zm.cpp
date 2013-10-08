@@ -167,6 +167,17 @@ bool Zm::operator==(const int b) const
     return (n - b) % base == 0;
 }
 
+bool Zm::operator== (const Zm a) const
+{
+    return n == a.n;
+}
+
+bool operator !=( const Zm a, const Zm b )
+{
+    return !( a.operator==(b) );
+}
+
+
 Zm& Zm::operator=(const int a)
 {
     n = ((a%base)+base)%base;
@@ -202,7 +213,6 @@ Zm::operator bool() const
     return n%base;
 }
 
-
 Zm operator+(Zm a, Zm b)
 {
     Zm r(a);
@@ -225,4 +235,15 @@ Zm operator*(Zm a, const int b)
 {
     Zm r(a);
     return r *= Zm(b);
+}
+
+
+MatrixZm MatrixZmIdentity(uint32_t rows)
+{
+    MatrixZm id(rows, rows);
+    for( uint32_t i = 0; i < rows; ++i )
+    {
+        id(i, i) = 1;
+    }
+    return id;
 }
