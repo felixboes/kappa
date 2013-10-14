@@ -1,29 +1,23 @@
 #include "diagonalizer_q.hpp"
 
-DiagonalizerQ::DiagonalizerQ(MatrixQ &out_differential, MatrixQ &in_differential ) :
-    out(out_differential),
-    in(in_differential),
-    def(0),
-    tor(0)
-{
-    // Defect equals #cols - rank
-    def = out.size2() - diag_field(out);
-    tor = diag_field(in);
-}
-
-uint32_t DiagonalizerQ::defect()
+uint32_t DiagonalizerQ::dfct()
 {
     return def;
 }
 
-uint32_t DiagonalizerQ::kern()
+HomologyField::KernT DiagonalizerQ::kern()
 {
     return def;
 }
 
-uint32_t DiagonalizerQ::torsion()
+uint32_t DiagonalizerQ::rank()
 {
-    return tor;
+    return rnk;
+}
+
+HomologyField::TorsT DiagonalizerQ::tors()
+{
+    return rnk;
 }
 
 /**
@@ -107,3 +101,22 @@ uint32_t DiagonalizerQ::diag_field(MatrixQ &matrix)
     }
     return rank;
 }
+
+void DiagonalizerQ::operator() ( MatrixQ &matrix )
+{
+    rnk = diag_field( matrix );
+    def = matrix.size2() - rnk;
+}
+
+void DiagonalizerQ::operator() ( MatrixQ &post_matrix, MatrixQ &matrix )
+{
+    operator ()(matrix);
+    std::cerr << "TODO: Additional ops in Diagonalizer::operator() ( MatrixQ &post_matrix, MatrixQ &matrix )" << std::endl;
+}
+
+void DiagonalizerQ::operator() ( MatrixQ &post_matrix, MatrixQ &matrix, MatrixQ &pre_matrix )
+{
+    operator ()(matrix);
+    std::cerr << "TODO: Additional ops in Diagonalizer::operator() ( MatrixQ &post_matrix, MatrixQ &matrix, MatrixQ &pre_matrix )" << std::endl;
+}
+

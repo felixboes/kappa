@@ -124,8 +124,8 @@ void test_some_chain_complex_zm()
     cc[1] = N;
     cc[0] = M;
     
-    std::cout << "M:    " << cc[1] << std::endl;
-    std::cout << "N:    " << cc[0] << std::endl;
+    std::cout << "N:    " << cc[1] << std::endl;
+    std::cout << "M:    " << cc[0] << std::endl;
     std::cout << "Prod: " << prod( cc[0], cc[1] ) << std::endl;
     
     HomologyField ho = cc.homology(0);
