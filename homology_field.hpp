@@ -15,9 +15,13 @@ public:
     HomologyField();
     HomologyField( int32_t, KernT, TorsT );
     
+    void set_kern( int32_t n, KernT k );
+    void set_tors( int32_t n, TorsT t );
+    
     friend std::ostream& operator<< (std::ostream& stream, const HomologyField& homol);
 private:
-    std::map< int32_t, int64_t > dimension;
+    std::map< int32_t, int64_t > kern;
+    std::map< int32_t, int64_t > tors;
 };
 
 std::ostream& operator<< (std::ostream& stream, const HomologyField& homol);

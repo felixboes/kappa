@@ -55,8 +55,9 @@ bool create_random_matrix_zm(uint32_t rows, uint32_t cols, uint32_t rank)
     matrix = boost::numeric::ublas::prod( row_ops, matrix );
     matrix = boost::numeric::ublas::prod( matrix,  col_ops );
     DiagonalizerZm diagonalizer;
+    diagonalizer(matrix);
     
-    return rank == diagonalizer.diag_field(matrix);
+    return rank == diagonalizer.rank();
 }
 
 uint32_t test_rank_zm( uint32_t num_rounds, uint32_t max_num_rows, uint32_t max_num_cols, uint32_t max_num_rank = std::numeric_limits<uint32_t>::max() )
@@ -120,12 +121,12 @@ void test_some_chain_complex_zm()
     N(3,0) =   0;
     N(3,1) =   1;
 
-    cc[1] = M;
-    cc[0] = N;
+    cc[1] = N;
+    cc[0] = M;
     
     std::cout << "M:    " << cc[1] << std::endl;
     std::cout << "N:    " << cc[0] << std::endl;
-    std::cout << "Prod: " << prod( cc[1], cc[0] ) << std::endl;
+    std::cout << "Prod: " << prod( cc[0], cc[1] ) << std::endl;
     
     HomologyField ho = cc.homology(0);
     std::cout << ho << std::endl;
@@ -142,7 +143,10 @@ int main( int argc, char ** argv )
     }
     Zm::set_modulus(atoi(argv[1]),1);
     
-    /*
+    test_some_chain_complex_zm();
+    
+    return 0;
+    
     uint32_t errors = 0;
     if( argc == 5 )
     {
@@ -158,7 +162,6 @@ int main( int argc, char ** argv )
         return 1;
     }
     std::cout << "Total number of errors: " << errors << std::endl;
-    */
-    test_some_chain_complex_zm();
+    
     return 0;
 }

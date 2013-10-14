@@ -1,32 +1,23 @@
 #include "diagonalizer_zm.hpp"
 
-DiagonalizerZm::DiagonalizerZm(MatrixZm &out_differential, MatrixZm &in_differential ) :
-    out(out_differential),
-    in(in_differential),
-    def(0),
-    tor(0)
-{
-    if( Zm::is_field() )
-    {
-        // Defect equals #cols - rank
-        def = out.size2() - diag_field(out);
-        tor = diag_field(in);
-    }
-}
-
-uint32_t DiagonalizerZm::defect()
+uint32_t DiagonalizerZm::dfct()
 {
     return def;
 }
 
-uint32_t DiagonalizerZm::kern()
+HomologyField::KernT DiagonalizerZm::kern()
 {
     return def;
 }
 
-uint32_t DiagonalizerZm::torsion()
+uint32_t DiagonalizerZm::rank()
 {
-    return tor;
+    return rnk;
+}
+
+HomologyField::TorsT DiagonalizerZm::tors()
+{
+    return rnk;
 }
 
 /**
@@ -109,4 +100,20 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
     return rank;
 }
 
+void DiagonalizerZm::operator() ( MatrixZm &matrix )
+{
+    rnk = diag_field( matrix );
+    def = matrix.size2() - rnk;
+}
 
+void DiagonalizerZm::operator() ( MatrixZm &post_matrix, MatrixZm &matrix )
+{
+    operator ()(matrix);
+    std::cerr << "TODO: Additional ops in Diagonalizer::operator() ( MatrixZm &post_matrix, MatrixZm &matrix )" << std::endl;
+}
+
+void DiagonalizerZm::operator() ( MatrixZm &post_matrix, MatrixZm &matrix, MatrixZm &pre_matrix )
+{
+    operator ()(matrix);
+    std::cerr << "TODO: Additional ops in Diagonalizer::operator() ( MatrixZm &post_matrix, MatrixZm &matrix, MatrixZm &pre_matrix )" << std::endl;
+}

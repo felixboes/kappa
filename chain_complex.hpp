@@ -5,10 +5,15 @@
 #include <iostream>
 #include <map>
 
-template< class Coefficient, class MatrixT, class DiagonalizerT, class Homology >
+/**
+ *  We assume, that \f$ 0 \times n \f$- and \f$ n \times 0 \f$-matrices require negligible RAM.
+ *  Using standard tools, our tests where successfull for the types MatrixZm and MatrixQ.
+ */
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
 class ChainComplex
 {
 public:
+    typedef ChainComplex<CoefficientT, MatrixT, DiagonalizerT, HomologyT> SelfType;
     ChainComplex();
     
     /**
@@ -19,22 +24,22 @@ public:
     /**
      *  Access the coefficient of the \f$n\f$-th differential at the position (row, col).
      */
-    Coefficient &operator() ( int32_t n, uint32_t row, uint32_t col );
+    CoefficientT &operator() ( int32_t n, uint32_t row, uint32_t col );
     
     /**
      *  Compute the homology at the \f$n\f$-th spot.
      */
-    Homology homology( int32_t n );
+    HomologyT homology( int32_t n );
     
     /**
      *  Compute all the homology.
      */
-    Homology homology();
+    HomologyT homology();
 
     /**
-     *  Checks if the \f$n\f$-th modules exists.
+     *  Checks if the \f$n\f$-th differential exists.
      */
-    bool exists_module( int32_t n );
+    bool exists_differential( int32_t n );
     
 private:
     std::map< int32_t, MatrixT > differential;

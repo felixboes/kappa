@@ -1,41 +1,90 @@
 #include "chain_complex.hpp"
 
-template< class Coefficient, class MatrixT, class DiagonalizerT, class Homology >
-ChainComplex< Coefficient, MatrixT, DiagonalizerT, Homology >::ChainComplex()
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::ChainComplex()
 {
 
 
 }
 
-template< class Coefficient, class MatrixT, class DiagonalizerT, class Homology >
-MatrixT &ChainComplex< Coefficient, MatrixT, DiagonalizerT, Homology >::operator[] ( int32_t n )
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator[] ( int32_t n )
 {
     return differential[n];
 }
 
-template< class Coefficient, class MatrixT, class DiagonalizerT, class Homology >
-Coefficient &ChainComplex< Coefficient, MatrixT, DiagonalizerT, Homology >::operator() ( int32_t n, uint32_t row, uint32_t col )
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator() ( int32_t n, uint32_t row, uint32_t col )
 {
     return differential[n](row, col);
 }
 
-template< class Coefficient, class MatrixT, class DiagonalizerT, class Homology >
-bool ChainComplex< Coefficient, MatrixT, DiagonalizerT, Homology >::exists_module( int32_t n )
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+bool ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::exists_differential( int32_t n )
 {
     // The n-th module exists iff there exists a matrix M leaving it.
     return differential.count(n) > 0;
 }
 
-template< class Coefficient, class MatrixT, class DiagonalizerT, class Homology >
-Homology ChainComplex< Coefficient, MatrixT, DiagonalizerT, Homology >::homology( int32_t n )
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homology( int32_t n )
 {
-    if( exists_module(n+1) && exists_module(n) )
+    HomologyT homol;
+    // Case by case anaylsis:
+    
+    // diff_n is the zero matrix if either it is not stored or it has no rows.
+    // In this case, the defect is the whole module.
+    
+    // diff_n is not stored.
+    if( differential.count(n) == 0 )
     {
-        DiagonalizerT diag( differential[n+1], differential[n] );
-        return Homology( n, diag.kern(), diag.torsion() );
+        // The dimension of the n-th module is known by the (n+1)-th differential.
+        if( differential.count(n+1) )
+        {
+            homol.set_kern( n, differential[n+1].size1() );
+        }
+        else // The dimension of the n-th module is unkown.
+        {
+            typename HomologyT::KernT k;
+            homol.set_kern( n, k );
+            std::cerr << "Error: Homology in " << n << " unknown." << std::endl;
+        }
+    }
+    // diff_n has no rows.
+    else if ( differential[n].size1() == 0 )
+    {
+        // The dimension is equals to the number of columns.
+        homol.set_kern( n, differential[n].size2() );
     }
     else
     {
-        std::cerr << "Todo" << std::endl;
+        DiagonalizerT diago;
+        diago( differential[n] );
+        homol.set_kern( n, diago.kern() );
     }
+    
+    if( differential.count(n+1) == 0 || differential[n+1].size1() == 0 )
+    {
+        typename HomologyT::TorsT t;
+        homol.set_tors( n, t );
+    }
+    else 
+    {
+        // Assert that the matrices have the right number of colums and rows.
+        if( !(
+                differential.count(n) == 0 || differential[n].size1() == 0 || // Zero matrix
+                differential[n].size2() == differential[n+1].size1()
+                ) )
+        {
+            std::cerr << "Error: Column-Rows exception at position " << n << std::endl;
+        }
+        // Diagonalize
+        DiagonalizerT diago;
+        diago( differential[n+1] );
+        homol.set_tors( n, diago.tors() );
+    }
+    
+    return homol;
 }
+
+
