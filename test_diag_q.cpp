@@ -123,8 +123,9 @@ void test_some_chain_complex_q()
     N(3,0) =   0;
     N(3,1) =   1;
 
-    cc[1] = N;
-    cc[0] = M;
+    cc[2] = N;
+    cc[1] = M;
+    cc[0] = MatrixQ(0,4);
     
     cc[10] = MatrixQ(0,1);
     cc[11] = MatrixQ(1,1);
@@ -140,10 +141,7 @@ void test_some_chain_complex_q()
     cc[17] = MatrixQ(0,1);
     cc[18] = MatrixQ(1,1);
     cc(18,0,0) = 2;
-    
-    std::cout << "N:    " << cc[1] << std::endl;
-    std::cout << "M:    " << cc[0] << std::endl;
-    
+  
     HomologyField ho = cc.homology();
     std::cout << ho << std::endl;
 }
