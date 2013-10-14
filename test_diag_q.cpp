@@ -126,11 +126,25 @@ void test_some_chain_complex_q()
     cc[1] = N;
     cc[0] = M;
     
+    cc[10] = MatrixQ(0,1);
+    cc[11] = MatrixQ(1,1);
+    cc(11,0,0) = 0;
+    cc[12] = MatrixQ(1,1);
+    cc(12,0,0) = 2;
+    cc[13] = MatrixQ(0,1);
+    cc[14] = MatrixQ(1,1);
+    cc(14,0,0) = 2;
+    cc[15] = MatrixQ(0,1);
+    cc[16] = MatrixQ(1,1);
+    cc(16,0,0) = 2;
+    cc[17] = MatrixQ(0,1);
+    cc[18] = MatrixQ(1,1);
+    cc(18,0,0) = 2;
+    
     std::cout << "N:    " << cc[1] << std::endl;
     std::cout << "M:    " << cc[0] << std::endl;
-    std::cout << "Prod: " << prod( cc[0], cc[1] ) << std::endl;
     
-    HomologyField ho = cc.homology(0);
+    HomologyField ho = cc.homology();
     std::cout << ho << std::endl;
 }
 

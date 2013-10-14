@@ -87,4 +87,30 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
     return homol;
 }
 
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homology()
+{
+    HomologyT homol;
+    
+    for( auto it = differential.begin(); it != differential.end(); ++it )
+    {
+        int32_t n = it->first;
+        MatrixT diff = it->second;
+        if( diff.size1() == 0 )
+        {
+            homol.set_kern( n, diff.size2() );
+            typename HomologyT::TorsT t(0);
+            homol.set_tors( n-1, t );
+        }
+        else
+        {
+            DiagonalizerT diago;
+            diago(diff);
+            homol.set_kern( n, diago.kern() );
+            homol.set_tors( n-1, diago.tors() );
+        }
+    }
+    
+    return homol;
+}
 

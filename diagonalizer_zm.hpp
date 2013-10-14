@@ -50,13 +50,13 @@ public:
      */
     void operator() ( MatrixZm &post_matrix, MatrixZm &matrix, MatrixZm &pre_matrix );
     
-    /**  @return defect of the matrix out */
+    /**  @return defect of the matrix */
     uint32_t dfct();   
-    /**  @return defect of the matrix out */
+    /**  @return defect of the matrix */
     HomologyField::KernT kern();
-    /**  @return rank of the matrix in */
+    /**  @return rank of the matrix */
     uint32_t rank();
-    /**  @return rank of the matrix in */
+    /**  @return rank of the matrix */
     HomologyField::TorsT tors();
     
 private:

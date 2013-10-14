@@ -60,13 +60,13 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
         std::list<size_t> rows_to_check;
         
         // Fill the list.
-        for( size_t row_1 = 0; row_1 < num_rows; row_1++ )
+        for( size_t row_1 = 0; row_1 < num_rows; ++row_1 )
         {
             rows_to_check.push_back(row_1);
         }
         
         // Iterate through columns. We may stop if the rank is maximal.
-        for ( size_t col = 0; col < num_cols && rank < num_rows; col++ )
+        for ( size_t col = 0; col < num_cols && rank < num_rows; ++col )
         {
             // Find first invertible (i.e. non-zero) entry in the remaining rows.
             auto it = rows_to_check.begin();

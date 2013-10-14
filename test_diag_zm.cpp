@@ -121,14 +121,31 @@ void test_some_chain_complex_zm()
     N(3,0) =   0;
     N(3,1) =   1;
 
-    cc[1] = N;
-    cc[0] = M;
+    cc[2] = N;
+    cc[1] = M;
+    cc[0] = MatrixZm(0,4);
     
-    std::cout << "N:    " << cc[1] << std::endl;
-    std::cout << "M:    " << cc[0] << std::endl;
-    std::cout << "Prod: " << prod( cc[0], cc[1] ) << std::endl;
     
-    HomologyField ho = cc.homology(0);
+    cc[10] = MatrixZm(0,1);
+    cc[11] = MatrixZm(1,1);
+    cc(11,0,0) = 0;
+    cc[12] = MatrixZm(1,1);
+    cc(12,0,0) = 2;
+    cc[13] = MatrixZm(0,1);
+    cc[14] = MatrixZm(1,1);
+    cc(14,0,0) = 2;
+    cc[15] = MatrixZm(0,1);
+    cc[16] = MatrixZm(1,1);
+    cc(16,0,0) = 2;
+    cc[17] = MatrixZm(0,1);
+    cc[18] = MatrixZm(1,1);
+    cc(18,0,0) = 2;
+    
+    
+    std::cout << "N:    " << cc[2] << std::endl;
+    std::cout << "M:    " << cc[1] << std::endl;
+    
+    HomologyField ho = cc.homology();
     std::cout << ho << std::endl;
 }
 

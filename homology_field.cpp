@@ -24,9 +24,19 @@ std::ostream &operator << ( std::ostream& os, const HomologyField& homol )
 {
     for( auto it = homol.kern.begin(); it != homol.kern.end(); ++it )
     {
+        int64_t torsion;
+        if( homol.tors.count( it->first ) == 0 )
+        {
+            torsion = 0;
+        }
+        else
+        {
+            torsion = homol.tors.at( it->first );
+        }
+        
         os << "Homologiemodul an der Stelle " << std::setw(4) << it->first << std::endl;
         os << std::setfill('-') << std::setw(40) << "-" << std::setfill(' ') << std::endl;
-        os << "Dimension = " << it->second - homol.tors.at( it->first ) << std::endl;
+        os << "Dimension = " << it->second - torsion << std::endl;
         os << std::endl;
     }
     return os;
