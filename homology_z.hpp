@@ -5,7 +5,9 @@
 #include <map>
 
 /**
- *  If we work over \f$ \mathbb{Z} \f$, a  homology module \f$ H \f$ is a finite sum of free and torsion modules.
+ TODO: Check the torsion part!
+
+ *  If we work over \f$ \mathbb{Z} \f$, a homology module \f$ H \f$ is a finite sum of free and torsion modules.
  *  \f[
  *      H = \mathbb{Z}^N \oplus \mathbb{Z}/a_1\mathbb{Z} \oplus \ldots \oplus \mathbb{Z}/a_r\mathbb{Z}
  *  \f]
@@ -15,17 +17,27 @@
 template< class Coefficient > class HomologyModuleZ
 {
 public:
+
+    /// trivial constructor
     HomologyModuleZ();
 
+    /// Access the dimension of the free part.
+    uint32_t free_part();
+
+    /// Access the number of torsion modules.
+    uint32_t tors_part();
+
     /// Access the \f$n\f$-th torsion coefficient \f$ a_n \f$.
-    Coefficient &operator[] (uint32_t n) { return tors_coeff[n]; }
+    Coefficient &operator[] (uint32_t n);
+
+private:
 
     /// The number \f$N\f$
     uint32_t free_part;
+
     /// The number \f$r\f$
     uint32_t tors_part;
 
-private:
     std::map< uint32_t, Coefficient > tors_coeff;
 };
 

@@ -3,8 +3,6 @@
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
 ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::ChainComplex()
 {
-
-
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
@@ -22,7 +20,7 @@ CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::o
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
 bool ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::exists_differential( int32_t n )
 {
-    // The n-th module exists iff there exists a matrix M leaving it.
+    // The n-th module exists iff there exists a matrix leaving it.
     return differential.count(n) > 0;
 }
 
@@ -53,18 +51,20 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
     // diff_n has no rows.
     else if ( differential[n].size1() == 0 )
     {
-        // The dimension is equals to the number of columns.
+        // The dimension equals the number of columns.
         homol.set_kern( n, differential[n].size2() );
     }
     else
     {
+        // Diagonalize.
         DiagonalizerT diago;
         diago( differential[n] );
         homol.set_kern( n, diago.kern() );
     }
-    
+    // diff_{n+1} is 0
     if( differential.count(n+1) == 0 || differential[n+1].size1() == 0 )
     {
+        // Tthere is no torsion.
         typename HomologyT::TorsT t;
         homol.set_tors( n, t );
     }
@@ -78,7 +78,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
         {
             std::cerr << "Error: Column-Rows exception at position " << n << std::endl;
         }
-        // Diagonalize
+        // Diagonalize.
         DiagonalizerT diago;
         diago( differential[n+1] );
         homol.set_tors( n, diago.tors() );
@@ -92,10 +92,14 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
 {
     HomologyT homol;
     
+    // Iterate through all the existing differentials. For each differential diff_n, we
+    // compute the kernel (stored in the n-th homology module) and the image (stored
+    // as torsion in the (n-1)-st homology module).
     for( auto it = differential.begin(); it != differential.end(); ++it )
     {
         int32_t n = it->first;
         MatrixT diff = it->second;
+        // if diff_n is 0, everything is kernel and nothing is torsion
         if( diff.size1() == 0 )
         {
             homol.set_kern( n, diff.size2() );
@@ -104,6 +108,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
         }
         else
         {
+            // diagonalize
             DiagonalizerT diago;
             diago(diff);
             homol.set_kern( n, diago.kern() );

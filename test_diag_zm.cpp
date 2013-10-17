@@ -16,8 +16,19 @@
 // The initial seed is the system time.
 boost::random::mt19937 gen_zm(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
 
+/**
+ * Creates a random matrix of size rows x cols of the given rank and tests where our
+ * diagonalizer computes the rank of that matrix correctly.
+ * \return true iff The rank of the computed matrix coincides with the rank of that matrix
+ * computed by the diagonalizer.
+ * Announces an error if there is no matrix of that size and rank.
+ */
 bool create_random_matrix_zm(uint32_t rows, uint32_t cols, uint32_t rank)
 {
+    // To create a random matrix of the given rank, we start with a (non-random) matrix of
+    // this rank. Then we multiply this matrix with invertible random matrices from the left to
+    // obtain the desired random matrix.
+
     MatrixZm matrix(rows, cols);
     MatrixZm row_ops = MatrixZmIdentity(rows);
     MatrixZm col_ops = MatrixZmIdentity(cols);
@@ -27,14 +38,18 @@ bool create_random_matrix_zm(uint32_t rows, uint32_t cols, uint32_t rank)
         std::cerr << "rank > min(rows, cols)" << std::endl;
         return false;
     }
-    
+
+    // Initialize matrix to be given by 1s on the first rank positions of the diagonal
+    // and zeroes elsewhere.
     for( uint32_t i = 0; i < rank; ++i )
     {
         matrix(i,i) = 1;
     }
-    
+
+    // ranges for the random numbers
     boost::random::uniform_int_distribution<> number(-100, 100);
-    // row_ops = lower left diag.
+
+    // Define the matrix row_ops as a random lower triangular matrix.
     for( uint32_t i = 1; i < rows; ++i )
     {
         for( uint32_t j = 0; j <= i-1; ++j )
@@ -43,7 +58,7 @@ bool create_random_matrix_zm(uint32_t rows, uint32_t cols, uint32_t rank)
         }
     }
     
-    // col_ops = upper right sdiag.
+    // Define the matrix col_ops as a random upper triangular matrix.
     for( uint32_t i = 0; i < cols-1; ++i )
     {
         for( uint32_t j = i+1; j < cols ; ++j )
@@ -51,18 +66,32 @@ bool create_random_matrix_zm(uint32_t rows, uint32_t cols, uint32_t rank)
             col_ops(i,j) = Zm( number(gen_zm) );
         }
     }
-    
+
+    // Multiply the matrices to obtain a matrix of the given rank.
     matrix = boost::numeric::ublas::prod( row_ops, matrix );
     matrix = boost::numeric::ublas::prod( matrix,  col_ops );
+
+    // Use the Diagonalizer to compute the rank of the random matrix.
     DiagonalizerZm diagonalizer;
     diagonalizer(matrix);
     
     return rank == diagonalizer.rank();
 }
 
+/**
+ * Tests whether the diagonalizer computes the rank of matrices correctly via testing
+ * it on various random matrices of random sizes.
+ * \return number of matrices where the diagonalizer fails.
+ * \param num_rounds number of tests
+ * \param max_num_rows maximum number of rows of the test matrices
+ * \param max_num_cols maximum number of columns of the test matrices
+ * \max_rank maximum rank of the test matrices
+ */
 uint32_t test_rank_zm( uint32_t num_rounds, uint32_t max_num_rows, uint32_t max_num_cols, uint32_t max_num_rank = std::numeric_limits<uint32_t>::max() )
 {
+    // variable used to count the failures of the diagonalizer
     uint32_t number_of_errors = 0;
+
     boost::random::uniform_int_distribution<> rnd_rows(5, max_num_rows);
     boost::random::uniform_int_distribution<> rnd_cols(5, max_num_cols);
     for( uint32_t round = 0; round < num_rounds; ++round )
@@ -82,6 +111,9 @@ uint32_t test_rank_zm( uint32_t num_rounds, uint32_t max_num_rows, uint32_t max_
     return number_of_errors;
 }
 
+/**
+ * Tests algorithms on chain complexes.
+ */
 void test_some_chain_complex_zm()
 {
     typedef ChainComplex< Zm, MatrixZm, DiagonalizerZm, HomologyField > ChainComplexZm;
@@ -159,11 +191,13 @@ int main( int argc, char ** argv )
         return 1;
     }
     Zm::set_modulus(atoi(argv[1]),1);
-    
+
+    // test homology computation
     test_some_chain_complex_zm();
     
     return 0;
     
+    // test whether the diagonalizer computes the rank correctly
     uint32_t errors = 0;
     if( argc == 5 )
     {
