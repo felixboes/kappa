@@ -8,6 +8,8 @@
 #include "matrix_q.hpp"
 #include "matrix_zm.hpp"
 
+// In order to use chain complexes with rational and Zm coefficients in other projects,
+// we have to use instanciate the templates explicitly.
 template class ChainComplex<Q, MatrixQ, DiagonalizerQ, HomologyField>;
 template class ChainComplex<Zm, MatrixZm, DiagonalizerZm, HomologyField>;
 
