@@ -1,4 +1,4 @@
-#include "fakultaet.hpp"
+#include "factorial.hpp"
 
 uint64_t factorial( uint32_t k )
 {

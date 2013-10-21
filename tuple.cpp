@@ -15,7 +15,7 @@ Transposition& Tuple :: operator[](size_t n)
 
 int32_t Tuple :: norm() const
 {
-    if( *this == true )
+    if( this->operator bool() == true )
     {
         return rep.size();
     }
@@ -44,14 +44,22 @@ std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
     PermutationType pt = permutation_type();
     stream << "Externe = " << pt.num_cycles - 1 << " Interne = " << pt.num_punctures << " p = " << p << ": ";
     #endif
-    for( auto it = rep.rbegin(); it != rep.rend(); ++it )
+    uint32_t i = 0;
+    for( std::vector< Transposition >::const_reverse_iterator it = tuple.rep.crbegin(); it != tuple.rep.crend(); ++it )
     {
         stream << "(" << (uint32_t)it->first << ",";
         if( it->first != it->second )
+        {
             stream << (uint32_t)it->second << ")";
+        }
         else
+        {
             stream << "*)";
+        }
+        ++i;
     }
+    
+    return stream;
 }
 
 PermutationType Tuple :: permutation_type()
@@ -100,7 +108,7 @@ PermutationType Tuple :: permutation_type()
         {
         }
     }
-    return anzahl;
+    return pt;
 }
 
 bool Tuple :: monoton()
@@ -223,7 +231,7 @@ bool Tuple :: f(uint32_t i)
     }
 }
 
-bool Tuple :: phi( uint32_t q, uint32_t i, std::stringstream *s )
+bool Tuple :: phi( uint32_t q, uint32_t i )
 {
     if( i == 0 || i > q )
     {
@@ -231,35 +239,98 @@ bool Tuple :: phi( uint32_t q, uint32_t i, std::stringstream *s )
         return false;
     }
 
-    if( i == q ) // \Phi^q_q ist die Identitaet.
-    {
-        return true;
-    }
-
     for( uint32_t j = q-1; j >= i; j-- ) // Da i > 0 erfuellt ist, endet die Schleife wirklich.
     {
         #ifdef KAPPA_DEBUG_TUPEL
-        if(s != NULL)
-        {
-            *s << "    f_" << j << "( " << to_string() << " ) = ";
-        }
+        std::cerr << "    f_" << j << "( " << *this << " ) = ";
         #endif
         if( f(j) == false ) // Die Norm des Produkts faellt.
         {
             #ifdef KAPPA_DEBUG_TUPEL
-            if( s != NULL )
-            {
-                s->str( std::string() );
-            }
+            std::cerr << *this << std::endl;
             #endif
             return false;
         }
         #ifdef KAPPA_DEBUG_TUPEL
-        else if ( s != NULL)
+        else
         {
-            *s << to_string() << std::endl;
+            std::cerr << *this << std::endl;
         }
         #endif
     }
     return true;
+}
+
+Tuple Tuple :: del2(uint32_t j)
+{
+    Tuple rand = *this;
+//    std::map< uint8_t, uint8_t > sigma;     // sigma
+//    std::map< uint8_t, uint8_t > sigma_inv; // sigma^{-1}
+
+//    // initialisiere simga als (1 2 ... p)
+//    sigma[1] = 2;
+//    sigma_inv[1] = p;
+//    for( uint8_t l = 2; l < p; l++ )
+//    {
+//        sigma[l] = l+1;
+//        sigma_inv[l] = l-1;
+//    }
+//    sigma[p] = 1;
+//    sigma_inv[p] = p-1;
+
+//    // Berechne nun die sigma_i. Die beiden einzigen Symbole, die sich aendern, wenn wir mit tau_i = (k,l) mulitplizieren, sind
+//    // sigma_{i-1}^{-1}(k) und sigma_{i-1}^{-1}(l).
+//    for( uint32_t l = 1; l <= rep.size(); l++ )
+//    {
+//        if( rand.rep[l-1].first == j )  // Diese Zeile soll geloescht werden.
+//        {
+//            // Mit Lemma 66 sieht man ein, dass nur ein Symbol geaendert werden muss und zwar j -> sigma_{i-1}(j)
+//            // Die Zelle ist genau dann degeneriert, wenn j = sigma_{i-1}(j) oder tau_i = (j, sigma_{i-1}(j)) für den unpunktierten Fall
+//            // Für den punktierten Fall bekommen muss zusätzlich geprüft werden, ob tau_i = (j,*) und ?
+
+//            rand.rep[l-1].first = sigma[ rand.rep[l-1].first ];
+//            if( rand.rep[l-1].first == j || rand.rep[l-1].first == rand.rep[l-1].second )
+//            {
+//                rand = Tupel( rep.size() );
+//                return rand;
+//            }
+//        }
+//        if( rand.rep[l-1].second == j ) // Analog zu obigem Abschnitt.
+//        {
+//            rand.rep[l-1].second = sigma[ rand.rep[l-1].second ];
+//            if( rand.rep[l-1].second == j || rand.rep[l-1].first == rand.rep[l-1].second)
+//            {
+//                rand = Tupel(rep.size());
+//                return rand;
+//            }
+//        }
+//        if( rand.rep[l-1].first > j )   // Alle Zeilen ueber i muessen nachrutschen.
+//        {
+//            rand.rep[l-1].first -= 1;
+//        }
+//        if( rand.rep[l-1].second > j )
+//        {
+//            rand.rep[l-1].second -= 1;
+//        }
+
+//        if( rand.rep[l-1].first < rand.rep[l-1].second )    // Das groessere Symbol soll immer links stehen.
+//        {
+//            uint8_t tmp = rand.rep[l-1].first;
+//            rand.rep[l-1].first = rand.rep[l-1].second;
+//            rand.rep[l-1].second = tmp;
+//        }
+
+//        // Berechne sigma_i = tau_i sigma_{i-1}
+//        sigma[ sigma_inv[ rep[l-1].first ] ] = rep[l-1].second;
+//        sigma[ sigma_inv[ rep[l-1].second ] ] = rep[l-1].first;
+
+//        // Berechne sigma_i^{-1}
+//        uint8_t tmp = sigma_inv[ rep[l-1].first ];
+//        sigma_inv[ rep[l-1].first ] = sigma_inv[ rep[l-1].second ];
+//        sigma_inv[ rep[l-1].second ] = tmp;
+
+//    }
+
+    std::cerr << " TODO ^^ " << std::endl;
+    return rand;
 }
