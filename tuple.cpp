@@ -8,9 +8,15 @@ Tuple :: Tuple(size_t h) :
 {
 }
 
+Tuple :: Tuple(uint32_t symbols, size_t h) :
+    p(symbols),
+    rep( h, Transposition(0, 0) )
+{
+}
+
 Transposition& Tuple :: operator[](size_t n)
 {
-    return rep[n];
+    return rep[n-1];
 }
 
 int32_t Tuple :: norm() const
@@ -128,6 +134,7 @@ bool Tuple :: monoton()
 bool Tuple :: f(uint32_t i)
 {
     // Compare Mehner: page 49.
+    // Attention: The i-th Transposition is stored in rep[i-1].
     // Wird durch Fallunterscheidung klar.
     if( i >= rep.size() ) // i muss kleiner als h sein.
     {
@@ -159,10 +166,11 @@ bool Tuple :: f(uint32_t i)
                 rep[i-1] = Transposition(a,b);
                 return true;
             }
-            else // (ab)(ac) = (acb) und (acb)' = (ab) und (acb)(ab) = (bc) bzw. (cb)
+            else // (ab)(ad) = (adb) = (bd)(ab) bzw (db)(ab)
             {
-                rep[i]   = Transposition(a,b);
-                rep[i-1] = Transposition(std::max(b,c), std::min(b,c));
+                rep[i]   = Transposition(std::max(b,d), std::min(b,d));
+                rep[i-1] = Transposition(a,b);
+                return true;
             }
         }
         else if( a == b ) // (a*)(  )
@@ -198,6 +206,7 @@ bool Tuple :: f(uint32_t i)
                 rep[i-1] = Transposition(a,d);
                 return true;
             }
+            // These are all cases since a > b >= d.
         }
         else if( a == d ) // (ab)(ca) = (acb) und c > a -> (ab)(ca)
         {
@@ -229,8 +238,10 @@ bool Tuple :: f(uint32_t i)
             }
         }
     }
+    std::cerr << "Error in f_i: Reached impossible case." << std::endl;
+    return false;
 }
-
+                 
 bool Tuple :: phi( uint32_t q, uint32_t i )
 {
     if( i == 0 || i > q )
