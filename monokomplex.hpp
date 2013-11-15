@@ -44,7 +44,7 @@ public:
     /**
         Siehe Erklaerung 1.
     **/
-    void gen_modulen_extern(uint32_t l, uint32_t p, Tupel& anfangsstueck); // externe Version
+    void gen_modules_extern(uint32_t l, uint32_t p, Tupel& tuple); // externe Version
     void gen_modulen_intern(uint32_t l, uint32_t p, Tupel& anfangsstueck, uint32_t intpkt ); // interne Version
     void del2_kappa(uint32_t p); ///< Die Funktion \f$ kappa_p \f$, wobei p der horizontale Grad ist.
 
