@@ -113,14 +113,14 @@ void MonoKomplex :: gen_modules_extern(uint32_t l, uint32_t p, Tuple& tuple)
         for( uint32_t i = p; i > 0; i-- )
         {
             Tuple tmp = tuple;
-            for( uint32_t j = l; j > 0; j-- )
+            for( uint32_t j = l-1; j > 0; j-- )
             {
-                if( tmp[j-1].first >= i )
+                if( tmp[j].first >= i )
                 {
-                    tmp[j-1].first++;
-                    if(tmp[j-1].second >= i )
+                    tmp[j].first++;
+                    if(tmp[j].second >= i )
                     {
-                        tmp[j-1].second++;
+                        tmp[j].second++;
                     }
                 }
             }
@@ -129,19 +129,25 @@ void MonoKomplex :: gen_modules_extern(uint32_t l, uint32_t p, Tuple& tuple)
             gen_modules_extern(l+1, p+1, tmp);
         }
 
-        // p -> p+2
+        /* p -> p+2
+           Now we use p+2 symbols instead of p. Thus one row is inserted at the top of the 
+           Schlitzbild, i.e. p+2 is the height of the l-th transposition. The other row is inserted 
+           either directly below the top row or between the old rows. Since the symbol p+1 does not 
+           occur in the transpositions 1, ..., l-1, both cases can be expressed by choosing a symbol
+           i = 1, ..., p+1 and by shifting up all indices >= i by one. 
+           TODO: Check the same indices as above! */ 
         tuple.p = p+2;
         for( uint32_t i = p+1; i > 0; i-- )
         {
             Tuple tmp = tuple;
-            for( uint32_t j = l; j > 0; j-- )
+            for( uint32_t j = l-1; j > 0; j-- )
             {
-                if( tmp[j-1].first >= i )
+                if( tmp[j].first >= i )
                 {
-                    tmp[j-1].first++;
-                    if(tmp[j-1].second >= i )
+                    tmp[j].first++;
+                    if(tmp[j].second >= i )
                     {
-                        tmp[j-1].second++;
+                        tmp[j].second++;
                     }
                 }
             }
@@ -150,7 +156,7 @@ void MonoKomplex :: gen_modules_extern(uint32_t l, uint32_t p, Tuple& tuple)
             gen_modules_extern(l+1, p+2, tmp);
         }
     }
-    else
+    else // check whether the created h-tuple is really a generator
     {
         if(tuple.zykelzahl().first == m+1)
         {
