@@ -138,7 +138,7 @@ bool Tuple :: f(uint32_t i)
     // Wird durch Fallunterscheidung klar.
     if( i >= rep.size() ) // i muss kleiner als h sein.
     {
-        std::cerr << "f(i) mit i=" << i << "und h=" << rep.size() << std::endl;
+        std::cerr << "Error in 'bool Tuple :: f(uint32_t i)' -> i=" << i << " >= h=" << rep.size() << std::endl;
         return false;
     }
     else    // (ab)(cd)
@@ -238,7 +238,7 @@ bool Tuple :: f(uint32_t i)
             }
         }
     }
-    std::cerr << "Error in f_i: Reached impossible case." << std::endl;
+    std::cerr << "Error in 'bool Tuple::f(uint32_t i)' -> Reached impossible case." << std::endl;
     return false;
 }
                  
@@ -246,7 +246,7 @@ bool Tuple :: phi( uint32_t q, uint32_t i )
 {
     if( i == 0 || i > q )
     {
-        std::cerr << "phi^q_i mit q=" << q << "und i=" << i << std::endl;
+        std::cerr << "Error in 'bool Tuple::phi( uint32_t q, uint32_t i)' -> q=" << q << " and i=" << i << std::endl;
         return false;
     }
 
@@ -272,76 +272,131 @@ bool Tuple :: phi( uint32_t q, uint32_t i )
     return true;
 }
 
-Tuple Tuple :: del2(uint32_t j)
+Tuple Tuple :: d_hor( uint32_t k )
 {
-    Tuple rand = *this;
-//    std::map< uint8_t, uint8_t > sigma;     // sigma
-//    std::map< uint8_t, uint8_t > sigma_inv; // sigma^{-1}
+    if(0 == k || k >= p)
+    {
+        return Tuple();
+    }
+    
+    Tuple boundary = *this;
+    
+    // start with sigma_0.
+    Tuple::Permutation sigma = long_cycle();
+    Tuple::Permutation sigma_inv = long_cycle_inv();
+    
+    for(uint8_t q = 1; q <= boundary.rep.size(); ++q)
+    {
+        // Write tau_q = (a,b)
+        auto a = boundary.rep[q].first;
+        auto b = boundary.rep[q].second;
+        
+        //Write (k, sigma_{q-1}(k)) = (k,l)
+        auto l = sigma[k];
+        
+        // Compute tau':
+        // Most of the time the transpositions are disjoint hence (a,b)(k,l) = (k,l)(a,b) and
+        // the left transposition will be killed by D_k
+        if( k != a && k != b && l != a && l != b )
+        {
+        }
+        // The degenerate cases:
+        // k and k = sigma_{q-1}(k) are both part of tau_q.
+        else if( k == l && ( a == k || b == k ) )
+        {
+            return Tuple();
+        }
+        // tau_q = (k, sigma_{q-1}(k)).
+        else if( a == std::max(k, l) && b == std::min(k, l) )
+        {
+            return Tuple();
+        }
+        // The non degenerate case:
+        else
+        {   
+            // Compute Z = (a,b)(k,l)
+            // Z(k) = l iff l != a and l != b hence k == a or k == b
+            // In this case: (Z(k),k)Z = (k,l)(a,b)(k,l) = (c,l) with c != k
+            if( l != a && l != b)
+            {
+                if(a != k)
+                {
+                    boundary.rep[q].first  = std::max(a,l);
+                    boundary.rep[q].second = std::min(a,l);
+                }
+                else
+                {
+                    boundary.rep[q].first  = std::max(b,l);
+                    boundary.rep[q].second = std::min(b,l);
+                }
+            }
+            // Z(k) != l iff l = a or l = b hence k != a and k != b
+            // In this case: (Z(k),k)Z = (c,k)(a,b)(k,l) = (c,l) with c != l,
+            // but we see that this is just (a,b):
+            // if l != a, then k,l != a and we map
+            // a to a to b != c since otherwise a would map to k
+            // therefore a = c and l = b.
+            // Thus we do not need to alter the boundary.
+        }
+        
+        // Compute sigma_{q}
+        // (a,b)sigma(k) =
+        //   a          if k = sigma^{-1}(b)
+        //   b          if k = sigma^{-1}(a)
+        //   sigma(k)   else
+        // this is done by swapping the values of sigma^{-1}(a) and sigma^{-1}(b) under sigma:
+        std::swap( sigma[ sigma_inv[a] ], sigma[ sigma_inv[b] ] );
+        
+        // sigma^{-1}(a,b) (k) = 
+        //   sigma^{-1}(b)  if k = a
+        //   sigma^{-1}(a)  if k = b
+        //   sigma^{-1}(k)  else
+        // this is done by interchanging the values of a and b under sigma^{-1}
+        std::swap( sigma_inv(a), sigma_inv(b) );
+    }
+    
+    // Renormalize all tau'
+    for(uint8_t q = 1; q <= boundary.rep.size(); ++q)
+    {
+        // Write tau_q = (a,b)
+        auto a = boundary.rep[q].first;
+        auto b = boundary.rep[q].second;
+        
+        if(a == k || b == k)
+        {
+            std::cerr << "Error in 'Tuple Tuple::d_hor( uint32_t k )' -> Reached impossible case." << std::endl;
+        }
+        if(a > k)
+        {
+            a--;
+        }
+        if(b > k)
+        {
+            b--;
+        }
+    }
+    
+    return boundary;
+}
 
-//    // initialisiere simga als (1 2 ... p)
-//    sigma[1] = 2;
-//    sigma_inv[1] = p;
-//    for( uint8_t l = 2; l < p; l++ )
-//    {
-//        sigma[l] = l+1;
-//        sigma_inv[l] = l-1;
-//    }
-//    sigma[p] = 1;
-//    sigma_inv[p] = p-1;
+Tuple::Permutation Tuple::long_cycle()
+{
+    Tuple::Permutation sigma;
+    for(uint8_t k = 1; k < p; ++k)
+    {
+        sigma[k] = k+1;
+    }
+    sigma[p] = 1;
+    return sigma;
+}
 
-//    // Berechne nun die sigma_i. Die beiden einzigen Symbole, die sich aendern, wenn wir mit tau_i = (k,l) mulitplizieren, sind
-//    // sigma_{i-1}^{-1}(k) und sigma_{i-1}^{-1}(l).
-//    for( uint32_t l = 1; l <= rep.size(); l++ )
-//    {
-//        if( rand.rep[l-1].first == j )  // Diese Zeile soll geloescht werden.
-//        {
-//            // Mit Lemma 66 sieht man ein, dass nur ein Symbol geaendert werden muss und zwar j -> sigma_{i-1}(j)
-//            // Die Zelle ist genau dann degeneriert, wenn j = sigma_{i-1}(j) oder tau_i = (j, sigma_{i-1}(j)) für den unpunktierten Fall
-//            // Für den punktierten Fall bekommen muss zusätzlich geprüft werden, ob tau_i = (j,*) und ?
-
-//            rand.rep[l-1].first = sigma[ rand.rep[l-1].first ];
-//            if( rand.rep[l-1].first == j || rand.rep[l-1].first == rand.rep[l-1].second )
-//            {
-//                rand = Tupel( rep.size() );
-//                return rand;
-//            }
-//        }
-//        if( rand.rep[l-1].second == j ) // Analog zu obigem Abschnitt.
-//        {
-//            rand.rep[l-1].second = sigma[ rand.rep[l-1].second ];
-//            if( rand.rep[l-1].second == j || rand.rep[l-1].first == rand.rep[l-1].second)
-//            {
-//                rand = Tupel(rep.size());
-//                return rand;
-//            }
-//        }
-//        if( rand.rep[l-1].first > j )   // Alle Zeilen ueber i muessen nachrutschen.
-//        {
-//            rand.rep[l-1].first -= 1;
-//        }
-//        if( rand.rep[l-1].second > j )
-//        {
-//            rand.rep[l-1].second -= 1;
-//        }
-
-//        if( rand.rep[l-1].first < rand.rep[l-1].second )    // Das groessere Symbol soll immer links stehen.
-//        {
-//            uint8_t tmp = rand.rep[l-1].first;
-//            rand.rep[l-1].first = rand.rep[l-1].second;
-//            rand.rep[l-1].second = tmp;
-//        }
-
-//        // Berechne sigma_i = tau_i sigma_{i-1}
-//        sigma[ sigma_inv[ rep[l-1].first ] ] = rep[l-1].second;
-//        sigma[ sigma_inv[ rep[l-1].second ] ] = rep[l-1].first;
-
-//        // Berechne sigma_i^{-1}
-//        uint8_t tmp = sigma_inv[ rep[l-1].first ];
-//        sigma_inv[ rep[l-1].first ] = sigma_inv[ rep[l-1].second ];
-//        sigma_inv[ rep[l-1].second ] = tmp;
-
-//    }
-
-    std::cerr << " TODO ^^ " << std::endl;
-    return rand;
+Tuple::Permutation Tuple::long_cycle_inv()
+{
+    Tuple::Permutation sigma;
+    for(uint8_t k = 2; k <= p; ++k)
+    {
+        sigma[k] = k-1;
+    }
+    sigma[1] = p;
+    return sigma;
 }
