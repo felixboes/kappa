@@ -53,7 +53,6 @@ std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
     uint32_t i = 0;
     for( std::vector< Transposition >::const_reverse_iterator it = tuple.rep.crbegin(); it != tuple.rep.crend(); ++it )
     {
-        stream << "(" << (uint32_t)it->first << ",";
         if( it->first != it->second )
         {
             stream << (uint32_t)it->second << ")";
@@ -62,7 +61,6 @@ std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
         {
             stream << "*)";
         }
-        ++i;
     }
     
     return stream;

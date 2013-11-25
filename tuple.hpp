@@ -31,7 +31,7 @@ public:
      */
     Tuple(size_t h = 1);
     
-    Tuple(uint32_t symbols, size_t h = 1);
+    Tuple(uint32_t symbols, size_t h);
 
     /**
      *  Access the \f$ i \f$-th Transposition of the Tuple.
