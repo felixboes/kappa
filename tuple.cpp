@@ -14,9 +14,14 @@ Tuple :: Tuple(uint32_t symbols, size_t h) :
 {
 }
 
-Transposition& Tuple :: operator[](size_t n)
+Transposition& Tuple :: at(size_t n)
 {
     return rep[n-1];
+}
+
+Transposition& Tuple :: operator[](size_t n)
+{
+    return at(n);
 }
 
 int32_t Tuple :: norm() const
@@ -29,6 +34,24 @@ int32_t Tuple :: norm() const
     {
         return 0;
     }
+}
+
+bool Tuple :: operator==(const Tuple& t) const
+{
+    // Observe how two vectors are compares
+    // Operations == and != are performed by first comparing sizes, and if they match, the elements are compared sequentially
+    // using algorithm equal, which stops at the first mismatch.
+    // Source: http://www.cplusplus.com/reference/vector/vector/operators/
+    return this->rep == t.rep;
+}
+
+bool Tuple :: operator!=(const Tuple& t) const
+{
+    // Observe how two vectors are compares
+    // Operations == and != are performed by first comparing sizes, and if they match, the elements are compared sequentially
+    // using algorithm equal, which stops at the first mismatch.
+    // Source: http://www.cplusplus.com/reference/vector/vector/operators/
+    return this->rep != t.rep;
 }
 
 Tuple :: operator bool() const
@@ -50,7 +73,7 @@ std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
     PermutationType pt = permutation_type();
     stream << "Externe = " << pt.num_cycles - 1 << " Interne = " << pt.num_punctures << " p = " << p << ": ";
     #endif
-    for( std::vector< Transposition >::const_reverse_iterator it = tuple.rep.crbegin(); it != tuple.rep.crend(); ++it )
+    for( auto it = tuple.rep.crbegin(); it != tuple.rep.crend(); ++it )
     {
         stream << "(" << (uint32_t)it->first << ",";
         if( it->first != it->second )
@@ -70,25 +93,18 @@ PermutationType Tuple :: permutation_type()
 {
     // Man kann ebenso die Anzahl der Zykel von (p p-1 ... 1) t_1 ... t_h zaehlen, da die t_i Transpositionen sind.
     PermutationType pt;    // Anzahl.first enstspricht den externen Punktierungen, Anzahl.second den internen.
-    std::map< uint8_t, uint8_t > sigma_inv;
-
-    // Initialisiere simga^{-1} als (p p-1 ... 1)
-    for( uint8_t i = p; i > 1; i-- )
-    {
-        sigma_inv[i] = i-1;
-    }
-    sigma_inv[1] = p;
+    Tuple::Permutation sigma_inv = long_cycle_inv();
 
     // Multipliziere mit t_1 bis t_h und zaehle die internen Punktierungen
-    for( uint32_t i = 0; i < rep.size(); i++ )
+    for( uint32_t i = 1; i <= norm(); i++ )
     {
-        if(rep[i].first == rep[i].second)
+        if(at(i).first == at(i).second)
         {
             pt.num_punctures += 1;
         }
 
-        uint8_t k = rep[i].first;
-        uint8_t l = rep[i].second;
+        uint8_t k = at(i).first;
+        uint8_t l = at(i).second;
         std::swap( sigma_inv[ k ], sigma_inv[ l ] );
     }
 
@@ -118,56 +134,54 @@ PermutationType Tuple :: permutation_type()
 bool Tuple :: monoton()
 {
     // Ein Tupel ist genau dann monoto, wenn die Folge rep[i] monoton ist.
-    for( uint32_t i = 0; i < rep.size() - 1; i++ )
+    for( uint32_t i = 1; i < norm() - 1; i++ )
     {
-        if( rep[i+1].first < rep[i].first )
+        if( at(i+1).first < at(i).first )
         {
             return false;
         }
     }
-
     return true;
 }
 
 bool Tuple :: f(uint32_t i)
 {
     // Compare Mehner: page 49.
-    // Attention: The i-th Transposition is stored in rep[i-1].
     // Wird durch Fallunterscheidung klar.
-    if( i >= rep.size() ) // i muss kleiner als h sein.
+    if( i == 0 || i >= norm() ) // i muss kleiner als h sein.
     {
-        std::cerr << "Error in 'bool Tuple :: f(uint32_t i)' -> i=" << i << " >= h=" << rep.size() << std::endl;
+        std::cerr << "Error in 'bool Tuple :: f(uint32_t i)' -> i=" << i << " >= h=" << norm() << std::endl;
         return false;
     }
-    else    // (ab)(cd)
+    else    // Denote g_{i+1} | g_i by (ab)(cd)
     {
-        uint8_t a = rep[i].first;
-        uint8_t b = rep[i].second;
-        uint8_t c = rep[i-1].first;
-        uint8_t d = rep[i-1].second;
+        uint8_t a = at(i+1).first;
+        uint8_t b = at(i+1).second;
+        uint8_t c = at(i).first;
+        uint8_t d = at(i).second;
         
         if( a == c ) // (a )(a )
         {
             if( b == d ) // (ab)(ab) = id und (a*)(a*) = 0
             {
-                rep.assign( rep.size(), Transposition(0,0) );
+                rep.assign( norm(), Transposition(0,0) );
                 return false;
             }
             else if( a == b ) // (a*)(ad) = (ad*) -> (d*)(ad)
             {
-                rep[i] = Transposition(d,d);
+                at(i+1) = Transposition(d,d);
                 return true;
             }
             else if( a == d ) // (ab)(a*) = (ab*) -> (b*)(ab)
             {
-                rep[i]   = Transposition(b,b);
-                rep[i-1] = Transposition(a,b);
+                at(i+1) = Transposition(b,b);
+                at(i)   = Transposition(a,b);
                 return true;
             }
             else // (ab)(ad) = (adb) = (bd)(ab) bzw (db)(ab)
             {
-                rep[i]   = Transposition(std::max(b,d), std::min(b,d));
-                rep[i-1] = Transposition(a,b);
+                at(i+1) = Transposition(std::max(b,d), std::min(b,d));
+                at(i)   = Transposition(a,b);
                 return true;
             }
         }
@@ -185,7 +199,7 @@ bool Tuple :: f(uint32_t i)
                 }
                 else
                 {
-                    std::swap( rep[i], rep[i-1]);
+                    std::swap( at(i+1), at(i));
                     return true;
                 }
             }
@@ -195,13 +209,13 @@ bool Tuple :: f(uint32_t i)
         {
             if( c == d ) // (ab)(b*) = (ab*) -> (b*)(ab)
             {
-                std::swap( rep[i], rep[i-1]);
+                std::swap( at(i), at(i) );
                 return true;
             }
             else // (ab)(bd) = (abd) und (abd)' = (ad) und (abd)(ad) = (bd)
             {
-                rep[i]   = Transposition(b,d);
-                rep[i-1] = Transposition(a,d);
+                at(i+1) = Transposition(b,d);
+                at(i)   = Transposition(a,d);
                 return true;
             }
             // These are all cases since a > b >= d.
@@ -218,8 +232,8 @@ bool Tuple :: f(uint32_t i)
             }
             else    // (abc)' = (ac) und (abc)(ac) = (cb)
             {
-                rep[i]   = Transposition(c,b);
-                rep[i-1] = Transposition(a,c);
+                at(i+1) = Transposition(c,b);
+                at(i)   = Transposition(a,c);
                 return true;
             }
         }
@@ -231,7 +245,7 @@ bool Tuple :: f(uint32_t i)
             }
             else
             {
-                std::swap( rep[i], rep[i-1]);
+                std::swap( at(i+1), at(i) );
                 return true;
             }
         }
@@ -270,11 +284,11 @@ bool Tuple :: phi( uint32_t q, uint32_t i )
     return true;
 }
 
-Tuple Tuple :: d_hor( uint8_t k )
+Tuple Tuple :: d_hor( uint8_t k ) const
 {
     if(0 == k || k >= p)
     {
-        return Tuple();
+        return Tuple(this->norm());
     }
     
     Tuple boundary = *this;
@@ -283,11 +297,11 @@ Tuple Tuple :: d_hor( uint8_t k )
     Tuple::Permutation sigma = long_cycle();
     Tuple::Permutation sigma_inv = long_cycle_inv();
     
-    for(uint8_t q = 1; q <= boundary.rep.size(); ++q)
+    for(uint8_t q = 1; q <= boundary.norm(); ++q)
     {
         // Write tau_q = (a,b)
-        auto a = boundary.rep[q].first;
-        auto b = boundary.rep[q].second;
+        auto a = boundary[q].first;
+        auto b = boundary[q].second;
         
         //Write (k, sigma_{q-1}(k)) = (k,l)
         auto l = sigma[k];
@@ -307,7 +321,7 @@ Tuple Tuple :: d_hor( uint8_t k )
         // tau_q = (k, sigma_{q-1}(k)).
         else if( a == std::max(k, l) && b == std::min(k, l) )
         {
-            return Tuple();
+            return Tuple(boundary.norm());
         }
         // The non degenerate case:
         else
@@ -319,13 +333,13 @@ Tuple Tuple :: d_hor( uint8_t k )
             {
                 if(a != k)
                 {
-                    boundary.rep[q].first  = std::max(a,l);
-                    boundary.rep[q].second = std::min(a,l);
+                    boundary[q].first  = std::max(a,l);
+                    boundary[q].second = std::min(a,l);
                 }
                 else
                 {
-                    boundary.rep[q].first  = std::max(b,l);
-                    boundary.rep[q].second = std::min(b,l);
+                    boundary[q].first  = std::max(b,l);
+                    boundary[q].second = std::min(b,l);
                 }
             }
             // Z(k) != l iff l = a or l = b hence k != a and k != b
@@ -354,11 +368,11 @@ Tuple Tuple :: d_hor( uint8_t k )
     }
     
     // Renormalize all tau'
-    for(uint8_t q = 1; q <= boundary.rep.size(); ++q)
+    for(uint8_t q = 1; q <= boundary.norm(); ++q)
     {
         // Write tau_q = (a,b)
-        auto a = boundary.rep[q].first;
-        auto b = boundary.rep[q].second;
+        auto a = boundary[q].first;
+        auto b = boundary[q].second;
         
         if(a == k || b == k)
         {
@@ -377,7 +391,66 @@ Tuple Tuple :: d_hor( uint8_t k )
     return boundary;
 }
 
-Tuple::Permutation Tuple::long_cycle()
+Tuple Tuple :: d_hor_test( uint8_t i ) const
+{
+    if( (i == 0) || (i >= this->norm()) )
+    {
+        return Tuple(this->norm());
+    }
+    Tuple boundary = *this;
+    Tuple::Permutation sigma = long_cycle();     // sigma
+    Tuple::Permutation sigma_inv = long_cycle_inv(); // sigma^{-1}
+
+    // Berechne nun die sigma_i. Die beiden einzigen Symbole, die sich aendern, wenn wir mit tau_i = (k,l) mulitplizieren, sind
+    // sigma_{i-1}^{-1}(k) und sigma_{i-1}^{-1}(l).
+    for( uint32_t l = 1; l <= boundary.norm(); l++ )
+    {
+        // write tau_l = (a,b)
+        auto& a = boundary.at(l).first;
+        auto& b = boundary.at(l).second;
+        
+        // Berechne sigma_l = tau_l sigma_{l-1}
+        std::swap( sigma[ sigma_inv[ a ] ], sigma[ sigma_inv[ b ] ] );
+
+        // Berechne sigma_l^{-1}
+        std::swap( sigma_inv[ a ], sigma_inv[ b ] );
+
+        if( a == i )  // Diese Zeile soll geloescht werden.
+        {
+            a = sigma[ a ]; // Mit Lemma 66 sieht man ein, dass nur ein Symbol geaendert werden muss und zwar i -> sigma(i)
+            if( a == i )  // Die Zelle ist degeneriert.
+            {
+                return Tuple( boundary.norm() );
+            }
+        }
+        if( a > i )   // Alle Zeilen ueber i muessen nachrutschen.
+        {
+            a -= 1;
+        }
+
+        if( b == i ) // Analog zu obigem Abschnitt.
+        {
+            b = sigma[ b ];
+            if( b == i)
+            {
+                return Tuple( boundary.norm() );
+            }
+        }
+        if( b > i )
+        {
+            b -= 1;
+        }
+
+        if( a < b )    // Das groessere Symbol soll immer links stehen.
+        {
+            std::swap(a,b);
+        }
+    }
+
+    return boundary;
+}
+
+Tuple::Permutation Tuple::long_cycle() const
 {
     Tuple::Permutation sigma;
     for(uint8_t k = 1; k < p; ++k)
@@ -388,7 +461,7 @@ Tuple::Permutation Tuple::long_cycle()
     return sigma;
 }
 
-Tuple::Permutation Tuple::long_cycle_inv()
+Tuple::Permutation Tuple::long_cycle_inv() const
 {
     Tuple::Permutation sigma;
     for(uint8_t k = 2; k <= p; ++k)

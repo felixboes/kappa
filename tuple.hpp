@@ -44,6 +44,16 @@ public:
     int32_t norm() const;
     
     /**
+     *  @return Returns true iff both Tuples are elementwise equal.
+     */
+    bool operator==(const Tuple& t) const;
+    
+    /**
+     *  @return Returns false iff both Tuples are elementwise equal.
+     */
+    bool operator!=(const Tuple& t) const;
+    
+    /**
      *  @return Returns true iff no Transposition contains the symbol 0.
      *  It is used in del2. @sa Tuple::del2.
      */
@@ -62,14 +72,16 @@ public:
     bool monoton();                     ///< Gibt genau dann true zurueck, wenn das Tupel monoton ist.
     bool f(uint32_t i);                 ///< Die Funktion \f$ f_i \f$ fuer \f$ 1 \le i < h \f$.
     bool phi( uint32_t q, uint32_t i);   ///< Die Funtkion \f$ \Phi^q_i \f$.
-    Tuple d_hor( uint8_t i );           ///< Der i-te horizontale Rand \f$ \partial_i^{\prime \prime}
+    Tuple d_hor( uint8_t i ) const;         ///< Der i-te horizontale Rand \f$ \partial_i^{\prime \prime}
+    Tuple d_hor_test( uint8_t i ) const;    ///< Different implementation.
     
     uint32_t p;  ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
 private:
+    Transposition& at(size_t);
     std::vector< Transposition > rep;   ///< Representation eines Tuples von Transpositionen.
     typedef std::map<uint8_t, uint8_t> Permutation;
-    Permutation long_cycle();
-    Permutation long_cycle_inv();
+    Permutation long_cycle() const;
+    Permutation long_cycle_inv() const;
 };
 
 /// output stream

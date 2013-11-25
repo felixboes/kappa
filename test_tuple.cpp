@@ -39,5 +39,12 @@ int main()
     t.phi(3,3);
     t.phi(4,2);
     t.phi(5,3);
+    
+    for( uint8_t i = 0; i <= 8; ++i)
+    {
+        std::cout << t.d_hor(i) << " " << t.d_hor_test(i) << (t.d_hor(i) == t.d_hor_test(i)? " test passed" : " test failed" ) << std::endl;
+        
+    }
+        
     std::cout << t << std::endl;
 }
