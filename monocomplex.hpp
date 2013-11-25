@@ -2,6 +2,7 @@
 #define MONOCOMPLEX_H
 
 #include <stdint.h>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <map>

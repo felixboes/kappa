@@ -272,7 +272,7 @@ bool Tuple :: phi( uint32_t q, uint32_t i )
     return true;
 }
 
-Tuple Tuple :: d_hor( uint32_t k )
+Tuple Tuple :: d_hor( uint8_t k )
 {
     if(0 == k || k >= p)
     {
@@ -352,7 +352,7 @@ Tuple Tuple :: d_hor( uint32_t k )
         //   sigma^{-1}(a)  if k = b
         //   sigma^{-1}(k)  else
         // this is done by interchanging the values of a and b under sigma^{-1}
-        std::swap( sigma_inv(a), sigma_inv(b) );
+        std::swap( sigma_inv[a], sigma_inv[b] );
     }
     
     // Renormalize all tau'
