@@ -50,9 +50,9 @@ std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
     PermutationType pt = permutation_type();
     stream << "Externe = " << pt.num_cycles - 1 << " Interne = " << pt.num_punctures << " p = " << p << ": ";
     #endif
-    uint32_t i = 0;
     for( std::vector< Transposition >::const_reverse_iterator it = tuple.rep.crbegin(); it != tuple.rep.crend(); ++it )
     {
+        stream << "(" << (uint32_t)it->first << ",";
         if( it->first != it->second )
         {
             stream << (uint32_t)it->second << ")";

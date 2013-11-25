@@ -7,10 +7,9 @@
 #include <iostream>
 #include <map>
 #include <omp.h>
-#include <set>
 #include <vector>
 
-#include <homology>
+#include <homology.hpp>
 
 #include "factorial.hpp"
 #include "tuple.hpp"
@@ -55,6 +54,8 @@ public:
     void gen_differential(int32_t p);                     ///< generate the p-th differential 
     void gen_differentials();                             ///< generate all differentials
 
+    void show_basis( int32_t p ) const;
+    //std::string show_bases() const;
 private:
     uint32_t g;     ///< genus
     uint32_t m;     ///< number of punctures
@@ -63,5 +64,7 @@ private:
     MatrixComplex matrix_complex;                         ///< underlying matrix complex of this MonoComplex
     std::map< uint32_t, MonoBasis > basis_complex;        ///< basis_complex[n] is the n-th MonoBasis, i.e. the basis of the n-th module of this MonoComplex.
 };
+
+#include "monocomplex.ipp"
 
 #endif // MONOCOMPLEX_H
