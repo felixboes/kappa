@@ -5,7 +5,6 @@
  *   MonoBasis
  *
  */
-
 void MonoBasis :: add_basis_element (Tuple& t)
 {
     basis.push_back(t);
@@ -17,22 +16,32 @@ uint64_t MonoBasis :: size()
     return basis.size();
 }
 
+std::ostream& operator<< ( std::ostream& os, const MonoBasis& mb )
+{
+    for( auto it = mb.basis.cbegin(); it != mb.basis.cend(); ++it )
+    {
+        os << *it << std::endl;
+    }
+    return os;
+}
+
 /*
  *
  *   MonoComplex
  *
  */
-
-MonoComplex :: MonoComplex(uint32_t _g, uint32_t _m) : g(_g), m(_m), h(2*_g + _m)
+template< class MatrixComplex >
+MonoComplex< class MatrixComplex > :: MonoComplex(uint32_t _g, uint32_t _m) : g(_g), m(_m), h(2*_g + _m)
 {
     Tuple anf(h);
 
-    anf[1] = std::pair< uint8_t, uint8_t >(2, 1);
+    anf[1] = Transposition(2, 1);
     gen_bases(1, 2, anf);  // Wir beginnen mit ...(2 1)
 
 }
 
-void MonoComplex :: gen_bases(uint32_t l, uint32_t p, Tuple& tuple)
+template< class MatrixComplex >
+void MonoComplex< class MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tuple)
 {
     /* Up to now we have determined all monotonic tuples of l transpositions containing the 
        symbols 1, ..., p, each at least once. We now add an (l+1)-th transposition and continue
@@ -121,7 +130,8 @@ void MonoComplex :: gen_bases(uint32_t l, uint32_t p, Tuple& tuple)
     }
 }
 
-void MonoComplex :: gen_differential(int32_t p)
+template< class MatrixComplex >
+void MonoComplex< class MatrixComplex > :: gen_differential(int32_t p)
 {
     /**
         Statt die Funktion rekusiv aufzurufen, zaehlen wir die Indexfolgen ab.

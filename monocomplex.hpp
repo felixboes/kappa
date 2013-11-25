@@ -25,7 +25,7 @@ struct MonoBasis
     void add_basis_element (Tuple& t);
     
     /// output stream
-    friend std::ostream& operator<< (std::ostream& stream, const MonoBasis& basis);
+    friend std::ostream& operator<< (std::ostream& stream, const MonoBasis& mb);
     
     /// Returns the number of basis elements.
     uint64_t size();
