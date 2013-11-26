@@ -230,7 +230,7 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
                         bound_contr = true;
                         f_folge << "    The " << i << "-th boundary " << rand;
                         #endif
-                        if( rand.monoton() == true ) // then it contributes to the differential
+                        if( rand.monotone() == true ) // then it contributes to the differential
                         {
                             #ifdef KAPPA_PARA
 			    			// When we parallelize with openmp, mono++ must be an atomic operation.
