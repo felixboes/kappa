@@ -370,8 +370,8 @@ Tuple Tuple :: d_hor( uint8_t k ) const
     for(uint8_t q = 1; q <= boundary.norm(); ++q)
     {
         // Write tau_q = (a,b)
-        auto a = boundary[q].first;
-        auto b = boundary[q].second;
+        auto& a = boundary[q].first;
+        auto& b = boundary[q].second;
         
         if(a == k || b == k)
         {
@@ -390,59 +390,66 @@ Tuple Tuple :: d_hor( uint8_t k ) const
     return boundary;
 }
 
-Tuple Tuple :: d_hor_test( uint8_t i ) const
+Tuple Tuple :: d_hor_naiv( uint8_t i ) const
 {
-    if( (i == 0) || (i >= this->norm()) )
+    if( i == 0 || i >= p )
     {
         return Tuple(this->norm());
     }
     Tuple boundary = *this;
     Tuple::Permutation sigma = long_cycle();     // sigma
     Tuple::Permutation sigma_inv = long_cycle_inv(); // sigma^{-1}
-
+    
     // Compute the permutations sigma_i. The only symbols that change when we multiply with tau_i = (k,l) are
     // sigma_{i-1}^{-1}(k) and sigma_{i-1}^{-1}(l).
     for( uint32_t l = 1; l <= boundary.norm(); l++ )
     {
         // write tau_l = (a,b)
-        auto& a = boundary.at(l).first;
-        auto& b = boundary.at(l).second;
+        uint8_t a = boundary.at(l).first;
+        uint8_t b = boundary.at(l).second;
+        
+        Permutation sigma_inv_tmp(sigma_inv);
+        sigma_inv_tmp[ sigma[i] ] = sigma_inv[i];
+        sigma_inv_tmp[i] = i;
         
         // compute sigma_l = tau_l sigma_{l-1}
-        std::swap( sigma[ sigma_inv[ a ] ], sigma[ sigma_inv[ b ] ] );
-
+        sigma[ sigma_inv[a] ] = b;
+        sigma[ sigma_inv[b] ] = a;
+        
         // compute sigma_l^{-1}
         std::swap( sigma_inv[ a ], sigma_inv[ b ] );
-
-        if( a == i )  // This row is to be deleted.
+        
+        Permutation sigma_tmp(sigma);
+        sigma_tmp[ sigma_inv[i] ] = sigma[i];
+        sigma_tmp[i] = i;
+        
+        
+        if( sigma[i] == i )
         {
-            a = sigma[ a ]; // With Lemma 66 one sees that only the symbol i -> sigma(i) has to be changed.
-            if( a == i )  // The row is degenerate.
+            return Tuple( boundary.norm() );
+        }
+        
+        for( uint8_t j = 1; j <=p; ++j )
+        {
+            if( sigma_tmp[ sigma_inv_tmp[j] ] != j )
             {
-                return Tuple( boundary.norm() );
+                uint8_t c = j;
+                uint8_t d = sigma_tmp[ sigma_inv_tmp[j] ];
+                
+                if( c > i )
+                {
+                    c--;
+                }
+                if( d > i )
+                {
+                    d--;
+                }
+                if(c == d)
+                {
+                    std::cerr << "Error in 'Tuple Tuple :: d_hor_naiv(uint8_t i)' -> Reached impossible case." << std::endl;
+                }
+                boundary.at(l) = Transposition ( std::max(c,d),  std::min(c,d) );
             }
-        }
-        if( a > i )   // all rows above i decrease
-        {
-            --a;
-        }
-
-        if( b == i ) // similar as above
-        {
-            b = sigma[ b ];
-            if( b == i)
-            {
-                return Tuple( boundary.norm() );
-            }
-        }
-        if( b > i )
-        {
-            --b;
-        }
-
-        if( a < b )    // The bigger symbol always is to the left of the other one.
-        {
-            std::swap(a,b);
         }
     }
 
@@ -469,4 +476,29 @@ Tuple::Permutation Tuple::long_cycle_inv() const
     }
     sigma[1] = p;
     return sigma;
+}
+
+void Tuple :: print_permutation(Permutation sigma) const
+{
+    std::vector<bool> visited(p+1, false);
+    for( uint8_t i = 1; i <= p; ) // We iterate through all cycles and mark the used symbols.
+    {
+        // consider the next cycle
+        visited[i] = true;
+        uint8_t j = sigma[i];
+        
+        std::cout << "(" << (uint32_t)i;
+        while( j != i ) // mark all symbols in this cycle
+        {
+            std::cout << " " << (uint32_t)j;
+            visited[j] = true;
+            j = sigma[j];
+        }
+        std::cout << ")";
+
+        // find the next unvisited cycle
+        for( ++i; i <= p && visited[i]; ++i )
+        {
+        }
+    }
 }

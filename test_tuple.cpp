@@ -17,7 +17,7 @@ int main()
     
     std::cout << "t: " << t << std::endl;
     std::cout << "n_c n_p:" << t.permutation_type().num_cycles << " " << t.permutation_type().num_punctures << std::endl;
-    std::cout << "m" << t.monoton() << std::endl;
+    std::cout << "m" << t.monotone() << std::endl;
     
     std::cout << "t: " << t << std::endl;
     
@@ -42,7 +42,7 @@ int main()
     
     for( uint8_t i = 0; i <= 8; ++i)
     {
-        std::cout << t.d_hor(i) << " " << t.d_hor_test(i) << (t.d_hor(i) == t.d_hor_test(i)? " test passed" : " test failed" ) << std::endl;
+        std::cout << t.d_hor(i) << " " << t.d_hor_naiv(i) << (t.d_hor(i) == t.d_hor_naiv(i)? " test passed" : " test failed" ) << std::endl;
         
     }
         

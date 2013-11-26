@@ -73,7 +73,7 @@ public:
     bool f(uint32_t i);                     ///< Applies the function \f$ f_i \f$ fuer \f$ 1 \le i < h \f$ and returns true iff the norm is preserved thereby.
     bool phi( uint32_t q, uint32_t i);      ///< Applies the function \f$ \Phi^q_i \f$ and returns true iff the norm is preserved thereby..
     Tuple d_hor( uint8_t i ) const;         ///< Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} and returns true iff the norm is preserved thereby.
-    Tuple d_hor_test( uint8_t i ) const;    ///< Different implementation of the i-th horizontal boundary.
+    Tuple d_hor_naiv( uint8_t i ) const;    ///< Different implementation of the i-th horizontal boundary.
     
     uint32_t p;  ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
 private:
@@ -81,7 +81,9 @@ private:
     std::vector< Transposition > rep;                ///< Representation of a tuple of transpositions.
     typedef std::map<uint8_t, uint8_t> Permutation;  ///< Data structure to store a permutation, where a -> perm[a] if perm is a Permutation
     Permutation long_cycle() const;                  ///< Returns the cycle 1 -> 2 -> ... -> p-1 -> p -> 1.
-    Permutation long_cycle_inv() const;              ///< Returns the cycle 1 -> p -> p-2 -> ... -> 2 -> 1. 
+    Permutation long_cycle_inv() const;              ///< Returns the cycle 1 -> p -> p-2 -> ... -> 2 -> 1.
+    
+    void print_permutation( Permutation sigma ) const;
 };
 
 /// output stream
