@@ -38,7 +38,7 @@ int32_t Tuple :: norm() const
 
 bool Tuple :: operator==(const Tuple& t) const
 {
-    // Observe how two vectors are compares
+    // Observe how two vectors are compared
     // Operations == and != are performed by first comparing sizes, and if they match, the elements are compared sequentially
     // using algorithm equal, which stops at the first mismatch.
     // Source: http://www.cplusplus.com/reference/vector/vector/operators/
@@ -47,7 +47,7 @@ bool Tuple :: operator==(const Tuple& t) const
 
 bool Tuple :: operator!=(const Tuple& t) const
 {
-    // Observe how two vectors are compares
+    // Observe how two vectors are compared
     // Operations == and != are performed by first comparing sizes, and if they match, the elements are compared sequentially
     // using algorithm equal, which stops at the first mismatch.
     // Source: http://www.cplusplus.com/reference/vector/vector/operators/
@@ -91,11 +91,11 @@ std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
 
 PermutationType Tuple :: permutation_type()
 {
-    // Man kann ebenso die Anzahl der Zykel von (p p-1 ... 1) t_1 ... t_h zaehlen, da die t_i Transpositionen sind.
-    PermutationType pt;    // Anzahl.first enstspricht den externen Punktierungen, Anzahl.second den internen.
+    // Since the t_i are transpositions, one can instead count the number of cycles of (p p-1 ... 1) t_1 ... t_h.
+    PermutationType pt;   
     Tuple::Permutation sigma_inv = long_cycle_inv();
 
-    // Multipliziere mit t_1 bis t_h und zaehle die internen Punktierungen
+    // multiply with t_1, ..., t_h and count punctures
     for( uint32_t i = 1; i <= norm(); i++ )
     {
         if(at(i).first == at(i).second)
@@ -108,32 +108,32 @@ PermutationType Tuple :: permutation_type()
         std::swap( sigma_inv[ k ], sigma_inv[ l ] );
     }
 
-    // Zaehle die Zylel
-    std::vector<bool> besucht( p+1, false );    // besucht[0] wird gar nicht verwendet.
-    for( uint8_t i = 1; i <= p; ) // Wir verarbeiten alle Zykel nacheinander und markieren, welche Symbole verwendet werden.
+    // count the cycles
+    std::vector<bool> visited( p+1, false );    // visited[0] is not used
+    for( uint8_t i = 1; i <= p; ) // We iterate through all cycles and mark the used symbols.
     {
-        // Verarbeite den naechsten Zykel
+        // consider the next cycle
         pt.num_cycles += 1;
-        besucht[i] = true;
+        visited[i] = true;
         uint8_t j = sigma_inv[i];
         
-        while( j != i ) // Markiere alle Symbole dieses Zykels.
+        while( j != i ) // mark all symbols in this cycle
         {
-            besucht[j] = true;
+            visited[j] = true;
             j = sigma_inv[j];
         }
 
-        // Finde den naechsten unbesuchten Zykel
-        for( ++i; i <= p && besucht[i]; ++i )
+        // find the next unvisited cycle
+        for( ++i; i <= p && visited[i]; ++i )
         {
         }
     }
     return pt;
 }
 
-bool Tuple :: monoton()
+bool Tuple :: monotone()
 {
-    // Ein Tupel ist genau dann monoto, wenn die Folge rep[i] monoton ist.
+    // A tuple is monotone iff the sequence of all at(i) is monotone.
     for( uint32_t i = 1; i < norm() - 1; i++ )
     {
         if( at(i+1).first < at(i).first )
@@ -146,14 +146,13 @@ bool Tuple :: monoton()
 
 bool Tuple :: f(uint32_t i)
 {
-    // Compare Mehner: page 49.
-    // Wird durch Fallunterscheidung klar.
-    if( i == 0 || i >= norm() ) // i muss kleiner als h sein.
+    // Compare Mehner: page 49, computed by a clear case distinction.
+    if( i == 0 || i >= norm() ) // i has to be smaller than h.
     {
         std::cerr << "Error in 'bool Tuple :: f(uint32_t i)' -> i=" << i << " >= h=" << norm() << std::endl;
         return false;
     }
-    else    // Denote g_{i+1} | g_i by (ab)(cd)
+    else    // Denote g_{i+1} | g_i by (ab)(cd).
     {
         uint8_t a = at(i+1).first;
         uint8_t b = at(i+1).second;
@@ -162,7 +161,7 @@ bool Tuple :: f(uint32_t i)
         
         if( a == c ) // (a )(a )
         {
-            if( b == d ) // (ab)(ab) = id und (a*)(a*) = 0
+            if( b == d ) // (ab)(ab) = id and (a*)(a*) = 0
             {
                 rep.assign( norm(), Transposition(0,0) );
                 return false;
@@ -178,7 +177,7 @@ bool Tuple :: f(uint32_t i)
                 at(i)   = Transposition(a,b);
                 return true;
             }
-            else // (ab)(ad) = (adb) = (bd)(ab) bzw (db)(ab)
+            else // (ab)(ad) = (adb) = (bd)(ab) or (db)(ab)
             {
                 at(i+1) = Transposition(std::max(b,d), std::min(b,d));
                 at(i)   = Transposition(a,b);
@@ -191,7 +190,7 @@ bool Tuple :: f(uint32_t i)
             {
                 return true;
             }
-            else // (a*)(c*) oder (a*)(cd) und beide kommutieren.
+            else // (a*)(c*) or (a*)(cd) and the two transpositions commute
             {
                 if( a < c )
                 {
@@ -212,7 +211,7 @@ bool Tuple :: f(uint32_t i)
                 std::swap( at(i), at(i) );
                 return true;
             }
-            else // (ab)(bd) = (abd) und (abd)' = (ad) und (abd)(ad) = (bd)
+            else // (ab)(bd) = (abd) and (abd)' = (ad) and (abd)(ad) = (bd)
             {
                 at(i+1) = Transposition(b,d);
                 at(i)   = Transposition(a,d);
@@ -220,7 +219,7 @@ bool Tuple :: f(uint32_t i)
             }
             // These are all cases since a > b >= d.
         }
-        else if( a == d ) // (ab)(ca) = (acb) und c > a -> (ab)(ca)
+        else if( a == d ) // (ab)(ca) = (acb) and c > a -> (ab)(ca)
         {
             return true;
         }
@@ -230,14 +229,14 @@ bool Tuple :: f(uint32_t i)
             {
                 return true;
             }
-            else    // (abc)' = (ac) und (abc)(ac) = (cb)
+            else    // (abc)' = (ac) and (abc)(ac) = (cb)
             {
                 at(i+1) = Transposition(c,b);
                 at(i)   = Transposition(a,c);
                 return true;
             }
         }
-        else // (ab)(c ) mit d nicht a oder b, also disjunkte Transpositionen.
+        else // (ab)(c ) with d not a and not b, hence disjoint transpositions
         {
             if( a < c )
             {
@@ -262,12 +261,12 @@ bool Tuple :: phi( uint32_t q, uint32_t i )
         return false;
     }
 
-    for( uint32_t j = q-1; j >= i; j-- ) // Da i > 0 erfuellt ist, endet die Schleife wirklich.
+    for( uint32_t j = q-1; j >= i; j-- ) // The loop terminates due to i > 0.
     {
         #ifdef KAPPA_DEBUG_TUPEL
         std::cerr << "    f_" << j << "( " << *this << " ) = ";
         #endif
-        if( f(j) == false ) // Die Norm des Produkts faellt.
+        if( f(j) == false ) // The norm of the product falls.
         {
             #ifdef KAPPA_DEBUG_TUPEL
             std::cerr << *this << std::endl;
@@ -401,34 +400,34 @@ Tuple Tuple :: d_hor_test( uint8_t i ) const
     Tuple::Permutation sigma = long_cycle();     // sigma
     Tuple::Permutation sigma_inv = long_cycle_inv(); // sigma^{-1}
 
-    // Berechne nun die sigma_i. Die beiden einzigen Symbole, die sich aendern, wenn wir mit tau_i = (k,l) mulitplizieren, sind
-    // sigma_{i-1}^{-1}(k) und sigma_{i-1}^{-1}(l).
+    // Compute the permutations sigma_i. The only symbols that change when we multiply with tau_i = (k,l) are
+    // sigma_{i-1}^{-1}(k) and sigma_{i-1}^{-1}(l).
     for( uint32_t l = 1; l <= boundary.norm(); l++ )
     {
         // write tau_l = (a,b)
         auto& a = boundary.at(l).first;
         auto& b = boundary.at(l).second;
         
-        // Berechne sigma_l = tau_l sigma_{l-1}
+        // compute sigma_l = tau_l sigma_{l-1}
         std::swap( sigma[ sigma_inv[ a ] ], sigma[ sigma_inv[ b ] ] );
 
-        // Berechne sigma_l^{-1}
+        // compute sigma_l^{-1}
         std::swap( sigma_inv[ a ], sigma_inv[ b ] );
 
-        if( a == i )  // Diese Zeile soll geloescht werden.
+        if( a == i )  // This row is to be deleted.
         {
-            a = sigma[ a ]; // Mit Lemma 66 sieht man ein, dass nur ein Symbol geaendert werden muss und zwar i -> sigma(i)
-            if( a == i )  // Die Zelle ist degeneriert.
+            a = sigma[ a ]; // With Lemma 66 one sees that only the symbol i -> sigma(i) has to be changed.
+            if( a == i )  // The row is degenerate.
             {
                 return Tuple( boundary.norm() );
             }
         }
-        if( a > i )   // Alle Zeilen ueber i muessen nachrutschen.
+        if( a > i )   // all rows above i decrease
         {
-            a -= 1;
+            --a;
         }
 
-        if( b == i ) // Analog zu obigem Abschnitt.
+        if( b == i ) // similar as above
         {
             b = sigma[ b ];
             if( b == i)
@@ -438,10 +437,10 @@ Tuple Tuple :: d_hor_test( uint8_t i ) const
         }
         if( b > i )
         {
-            b -= 1;
+            --b;
         }
 
-        if( a < b )    // Das groessere Symbol soll immer links stehen.
+        if( a < b )    // The bigger symbol always is to the left of the other one.
         {
             std::swap(a,b);
         }
