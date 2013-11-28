@@ -7,7 +7,7 @@
 #include <iostream>
 #include <map>
 #include <omp.h>
-#include <vector>
+#include <unordered_set>
 
 #include <homology.hpp>
 
@@ -21,7 +21,7 @@
 struct MonoBasis
 {
     /// Add a basis element.
-    void add_basis_element (Tuple& t);
+    uint32_t add_basis_element (Tuple& t);
     
     /// output stream
     friend std::ostream& operator<< (std::ostream& stream, const MonoBasis& mb);
@@ -29,8 +29,11 @@ struct MonoBasis
     /// Returns the number of basis elements.
     uint64_t size();
 
+    /// Returns the index of the tuple or -1.
+    int64_t id_of( Tuple& t );
+    
     /// Stores the orderd basis.
-    std::vector< Tuple > basis;
+    std::unordered_set< Tuple, HashTuple > basis;
 };
 
 std::ostream& operator<< (std::ostream& stream, const MonoBasis& basis);
@@ -42,6 +45,8 @@ template< class MatrixComplex >
 class MonoComplex
 {
 public:
+    typedef typename MatrixComplex::MatrixType MatrixType;
+    
     MonoComplex(uint32_t genus, uint32_t num_punctures);
     /** Recursive function initializing the basis_complex.
         In the call of gen_bases with the parameters l, p and tuple, we assume that the first l transpositions

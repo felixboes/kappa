@@ -134,7 +134,7 @@ PermutationType Tuple :: permutation_type()
 bool Tuple :: monotone()
 {
     // A tuple is monotone iff the sequence of all at(i) is monotone.
-    for( uint32_t i = 1; i < norm() - 1; i++ )
+    for( uint32_t i = 1; i <= norm() - 1; i++ )
     {
         if( at(i+1).first < at(i).first )
         {
@@ -397,8 +397,8 @@ Tuple Tuple :: d_hor_naiv( uint8_t i ) const
         return Tuple(this->norm());
     }
     Tuple boundary = *this;
-    Tuple::Permutation sigma = long_cycle();     // sigma
-    Tuple::Permutation sigma_inv = long_cycle_inv(); // sigma^{-1}
+    Tuple::Permutation sigma = long_cycle();            // sigma = sigma_0
+    Tuple::Permutation sigma_inv = long_cycle_inv();    // sigma^{-1}
     
     // Compute the permutations sigma_i. The only symbols that change when we multiply with tau_i = (k,l) are
     // sigma_{i-1}^{-1}(k) and sigma_{i-1}^{-1}(l).
@@ -408,6 +408,7 @@ Tuple Tuple :: d_hor_naiv( uint8_t i ) const
         uint8_t a = boundary.at(l).first;
         uint8_t b = boundary.at(l).second;
         
+        // Compute D_i(sigma_{l-1}^{-1})
         Permutation sigma_inv_tmp(sigma_inv);
         sigma_inv_tmp[ sigma[i] ] = sigma_inv[i];
         sigma_inv_tmp[i] = i;
@@ -419,11 +420,12 @@ Tuple Tuple :: d_hor_naiv( uint8_t i ) const
         // compute sigma_l^{-1}
         std::swap( sigma_inv[ a ], sigma_inv[ b ] );
         
+        // Compute D_i(sigma_l)
         Permutation sigma_tmp(sigma);
         sigma_tmp[ sigma_inv[i] ] = sigma[i];
         sigma_tmp[i] = i;
         
-        
+        // D_i(sigma_l) is degenerate iff sigma_l(i) = i
         if( sigma[i] == i )
         {
             return Tuple( boundary.norm() );
@@ -431,8 +433,10 @@ Tuple Tuple :: d_hor_naiv( uint8_t i ) const
         
         for( uint8_t j = 1; j <=p; ++j )
         {
+            // This case occures at least once, otherwise tau_l = id.
             if( sigma_tmp[ sigma_inv_tmp[j] ] != j )
             {
+                // Compute the new transpositon tau''_l = (c,d).
                 uint8_t c = j;
                 uint8_t d = sigma_tmp[ sigma_inv_tmp[j] ];
                 
@@ -501,4 +505,16 @@ void Tuple :: print_permutation(Permutation sigma) const
         {
         }
     }
+}
+
+size_t HashTuple :: operator ()( const Tuple &tuple ) const
+{
+    size_t hashvalue=0;
+    size_t offset = 2;
+    for( const auto& cit : tuple.rep )
+    {
+        hashvalue += offset*(cit.first + 8*cit.second);
+        offset *= 16;
+    }
+    return hashvalue;
 }

@@ -25,6 +25,8 @@ struct PermutationType
 **/
 class Tuple
 {
+    friend class HashTuple;
+    
 public:
     /**
      *  Construct a Tuple of norm h which has to be filled.
@@ -76,6 +78,7 @@ public:
     Tuple d_hor_naiv( uint8_t i ) const;    ///< Different implementation of the i-th horizontal boundary.
     
     uint32_t p;  ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
+    uint32_t id; ///< The index of this Tuple in the basis of the MonoComplex.
 private:
     Transposition& at(size_t);
     std::vector< Transposition > rep;                ///< Representation of a tuple of transpositions.
@@ -88,5 +91,11 @@ private:
 
 /// output stream
 std::ostream& operator<< (std::ostream& stream, const Tuple& tuple);
+
+class HashTuple
+{
+public:
+    size_t operator()( const Tuple& ) const;
+};
 
 #endif // TUPLE_HPP

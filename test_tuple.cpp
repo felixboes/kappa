@@ -3,6 +3,25 @@
 
 #include <iostream>
 
+bool compare_boundary_computation (Tuple t, uint32_t i )
+{
+    Tuple boundary_1 = t.d_hor(i);
+    Tuple boundary_2 = t.d_hor_naiv(i);
+    std::cout << boundary_1 << " " << boundary_2 << ( boundary_1 == boundary_2? " test passed" : " test failed" ) << std::endl;
+    
+    return boundary_1 == boundary_2;
+}
+
+bool compare_boundary_computations (Tuple t )
+{
+    bool ret = false;
+    for( uint32_t i = 0; i <= t.p ; ++i)
+    {
+        ret = compare_boundary_computation(t,i);
+    }
+    return ret;
+}
+
 int main()
 {
     std::cout.setf(std::ios::unitbuf);
@@ -33,18 +52,20 @@ int main()
     t[4] = Transposition(8,3);
     t[5] = Transposition(8,2);
     
-    
+    compare_boundary_computations(t);
     t.phi(1,1);
+    compare_boundary_computations(t);
     t.phi(2,2);
+    compare_boundary_computations(t);
     t.phi(3,3);
+    compare_boundary_computations(t);
     t.phi(4,2);
+    compare_boundary_computations(t);
     t.phi(5,3);
+    compare_boundary_computations(t);
     
-    for( uint8_t i = 0; i <= 8; ++i)
-    {
-        std::cout << t.d_hor(i) << " " << t.d_hor_naiv(i) << (t.d_hor(i) == t.d_hor_naiv(i)? " test passed" : " test failed" ) << std::endl;
-        
-    }
-        
+    HashTuple h;
+    std::cout << "Hash of " << t << ":" << h(t) << std::endl;
+    
     std::cout << t << std::endl;
 }

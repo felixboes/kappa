@@ -19,10 +19,10 @@ void MonoComplex< MatrixComplex > :: show_basis( int32_t p ) const
     if( basis_complex.count(p) )
     {
          std::cout << "This it the " << p << "-th basis:" << std::endl;
-        const std::vector< Tuple >& basis_vector = basis_complex.at(p).basis;
+        const auto& basis_vector = basis_complex.at(p).basis;
         for( auto it = basis_vector.cbegin(); it != basis_vector.cend(); ++it )
         {
-            std::cout << *it << std::endl;
+            std::cout << it->id << ": " << *it << std::endl;
         }
     }
     else
@@ -112,12 +112,13 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tu
             gen_bases(l+1, p+2, tmp);
         }
     }
-    else // check whether the created h-tuple is really a generator, i.e. if it has the correct 
-         // number of cycles
+    else // Check whether the created h-tuple is really a generator, i.e. if it has the correct 
+         // number of cycles. If this is the case, we add tuple to the basis elements of the 
+         // p-th basis and store the index of tuple in this basis as the id of tuple.
     {
         if(tuple.permutation_type().num_cycles == m+1)
         {
-            basis_complex[p].add_basis_element( tuple );
+            tuple.id = basis_complex[p].add_basis_element( tuple );
         }
     }
 }
@@ -126,147 +127,82 @@ template< class MatrixComplex >
 void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
 {
     /**
-        Instead of implementing the differential recursively, we use a direct formula to enumerate
-        the sequences of indices in order to use threads. 
-	The sequences of indices we need to enumerate is given by the set 
-	\[ 
-		\{(t_h, \ldots, t_1) \mid 0 \le t_q < q \,\}
-	\]
-	and for its enumeration we use that the map
-	\[ 
-		\{0, \ldots, h! - 1\} = \{(t_h, \ldots, t_1) \mid 0 \le t_q < q \,\}
-	\]
-	\[
-		k \mapsto \left( \left\lfloor \frac{k}{(q-1)!| \right\rfloor \pmod q\right)_q\,,
-	\]
-	is bijective. This is shown in the document s_qformel.pdf.	
+     *  Instead of implementing the differential recursively, we use a direct formula to enumerate
+     *  the sequences of indices in order to use threads.     
+	 *  The sequences of indices we need to enumerate is given by the set 
+	 *  \[ 
+     *      \{(t_h, \ldots, t_1) \mid 0 \le t_q < q \,\}
+	 *  \]
+	 *  and for its enumeration we use that the map
+	 *  \[ 
+     *      \{0, \ldots, h! - 1\} = \{(t_h, \ldots, t_1) \mid 0 \le t_q < q \,\}
+	 *  \]
+	 *  \[
+     *      k \mapsto \left( \left\lfloor \frac{k}{(q-1)!| \right\rfloor \pmod q\right)_q\,,
+	 *  \]
+	 *  is bijective. This is shown in the document s_qformel.pdf.	
     **/
-
-    uint64_t mono = 0;
-
-    std::cout << "The map del o kappa_" << p << " is now computed...";
-    #ifdef KAPPA_DEBUG_MONOKOMPLEX
-         std::cout << std::endl;
-    #endif
-
+    
+    
+    // Allocate enough space for the differential.
+    // Todo: Test this.
+    MatrixType differential( basis_complex[p-1].size(), basis_complex[p].size() );
+    
+    std::cout << "The map del o kappa_" << p << " is now computed..." << std::endl;
     // For each tuple t in the basis, we compute all basis elements that 
     // occur in kappa(t). 
     for( auto it : basis_complex[p].basis )
     {
-        #ifdef KAPPA_DEBUG_MONOKOMPLEX
-        std::cout << std::setfill('-') << std::setw(40) << "-" << std::setfill(' ') << std::endl
-                  << "Consider tuple: " << it->to_string() << std::endl
-                  << std::setfill('-') << std::setw(40) << "-" << std::setfill(' ') << std::endl;
-        #endif
-
-        // In order to use variables for each thread seperately with openmp, they have to be 
-        // declared before the loop.
-        Tuple neuer;
+        // parity of the exponent of the sign of the current summand of the differential
+        int32_t parity = ((h*(h+1))/2) % 2;
+        
         Tuple rand;
-        bool norm_preserved;
-        uint32_t k;
         uint32_t i;
-        uint32_t q;
         uint32_t s_q;
-        #ifdef KAPPA_PARA
-        #pragma omp parallel for private(neuer,rand,norm_preserved,k,i,q,s_q shared(mono)
-        #endif
-        for( k = 0; k < factorial(h); k++ )
+        
+        for( uint32_t k = 0; k < factorial(h); k++ )
 		// in each iteration we enumerate one sequence of indices according to the above formula        
 		{
-            neuer = it;
-            norm_preserved = true;
-
-            #ifdef KAPPA_DEBUG_MONOKOMPLEX
-            std::stringstream f_folge;
-            std::string indexfolge = "1)";
-            #endif
-
+            Tuple neuer = it;
+            bool norm_preserved = true;
+            
             // Calculate phi_{(s_h, ..., s_1)}( Sigma )
-            for( q = 2; q <= h; q++ )
+            for( uint32_t q = 2; q <= h; q++ )
             {
                 s_q = 1 + ( ( k / factorial(q-1)) % q );   
-
-                #ifdef KAPPA_DEBUG_MONOKOMPLEX
-                std::stringstream tmp;
-                tmp << s_q;
-                indexfolge = tmp.str() + "," + indexfolge;
-
-                if( neuer.phi(q, s_q, &f_folge) == false )
-                {
-                    valid = false;
-                    f_folge.str( std::string() );
-                    break;
-                }
-                #else
+                parity += s_q % 2;
                 if( neuer.phi(q, s_q) == false )
                 {
                     norm_preserved = false;
                     break;
                 }
-                #endif
             }
             
             // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
-            if( norm_preserved )   // Compute all horiyontal boundaries.
+            if( norm_preserved )   // Compute all horizontal boundaries.
             {
-                #ifdef KAPPA_DEBUG_MONOKOMPLEX
-                indexfolge = "(" + indexfolge;
-                std::cout << "Phi_" << indexfolge << "( " << it->to_string() << " ) = " << neuer.to_string() << std::endl;
-                if( f_folge.str().length() > 1 )
-                {
-                    std::cout << "Thereby we have:" << std::endl
-                              << f_folge.str();
-                }
-                f_folge.str( std::string() );
-                bool bound_contr = false;
-                #endif
-                
                 for( i = 1; i < p; i++ )
                 {
                     if( (rand = neuer.d_hor(i)) )
                     {
-                        #ifdef KAPPA_DEBUG_MONOKOMPLEX
-                        bound_contr = true;
-                        f_folge << "    The " << i << "-th boundary " << rand;
-                        #endif
-                        if( rand.monotone() == true ) // then it contributes to the differential
+                        if( rand.monotone() == true ) // then it contributes to the differential with the computed parity
                         {
-                            #ifdef KAPPA_PARA
-			    			// When we parallelize with openmp, mono++ must be an atomic operation.
-                            #pragma omp atomic
-                            #endif
-                            mono++;
-                            #ifdef KAPPA_DEBUG_MONOKOMPLEX
-                            f_folge << " ist monoton." << std::endl;
-                            #endif
+                            parity = (parity + i) % 2;
+                            std::cout << it << "->" << rand << std::endl;
+                            std::cout << it.id << "->" << basis_complex[p-1].id_of(rand) << " in " << "M_{" << basis_complex[p].size() << "," << basis_complex[p-1].size() << "} parity=" << parity << std::endl;
+                            std::cout << std::endl;
+//                            if (parity == 0)
+//                            {
+//                                differential(rand.id, it.id) += 1;
+//                            }
+//                            else
+//                            {
+//                                differential(rand.id, it.id) += -1;
+//                            }
                         }
-                        #ifdef KAPPA_DEBUG_MONOKOMPLEX
-                        else
-                        {
-                            f_folge << " ist nicht monoton." << std::endl;
-                        }
-                        #endif
                     }
                 }
-                #ifdef KAPPA_DEBUG_MONOKOMPLEX
-                if( bound_contr == true )
-                {
-                    std::cout << "The horizontal boundaries are:" << std::endl
-                              << f_folge.str() << std::endl;
-                }
-                else
-                {
-                    std::cout << "All horizontal boundaries are degenerate." << std::endl << std::endl;
-                }
-                #endif
             }
         }
     }
-
-    #ifdef KAPPA_DEBUG_MONOKOMPLEX
-    std::cout << "The number of monotonic pairs (t,t',i), where t' = del_i o kappa (t), is exactly " << mono << "." << std::endl;
-    #else
-    std::cout << mono << std::endl;
-    #endif
 }
