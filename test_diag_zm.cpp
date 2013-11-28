@@ -4,13 +4,18 @@
 #include <chrono>
 #include <cinttypes>
 #include <functional>
+#include <future>
 #include <iostream>
 #include <limits>
+#include <thread>
+
 
 #include "chain_complex.hpp"
 #include "diagonalizer_zm.hpp"
 #include "homology_field.hpp"
 #include "matrix_zm.hpp"
+
+#include <homology.hpp>
 
 // This is a deterministic random generator.
 // The initial seed is the system time.
@@ -33,6 +38,8 @@ bool create_random_matrix_zm(uint32_t rows, uint32_t cols, uint32_t rank)
     MatrixZm row_ops = MatrixZmIdentity(rows);
     MatrixZm col_ops = MatrixZmIdentity(cols);
     
+    std::cout << "Initialize random matrices ... ";
+    
     if( rank > std::min(rows, cols) )
     {
         std::cerr << "rank > min(rows, cols)" << std::endl;
@@ -48,7 +55,7 @@ bool create_random_matrix_zm(uint32_t rows, uint32_t cols, uint32_t rank)
 
     // ranges for the random numbers
     boost::random::uniform_int_distribution<> number(-100, 100);
-
+    
     // Define the matrix row_ops as a random lower triangular matrix.
     for( uint32_t i = 1; i < rows; ++i )
     {
@@ -67,14 +74,19 @@ bool create_random_matrix_zm(uint32_t rows, uint32_t cols, uint32_t rank)
         }
     }
 
+    std::cout << "Prod" << std::endl;
     // Multiply the matrices to obtain a matrix of the given rank.
     matrix = boost::numeric::ublas::prod( row_ops, matrix );
+    std::cout << "Prod" << std::endl;
     matrix = boost::numeric::ublas::prod( matrix,  col_ops );
 
+    
+    std::cout << "done." << std::endl;
     // Use the Diagonalizer to compute the rank of the random matrix.
     DiagonalizerZm diagonalizer;
     diagonalizer(matrix);
     
+    std::flush(std::cout);
     return rank == diagonalizer.rank();
 }
 
@@ -92,8 +104,8 @@ uint32_t test_rank_zm( uint32_t num_rounds, uint32_t max_num_rows, uint32_t max_
     // variable used to count the failures of the diagonalizer
     uint32_t number_of_errors = 0;
 
-    boost::random::uniform_int_distribution<> rnd_rows(5, max_num_rows);
-    boost::random::uniform_int_distribution<> rnd_cols(5, max_num_cols);
+    boost::random::uniform_int_distribution<> rnd_rows(max_num_rows - 5, max_num_rows);
+    boost::random::uniform_int_distribution<> rnd_cols(max_num_cols - 5, max_num_cols);
     for( uint32_t round = 0; round < num_rounds; ++round )
     {
         uint32_t rows = rnd_rows(gen_zm);
@@ -116,10 +128,9 @@ uint32_t test_rank_zm( uint32_t num_rounds, uint32_t max_num_rows, uint32_t max_
  */
 void test_some_chain_complex_zm()
 {
-    typedef ChainComplex< Zm, MatrixZm, DiagonalizerZm, HomologyField > ChainComplexZm;
     ChainComplexZm cc;
     
-    MatrixZm M(4,4);
+    ChainComplexZm::MatrixType M(4,4);
     M(0,0) = 1;
     M(0,1) = 1;
     M(0,2) = 2;
@@ -140,7 +151,7 @@ void test_some_chain_complex_zm()
     M(3,2) = 0;
     M(3,3) = 0;
 
-    MatrixZm N(4,2);
+    ChainComplexZm::MatrixType N(4,2);
     N(0,0) = -15;
     N(0,1) =  -7;
     
@@ -155,29 +166,29 @@ void test_some_chain_complex_zm()
 
     cc[2] = N;
     cc[1] = M;
-    cc[0] = MatrixZm(0,4);
+    cc[0] = ChainComplexZm::MatrixType(0,4);
     
     
-    cc[10] = MatrixZm(0,1);
-    cc[11] = MatrixZm(1,1);
+    cc[10] = ChainComplexZm::MatrixType(0,1);
+    cc[11] = ChainComplexZm::MatrixType(1,1);
     cc(11,0,0) = 0;
-    cc[12] = MatrixZm(1,1);
+    cc[12] = ChainComplexZm::MatrixType(1,1);
     cc(12,0,0) = 2;
-    cc[13] = MatrixZm(0,1);
-    cc[14] = MatrixZm(1,1);
+    cc[13] = ChainComplexZm::MatrixType(0,1);
+    cc[14] = ChainComplexZm::MatrixType(1,1);
     cc(14,0,0) = 2;
-    cc[15] = MatrixZm(0,1);
-    cc[16] = MatrixZm(1,1);
+    cc[15] = ChainComplexZm::MatrixType(0,1);
+    cc[16] = ChainComplexZm::MatrixType(1,1);
     cc(16,0,0) = 2;
-    cc[17] = MatrixZm(0,1);
-    cc[18] = MatrixZm(1,1);
+    cc[17] = ChainComplexZm::MatrixType(0,1);
+    cc[18] = ChainComplexZm::MatrixType(1,1);
     cc(18,0,0) = 2;
     
     
     std::cout << "N:    " << cc[2] << std::endl;
     std::cout << "M:    " << cc[1] << std::endl;
     
-    HomologyField ho = cc.homology();
+    ChainComplexQ::HomologyType ho = cc.homology();
     std::cout << ho << std::endl;
 }
 
@@ -193,10 +204,9 @@ int main( int argc, char ** argv )
     Zm::set_modulus(atoi(argv[1]),1);
 
     // test homology computation
-    test_some_chain_complex_zm();
+    //test_some_chain_complex_zm();
     
-    return 0;
-    
+    //return 0;  
     // test whether the diagonalizer computes the rank correctly
     uint32_t errors = 0;
     if( argc == 5 )

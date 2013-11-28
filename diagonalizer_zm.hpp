@@ -3,9 +3,12 @@
 
 #include <cinttypes>
 #include <functional>
+#include <future>
 #include <iostream>
 #include <list>
+#include <thread>
 #include <vector>
+
 #include <boost/numeric/ublas/io.hpp>
 
 #include "matrix_zm.hpp"

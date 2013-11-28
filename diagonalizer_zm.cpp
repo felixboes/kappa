@@ -65,8 +65,11 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
             rows_to_check.push_back(row_1);
         }
         
+        size_t col = 0;
+        size_t row_1 = 0;
+        
         // Iterate through columns. We may stop if the rank is maximal.
-        for ( size_t col = 0; col < num_cols && rank < num_rows; ++col )
+        for (; col < num_cols && rank < num_rows; ++col )
         {
             // Find first invertible (i.e. non-zero) entry in the remaining rows.
             auto it = rows_to_check.begin();
@@ -79,7 +82,7 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
             {
                 // This row contributes to the rank.
                 rank++;
-                size_t row_1 = *it;
+                row_1 = *it;
                 // We do not need to check this row in further iterations.
                 // After erasing, it will point to the next element in the list.
                 it = rows_to_check.erase(it);

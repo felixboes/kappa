@@ -14,6 +14,10 @@ class ChainComplex
 {
 public:
     typedef ChainComplex<CoefficientT, MatrixT, DiagonalizerT, HomologyT> SelfType;
+    typedef CoefficientT CoefficientType;
+    typedef MatrixT MatrixType;
+    typedef DiagonalizerT DiagonalizerType;
+    typedef HomologyT HomologyType;
     ChainComplex();
     
     /**
