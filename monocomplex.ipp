@@ -206,3 +206,94 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
         }
     }
 }
+
+
+template< class MatrixComplex >
+void MonoComplex< MatrixComplex > :: gen_differential_simple(int32_t p)
+{    
+    // Allocate enough space for the differential.
+    // Todo: Test this.
+    MatrixType differential( basis_complex[p-1].size(), basis_complex[p].size() );
+    
+    std::cout << "The map del o kappa_" << p << " is now computed..." << std::endl;
+    // For each tuple t in the basis, we compute all basis elements that 
+    // occur in kappa(t). 
+    for( auto it : basis_complex[p].basis )
+    {
+		//// here we recursively determine all contributing sequences s_p, ..., s_1.        
+
+		std::array<int, p> s;
+		int pos = p-1;
+		calculate(it, s);
+		while (pos >= 0)
+		{
+			while (s[pos] < (pos + 1))
+			{
+				++s[pos];
+				calculate(it, s);
+				pos = n - 1;
+			}
+			for ( int i = pos; i < n; ++i)
+			{
+				s[i] = 1;
+			}
+			--pos;
+			while ((pos > 0) && (s[pos] == (pos + 1)))
+			{
+				s[pos] = 1;
+				--pos;
+			}
+			if (pos == 0)
+				break;
+			++s[pos];
+			calculate(it, s);
+			pos = n-1;
+		}
+	}
+}
+
+// for one sequence s_p, ..., s_1, this calculates the multiple application of phi, of and of the d_i.
+template< class MatrixComplex >
+void MonoComplex< MatrixComplex > :: void calculate(Tuple neuer, std::array<int> & s)
+{
+	Tuple rand;
+	bool norm_preserved = true;
+    // parity of the exponent of the sign of the current summand of the differential
+    int32_t parity = ((h*(h+1))/2) % 2;
+
+	for (int q = 0; q < p; ++i)
+	{
+		parity += s[q] % 2;
+		if (neuer.phi(q, s[q]) == false)
+		{
+			norm_preserved = false;
+			break;
+		}
+	}
+    // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
+    if( norm_preserved )   // Compute all horizontal boundaries.
+    {
+        for( i = 1; i < p; i++ )
+        {
+            if( (rand = neuer.d_hor(i)) )
+            {
+                if( rand.monotone() == true ) // then it contributes to the differential with the computed parity
+                {
+                    parity = (parity + i) % 2;
+                    std::cout << it << "->" << rand << std::endl;
+                    std::cout << it.id << "->" << basis_complex[p-1].id_of(rand) << " in " << "M_{" << basis_complex[p].size() << "," << basis_complex[p-1].size() << "} parity=" << parity << std::endl;
+                    std::cout << std::endl;
+                    if (parity == 0)
+                    {
+                        differential(rand.id, it.id) += 1;
+                    }
+                    else
+                    {
+                        differential(rand.id, it.id) += -1;
+                    }
+                }
+            }
+        }
+    }
+}
+
