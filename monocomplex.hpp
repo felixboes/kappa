@@ -65,7 +65,7 @@ public:
     void show_differential( int32_t p ) const;
     void show_differential_naive( int32_t p ) const;
     //std::string show_bases() const;
-private:
+//private:
     uint32_t g;     ///< genus
     uint32_t m;     ///< number of punctures
     uint32_t h;     ///< h = 2*g+m

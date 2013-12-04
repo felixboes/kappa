@@ -312,7 +312,7 @@ void MonoComplex< MatrixComplex > :: pi_del_phi_naive(const Tuple& it, std::vect
     {
         for( uint32_t i = 1; i < p; i++ )
         {
-            if( (boundary = current_basis.d_hor(i)) && boundary.monotone() ) // then it contributes to the differential with the computed parity
+            if( (boundary = current_basis.d_hor_naive(i)) && boundary.monotone() ) // then it contributes to the differential with the computed parity
             {
                 boundary.id = basis_complex[p-1].id_of(boundary);
                 

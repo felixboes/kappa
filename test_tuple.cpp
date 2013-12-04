@@ -6,7 +6,7 @@
 bool compare_boundary_computation (Tuple t, uint32_t i )
 {
     Tuple boundary_1 = t.d_hor(i);
-    Tuple boundary_2 = t.d_hor_naiv(i);
+    Tuple boundary_2 = t.d_hor_naive(i);
     std::cout << boundary_1 << " " << boundary_2 << ( boundary_1 == boundary_2? " test passed" : " test failed" ) << std::endl;
     
     return boundary_1 == boundary_2;

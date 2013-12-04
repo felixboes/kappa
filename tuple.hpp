@@ -75,7 +75,7 @@ public:
     bool f(uint32_t i);                     ///< Applies the function \f$ f_i \f$ fuer \f$ 1 \le i < h \f$ and returns true iff the norm is preserved thereby.
     bool phi( uint32_t q, uint32_t i);      ///< Applies the function \f$ \Phi^q_i \f$ and returns true iff the norm is preserved thereby..
     Tuple d_hor( uint8_t i ) const;         ///< Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} and returns true iff the norm is preserved thereby.
-    Tuple d_hor_naiv( uint8_t i ) const;    ///< Different implementation of the i-th horizontal boundary.
+    Tuple d_hor_naive( uint8_t i ) const;   ///< Different implementation of the i-th horizontal boundary.
     
     uint32_t p;  ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
     uint32_t id; ///< The index of this Tuple in the basis of the MonoComplex.

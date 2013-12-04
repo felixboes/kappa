@@ -390,7 +390,7 @@ Tuple Tuple :: d_hor( uint8_t k ) const
     return boundary;
 }
 
-Tuple Tuple :: d_hor_naiv( uint8_t i ) const
+Tuple Tuple :: d_hor_naive( uint8_t i ) const
 {
     if( i == 0 || i >= p )
     {
