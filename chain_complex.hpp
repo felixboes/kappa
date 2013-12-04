@@ -26,6 +26,11 @@ public:
     MatrixT &operator[] ( int32_t n );
     
     /**
+     *  Access the \f$n\f$-th differential.
+     */
+    const MatrixT &at (const int32_t& n );    
+    
+    /**
      *  Access the coefficient of the \f$n\f$-th differential at the position (row, col).
      */
     CoefficientT &operator() ( int32_t n, uint32_t row, uint32_t col );
