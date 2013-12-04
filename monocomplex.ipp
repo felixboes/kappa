@@ -18,7 +18,7 @@ void MonoComplex< MatrixComplex > :: show_basis( int32_t p ) const
 {
     if( basis_complex.count(p) )
     {
-         std::cout << "This it the " << p << "-th basis:" << std::endl;
+        std::cout << "This it the " << p << "-th basis:" << std::endl;
         const auto& basis_vector = basis_complex.at(p).basis;
         for( auto it = basis_vector.cbegin(); it != basis_vector.cend(); ++it )
         {
@@ -30,6 +30,38 @@ void MonoComplex< MatrixComplex > :: show_basis( int32_t p ) const
         std::cout << "The " << p << "-th basis is empty" << std::endl;
     }
 }
+
+template< class MatrixComplex >
+void MonoComplex< MatrixComplex > :: show_differential( int32_t p ) const
+{
+    if( matrix_complex.count(p) )
+    {
+        std::cout << "This it the " << p << "-th differential:" << std::endl;
+        std::cout << matrix_complex.at(p);
+        std::cout << std::endl;
+    }
+    else
+    {
+        std::cout << "The " << p << "-th differential is empty." << std::endl;
+    }
+}
+
+template< class MatrixComplex >
+void MonoComplex< MatrixComplex > :: show_differential_naive( int32_t p ) const
+{
+    if( matrix_complex_naive.count(p) )
+    {
+        std::cout << "This it the " << p << "-th differential (naive)." << std::endl;
+        std::cout << matrix_complex_naive.at(p);
+        std::cout << std::endl;
+    }
+    else
+    {
+        std::cout << "The " << p << "-th differential (naive) is empty." << std::endl;
+    }
+}
+
+
 
 template< class MatrixComplex >
 void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tuple)
@@ -146,9 +178,10 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     
     // Allocate enough space for the differential.
     // Todo: Test this.
-    MatrixType differential( basis_complex[p-1].size(), basis_complex[p].size() );
+    matrix_complex[p] = MatrixType ( basis_complex[p-1].size(), basis_complex[p].size() );
+    MatrixType& differential = matrix_complex[p];
     
-    std::cout << "The map del o kappa_" << p << " is now computed..." << std::endl;
+    std::cout << "The map pi o del o kappa_" << p << " is now computed..." << std::endl;
     // For each tuple t in the basis, we compute all basis elements that 
     // occur in kappa(t). 
     for( auto it : basis_complex[p].basis )
@@ -156,22 +189,22 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
         // parity of the exponent of the sign of the current summand of the differential
         int32_t parity = ((h*(h+1))/2) % 2;
         
-        Tuple rand;
-        uint32_t i;
+        Tuple boundary;
         uint32_t s_q;
         
         for( uint32_t k = 0; k < factorial(h); k++ )
 		// in each iteration we enumerate one sequence of indices according to the above formula        
 		{
-            Tuple neuer = it;
+            Tuple current_basis = it;
             bool norm_preserved = true;
+            parity = ((h*(h+1))/2) % 2;
             
             // Calculate phi_{(s_h, ..., s_1)}( Sigma )
-            for( uint32_t q = 2; q <= h; q++ )
+            for( uint32_t q = 1; q <= h; q++ )
             {
                 s_q = 1 + ( ( k / factorial(q-1)) % q );   
-                parity += s_q % 2;
-                if( neuer.phi(q, s_q) == false )
+                parity += s_q;
+                if( current_basis.phi(q, s_q) == false )
                 {
                     norm_preserved = false;
                     break;
@@ -181,24 +214,26 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
             // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
             if( norm_preserved )   // Compute all horizontal boundaries.
             {
-                for( i = 1; i < p; i++ )
+                for( uint32_t i = 1; i < p; i++ )
                 {
-                    if( (rand = neuer.d_hor(i)) )
+                    if( (boundary = current_basis.d_hor(i)) )
                     {
-                        if( rand.monotone() == true ) // then it contributes to the differential with the computed parity
+                        if( boundary.monotone() == true ) // then it contributes to the differential with the computed parity
                         {
+                            boundary.id = basis_complex[p-1].id_of(boundary);
+                            
                             parity = (parity + i) % 2;
-                            std::cout << it << "->" << rand << std::endl;
-                            std::cout << it.id << "->" << basis_complex[p-1].id_of(rand) << " in " << "M_{" << basis_complex[p].size() << "," << basis_complex[p-1].size() << "} parity=" << parity << std::endl;
-                            std::cout << std::endl;
-//                            if (parity == 0)
-//                            {
-//                                differential(rand.id, it.id) += 1;
-//                            }
-//                            else
-//                            {
-//                                differential(rand.id, it.id) += -1;
-//                            }
+//                            std::cout << it << "->" << boundary << std::endl;
+//                            std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << parity << std::endl;
+//                            std::cout << std::endl;
+                            if (parity == 0)
+                            {
+                                differential(boundary.id, it.id) += 1;
+                            }
+                            else
+                            {
+                                differential(boundary.id, it.id) += -1;
+                            }
                         }
                     }
                 }
@@ -209,62 +244,64 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
 
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: gen_differential_simple(int32_t p)
+void MonoComplex< MatrixComplex > :: gen_differential_naive(int32_t p)
 {    
     // Allocate enough space for the differential.
-    // Todo: Test this.
-    MatrixType differential( basis_complex[p-1].size(), basis_complex[p].size() );
+    // Todo: Test this.    
+    matrix_complex_naive[p] = MatrixType ( basis_complex[p-1].size(), basis_complex[p].size() );
     
-    std::cout << "The map del o kappa_" << p << " is now computed..." << std::endl;
+    std::cout << "The map pi o del o kappa_" << p << " (naive) is now computed..." << std::endl;
     // For each tuple t in the basis, we compute all basis elements that 
     // occur in kappa(t). 
-    for( auto it : basis_complex[p].basis )
+    for( auto& it : basis_complex[p].basis )
     {
-		//// here we recursively determine all contributing sequences s_p, ..., s_1.        
+		//// here we recursively determine all contributing sequences s_h, ..., s_1.        
 
-		std::array<int, p> s;
-		int pos = p-1;
-		calculate(it, s);
-		while (pos >= 0)
+        std::vector<int32_t> s(h+1, 1);
+		int pos = h;
+		pi_del_phi_naive(it, s);
+		
+        while (pos > 0)
 		{
-			while (s[pos] < (pos + 1))
+			while( s[h] < h )
 			{
-				++s[pos];
-				calculate(it, s);
-				pos = n - 1;
+				++s[h];
+				pi_del_phi_naive(it, s);
 			}
-			for ( int i = pos; i < n; ++i)
-			{
-				s[i] = 1;
-			}
-			--pos;
-			while ((pos > 0) && (s[pos] == (pos + 1)))
+			while ( (pos > 0) && (s[pos] == pos) )
 			{
 				s[pos] = 1;
 				--pos;
 			}
 			if (pos == 0)
+            {
 				break;
+            }
+            
 			++s[pos];
-			calculate(it, s);
-			pos = n-1;
+			pi_del_phi_naive(it, s);
+			pos = h;
 		}
 	}
 }
 
 // for one sequence s_p, ..., s_1, this calculates the multiple application of phi, of and of the d_i.
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: void calculate(Tuple neuer, std::array<int> & s)
+void MonoComplex< MatrixComplex > :: pi_del_phi_naive(const Tuple& it, std::vector<int32_t> & s)
 {
-	Tuple rand;
+    Tuple current_basis = it;
+	Tuple boundary;
 	bool norm_preserved = true;
     // parity of the exponent of the sign of the current summand of the differential
     int32_t parity = ((h*(h+1))/2) % 2;
-
-	for (int q = 0; q < p; ++i)
+    
+    uint32_t& p = current_basis.p;
+    MatrixType& differential = matrix_complex_naive[p];
+    
+	for (int32_t q = 1; q <= h; ++q)
 	{
 		parity += s[q] % 2;
-		if (neuer.phi(q, s[q]) == false)
+		if (current_basis.phi(q, s[q]) == false)
 		{
 			norm_preserved = false;
 			break;
@@ -273,24 +310,23 @@ void MonoComplex< MatrixComplex > :: void calculate(Tuple neuer, std::array<int>
     // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
     if( norm_preserved )   // Compute all horizontal boundaries.
     {
-        for( i = 1; i < p; i++ )
+        for( uint32_t i = 1; i < p; i++ )
         {
-            if( (rand = neuer.d_hor(i)) )
+            if( (boundary = current_basis.d_hor(i)) && boundary.monotone() ) // then it contributes to the differential with the computed parity
             {
-                if( rand.monotone() == true ) // then it contributes to the differential with the computed parity
+                boundary.id = basis_complex[p-1].id_of(boundary);
+                
+                parity = (parity + i) % 2;
+//                std::cout << it << "->" << boundary << std::endl;
+//                std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << parity << std::endl;
+//                std::cout << std::endl;
+                if (parity == 0)
                 {
-                    parity = (parity + i) % 2;
-                    std::cout << it << "->" << rand << std::endl;
-                    std::cout << it.id << "->" << basis_complex[p-1].id_of(rand) << " in " << "M_{" << basis_complex[p].size() << "," << basis_complex[p-1].size() << "} parity=" << parity << std::endl;
-                    std::cout << std::endl;
-                    if (parity == 0)
-                    {
-                        differential(rand.id, it.id) += 1;
-                    }
-                    else
-                    {
-                        differential(rand.id, it.id) += -1;
-                    }
+                    differential(boundary.id, it.id) += 1;
+                }
+                else
+                {
+                    differential(boundary.id, it.id) += -1;
                 }
             }
         }

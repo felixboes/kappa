@@ -58,8 +58,12 @@ public:
     void gen_bases(uint32_t l, uint32_t p, Tuple& tuple); 
     void gen_differential(int32_t p);                     ///< generate the p-th differential 
     void gen_differentials();                             ///< generate all differentials
-
+    void gen_differential_naive(int32_t p);
+    void pi_del_phi_naive(const Tuple& it, std::vector<int32_t> & s);
+    
     void show_basis( int32_t p ) const;
+    void show_differential( int32_t p ) const;
+    void show_differential_naive( int32_t p ) const;
     //std::string show_bases() const;
 private:
     uint32_t g;     ///< genus
@@ -67,6 +71,7 @@ private:
     uint32_t h;     ///< h = 2*g+m
     
     MatrixComplex matrix_complex;                         ///< underlying matrix complex of this MonoComplex
+    MatrixComplex matrix_complex_naive;                   ///< underlying matrix complex of this MonoComplex
     std::map< uint32_t, MonoBasis > basis_complex;        ///< basis_complex[n] is the n-th MonoBasis, i.e. the basis of the n-th module of this MonoComplex.
 };
 
