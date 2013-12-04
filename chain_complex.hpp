@@ -28,7 +28,12 @@ public:
     /**
      *  Access the \f$n\f$-th differential.
      */
-    const MatrixT &at (const int32_t& n );    
+    const MatrixT &at ( const int32_t& n ) const;
+    
+    /**
+     *  @returns 0 iff there is no differential stored and 1 else.
+     */
+    size_t count( const int32_t& n ) const;
     
     /**
      *  Access the coefficient of the \f$n\f$-th differential at the position (row, col).

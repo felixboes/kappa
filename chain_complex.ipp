@@ -12,10 +12,17 @@ MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operat
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-const MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::at (const int32_t& n )
+const MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::at (const int32_t& n ) const
 {
     return differential.at(n);
 }
+
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+size_t ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::count (const int32_t& n ) const
+{
+    return differential.count(n);
+}
+
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
 CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator() ( int32_t n, uint32_t row, uint32_t col )
