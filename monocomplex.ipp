@@ -222,11 +222,11 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
                         {
                             boundary.id = basis_complex[p-1].id_of(boundary);
                             
-                            parity = (parity + i) % 2;
+                            int32_t actual_parity = (parity + i) % 2;
                             std::cout << it << " " << i << ": The d^hor_i boundary of " << current_basis << ". This is " << boundary << std::endl;
-                            std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << parity << std::endl;
+                            std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << actual_parity << std::endl;
                             std::cout << std::endl;
-                            if (parity == 0)
+                            if (actual_parity == 0)
                             {
                                 differential(boundary.id, it.id) += 1;
                             }
@@ -315,12 +315,10 @@ void MonoComplex< MatrixComplex > :: pi_del_phi_naive(const Tuple& it, std::vect
             if( (boundary = current_basis.d_hor_naive(i)) && boundary.monotone() ) // then it contributes to the differential with the computed parity
             {
                 boundary.id = basis_complex[p-1].id_of(boundary);
-                
-                parity = (parity + i) % 2;
 //                std::cout << it << "->" << boundary << std::endl;
-//                std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << parity << std::endl;
+//                std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << (parity + i) % 2 << std::endl;
 //                std::cout << std::endl;
-                if (parity == 0)
+                if ((parity + i) % 2 == 0)
                 {
                     differential(boundary.id, it.id) += 1;
                 }
