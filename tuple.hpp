@@ -7,8 +7,15 @@
 #include <map>
 #include <vector>
 
+
+/**
+ *  A Transposition is represented by a pair of uint8_t.
+ */
 typedef std::pair< uint8_t, uint8_t > Transposition;
 
+/**
+ *  A Tuple has a permutation type which stores the number of cycles of \f$ \sigma_h \f$ and the number of internal punctures.
+ */ 
 struct PermutationType
 {
     PermutationType() : num_cycles(0), num_punctures(0) {}
@@ -80,7 +87,7 @@ public:
     uint32_t p;  ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
     uint32_t id; ///< The index of this Tuple in the basis of the MonoComplex.
 private:
-    Transposition& at(size_t);
+    Transposition& at(size_t q);                     ///< Access the q-th Transposition.
     std::vector< Transposition > rep;                ///< Representation of a tuple of transpositions.
     typedef std::map<uint8_t, uint8_t> Permutation;  ///< Data structure to store a permutation, where a -> perm[a] if perm is a Permutation
     Permutation long_cycle() const;                  ///< Returns the cycle 1 -> 2 -> ... -> p-1 -> p -> 1.
