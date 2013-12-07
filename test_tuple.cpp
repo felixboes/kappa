@@ -64,6 +64,15 @@ int main()
     t.phi(5,3);
     compare_boundary_computations(t);
     
+    Tuple s(3,3);
+    s[3] = Transposition(2,1);
+    s[2] = Transposition(2,1);
+    s[1] = Transposition(3,2);
+    
+    std::cout << s.d_hor_naive(2) << std::endl;
+    
+    // (2,1)(2,1)(3,2) (123) (2,1)(2,1)(3,1)
+    
     HashTuple h;
     std::cout << "Hash of " << t << ":" << h(t) << std::endl;
     

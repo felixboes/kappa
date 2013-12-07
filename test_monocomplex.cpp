@@ -28,42 +28,40 @@ bool equals( const MatrixType& A, const MatrixType& B )
     return false;
 }
 
-int main()
+void print_usage(int argc, char** argv)
 {
+    std::cout << "Usage: " << argv[0] << " g m differential_to_print (show_basis = 0 or 1) (check_dd_zero = 0 or 1)" << std::endl;
+}
+
+int main(int argc, char** argv)
+{
+    if( argc < 4 )
+    {
+        print_usage(argc, argv);
+        return 1;
+    }
+    
     typedef MonoComplex<ChainComplexQ> MonoComplexQ;
-    MonoComplexQ mc(1,3); // p = 2( 1*2+3 )= 10
-//    mc.show_basis(1);
-//    mc.show_basis(2);
-//    mc.show_basis(3);
-//    mc.show_basis(4);
-//    mc.show_basis(5);
+    MonoComplexQ mc( atoi(argv[1]), atoi(argv[2]) ); // p = 2( 1*2+3 )= 10
     
-//    mc.gen_differential(4);
+    if( argc >= 5 && atoi(argv[4]) != 0 )
+    {
+        mc.show_basis( atoi(argv[3]) - 1 );
+        mc.show_basis( atoi(argv[3]) );
+    }
     
+    mc.gen_differential( atoi(argv[3]) );
     
-    mc.gen_differential(1);
-    mc.gen_differential_naive(1);
-    mc.gen_differential(2);
-    mc.gen_differential_naive(2);
-    mc.gen_differential(3);
-    mc.gen_differential_naive(3);
-    mc.gen_differential(4);
-    mc.gen_differential_naive(4);
-    mc.gen_differential(5);
-    mc.gen_differential_naive(5);
-    mc.gen_differential(6);
-    mc.gen_differential_naive(6);
-    mc.gen_differential(7);
-    mc.gen_differential_naive(7);
+    std::cout << mc.matrix_complex[atoi(argv[3])] << std::endl;
     
-    
-    std::cout << ( equals(mc.matrix_complex[1], mc.matrix_complex_naive[1] )? "Yeay" : "Ohh nein" ) << std::endl;
-    std::cout << ( equals(mc.matrix_complex[2], mc.matrix_complex_naive[2] )? "Yeay" : "Ohh nein" ) << std::endl;
-    std::cout << ( equals(mc.matrix_complex[3], mc.matrix_complex_naive[3] )? "Yeay" : "Ohh nein" ) << std::endl;
-    std::cout << ( equals(mc.matrix_complex[4], mc.matrix_complex_naive[4] )? "Yeay" : "Ohh nein" ) << std::endl;
-    std::cout << ( equals(mc.matrix_complex[5], mc.matrix_complex_naive[5] )? "Yeay" : "Ohh nein" ) << std::endl;
-    std::cout << ( equals(mc.matrix_complex[6], mc.matrix_complex_naive[6] )? "Yeay" : "Ohh nein" ) << std::endl;
-    std::cout << ( equals(mc.matrix_complex[7], mc.matrix_complex_naive[7] )? "Yeay" : "Ohh nein" ) << std::endl;
+    if( argc >= 6 && atoi(argv[5]) != 0 )
+    {
+        mc.gen_differential( atoi(argv[3]) - 1 );
+        std::cout << mc.matrix_complex[atoi(argv[3]) - 1] << std::endl;
+        
+        std::cout << "Check if dd = 0:" << std::endl;
+        std::cout << prod( mc.matrix_complex[atoi(argv[3]) - 1], mc.matrix_complex[atoi(argv[3])] ) << std::endl; 
+    }
     
     return 0;
 }

@@ -223,9 +223,9 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
                             boundary.id = basis_complex[p-1].id_of(boundary);
                             
                             parity = (parity + i) % 2;
-//                            std::cout << it << "->" << boundary << std::endl;
-//                            std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << parity << std::endl;
-//                            std::cout << std::endl;
+                            std::cout << it << " " << i << ": The d^hor_i boundary of " << current_basis << ". This is " << boundary << std::endl;
+                            std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << parity << std::endl;
+                            std::cout << std::endl;
                             if (parity == 0)
                             {
                                 differential(boundary.id, it.id) += 1;
