@@ -68,6 +68,7 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
         size_t col = 0;
         size_t row_1 = 0;
         
+        auto t = std::chrono::steady_clock::now();
         // Iterate through columns. We may stop if the rank is maximal.
         for (; col < num_cols && rank < num_rows; ++col )
         {
@@ -80,6 +81,7 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
             // Does this row contribute to the rank, i.e. did we find an invertible element?
             if( it != rows_to_check.end() )
             {
+                std::cout << "Diagonalize: " << rank << " of " << num_rows << "\r";
                 // This row contributes to the rank.
                 rank++;
                 row_1 = *it;
@@ -87,7 +89,7 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
                 // After erasing, it will point to the next element in the list.
                 it = rows_to_check.erase(it);
                 // Use row operations to zeroize the remaining elements of the column.
-                for( ; it != rows_to_check.end(); ++it )
+                for(size_t relative_position=0 ; it != rows_to_check.end(); ++it, ++relative_position )
                 {
                     size_t row_2 = *it;
                     // Assuming that the entry (row_2, col) differs from zero, we perform
@@ -99,6 +101,7 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
                 }
             }
         }
+        std::cout << "Diagonalization done. Duration: " << std::chrono::duration<double>(std::chrono::steady_clock::now() - t).count() << " seconds." << std::endl;
     }
     return rank;
 }

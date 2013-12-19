@@ -1,6 +1,7 @@
 #ifndef DIAGONALIZER_ZM_HPP
 #define DIAGONALIZER_ZM_HPP
 
+#include <chrono>
 #include <cinttypes>
 #include <functional>
 #include <future>

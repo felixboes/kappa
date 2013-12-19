@@ -77,7 +77,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
     // diff_{n+1} is 0
     if( differential.count(n+1) == 0 || differential[n+1].size1() == 0 )
     {
-        // Tthere is no torsion.
+        // There is no torsion.
         typename HomologyT::TorsT t;
         homol.set_tors( n, t );
     }
@@ -131,4 +131,3 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
     
     return homol;
 }
-
