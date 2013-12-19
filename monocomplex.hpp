@@ -1,6 +1,7 @@
 #ifndef MONOCOMPLEX_H
 #define MONOCOMPLEX_H
 
+#include <chrono>
 #include <stdint.h>
 #include <functional>
 #include <iomanip>
