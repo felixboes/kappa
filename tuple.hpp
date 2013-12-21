@@ -7,6 +7,9 @@
 #include <map>
 #include <vector>
 
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/vector.hpp>
 
 /**
  *  A Transposition is represented by a pair of uint8_t.
@@ -94,6 +97,13 @@ private:
     Permutation long_cycle_inv() const;              ///< Returns the cycle 1 -> p -> p-2 -> ... -> 2 -> 1.
     
     void print_permutation( Permutation sigma ) const;
+    
+    // Implement serialization.
+    friend class boost::serialization::access;
+    template <class Archive> void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization of Tuple.
+    {
+        ar & p & id & rep;
+    }
 };
 
 /// output stream

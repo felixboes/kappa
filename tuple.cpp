@@ -518,3 +518,4 @@ size_t HashTuple :: operator ()( const Tuple &tuple ) const
     }
     return hashvalue;
 }
+
