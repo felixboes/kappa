@@ -151,7 +151,7 @@ std::string Zm::get_string()
 
 std::ostream& operator<< (std::ostream& stream, const Zm& coeff)
 {
-    return stream << coeff.n;
+    return stream << ((coeff.n %coeff.base)+coeff.base)%coeff.base;
 }
 
 /*

@@ -4,6 +4,7 @@
 #include <cinttypes>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
+#include <boost/serialization/access.hpp>
 
 /**
  *  The coefficient ring \f$ \mathbb{Z} / m \mathbb{Z} \f$.
@@ -41,6 +42,12 @@ private:
     static std::vector<int> inv;
     operator int() const;
     operator unsigned() const;
+    
+    friend class boost::serialization::access;
+    template <class Archive> void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization of a coefficient.
+    {
+        ar & n;
+    }
 };
 
 bool operator !=( const Zm, const Zm );
