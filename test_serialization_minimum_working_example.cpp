@@ -43,10 +43,10 @@ void save_tuple(Tuple t)
     out.push(boost::iostreams::bzip2_compressor());
     out.push(ofs);
     
-    // Open binary_archive in order to serialize the given integer.
+    // Open binary_archive in order to serialize the given tuple.
     boost::archive::binary_oarchive oa(out);
     
-    // Put integer into the binary_archive.
+    // Put tuple into the binary_archive.
     oa << t;
 }
 
@@ -80,7 +80,7 @@ void load_tuple()
     in.push(boost::iostreams::bzip2_decompressor());
     in.push(ifs);
     
-    // Open binary_archive in order to deserialize the given integer.
+    // Open binary_archive in order to deserialize the given tuple.
     boost::archive::binary_iarchive ia(in);
     
     Tuple t;
