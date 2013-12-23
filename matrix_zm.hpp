@@ -44,7 +44,9 @@ private:
     operator unsigned() const;
     
     friend class boost::serialization::access;
-    template <class Archive> void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization of a coefficient.
+    
+    template <class Archive>
+    void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization of a coefficient.
     {
         ar & n;
     }

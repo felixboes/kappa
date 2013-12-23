@@ -5,6 +5,8 @@
 #include <iostream>
 #include <map>
 
+#include <boost/serialization/access.hpp>
+
 /**
  *  We assume, that \f$ 0 \times n \f$- and \f$ n \times 0 \f$-matrices require negligible RAM.
  *  Using standard tools, our tests where successfull for the types MatrixZm and MatrixQ.
@@ -57,6 +59,14 @@ public:
     
 private:
     std::map< int32_t, MatrixT > differential;
+    
+    friend class boost::serialization::access;
+    
+    template <class Archive>
+    void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization.
+    {
+        ar & differential;
+    }
 };
 
 #include "chain_complex.ipp"
