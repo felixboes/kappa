@@ -113,6 +113,13 @@ class HashTuple
 {
 public:
     size_t operator()( const Tuple& ) const;
+    
+    friend class boost::serialization::access;
+    
+    template <class Archive>
+    void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization.
+    {
+    }
 };
 
 #endif // TUPLE_HPP

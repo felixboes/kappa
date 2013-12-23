@@ -7,8 +7,9 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
-#include <omp.h>
 #include <unordered_set>
+
+#include <boost/serialization/access.hpp>
 
 #include <homology.hpp>
 
@@ -35,6 +36,14 @@ struct MonoBasis
     
     /// Stores the orderd basis.
     std::unordered_set< Tuple, HashTuple > basis;
+    
+    friend class boost::serialization::access;
+    
+    template <class Archive>
+    void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization.
+    {
+        ar & basis;
+    }
 };
 
 std::ostream& operator<< (std::ostream& stream, const MonoBasis& basis);
@@ -74,6 +83,15 @@ public:
     MatrixComplex matrix_complex;                         ///< underlying matrix complex of this MonoComplex
     MatrixComplex matrix_complex_naive;                   ///< underlying matrix complex of this MonoComplex (genereted the naive way)
     std::map< uint32_t, MonoBasis > basis_complex;        ///< basis_complex[n] is the n-th MonoBasis, i.e. the basis of the n-th module of this MonoComplex.
+    
+    friend class boost::serialization::access;
+    
+    template <class Archive>
+    void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization.
+    {
+        ar & matrix_complex;
+        ar & basis_complex;
+    }
 };
 
 #include "monocomplex.ipp"
