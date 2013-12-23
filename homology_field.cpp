@@ -34,8 +34,8 @@ std::ostream &operator << ( std::ostream& os, const HomologyField& homol )
             torsion = homol.tors.at( it->first );
         }
         
-        os << "Homologiemodul an der Stelle " << std::setw(4) << it->first << std::endl;
-        os << std::setfill('-') << std::setw(40) << "-" << std::setfill(' ') << std::endl;
+        os << "Homology module H_" << it->first << std::endl;
+        os << std::setfill('-') << std::setw(35) << "-" << std::setfill(' ') << std::endl;
         os << "Dimension = " << it->second - torsion << std::endl;
         os << std::endl;
     }
