@@ -70,10 +70,15 @@ void test2(int argc, char** argv)
     }
 }
 
-void test3(int32_t i)
+void test3(int argc, char** argv)
 {   
-    std::string t ("test_out_file_");
-    t += std::to_string(i);
+    if(argc < 4)
+    {
+        std::cout << "g m p" << std::endl;
+        return;
+    }
+    std::string t("./cache/bases/");
+    t += std::to_string(atoi(argv[1])) + "_" + std::to_string(atoi(argv[2])) + "_" + std::to_string(atoi(argv[3]));
     
     auto ba = load_from_file_bz2<MonoBasis>(t).basis;
     std::cout << ba.size() << std::endl;
@@ -89,7 +94,7 @@ int main(int argc, char** argv)
 {
     //test1(argc, argv);
     //test2(argc, argv);
-    test3(atoi(argv[1]));
+    test3(argc, argv);
     
     return 0;
 }

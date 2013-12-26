@@ -12,31 +12,37 @@ void print_usage(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
+    // Parse configuration from command line arguments.
     SessionConfig conf(argc, argv);
     if( conf.valid == false )
     {
         print_usage(argc, argv);
         return 1;
     }
+    if ( conf.setup_configuration() == false )
+    {
+        std::cout << "The configuration could not been setup." << std::endl;
+        return 2;
+    }
     
-    conf.setup_configuration();
-    
+    // We may start with the computations.
     if(conf.rational == true)
     {
+        // Compute all bases.
         MonoComplexZStorageOnly monocomplex( conf.genus, conf.num_punctures );
-        monocomplex.gen_differentials();
         
+        // Save bases to file
+        std::string prefix_basis("./cache/bases/");
+        prefix_basis += std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
         for( auto& it : monocomplex.basis_complex )
         {
+            // Store the p-th basis.
             auto& p = it.first;
-            std::string prefix_basis("./cache/bases/");
-            std::string prefix_differentials("./cache/differentials/");
-            
-            std::string t ("test_out_file_");
-            t += std::to_string(p);
-            save_to_file_bz2<MonoBasis>(it.second, t.c_str());
-            std::cout << it.second << std::endl;
+            save_to_file_bz2<MonoBasis>(it.second, prefix_basis + std::to_string(p));
         }
+        
+        // Compute all differentials.
+        monocomplex.gen_differentials();
         
         //save_to_file_bz2<MatrixZDontDiagonalize>( monocomplex.matrix_complex[3], "test_out_file" );
         

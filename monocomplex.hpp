@@ -38,10 +38,12 @@ struct MonoBasis
     
     friend class boost::serialization::access;
     
-    /// @warning The serialization library from boost does not yet support unorderd maps. Therefore we must provide a workaround.
+    /// @warning The serialization library from boost does not yet support unorderd maps (we use boost in the version 1.49). Therefore we must provide a workaround.
+    /// boost::serialization method that we use to save a MonoBasis to file.
     template<class Archive>
     void save(Archive & ar, const unsigned int version) const
     {
+        // In order to load an unorderd_set we need to know the exact number of elemets that are stored.
         size_t size = basis.size();
         ar & size;
         for( const auto& it : basis )
@@ -49,6 +51,8 @@ struct MonoBasis
             ar & it;
         }
     }
+    
+    /// boost::serialization method that we use to load a MonoBasis from file.
     template<class Archive>
     void load(Archive & ar, const unsigned int version)
     {
@@ -62,6 +66,8 @@ struct MonoBasis
             basis.insert(t);
         }
     }
+    
+    // This is required as saving and loading are different methods.
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
@@ -102,8 +108,6 @@ public:
     MatrixComplex matrix_complex;                         ///< underlying matrix complex of this MonoComplex
     MatrixComplex matrix_complex_naive;                   ///< underlying matrix complex of this MonoComplex (genereted the naive way)
     std::map< uint32_t, MonoBasis > basis_complex;        ///< basis_complex[n] is the n-th MonoBasis, i.e. the basis of the n-th module of this MonoComplex.
-    
-    friend class boost::serialization::access;
 };
 
 #include "monocomplex.ipp"

@@ -98,7 +98,6 @@ private:
     
     void print_permutation( Permutation sigma ) const;
     
-    // Implement serialization.
     friend class boost::serialization::access;
     template <class Archive> void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization of Tuple.
     {
@@ -109,6 +108,9 @@ private:
 /// output stream
 std::ostream& operator<< (std::ostream& stream, const Tuple& tuple);
 
+/**
+ *  In order to save Tuples in a hash table (e.g. in MonoBasis) we need a function object, that hashes Tuples.
+ */ 
 class HashTuple
 {
 public:

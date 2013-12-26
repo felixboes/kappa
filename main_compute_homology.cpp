@@ -11,6 +11,7 @@ void print_usage(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
+    // Parse configuration from command line arguments.
     SessionConfig conf(argc, argv);
     if( conf.valid == false )
     {
@@ -18,28 +19,21 @@ int main(int argc, char** argv)
         return 1;
     }
     
+    if ( conf.setup_configuration() == false )
+    {
+        std::cout << "The configuration could not been setup." << std::endl;
+        return 2;
+    }
+    
     // We may start with the computations.
     if(conf.rational == true)
     {
+        // Compute all bases.
         MonoComplexQ monocomplex( conf.genus, conf.num_punctures );
+        // Compute all differentials.
         monocomplex.gen_differentials();
         
-        for( auto& it : monocomplex.basis_complex )
-        {
-            auto& p = it.first;
-            monocomplex.show_basis(p);
-            monocomplex.show_differential(p);
-        }
-        
-        std::cout << monocomplex.matrix_complex.homology() << std::endl;
-        
-        return 0;
-    }
-    else
-    {
-        MonoComplexZm monocomplex( conf.genus, conf.num_punctures );
-        monocomplex.gen_differentials();
-        
+//        // Print all bases and differentials to screen.
 //        for( auto& it : monocomplex.basis_complex )
 //        {
 //            auto& p = it.first;
@@ -47,6 +41,27 @@ int main(int argc, char** argv)
 //            monocomplex.show_differential(p);
 //        }
         
+        // Compute homology and print to screen.
+        std::cout << monocomplex.matrix_complex.homology() << std::endl;
+        
+        return 0;
+    }
+    else
+    {
+        // Compute all bases.
+        MonoComplexZm monocomplex( conf.genus, conf.num_punctures );
+        // Compute all differentials.
+        monocomplex.gen_differentials();
+        
+//        // Print all bases and differentials to screen.
+//        for( auto& it : monocomplex.basis_complex )
+//        {
+//            auto& p = it.first;
+//            monocomplex.show_basis(p);
+//            monocomplex.show_differential(p);
+//        }
+        
+        // Compute homology and print to screen.
         std::cout << monocomplex.matrix_complex.homology() << std::endl;
         
         return 0;

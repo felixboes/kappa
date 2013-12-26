@@ -5,13 +5,13 @@ CPPFLAGS =-std=c++11 -O3
 LIBS = -I../libhomology -lgmpxx -lgmp
 OBJ = factorial.o monocomplex.o tuple.o sessionconfig.o
 
-compute_homology:$(OBJ)
+compute_homology:$(OBJ) main_compute_homology.cpp
 	$(CPP) $(CPPFLAGS) -o compute_homology main_compute_homology.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS)
 
-compute_statistics:$(OBJ)
+compute_statistics:$(OBJ) main_compute_statistics.cpp
 	$(CPP) $(CPPFLAGS) -o compute_statistics main_compute_statistics.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) -lboost_iostreams -lboost_serialization
 
-compute_cache:$(OBJ)
+compute_cache:$(OBJ) main_compute_cache.cpp
 	$(CPP) $(CPPFLAGS) -o compute_cache main_compute_cache.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) -lboost_iostreams -lboost_serialization
 
 %.o: %.cpp 
