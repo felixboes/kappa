@@ -26,19 +26,19 @@ int main(int argc, char** argv)
         MonoComplexZStorageOnly monocomplex( conf.genus, conf.num_punctures );
         monocomplex.gen_differentials();
         
-//        for( auto& it : monocomplex.basis_complex )
-//        {
-//            auto& p = it.first;
-//            std::string prefix_basis("./cache/bases/");
-//            std::string prefix_differentials("./cache/differentials/");
+        for( auto& it : monocomplex.basis_complex )
+        {
+            auto& p = it.first;
+            std::string prefix_basis("./cache/bases/");
+            std::string prefix_differentials("./cache/differentials/");
             
-//            std::string t ("test_out_file_");
-//            t += std::to_string(p);
-//            save_to_file_bz2<MonoBasis>(it.second, t.c_str());
-//            std::cout << it.second.size() << std::endl;
-//        }
+            std::string t ("test_out_file_");
+            t += std::to_string(p);
+            save_to_file_bz2<MonoBasis>(it.second, t.c_str());
+            std::cout << it.second << std::endl;
+        }
         
-        save_to_file_bz2<MatrixZDontDiagonalize>( monocomplex.matrix_complex[3], "test_out_file" );
+        //save_to_file_bz2<MatrixZDontDiagonalize>( monocomplex.matrix_complex[3], "test_out_file" );
         
         return 0;
     }

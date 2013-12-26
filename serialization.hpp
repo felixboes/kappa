@@ -9,7 +9,9 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/iostreams/filter/bzip2.hpp>
 #include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/serialization/access.hpp>
 
+/// @warning: unorders_set is not yet supported by boost::serialization.
 
 /**
  *  Save a given class T to filename.bz2.
@@ -17,7 +19,7 @@
 template <class T>
 void save_to_file_bz2(T& t, std::string filename){
     // Open binary file 'filename.bz2'.
-    std::ofstream ofs( (std::string(filename) + ".bz2").c_str(), std::ios::out|std::ios::binary|std::ios::trunc);
+    std::ofstream ofs( (filename + ".bz2").c_str(), std::ios::out|std::ios::binary|std::ios::trunc);
     
     // Wrap the 'compress with bzip2'-filter around ofs.
     boost::iostreams::filtering_streambuf<boost::iostreams::output> out;
@@ -35,10 +37,10 @@ void save_to_file_bz2(T& t, std::string filename){
  *  Save a given class T from filename.bz2.
  */
 template <class T>
-T load_from_file_bz2(char* filename)
+T load_from_file_bz2(std::string filename)
 {
     // Open binary file 'filename.bz2'.
-    std::ifstream ifs( (std::string(filename) + ".bz2").c_str(), std::ios::in|std::ios::binary);
+    std::ifstream ifs( (filename + ".bz2").c_str(), std::ios::in|std::ios::binary);
     
     // Wrap the 'decompress with bzip2'-filter around ifs.
     boost::iostreams::filtering_streambuf<boost::iostreams::input> in;

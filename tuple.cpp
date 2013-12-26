@@ -69,10 +69,6 @@ Tuple :: operator bool() const
 
 std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
 {
-    #ifdef KAPPA_DEBUG_TUPEL
-    PermutationType pt = permutation_type();
-    stream << "Externe = " << pt.num_cycles - 1 << " Interne = " << pt.num_punctures << " p = " << p << ": ";
-    #endif
     for( auto it = tuple.rep.crbegin(); it != tuple.rep.crend(); ++it )
     {
         stream << "(" << (uint32_t)it->first << ",";
@@ -85,6 +81,8 @@ std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
             stream << "*)";
         }
     }
+    
+    std::cout << " Basis number (if any): " << tuple.id;
     
     return stream;
 }

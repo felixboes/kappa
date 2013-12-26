@@ -1,5 +1,8 @@
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <unordered_set>
+#include <boost/serialization/set.hpp>
 
 #include <homology.hpp>
 
@@ -67,25 +70,26 @@ void test2(int argc, char** argv)
     }
 }
 
-void test3()
-{
-    std::cout << load_from_file_bz2<MatrixZDontDiagonalize>("test_out_file") << std::endl;
+void test3(int32_t i)
+{   
+    std::string t ("test_out_file_");
+    t += std::to_string(i);
     
-//    auto ba = load_from_file_bz2<MonoBasis>("test_out_file_2").basis;
-//    std::cout << ba.size() << std::endl;
+    auto ba = load_from_file_bz2<MonoBasis>(t).basis;
+    std::cout << ba.size() << std::endl;
     
-//    for( auto& it : load_from_file_bz2<MonoBasis>("test_out_file_2").basis )
-//    {
-//        std::cout << it << std::endl;
-//    }
-//    std::cout << std::endl;
-    
+    for( auto& it : ba )
+    {
+        std::cout << it << std::endl;
+    }
+    std::cout << std::endl;    
 }
 
 int main(int argc, char** argv)
 {
     //test1(argc, argv);
     //test2(argc, argv);
-    test3();
+    test3(atoi(argv[1]));
+    
     return 0;
 }
