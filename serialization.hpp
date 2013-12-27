@@ -12,6 +12,8 @@
 #include <boost/iostreams/filter/bzip2.hpp>
 #include <boost/iostreams/filtering_streambuf.hpp>
 #include <boost/serialization/access.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/vector.hpp>
 
 /// @warning: unorders_set is not yet supported by boost::serialization.
 
@@ -23,6 +25,7 @@ void save_to_file_bz2( T& t, std::string filename, bool print_duration = true ){
     if( print_duration == true )
     {
         std::cout << "Saving '" + filename + ".bz2'";
+        std::cout.flush();
     }
     auto measure_duration = std::chrono::steady_clock::now();
     
@@ -43,6 +46,7 @@ void save_to_file_bz2( T& t, std::string filename, bool print_duration = true ){
     if( print_duration == true )
     {
         std::cout << " done. Duration: " << std::chrono::duration<double>(std::chrono::steady_clock::now() - measure_duration).count() << " seconds." << std::endl;
+        std::cout.flush();
     }
 }
 
@@ -57,6 +61,7 @@ T load_from_file_bz2( std::string filename, bool print_duration = true)
         if( print_duration == true )
         {
             std::cout << "Loading '" + filename + ".bz2'";
+            std::cout.flush();
         }
         auto measure_duration = std::chrono::steady_clock::now();
         
@@ -75,12 +80,14 @@ T load_from_file_bz2( std::string filename, bool print_duration = true)
         if( print_duration == true )
         {
             std::cout << " done. Duration: " << std::chrono::duration<double>(std::chrono::steady_clock::now() - measure_duration).count() << " seconds." << std::endl;
+            std::cout.flush();
         }
         return t;
     }
     else
     {
         std::cout << "This '" << filename + ".bz2' is not a file." << std::endl;
+        std::cout.flush();
         return T();
     }
 }

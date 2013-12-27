@@ -13,9 +13,11 @@ MonoComplex< MatrixComplex > :: MonoComplex(uint32_t _g, uint32_t _m) : g(_g), m
     tuple.p = 2;
     
     std::cout << "Generating bases";
+    std::cout.flush();
     auto measure_duration = std::chrono::steady_clock::now();
     gen_bases(1, 2, tuple);  // We start with the transposition ... (2 1).
     std::cout << " done. Duration: " << std::chrono::duration<double>(std::chrono::steady_clock::now() - measure_duration).count() << " seconds." << std::endl;
+    std::cout.flush();
 }
 
 template< class MatrixComplex >
@@ -196,6 +198,7 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     MatrixType& differential = matrix_complex[p];
     
     std::cout << "Computing pi o del o kappa_" << p;
+    std::cout.flush();
     auto measure_duration = std::chrono::steady_clock::now();
     // For each tuple t in the basis, we compute all basis elements that 
     // occur in kappa(t). 
@@ -256,6 +259,7 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
         }
     }
     std::cout << " done. Duration: " << std::chrono::duration<double>(std::chrono::steady_clock::now() - measure_duration ).count() << " seconds." << std::endl;
+    std::cout.flush();
 }
 
 

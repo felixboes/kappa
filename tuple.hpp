@@ -7,9 +7,7 @@
 #include <map>
 #include <vector>
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/utility.hpp>
-#include <boost/serialization/vector.hpp>
+#include "serialization.hpp"
 
 /**
  *  A Transposition is represented by a pair of uint8_t.
