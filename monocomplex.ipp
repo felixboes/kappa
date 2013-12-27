@@ -196,6 +196,8 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     // Todo: Test this.
     matrix_complex[p] = MatrixType ( basis_complex[p-1].size(), basis_complex[p].size() );
     MatrixType& differential = matrix_complex[p];
+    // Initialize with zeros.
+    differential.clear();
     
     std::cout << "Computing pi o del o kappa_" << p;
     std::cout.flush();
