@@ -2,7 +2,6 @@
 #include <fstream>
 #include <string>
 #include <unordered_set>
-#include <boost/serialization/set.hpp>
 
 #include <homology.hpp>
 
@@ -81,13 +80,7 @@ void test3(int argc, char** argv)
     t += std::to_string(atoi(argv[1])) + "_" + std::to_string(atoi(argv[2])) + "_" + std::to_string(atoi(argv[3]));
     
     auto ba = load_from_file_bz2<MonoBasis>(t).basis;
-    std::cout << ba.size() << std::endl;
-    
-    for( auto& it : ba )
-    {
-        std::cout << it << std::endl;
-    }
-    std::cout << std::endl;    
+    std::cout << ba.size() << std::endl;   
 }
 
 int main(int argc, char** argv)

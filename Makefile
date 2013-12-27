@@ -2,19 +2,20 @@ LANG = en_US.UTF-8
 
 CPP = g++
 CPPFLAGS =-std=c++11 -O3
-LIBS = -I../libhomology -lgmpxx -lgmp
+LIBS = -I../libhomology -lgmpxx -lgmp -lboost_filesystem -lboost_system -lboost_iostreams -lboost_serialization
 OBJ = factorial.o monocomplex.o tuple.o sessionconfig.o
+INCLUDES = $(wildcard *.hpp)
 
-compute_homology:$(OBJ) main_compute_homology.cpp
+compute_homology:$(OBJ) ${INCLUDES} main_compute_homology.cpp
 	$(CPP) $(CPPFLAGS) -o compute_homology main_compute_homology.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS)
 
-compute_statistics:$(OBJ) main_compute_statistics.cpp
-	$(CPP) $(CPPFLAGS) -o compute_statistics main_compute_statistics.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) -lboost_iostreams -lboost_serialization
+compute_statistics:$(OBJ) ${INCLUDES} main_compute_statistics.cpp
+	$(CPP) $(CPPFLAGS) -o compute_statistics main_compute_statistics.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) 
 
-compute_cache:$(OBJ) main_compute_cache.cpp
-	$(CPP) $(CPPFLAGS) -o compute_cache main_compute_cache.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) -lboost_iostreams -lboost_serialization
+compute_cache:$(OBJ) ${INCLUDES} main_compute_cache.cpp
+	$(CPP) $(CPPFLAGS) -o compute_cache main_compute_cache.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) 
 
-%.o: %.cpp 
+%.o: %.cpp ${INCLUDES}
 	$(CPP) $(CPPFLAGS) -c  $< -I../libhomology/
 
 doc:

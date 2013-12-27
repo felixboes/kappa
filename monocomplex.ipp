@@ -13,9 +13,9 @@ MonoComplex< MatrixComplex > :: MonoComplex(uint32_t _g, uint32_t _m) : g(_g), m
     tuple.p = 2;
     
     std::cout << "Generating bases";
-    auto t = std::chrono::steady_clock::now();
+    auto measure_duration = std::chrono::steady_clock::now();
     gen_bases(1, 2, tuple);  // We start with the transposition ... (2 1).
-    std::cout << " done. Duration: " << std::chrono::duration<double>(std::chrono::steady_clock::now() - t).count() << " seconds." << std::endl;
+    std::cout << " done. Duration: " << std::chrono::duration<double>(std::chrono::steady_clock::now() - measure_duration).count() << " seconds." << std::endl;
 }
 
 template< class MatrixComplex >
@@ -196,7 +196,7 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     MatrixType& differential = matrix_complex[p];
     
     std::cout << "Computing pi o del o kappa_" << p;
-    auto t = std::chrono::steady_clock::now();
+    auto measure_duration = std::chrono::steady_clock::now();
     // For each tuple t in the basis, we compute all basis elements that 
     // occur in kappa(t). 
     for( auto it : basis_complex[p].basis )
@@ -255,7 +255,7 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
             }
         }
     }
-    std::cout << " done. Duration: " << std::chrono::duration<double>(std::chrono::steady_clock::now() - t).count() << " seconds." << std::endl;
+    std::cout << " done. Duration: " << std::chrono::duration<double>(std::chrono::steady_clock::now() - measure_duration ).count() << " seconds." << std::endl;
 }
 
 
@@ -299,6 +299,21 @@ void MonoComplex< MatrixComplex > :: gen_differential_naive(int32_t p)
 			pos = h;
 		}
 	}
+}
+
+template< class MatrixComplex >
+void MonoComplex< MatrixComplex >::delete_differential(int32_t p)
+{
+    if( matrix_complex.count(p) != 0 )
+    {
+        // Delete matrix to save space.
+        // Quote from the boost::ublas documentation http://www.boost.org/doc/libs/1_49_0/libs/numeric/ublas/doc/matrix.htm
+        //
+        // void resize (size_type size1, size_type size2, bool preserve = true)
+        // Reallocates a matrix to hold size1 rows of size2 elements. The existing elements of the matrix are preseved when specified.
+        matrix_complex[p].resize(0,0,false);
+        matrix_complex.erase(p);
+    }
 }
 
 // for one sequence s_p, ..., s_1, this calculates the multiple application of phi, of and of the d_i.

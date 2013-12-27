@@ -34,6 +34,7 @@ int main(int argc, char** argv)
         // Save bases to file
         std::string prefix_basis("./cache/bases/");
         prefix_basis += std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
+        
         for( auto& it : monocomplex.basis_complex )
         {
             // Store the p-th basis.
@@ -42,9 +43,15 @@ int main(int argc, char** argv)
         }
         
         // Compute all differentials.
-        monocomplex.gen_differentials();
-        
-        //save_to_file_bz2<MatrixZDontDiagonalize>( monocomplex.matrix_complex[3], "test_out_file" );
+        std::string prefix_differentials("./cache/differentials/");
+        prefix_differentials += std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
+        for( auto& it : monocomplex.basis_complex )
+        {
+            auto& p = it.first;
+            monocomplex.gen_differential( p );
+            save_to_file_bz2<MatrixZDontDiagonalize>( monocomplex.matrix_complex[p], prefix_differentials + std::to_string(p) );
+            monocomplex.delete_differential(p);
+        }
         
         return 0;
     }
