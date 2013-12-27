@@ -15,6 +15,8 @@ int main(int argc, char** argv)
         return 1;
     }
     
+    Zm::set_modulus(atoi(argv[1]), 1);
+    
     std::cout.setf(std::ios::unitbuf);
     
     std::cout << "Anzahl Zeilen eingeben." << std::endl;
@@ -26,9 +28,11 @@ int main(int argc, char** argv)
     std::cin >> spalten;
     
     MatrixZm Test(zeilen,spalten);
-    std::cout << Test.data().size();
+    std::cout << Test.data().size() << std::endl;
     
-    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+    Test.resize(0,0, false);
+    std::cout << Test.data().size() << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
     
     return 0;
 }

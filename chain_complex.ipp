@@ -23,6 +23,11 @@ size_t ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::count (c
     return differential.count(n);
 }
 
+template < class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::erase (const int32_t &n)
+{
+    differential.erase(n);
+}
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
 CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator() ( int32_t n, uint32_t row, uint32_t col )
