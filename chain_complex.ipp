@@ -45,6 +45,13 @@ bool ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::exists_dif
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
 HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homology( int32_t n )
 {
+    atomic_uint current_rank;
+    return homology(n, current_rank);
+}
+
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homology( int32_t n, atomic_uint & current_rank )
+{
     HomologyT homol;
     // Case by case anaylsis:
     
@@ -76,7 +83,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
     {
         // Diagonalize.
         DiagonalizerT diago;
-        diago( differential[n] );
+        diago( differential[n], current_rank );
         homol.set_kern( n, diago.kern() );
     }
     // diff_{n+1} is 0
@@ -98,7 +105,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
         }
         // Diagonalize.
         DiagonalizerT diago;
-        diago( differential[n+1] );
+        diago( differential[n+1], current_rank );
         homol.set_tors( n, diago.tors() );
     }
     

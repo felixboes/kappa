@@ -42,11 +42,11 @@ void DiagonalizerZm::row_operation(MatrixZm & matrix, size_t row_1, size_t row_2
  *  Compute the dimension of the image of matrix.
  *  This done by computing the number of lineary independent columns or rows.
  */ 
-uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
+uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix, atomic_uint& current_rank)
 {
     size_t num_rows = matrix.size1();
     size_t num_cols = matrix.size2();
-    size_t rank = 0; // Stores the dimension of the subspace spanned by the first 0 \le j < col columns. The dimension is at most of size row.
+    current_rank = 0; // Stores the dimension of the subspace spanned by the first 0 \le j < col columns. The dimension is at most of size row.
     
     /// @TODO: Is #rows <= #cols?
     // if( num_rows <= num_cols )
@@ -70,7 +70,7 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
         
         auto t = std::chrono::steady_clock::now();
         // Iterate through columns. We may stop if the rank is maximal.
-        for (; col < num_cols && rank < num_rows; ++col )
+        for (; col < num_cols && current_rank < num_rows; ++col )
         {
             // Find first invertible (i.e. non-zero) entry in the remaining rows.
             auto it = rows_to_check.begin();
@@ -81,9 +81,9 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
             // Does this row contribute to the rank, i.e. did we find an invertible element?
             if( it != rows_to_check.end() )
             {
-                std::cout << "Diagonalize: " << rank << " of " << num_rows << "\r";
+                //std::cout << "Diagonalize: " << current_rank << " of " << num_rows << "\r";
                 // This row contributes to the rank.
-                rank++;
+                current_rank++;
                 row_1 = *it;
                 // We do not need to check this row in further iterations.
                 // After erasing, it will point to the next element in the list.
@@ -101,14 +101,20 @@ uint32_t DiagonalizerZm::diag_field(MatrixZm &matrix)
                 }
             }
         }
-        std::cout << "Diagonalization done. Duration: " << std::chrono::duration<double>(std::chrono::steady_clock::now() - t).count() << " seconds." << std::endl;
+        //std::cout << "Diagonalization done. Duration: " << std::chrono::duration<double>(std::chrono::steady_clock::now() - t).count() << " seconds." << std::endl;
     }
-    return rank;
+    return current_rank;
 }
 
 void DiagonalizerZm::operator() ( MatrixZm &matrix )
 {
-    rnk = diag_field( matrix );
+    atomic_uint current_rank;
+    this->operator ()(matrix, current_rank);
+}
+
+void DiagonalizerZm::operator() ( MatrixZm &matrix, atomic_uint & current_rank )
+{
+    rnk = diag_field( matrix, current_rank );
     def = matrix.size2() - rnk;
 }
 

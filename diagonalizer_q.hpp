@@ -8,6 +8,7 @@
 
 #include "homology_field.hpp"
 #include "matrix_q.hpp"
+#include "parallelization.hpp"
 
 class DiagonalizerQ
 {
@@ -19,6 +20,8 @@ public:
     *   Diagonalize a given matrix.
     **/
     void operator() ( MatrixQ &matrix );
+    
+    void operator() ( MatrixQ &matrix, atomic_uint & current_rank );
     
     /**
      *  Diagonalize matrix and apply the base change to post_matrix.
@@ -53,6 +56,7 @@ private:
      *  The matrix is diagonalized via Gauss to compute the number of linearly independant columns or rows.
      */
     uint32_t diag_field(MatrixQ& matrix);
+    uint32_t diag_field(MatrixQ& matrix, atomic_uint & current_rank);
     
     /**
      *  Performs a row operation to matrix to zeroize the entry (row_2, col) using the entry (row_1, col).

@@ -42,11 +42,11 @@ void DiagonalizerQ::row_operation(MatrixQ & matrix, size_t row_1, size_t row_2, 
  *  Compute the dimension of the image of matrix.
  *  This done by computing the number of lineary independent columns or rows.
  */ 
-uint32_t DiagonalizerQ::diag_field(MatrixQ &matrix)
+uint32_t DiagonalizerQ::diag_field(MatrixQ &matrix, atomic_uint & current_rank )
 {
     size_t num_rows = matrix.size1();
     size_t num_cols = matrix.size2();
-    size_t rank = 0; // Stores the dimension of the subspace spanned by the first 0 \le j < col columns. The dimension is at most of size row.
+    current_rank = 0; // Stores the dimension of the subspace spanned by the first 0 \le j < col columns. The dimension is at most of size row.
     
     /// @TODO: Is #rows <= #cols?
     // if( num_rows <= num_cols )
@@ -66,7 +66,7 @@ uint32_t DiagonalizerQ::diag_field(MatrixQ &matrix)
         }
         
         // Iterate through columns. We may stop if the rank is maximal.
-        for ( size_t col = 0; col < num_cols && rank < num_rows; col++ )
+        for ( size_t col = 0; col < num_cols && current_rank < num_rows; col++ )
         {
             // Find first invertible (i.e. non-zero) entry in the remaining rows.
             auto it = rows_to_check.begin();
@@ -78,7 +78,7 @@ uint32_t DiagonalizerQ::diag_field(MatrixQ &matrix)
             if( it != rows_to_check.end() )
             {
                 // This row contributes to the rank.
-                rank++;
+                current_rank++;
                 size_t row_1 = *it;
                 // We do not need to check this row in further iterations.
                 // After erasing, it will point to the next element in the list.
@@ -99,12 +99,18 @@ uint32_t DiagonalizerQ::diag_field(MatrixQ &matrix)
             }
         }
     }
-    return rank;
+    return current_rank;
 }
 
 void DiagonalizerQ::operator() ( MatrixQ &matrix )
 {
-    rnk = diag_field( matrix );
+    atomic_uint current_rank;
+    this->operator ()(matrix, current_rank);
+}
+
+void DiagonalizerQ::operator() ( MatrixQ &matrix, atomic_uint & current_rank )
+{
+    rnk = diag_field( matrix, current_rank );
     def = matrix.size2() - rnk;
 }
 

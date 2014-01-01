@@ -7,6 +7,8 @@
 
 #include <boost/serialization/access.hpp>
 
+#include "parallelization.hpp"
+
 /**
  *  We assume, that \f$ 0 \times n \f$- and \f$ n \times 0 \f$-matrices require negligible RAM.
  *  Using standard tools, our tests where successfull for the types MatrixZm and MatrixQ.
@@ -20,7 +22,9 @@ public:
     typedef MatrixT MatrixType;
     typedef DiagonalizerT DiagonalizerType;
     typedef HomologyT HomologyType;
+    
     ChainComplex();
+    
     
     /**
      *  Access the \f$n\f$-th differential.
@@ -51,6 +55,11 @@ public:
      *  Compute the homology at the \f$n\f$-th spot.
      */
     HomologyT homology( int32_t n );
+    
+    /**
+     *  Compute the homology at the \f$n\f$-th spot.
+     */
+    HomologyT homology( int32_t n, atomic_uint & current_rank );
     
     /**
      *  Compute all the homology.
