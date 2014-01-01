@@ -86,7 +86,7 @@ void test2( int argc, char** argv )
     // The process (rows that are diagonalized) is stores in current_rank_0
     // In detail:
     // We call std::async with the 'policy' std::launch::async i.e. we start a new thread.
-    // This tread calls our lambda function.
+    // This thread calls our lambda function.
     // The lambda function accesses the variables by reference as it is defined as [&].
     // The return value of std::async is a std::future<void>
     auto diag_thread_0 = std::async(std::launch::async, [&]()
@@ -98,12 +98,12 @@ void test2( int argc, char** argv )
         } );
     // As above.
     auto diag_thread_1 = std::async(std::launch::async, [&]()
-    {
-       std::cout << "Diagonalizer 0 initialized." << std::endl;
-       std::cout.flush();
-       DiagonalizerZm diago;
-       diago( mc.matrix_complex[ atoi(argv[3]) + 1 ], current_rank_1 );
-    } );
+        {
+           std::cout << "Diagonalizer 1 initialized." << std::endl;
+           std::cout.flush();
+           DiagonalizerZm diago;
+           diago( mc.matrix_complex[ atoi(argv[3]) + 1 ], current_rank_1 );
+        } );
     // Start a thread that prints out the current status.
     auto monitor_thread = std::async(std::launch::async, [&]()
         {
@@ -113,23 +113,31 @@ void test2( int argc, char** argv )
             // We print the status as long as one of the diagoanlizer threads is working.
             // Therefore we have to check if the std::future(s) are still valid and
             // wait max. 100 second to check wether the thread is still working.
+            // Observe: In the printing command, we HAVE to check wether diag_thread_x is valid since
+            // after returning from the get below, the behaviour of wait_for() is undefined.
+            // See also [Stroustrup page 1242].
             while( diag_thread_0.valid() && diag_thread_0.wait_for( std::chrono::milliseconds(100) ) == std::future_status::timeout )
             {
                 std::cout << "Thread 0:" << std::setw(5) << current_rank_0 << " " <<
-                             "Thread 1:" << std::setw(5) << current_rank_1 << "\r";
+                             "Thread 1:" << std::setw(5) << ( diag_thread_1.valid() == false || diag_thread_1.wait_for( std::chrono::milliseconds(0) ) == std::future_status::ready ? "done" : std::to_string(current_rank_1.load()) ) << "\r";
                 std::cout.flush();
             }
             while( diag_thread_1.valid() && diag_thread_1.wait_for( std::chrono::milliseconds(100) ) == std::future_status::timeout )
             {
-                std::cout << "Thread 0:" << std::setw(5) << current_rank_0 << " " <<
+                std::cout << "Thread 0:" << std::setw(5) << ( diag_thread_0.valid() == false || diag_thread_0.wait_for( std::chrono::milliseconds(0) ) == std::future_status::ready ? "done" : std::to_string(current_rank_0.load()) ) << " " <<
                              "Thread 1:" << std::setw(5) << current_rank_1 << "\r";
                 std::cout.flush();
             }
         } );
 
+    
+    // Wait for thread terminations.
     diag_thread_0.get();
     diag_thread_1.get();
     monitor_thread.get();
+    
+    std::cout << "Thread 0:" << std::setw(5) << "done" << " " <<
+                 "Thread 1:" << std::setw(5) << "done" << std::endl;
 }
 
 int main(int argc, char** argv)
