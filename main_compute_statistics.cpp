@@ -16,19 +16,21 @@ void print_usage(int argc, char** argv)
 template< class MatrixT >
 void print_statistics( MatrixT& M )
 {
-    std::cout << "Number of rows: " << M.size1() << std::endl;
-    std::cout << "Number of columns: " << M.size2() << std::endl;
-    
+    uint32_t num_rows = M.size1();
+    uint32_t num_cols = M.size2();
     int32_t pos_infty = std::numeric_limits<int32_t>::max();
     int32_t neg_infty = std::numeric_limits<int32_t>::min();
     
-    std::vector<mpz_class> num_entries_per_col(M.size2(), 0);
-    std::vector<mpz_class>  largest_entry_per_col(M.size2(), neg_infty );
-    std::vector<mpz_class> smallest_entry_per_col(M.size2(), pos_infty );
+    std::cout << "Number of rows: " << num_rows << std::endl;
+    std::cout << "Number of columns: " << num_cols << std::endl;
     
-    for( uint32_t i = 0; i < M.size2(); ++i )
+    std::vector<mpz_class> num_entries_per_col( num_cols, 0 );
+    std::vector<mpz_class> largest_entry_per_col( num_cols, neg_infty );
+    std::vector<mpz_class> smallest_entry_per_col( num_cols, pos_infty );
+    
+    for( uint32_t i = 0; i < num_cols; ++i )
     {
-        for( uint32_t j = 0; j < M.size1(); ++j )
+        for( uint32_t j = 0; j < num_rows; ++j )
         {
             if( M(j,i) != 0 )
             {
@@ -75,11 +77,11 @@ void print_statistics( MatrixT& M )
     std::cout << std::endl;
     
     mpz_class total(0);
-    for( uint32_t i = 0; i < M.size2(); ++i )
+    for( uint32_t i = 0; i < num_cols; ++i )
     {
         total += num_entries_per_col[i];
     }
-    std::cout << "Average number of non-zero entries (arethmetic mean): exact: " << mpq_class(total) / M.size2() << " floored:" << total / M.size2() << std::endl;
+    std::cout << "Average number of non-zero entries (arithmetic mean): exact: " << mpq_class(total) / num_cols << " floored:" << total / num_cols << std::endl;
 }
 
 int main(int argc, char** argv)
