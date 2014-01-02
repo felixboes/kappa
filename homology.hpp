@@ -2,6 +2,7 @@
 #define HOMOLOGY_HPP
 
 #include "chain_complex.hpp"
+#include "clock.hpp"
 #include "diagonalizer_dummy.hpp"
 #include "diagonalizer_q.hpp"
 #include "diagonalizer_zm.hpp"
