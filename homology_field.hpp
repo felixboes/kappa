@@ -32,6 +32,12 @@ public:
     /// sets the torsion
     void set_tors( int32_t n, TorsT t );
     
+    /// gets the kernel
+    KernT get_kern( int32_t ) const;
+    
+    /// sets the kernel
+    TorsT get_tors( int32_t ) const;
+    
     /// output stream
     friend std::ostream& operator<< (std::ostream& stream, const HomologyField& homol);
 

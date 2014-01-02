@@ -20,6 +20,31 @@ void HomologyField::set_tors( int32_t n, TorsT t )
     tors[n] = t;
 }
 
+HomologyField::KernT HomologyField::get_kern( int32_t n ) const
+{
+    if( kern.count(n) == 0 )
+    {
+        return KernT();
+    }
+    else
+    {
+        return kern.at(n);
+    }
+}
+
+HomologyField::TorsT HomologyField::get_tors( int32_t n ) const
+{
+    if( tors.count(n) == 0 )
+    {
+        return TorsT();
+    }
+    else
+    {
+        return tors.at(n);
+    }
+}
+
+
 std::ostream &operator << ( std::ostream& os, const HomologyField& homol )
 {
     for( auto it = homol.kern.begin(); it != homol.kern.end(); ++it )

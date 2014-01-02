@@ -50,6 +50,58 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_kernel_and_torsion( int32_t n )
+{
+    atomic_uint current_rank(0);
+    return compute_kernel_and_torsion(n, current_rank);
+}
+
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_kernel_and_torsion( int32_t n, atomic_uint & current_rank )
+{
+    HomologyT homol;
+    // Case by case anaylsis:
+    
+    // diff_n is the zero matrix if either it is not stored or it has no rows.
+    // In this case, the defect is the whole module.
+    
+    // diff_n is not stored.
+    if( differential.count(n) == 0 )
+    {
+        // The dimension of the n-th module is known by the (n+1)-th differential.
+        if( differential.count(n+1) )
+        {
+            homol.set_kern( n, differential[n+1].size1() );
+        }
+        else // The dimension of the n-th module is unkown.
+        {
+            typename HomologyT::KernT k;
+            homol.set_kern( n, k );
+            std::cerr << "Error: Homology in " << n << " unknown." << std::endl;
+        }
+    }
+    // diff_n has no rows.
+    else if ( differential[n].size1() == 0 )
+    {
+        // The dimension equals the number of columns.
+        homol.set_kern( n, differential[n].size2() );
+        // There is no torsion one dimension below.
+        typename HomologyT::TorsT t;
+        homol.set_tors( n-1, t);
+    }
+    else
+    {
+        // Diagonalize.
+        DiagonalizerT diago;
+        diago( differential[n], current_rank );
+        homol.set_kern( n, diago.kern() );
+        homol.set_tors( n-1, diago.tors() );
+    }
+    
+    return homol;    
+}
+
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
 HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homology( int32_t n, atomic_uint & current_rank )
 {
     HomologyT homol;
@@ -120,10 +172,10 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
     // Iterate through all the existing differentials. For each differential diff_n, we
     // compute the kernel (stored in the n-th homology module) and the image (stored
     // as torsion in the (n-1)-st homology module).
-    for( auto it = differential.begin(); it != differential.end(); ++it )
+    for( auto& it : differential )
     {
-        int32_t n = it->first;
-        MatrixT diff = it->second;
+        int32_t n = it.first;
+        MatrixT diff = it.second;
         // if diff_n is 0, everything is kernel and nothing is torsion
         if( diff.size1() == 0 )
         {
