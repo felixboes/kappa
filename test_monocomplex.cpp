@@ -116,15 +116,15 @@ void test2( int argc, char** argv )
             // Observe: In the printing command, we HAVE to check wether diag_thread_x is valid since
             // after returning from the get below, the behaviour of wait_for() is undefined.
             // See also [Stroustrup page 1242].
-            while( diag_thread_0.valid() && diag_thread_0.wait_for( std::chrono::milliseconds(100) ) == std::future_status::timeout )
+            while( thread_running(diag_thread_0) )
             {
                 std::cout << "Thread 0:" << std::setw(5) << current_rank_0 << " " <<
-                             "Thread 1:" << std::setw(5) << ( diag_thread_1.valid() == false || diag_thread_1.wait_for( std::chrono::milliseconds(0) ) == std::future_status::ready ? "done" : std::to_string(current_rank_1.load()) ) << "\r";
+                             "Thread 1:" << std::setw(5) << ( thread_running(diag_thread_1) == false ? "done" : std::to_string(current_rank_1.load()) ) << "\r";
                 std::cout.flush();
             }
-            while( diag_thread_1.valid() && diag_thread_1.wait_for( std::chrono::milliseconds(100) ) == std::future_status::timeout )
+            while( thread_running( diag_thread_1 ) )
             {
-                std::cout << "Thread 0:" << std::setw(5) << ( diag_thread_0.valid() == false || diag_thread_0.wait_for( std::chrono::milliseconds(0) ) == std::future_status::ready ? "done" : std::to_string(current_rank_0.load()) ) << " " <<
+                std::cout << "Thread 0:" << std::setw(5) << ( thread_running( diag_thread_0 ) == false ? "done" : std::to_string(current_rank_0.load()) ) << " " <<
                              "Thread 1:" << std::setw(5) << current_rank_1 << "\r";
                 std::cout.flush();
             }

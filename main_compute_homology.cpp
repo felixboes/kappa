@@ -29,14 +29,14 @@ void compute_homology( SessionConfig conf )
         max_possible_rank = std::min( monocomplex.matrix_complex[p].size1(), monocomplex.matrix_complex[p].size2() );
         
         // Compute the induced homology.
-        auto measure_duration = std::chrono::steady_clock::now();
+        Clock measure_duration;
         // Diagonalzing thread.
         auto partial_homology_thread = std::async( std::launch::async, [&]() { return monocomplex.matrix_complex.compute_kernel_and_torsion( p, current_rank ); } );
         
         // Monitoring thread.
         auto monitor_thread = std::async( std::launch::async, [&]()
         {
-            while( partial_homology_thread.valid() && partial_homology_thread.wait_for( std::chrono::milliseconds(100) ) == std::future_status::timeout )
+            while( thread_running( partial_homology_thread ) )
             {
                 std::cout << "Diagonalization " << current_rank << "/" << max_possible_rank << "\r";
                 std::cout.flush();
@@ -49,7 +49,7 @@ void compute_homology( SessionConfig conf )
         homology.set_kern( p, partial_homology.get_kern(p) );
         homology.set_tors( p-1, partial_homology.get_tors(p-1) );
         
-        std::cout << "Diagonalization done. Duration: " << std::chrono::duration<double>(std::chrono::steady_clock::now() - measure_duration).count() << " seconds." << std::endl;
+        std::cout << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         
         // Delete the differential.
         monocomplex.erase_differential(p);

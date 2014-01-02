@@ -15,6 +15,8 @@
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/vector.hpp>
 
+#include <homology.hpp>
+
 /// @warning: unorders_set is not yet supported by boost::serialization.
 
 /**
@@ -27,7 +29,7 @@ void save_to_file_bz2( T& t, std::string filename, bool print_duration = true ){
         std::cout << "Saving '" + filename + ".bz2'";
         std::cout.flush();
     }
-    auto measure_duration = std::chrono::steady_clock::now();
+    Clock measure_duration;
     
     // Open binary file 'filename.bz2'.
     std::ofstream ofs( (filename + ".bz2").c_str(), std::ios::out|std::ios::binary|std::ios::trunc );    
@@ -45,7 +47,7 @@ void save_to_file_bz2( T& t, std::string filename, bool print_duration = true ){
     
     if( print_duration == true )
     {
-        std::cout << " done. Duration: " << std::chrono::duration<double>(std::chrono::steady_clock::now() - measure_duration).count() << " seconds." << std::endl;
+        std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         std::cout.flush();
     }
 }
@@ -63,7 +65,7 @@ T load_from_file_bz2( std::string filename, bool print_duration = true)
             std::cout << "Loading '" + filename + ".bz2'";
             std::cout.flush();
         }
-        auto measure_duration = std::chrono::steady_clock::now();
+        Clock measure_duration;
         
         // Open binary file 'filename.bz2'.
         std::ifstream ifs( (filename + ".bz2").c_str(), std::ios::in|std::ios::binary );
@@ -79,7 +81,7 @@ T load_from_file_bz2( std::string filename, bool print_duration = true)
         
         if( print_duration == true )
         {
-            std::cout << " done. Duration: " << std::chrono::duration<double>(std::chrono::steady_clock::now() - measure_duration).count() << " seconds." << std::endl;
+            std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
             std::cout.flush();
         }
         return t;
