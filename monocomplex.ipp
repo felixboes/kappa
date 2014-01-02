@@ -308,7 +308,7 @@ void MonoComplex< MatrixComplex > :: gen_differential_naive(int32_t p)
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex >::delete_differential(int32_t p)
+void MonoComplex< MatrixComplex >::erase_differential(int32_t p)
 {
     if( matrix_complex.count(p) != 0 )
     {

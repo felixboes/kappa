@@ -50,7 +50,7 @@ int main(int argc, char** argv)
             auto& p = it.first;
             monocomplex.gen_differential( p );
             save_to_file_bz2<MatrixZDontDiagonalize>( monocomplex.matrix_complex[p], prefix_differentials + std::to_string(p) );
-            monocomplex.delete_differential(p);
+            monocomplex.erase_differential(p);
         }
         
         return 0;

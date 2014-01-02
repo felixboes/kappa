@@ -35,9 +35,9 @@ void print_statistics( MatrixT& M )
             if( M(j,i) != 0 )
             {
                 num_entries_per_col[i]++;
-                largest_entry_per_col[i] = std::max( largest_entry_per_col[i], mpz_class(M(j,i)) );
-                smallest_entry_per_col[i] = std::min( smallest_entry_per_col[i], mpz_class(M(j,i)) );
             }
+            largest_entry_per_col[i] = std::max( largest_entry_per_col[i], mpz_class(M(j,i)) );
+            smallest_entry_per_col[i] = std::min( smallest_entry_per_col[i], mpz_class(M(j,i)) );
         }
     }
     
@@ -51,28 +51,14 @@ void print_statistics( MatrixT& M )
     std::cout << "Largest entries (per column): |";
     for( auto& it : largest_entry_per_col )
     {
-        if( it == neg_infty )
-        {
-            std::cout << "-inf|";
-        }
-        else
-        {
-            std::cout << it << "|";   
-        }
+        std::cout << it << "|";   
     }
     std::cout << std::endl;
     
     std::cout << "Smallest entries (per column): |";
     for( auto& it : smallest_entry_per_col )
     {
-        if( it == pos_infty )
-        {
-            std::cout << "+inf|";
-        }
-        else
-        {
-            std::cout << it << "|";   
-        }
+        std::cout << it << "|";
     }
     std::cout << std::endl;
     

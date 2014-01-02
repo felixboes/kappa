@@ -81,6 +81,7 @@ class MonoComplex
 {
 public:
     typedef typename MatrixComplex::MatrixType MatrixType;
+    typedef typename MatrixComplex::HomologyType HomologyType;
     
     MonoComplex(uint32_t genus, uint32_t num_punctures);
     /** Recursive function initializing the basis_complex.
@@ -94,7 +95,7 @@ public:
     void gen_differential(int32_t p);                       ///< generate the p-th differential 
     void gen_differentials();                               ///< generate all differentials
     void gen_differential_naive(int32_t p);                 ///< generate all differentials (the naive way)
-    void delete_differential(int32_t p);                    ///< deletes the p-th differential.
+    void erase_differential(int32_t p);                     ///< erases the p-th differential.
     
     void pi_del_phi_naive(const Tuple& it, std::vector<int32_t> & s);
     
