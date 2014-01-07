@@ -29,6 +29,7 @@ public:
     Zm& operator+=(const Zm);
     Zm& operator-=(const Zm);
     Zm& operator*=(const Zm);
+    Zm& operator/=(const Zm);
     Zm operator-() const;
     operator bool() const;  // false iff the coefficient is zero
     
@@ -56,6 +57,8 @@ bool operator !=( const Zm, const Zm );
 Zm operator+(const Zm, const Zm);
 Zm operator-(const Zm, const Zm);
 Zm operator*(const Zm, const Zm);
+Zm operator/(const Zm, const Zm);
+
 Zm operator*(const Zm, const int);
 
 

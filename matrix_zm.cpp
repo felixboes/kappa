@@ -114,13 +114,13 @@ bool const Zm::is_invertible()
  *--------------------------------------------------------------------------------------
  *       Class:  Zm
  *      Method:  Zm :: inverse
- * Description:  returns the inverse of a Zmicient
+ * Description:  returns the inverse of a Coefficient
  *--------------------------------------------------------------------------------------
  */
 
 Zm const Zm::inverse()
 {
-    return Zm(((n % base)+base)%base);
+    return Zm(  inv[(((n % base)+base)%base)] );
 }
 
 /*
@@ -202,6 +202,12 @@ Zm& Zm::operator *=(Zm a)
     return *this;
 }
 
+Zm& Zm::operator /=(Zm a)
+{
+    this->operator*= ( a.inverse() );
+    return *this;
+}
+
 Zm Zm::operator-() const
 {
     Zm r(-n);
@@ -229,6 +235,12 @@ Zm operator*(Zm a, Zm b)
 {
     Zm r(a);
     return r *= b;
+}
+
+Zm operator/ (Zm a, Zm b)
+{
+    Zm r(a);
+    return r /= b;
 }
 
 Zm operator*(Zm a, const int b)

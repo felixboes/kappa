@@ -47,21 +47,14 @@ HomologyField::TorsT HomologyField::get_tors( int32_t n ) const
 
 std::ostream &operator << ( std::ostream& os, const HomologyField& homol )
 {
-    for( auto it = homol.kern.begin(); it != homol.kern.end(); ++it )
+    for( const auto& it : homol.kern )
     {
-        int64_t torsion;
-        if( homol.tors.count( it->first ) == 0 )
-        {
-            torsion = 0;
-        }
-        else
-        {
-            torsion = homol.tors.at( it->first );
-        }
+        auto & p = it.first;
+        auto & kern = it.second;
         
-        os << "Homology module H_" << it->first << std::endl;
+        os << "Homology module H_" << p << std::endl;
         os << std::setfill('-') << std::setw(35) << "-" << std::setfill(' ') << std::endl;
-        os << "Dimension = " << it->second - torsion << std::endl;
+        os << "Dimension = " << kern - homol.get_tors(p) << std::endl;
         os << std::endl;
     }
     return os;
