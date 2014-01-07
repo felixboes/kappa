@@ -198,7 +198,6 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     matrix_complex[p] = MatrixType ( basis_complex[p-1].size(), basis_complex[p].size() );
     MatrixType& differential = matrix_complex[p];
     // Initialize with zeros.
-    differential.clear();
     
     std::cout << "Constructing the " << p << "-th differential";
     std::cout.flush();
@@ -318,7 +317,7 @@ void MonoComplex< MatrixComplex >::erase_differential(int32_t p)
         //
         // void resize (size_type size1, size_type size2, bool preserve = true)
         // Reallocates a matrix to hold size1 rows of size2 elements. The existing elements of the matrix are preseved when specified.
-        matrix_complex[p].resize(0,0,false);
+        //matrix_complex[p].resize(0,0,false);
         matrix_complex.erase(p);
     }
 }

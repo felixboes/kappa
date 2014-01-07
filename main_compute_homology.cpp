@@ -35,8 +35,12 @@ void compute_homology( SessionConfig conf )
         
         // Compute the induced homology.
         Clock measure_duration;
+        
         // Diagonalzing thread.
-        auto partial_homology_thread = std::async( std::launch::async, [&]() { return monocomplex.matrix_complex.compute_kernel_and_torsion( p, current_rank ); } );
+        auto partial_homology_thread = std::async( std::launch::async, [&]()
+        {
+            return monocomplex.matrix_complex.compute_kernel_and_torsion( p, current_rank );
+        } );
         
         // Monitoring thread.
         auto monitor_thread = std::async( std::launch::async, [&]()
@@ -48,12 +52,15 @@ void compute_homology( SessionConfig conf )
             }
         } );
         
+        // Wait for threads to terminate.
         auto partial_homology = partial_homology_thread.get();
         monitor_thread.get();
         
+        // Save results.
         homology.set_kern( p, partial_homology.get_kern(p) );
         homology.set_tors( p-1, partial_homology.get_tors(p-1) );
         
+        // Print status message.
         std::cout << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         std::cout << "    dim(H_" << (int32_t)(p-1) << ") = " << (int32_t)(homology.get_kern(p-1) - homology.get_tors(p-1)) << std::endl;
         std::cout << std::endl;
@@ -61,11 +68,13 @@ void compute_homology( SessionConfig conf )
         // Delete the differential.
         monocomplex.erase_differential(p);
     }
-        
+    
+    // Print status message.
     std::cout << std::endl;
     std::cout << "------------  Results   ------------" << std::endl;
     std::cout << std::endl;
-    // Print to screen.
+    
+    // Print results.
     std::cout << homology << std::endl;
 }
 
@@ -88,7 +97,7 @@ int main(int argc, char** argv)
     // We may start with the computations.
     if(conf.rational == true)
     {
-        compute_homology< MonoComplexQ >( conf );
+        //compute_homology< MonoComplexQ >( conf );
     }
     else
     {
