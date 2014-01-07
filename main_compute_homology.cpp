@@ -13,9 +13,14 @@ void print_usage(int argc, char** argv)
 template< class MonoComplexT >
 void compute_homology( SessionConfig conf )
 {
+    std::cout << "-------- Constructing bases --------" << std::endl;
+    
     // Compute all bases.
     MonoComplexT monocomplex( conf.genus, conf.num_punctures );
     typename MonoComplexT::HomologyType homology;
+    
+    std::cout << std::endl;
+    std::cout << "-------- Computing Homology --------" << std::endl;
     
     // Compute all differentials and homology consecutively.
     for( auto& it : monocomplex.basis_complex )
@@ -50,10 +55,16 @@ void compute_homology( SessionConfig conf )
         homology.set_tors( p-1, partial_homology.get_tors(p-1) );
         
         std::cout << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+        std::cout << "    dim(H_" << (int32_t)(p-1) << ") = " << (int32_t)(homology.get_kern(p-1) - homology.get_tors(p-1)) << std::endl;
+        std::cout << std::endl;
         
         // Delete the differential.
         monocomplex.erase_differential(p);
     }
+        
+    std::cout << std::endl;
+    std::cout << "------------  Results   ------------" << std::endl;
+    std::cout << std::endl;
     // Print to screen.
     std::cout << homology << std::endl;
 }

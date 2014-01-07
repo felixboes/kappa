@@ -7,8 +7,8 @@ OBJ = factorial.o monocomplex.o tuple.o sessionconfig.o
 INCLUDES = $(wildcard *.hpp)
 GCC_LT_4_7 := $(shell expr `g++ -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g'` \< 407)
 ifeq "$(GCC_LT_4_7)" "1"
-        CPPFLAGS :=-std=c++0x -O3
-        LIBS += -lpthread -lboost_chrono
+	CPPFLAGS :=-std=c++0x -O3
+	LIBS += -lpthread -lboost_chrono
 endif
 
 compute_homology:$(OBJ) ${INCLUDES} main_compute_homology.cpp

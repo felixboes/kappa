@@ -12,8 +12,9 @@ MonoComplex< MatrixComplex > :: MonoComplex(uint32_t _g, uint32_t _m) : g(_g), m
     tuple[1] = Transposition(2, 1);
     tuple.p = 2;
     
-    std::cout << "Generating bases";
+    std::cout << "Constructing bases";
     std::cout.flush();
+    
     Clock measure_duration;
     gen_bases(1, 2, tuple);  // We start with the transposition ... (2 1).
     std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
@@ -199,7 +200,7 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     // Initialize with zeros.
     differential.clear();
     
-    std::cout << "Computing pi o del o kappa_" << p;
+    std::cout << "Constructing the " << p << "-th differential";
     std::cout.flush();
     Clock measure_duration;
     // For each tuple t in the basis, we compute all basis elements that 
