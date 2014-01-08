@@ -1,19 +1,20 @@
-#ifndef MATRIX_HPP
-#define MATRIX_HPP
+#ifndef MATRIX_FIELD_HPP
+#define MATRIX_FIELD_HPP
 
 #include <iostream>
 #include <vector>
 
+#include "field_coefficients.hpp"
 #include "parallelization.hpp"
 
 template < class CoefficientT >
-class Matrix
+class MatrixField
 {
 public:
     typedef std::vector<CoefficientT> MatrixStorageType;
     
-    Matrix();
-    Matrix( size_t number_rows, size_t number_cols );
+    MatrixField();
+    MatrixField( size_t number_rows, size_t number_cols );
     
     void row_operation( size_t row_1, size_t row_2, size_t col );
     
@@ -22,7 +23,9 @@ public:
     size_t size1() const;
     size_t size2() const;
     
-    friend std::ostream& operator<< ( std::ostream& stream, const Matrix<CoefficientT> & matrix )
+    void clear();
+    
+    friend std::ostream& operator<< ( std::ostream& stream, const MatrixField<CoefficientT> & matrix )
     {
         for( size_t i = 0; i < matrix.num_rows; ++i )
         {
@@ -58,5 +61,11 @@ private:
     }
 };
 
-#include "matrix.ipp"
-#endif // MATRIX_HPP
+template class MatrixField<Q>;
+template class MatrixField<Zm>;
+
+typedef MatrixField<Q> MatrixQ;
+typedef MatrixField<Zm> MatrixZm;
+
+#include "matrix_field.ipp"
+#endif // MATRIX_FIELD_HPP

@@ -60,7 +60,7 @@ uint32_t DiagonalizerField< CoefficientT >::diag_field(MatrixType &matrix, atomi
         {
             // Find first invertible (i.e. non-zero) entry in the remaining rows.
             auto it = rows_to_check.begin();
-            for( ; it != rows_to_check.end() && matrix( *it, col ).is_invertible() == false; ++it )
+            for( ; it != rows_to_check.end() && matrix( *it, col ) == CoefficientType(0); ++it )
             {
             }
             
@@ -79,7 +79,7 @@ uint32_t DiagonalizerField< CoefficientT >::diag_field(MatrixType &matrix, atomi
                     size_t row_2 = *it;
                     // Assuming that the entry (row_2, col) differs from zero, we perform
                     // a row operation to matrix to zeroize the entry (row_2, col) using the entry (row_1, col). 
-                    if( matrix( row_2, col ) )
+                    if( matrix( row_2, col ) != CoefficientType(0) )
                     {
                         matrix.row_operation( row_1, row_2, col );
                     }

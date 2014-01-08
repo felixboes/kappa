@@ -1,10 +1,20 @@
-#ifndef MATRIX_ZM_HPP
-#define MATRIX_ZM_HPP
+#ifndef FIELD_COEFFICIENTS_HPP
+#define FIELD_COEFFICIENTS_HPP
 
 #include <cinttypes>
-#include <boost/numeric/ublas/matrix.hpp>
-#include <boost/numeric/ublas/matrix_proxy.hpp>
+#include <cmath>
+#include <gmpxx.h>
+#include <iostream>
+#include <vector>
+
 #include <boost/serialization/access.hpp>
+
+#include "parallelization.hpp"
+
+/**
+ *  The coefficient ring \f$ \mathbb{Q} \f$.
+ */
+typedef mpq_class Q;
 
 /**
  *  The coefficient ring \f$ \mathbb{Z} / m \mathbb{Z} \f$.
@@ -18,7 +28,6 @@ public:
     bool const is_invertible();
     Zm const inverse();
     void const show();
-    std::string get_string();
     static void clean_up();
     static bool is_field();
     
@@ -62,12 +71,5 @@ Zm operator/(const Zm, const Zm);
 Zm operator*(const Zm, const int);
 
 
-std::ostream& operator<< (std::ostream& stream, const Zm& coeff);
 
-typedef boost::numeric::ublas::matrix< Zm > MatrixZm;
-typedef boost::numeric::ublas::matrix_slice< MatrixZm > MatrixZmSlice;
-typedef boost::numeric::ublas::slice slice_zm;
-
-MatrixZm MatrixZmIdentity(uint32_t rows);
-
-#endif // MATRIX_Zm_HPP
+#endif // ENDIF FIELD_COEFFICIENTS_HPP

@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "homology_field.hpp"
-#include "matrix.hpp"
+#include "matrix_field.hpp"
 
 /**
  *  In order to compute the homology of the chain complex
@@ -27,7 +27,7 @@ class DiagonalizerField
 {
 public:
     typedef CoefficientT CoefficientType;
-    typedef Matrix<CoefficientType> MatrixType;
+    typedef MatrixField<CoefficientType> MatrixType;
     
     /**  constructor */
     DiagonalizerField() {}

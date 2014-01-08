@@ -1,4 +1,4 @@
-#include "matrix_zm.hpp"
+#include "field_coefficients.hpp"
 
 /*
  *--------------------------------------------------------------------------------------
@@ -135,20 +135,6 @@ void const Zm::show()
     std::cout << ((n%base)+base)%base;
 }
 
-/*
- *--------------------------------------------------------------------------------------
- *       Class:  Zm
- *      Method:  Zm :: print_Zm
- * Description:  prints a Zm to a String
- *--------------------------------------------------------------------------------------
- */
-std::string Zm::get_string()
-{
-    std::ostringstream tmp;
-    tmp << ((n%base)+base)%base;
-    return tmp.str();
-}
-
 std::ostream& operator<< (std::ostream& stream, const Zm& coeff)
 {
     return stream << ((coeff.n %coeff.base)+coeff.base)%coeff.base;
@@ -169,7 +155,7 @@ bool Zm::operator==(const int b) const
 
 bool Zm::operator== (const Zm a) const
 {
-    return n == a.n;
+    return (n - a.n) % base == 0;
 }
 
 bool operator !=( const Zm a, const Zm b )
@@ -247,15 +233,4 @@ Zm operator*(Zm a, const int b)
 {
     Zm r(a);
     return r *= Zm(b);
-}
-
-
-MatrixZm MatrixZmIdentity(uint32_t rows)
-{
-    MatrixZm id(rows, rows);
-    for( uint32_t i = 0; i < rows; ++i )
-    {
-        id(i, i) = 1;
-    }
-    return id;
 }
