@@ -20,6 +20,15 @@ public:
     
     CoefficientT & operator()( size_t i, size_t j );
 
+    // Dummy zum Löschen.
+    void resize (size_t size1, size_t size2, bool preserve = false)
+    {
+        data.clear();
+        num_rows = size1;
+        num_cols = size2;
+        data = MatrixStorageType( size1 * size2, CoefficientT(0) );
+    } 
+    
     size_t size1() const;
     size_t size2() const;
     
