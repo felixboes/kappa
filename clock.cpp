@@ -2,10 +2,10 @@
 
 Clock::Clock()
 {
-    measure_duration = chrn::steady_clock::now();
+    measure_duration = std_clock::now();
 }
 
 double Clock::duration()
 {
-    return chrn::duration<double>(chrn::steady_clock::now() - measure_duration).count();
+    return std::chrono::duration<double>(std_clock::now() - measure_duration).count();
 }
