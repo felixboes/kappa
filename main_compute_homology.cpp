@@ -7,7 +7,7 @@
 
 void print_usage(int argc, char** argv)
 {
-    std::cout << "Usage: " << argv[0] << " genus num_punctures (rational:0 | Z_r: r > 0)" << std::endl;
+    std::cout << "Usage: " << argv[0] << " genus num_punctures (rational:0 | Z_r: r > 0) optional: first p for which to compute H_p" << std::endl;
 }
 
 template< class MonoComplexT >
@@ -26,6 +26,10 @@ void compute_homology( SessionConfig conf )
     for( auto& it : monocomplex.basis_complex )
     {
         int32_t p = it.first;
+        if ( p < conf.start_p )
+        {
+            continue;
+        }
         atomic_uint current_rank(0);
         uint32_t max_possible_rank(0);
         

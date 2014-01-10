@@ -10,7 +10,7 @@
  */
 struct SessionConfig
 {
-    SessionConfig() : genus(0), num_punctures(0), rational(0), prime(2), valid(false) {}
+    SessionConfig() : genus(0), num_punctures(0), rational(0), prime(2), start_p(0), valid(false) {}
     SessionConfig( int argc, char** argv );
     
     /// Sometimes we have to work a litte, before we can use a configurration. Here we check parameters and setup Z_p coefficients.
@@ -23,6 +23,7 @@ struct SessionConfig
     uint32_t num_punctures;
     bool rational;
     uint32_t prime;
+    uint32_t start_p;
     bool valid;
 };
 
