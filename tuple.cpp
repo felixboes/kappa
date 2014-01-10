@@ -462,28 +462,28 @@ Tuple Tuple :: d_hor_naive( uint8_t i ) const
  * Determines the decompositions of sigma into cycles ignoring fix points.
  * \return A map consisting of all cycles of sigma with their smallest element as key.
  */
-std::map< uint8_t, Tuple::Permutation > cycle_decomposition() ( Tuple::Permutation sigma )
+std::map< uint8_t, Tuple::Permutation > Tuple::cycle_decomposition ( const Tuple::Permutation& sigma ) const
 {
-    std::map<uint8_t, Permutation> cycles();
+    std::map<uint8_t, Tuple::Permutation> cycles;
     std::vector<bool> visited(p+1, false);
     for( uint8_t i = 1; i <= p; ) // We iterate through all cycles and mark the used symbols.
     {
         // consider the next cycle
-        Permutation cycle();
+        Tuple::Permutation cycle;
         visited[i] = true;
         // don't consider fix points
-        if ( sigma[i] == i)
+        if ( sigma.at(i) == i )
         {
             continue;
         }
         uint8_t j = i;
-        uint8_t k = sigma[i];
+        uint8_t k = sigma.at(i);
         cycle[j] = k;
         while( k != i ) // mark all symbols in this cycle
         {
             visited[k] = true;
             j = k;
-            k = sigma[k];
+            k = sigma.at(k);
             cycle[j] = k;
         }
         // note that since the for-loop runs ascendingly, the smallest element of the cycle
@@ -498,12 +498,12 @@ std::map< uint8_t, Tuple::Permutation > cycle_decomposition() ( Tuple::Permutati
     return cycles;
 }
 
-std::map< uint8_t, uint8_t > Tuple::orientation_sign( Permutation sigma) const
+std::map< uint8_t, int8_t > Tuple::orientation_sign( const Tuple::Permutation& sigma ) const
 {
-    std::map< uint8_t, Permutation > cycles = cycle_decomposition(sigma);
-    std::map< uint8_t, uint8_t > sign;
+    std::map< uint8_t, Tuple::Permutation > cycles = cycle_decomposition(sigma);
+    std::map< uint8_t, int8_t > sign;
     // set the sign to 1 for all elements of the cycle of 0
-    for ( auto &it : cycles[0] )
+    for ( auto &it : cycles.at(0) )
     {
         uint8_t k = it.first;
         sign[k] = 1;
