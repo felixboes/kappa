@@ -458,6 +458,120 @@ Tuple Tuple :: d_hor_naive( uint8_t i ) const
     return boundary;
 }
 
+/**
+ * Determines the decompositions of sigma into cycles ignoring fix points.
+ * \return A map consisting of all cycles of sigma with their smallest element as key.
+ */
+std::map< uint8_t, Tuple::Permutation > cycle_decomposition() ( Tuple::Permutation sigma )
+{
+    std::map<uint8_t, Permutation> cycles();
+    std::vector<bool> visited(p+1, false);
+    for( uint8_t i = 1; i <= p; ) // We iterate through all cycles and mark the used symbols.
+    {
+        // consider the next cycle
+        Permutation cycle();
+        visited[i] = true;
+        // don't consider fix points
+        if ( sigma[i] == i)
+        {
+            continue;
+        }
+        uint8_t j = i;
+        uint8_t k = sigma[i];
+        cycle[j] = k;
+        while( k != i ) // mark all symbols in this cycle
+        {
+            visited[k] = true;
+            j = k;
+            k = sigma[k];
+            cycle[j] = k;
+        }
+        // note that since the for-loop runs ascendingly, the smallest element of the cycle
+        // is i
+        cycles[i] = cycle;
+
+        // find the next unvisited cycle
+        for( ++i; i <= p && visited[i]; ++i )
+        {
+        }
+    }
+    return cycles;
+}
+
+std::map< uint8_t, uint8_t > Tuple::orientation_sign( Permutation sigma) const
+{
+    std::map< uint8_t, Permutation > cycles = cycle_decomposition(sigma);
+    std::map< uint8_t, uint8_t > sign;
+    // set the sign to 1 for all elements of the cycle of 0
+    for ( auto &it : cycles[0] )
+    {
+        uint8_t k = it.first;
+        sign[k] = 1;
+    }
+
+    uint8_t i = 1; // counter of cycles
+    for ( auto &it_1 : cycles )
+    {
+        Permutation cycle = it_1.second;
+        // for the minimum symbol of the cycle, we set the sign according to the formula
+        uint8_t min_symbol = it_1.first;
+        uint8_t second_min_symbol = (std::next(cycle.begin()))->first;
+
+        if (second_min_symbol > (std::prev(cycle.end())->first))
+        {
+            uint8_t k = cycles.size();
+            if ( k - i % 2)
+            {
+                sign[min_symbol] = -1;
+            }
+            else
+            {
+                sign[min_symbol] = 1;
+            }
+        }
+        else
+        {
+            uint8_t k = 1;
+            // note that since we exclude the case min_symbol > cycle.last().first above,
+            // min_symbol can be sorted in between the cycles and this loop will never
+            // reach &it_2 = cycle.last
+            for ( auto &it_2 : cycle)
+            {
+                uint8_t left = it_2.first;
+                uint8_t right = (std::next(&it_2))->first;
+                if ( left < min_symbol && min_symbol < right)
+                {
+                    uint8_t k = left;
+                    if ( k - i % 2)
+                    {
+                        sign[min_symbol] = -1;
+                    }
+                    else
+                    {
+                        sign[min_symbol] = 1;
+                    }
+                }
+            }
+        }
+        // for all other symbols of the cycle, we set the sign to 1
+        for ( auto &it_2 = ++cycle.begin(); it_2 != cycle.end(); ++it_2)
+        {
+            uint8_t k = it_2->first;
+            sign[k] = 1;
+        }
+        ++i;
+    }
+
+    // for all fix points, i.e. for symbols not considered yet, we set the sign to 0
+    for ( uint8_t j = 1; j <= p; ++j)
+    {
+        if ( ! sign[j] )
+        {
+            sign[j] = 0;
+        }
+    }
+}
+
 Tuple::Permutation Tuple::long_cycle() const
 {
     Tuple::Permutation sigma;

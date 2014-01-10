@@ -36,6 +36,8 @@ class Tuple
     friend class HashTuple;
     
 public:
+    typedef std::map<uint8_t, uint8_t> Permutation;  ///< Data structure to store a permutation, where a -> perm[a] if perm is a Permutation
+
     /**
      *  Construct a Tuple of norm h which has to be filled.
      */
@@ -84,13 +86,13 @@ public:
     bool phi( uint32_t q, uint32_t i);      ///< Applies the function \f$ \Phi^q_i \f$ and returns true iff the norm is preserved thereby..
     Tuple d_hor( uint8_t i ) const;         ///< Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} and returns true iff the norm is preserved thereby.
     Tuple d_hor_naive( uint8_t i ) const;   ///< Different implementation of the i-th horizontal boundary.
-    
+    std::map< uint8_t, uint8_t > orientation_sign( Tuple::Permutation sigma ) const;
+
     uint32_t p;  ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
     uint32_t id; ///< The index of this Tuple in the basis of the MonoComplex.
 private:
     Transposition& at(size_t q);                     ///< Access the q-th Transposition.
     std::vector< Transposition > rep;                ///< Representation of a tuple of transpositions.
-    typedef std::map<uint8_t, uint8_t> Permutation;  ///< Data structure to store a permutation, where a -> perm[a] if perm is a Permutation
     Permutation long_cycle() const;                  ///< Returns the cycle 1 -> 2 -> ... -> p-1 -> p -> 1.
     Permutation long_cycle_inv() const;              ///< Returns the cycle 1 -> p -> p-2 -> ... -> 2 -> 1.
     
