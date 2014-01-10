@@ -7,7 +7,7 @@
 
 void print_usage(int argc, char** argv)
 {
-    std::cout << "Usage: " << argv[0] << " genus num_punctures (rational:0 | Z_r: r > 0) optional: first p for which to compute H_p" << std::endl;
+    std::cout << "Usage: " << argv[0] << " genus num_punctures (rational:0 | Z_r: r > 0) optional: first p for which to compute H_p optional:number of threads for paralellization." << std::endl;
 }
 
 template< class MonoComplexT >
@@ -43,7 +43,7 @@ void compute_homology( SessionConfig conf )
         // Diagonalzing thread.
         auto partial_homology_thread = std::async( std::launch::async, [&]()
         {
-            return monocomplex.matrix_complex.compute_kernel_and_torsion( p, current_rank );
+            return monocomplex.matrix_complex.compute_kernel_and_torsion( p, current_rank, conf.num_threads );
         } );
         
         // Monitoring thread.
