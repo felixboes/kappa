@@ -50,14 +50,14 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_kernel_and_torsion( int32_t n )
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_kernel_and_torsion( int32_t n, uint32_t number_threads )
 {
     atomic_uint current_rank(0);
-    return compute_kernel_and_torsion(n, current_rank);
+    return compute_kernel_and_torsion(n, current_rank, number_threads);
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_kernel_and_torsion( int32_t n, atomic_uint & current_rank )
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads )
 {
     HomologyT homol;
     // Case by case anaylsis:
@@ -93,7 +93,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
     {
         // Diagonalize.
         DiagonalizerT diago;
-        diago( differential[n], current_rank );
+        diago( differential[n], current_rank, number_threads );
         homol.set_kern( n, diago.kern() );
         homol.set_tors( n-1, diago.tors() );
     }

@@ -15,8 +15,8 @@ class DiagonalizerDummy
 {
 public:
     DiagonalizerDummy() {}
-    void operator() ( MatrixClass &matrix ) {}
-    void operator() ( MatrixClass &matrix, atomic_uint & current_rank ) {}
+    void operator() ( MatrixClass &matrix, uint32_t number_threads=0 ) {}
+    void operator() ( MatrixClass &matrix, atomic_uint & current_rank, uint32_t number_threads=0 ) {}
     void operator() ( MatrixClass &post_matrix, MatrixClass &matrix ) {}
     void operator() ( MatrixClass &post_matrix, MatrixClass &matrix, MatrixClass &pre_matrix );
     uint32_t dfct() {return 0;}

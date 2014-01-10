@@ -64,12 +64,12 @@ public:
     /**
      *  Compute the kernel at the \f$n\f$-th spot and the torsion at the \f$(n-1)\f$-th spot.
      */
-    HomologyT compute_kernel_and_torsion( int32_t n );
+    HomologyT compute_kernel_and_torsion( int32_t n, uint32_t number_threads=0 );
     
     /**
      *  Compute the kernel at the \f$n\f$-th spot and the torsion at the \f$(n-1)\f$-th spot.
      */
-    HomologyT compute_kernel_and_torsion( int32_t n, atomic_uint & current_rank );
+    HomologyT compute_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads=0 );
     
     /**
      *  Compute all the homology.

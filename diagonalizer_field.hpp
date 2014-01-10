@@ -6,6 +6,7 @@
 #include <functional>
 #include <future>
 #include <list>
+#include <mutex>
 #include <thread>
 #include <vector>
 
@@ -35,8 +36,8 @@ public:
     /**
     *   Diagonalize a given matrix.
     **/
-    void operator() ( MatrixType &matrix );
-    void operator() ( MatrixType &matrix, atomic_uint & current_rank );
+    void operator() ( MatrixType &matrix, uint32_t number_threads=0 );
+    void operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t number_threads=0 );
     
     /**
      *  Diagonalize matrix and apply the base change to post_matrix.
@@ -65,7 +66,7 @@ public:
     /**  @return rank of the matrix */
     HomologyField::TorsT tors();
     
-private:
+//private:
     /**
      *  @return rank of matrix
      *  The matrix is diagonalized via Gauss to compute the number of linearly independant columns or rows.
@@ -73,10 +74,100 @@ private:
     uint32_t diag_field(MatrixType& matrix);
     uint32_t diag_field(MatrixType& matrix, atomic_uint & current_rank);
     
+    uint32_t diag_field_parallelized(MatrixType& matrix, atomic_uint & current_rank, uint32_t number_threads);
+    
     MatrixType in;
     MatrixType out;
     uint32_t def;
     uint32_t rnk;
+     
+    // Classes for paralellization:
+    /**
+     *   A RowOpParam can be seen as a job that has to be processed by one of the worker threads.
+     */
+    struct RowOpParam
+    {
+        RowOpParam(size_t r1 = 0, size_t r2 = 0, size_t c = 0) : row1(r1), row2(r2), col(c) {}
+        size_t row1;
+        size_t row2;
+        size_t col;
+    };
+    
+    /**
+     *  A SyncList keeps track of the work that has to be done.
+     *  It can be filled with jobs i.e. RowOpParam.
+     */
+    class SyncList
+    {
+    public:
+        SyncList() : work_done(false) {}
+        
+        /**
+         *  blocks till queue is empty.
+         */
+        void wait_till_empty();
+        
+        
+        /**
+         *  puts a new job into the queue.
+         */ 
+        void put(RowOpParam new_job);
+        
+        /**
+         *  get stores a new job in new_job or blocks if the queue is empty.
+         *  get returns true iff there was a new job.
+         */
+        bool get(RowOpParam & new_job);
+    
+        /**
+         *  Tell the SyncList that all work is done.
+         */
+        void all_work_done();
+        
+        /**
+         * @returns true iff there is no more work to do.
+         */
+        bool no_work_left();
+    private:
+        std::list<RowOpParam> row_op_list;
+        std::mutex mtx;
+        std::condition_variable cond_wait_for_filler;
+        std::condition_variable cond_wait_for_worker;
+        bool work_done;
+    };
+    
+    /**
+     *  A Filler refills the SyncList.
+     */
+    class Filler
+    {
+    public:
+        Filler( SyncList & sl );
+        
+        /**
+         *  Refill the SyncList with new work evey time a column is fully processed.
+         */
+        void work(MatrixType& matrix, atomic_uint & current_rank);
+    private:
+        SyncList & sync_list;
+    };
+    
+    /**
+     *  A Worker waits for row operation jobs and performs those.
+     */
+    class Worker
+    {
+    public:
+        Worker( uint32_t identification, SyncList & sl );
+        
+        /**
+         *  Wait and perform row operations till all work is done.
+         */ 
+        void work(MatrixType& matrix);
+    private:
+        uint32_t id;
+        SyncList& sync_list;
+    };
 };
 
 #include "diagonalizer_field.ipp"
