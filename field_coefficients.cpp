@@ -9,7 +9,7 @@
 uint32_t Zm::prim;
 uint32_t Zm::expo;
 int32_t Zm::base;
-std::vector<int> Zm::inv;
+std::vector<int8_t> Zm::inv;
 
 /*
  *--------------------------------------------------------------------------------------

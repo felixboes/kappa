@@ -45,11 +45,11 @@ public:
     friend std::ostream& operator<< (std::ostream& stream, const Zm& coeff);
     
 private:
-    int n;
+    int8_t n;
     static uint prim;
     static uint expo;
     static int base;        // base =  p^k
-    static std::vector<int> inv;
+    static std::vector<int8_t> inv;
     operator int() const;
     operator unsigned() const;
     

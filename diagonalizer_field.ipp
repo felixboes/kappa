@@ -286,12 +286,12 @@ uint32_t DiagonalizerField< CoefficientT >::diag_field_parallelized(MatrixType& 
     }
     
     // Wait to finish.
-    filler_thread.get();
     for( auto& it: worker_threads )
     {   
         it.get();
     }
 
+    filler_thread.get();
     
     return current_rank;
 }
