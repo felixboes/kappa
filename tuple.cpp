@@ -541,7 +541,6 @@ std::map< uint8_t, uint8_t > Tuple::orientation_sign( Permutation sigma) const
                 uint8_t right = (std::next(&it_2))->first;
                 if ( left < min_symbol && min_symbol < right)
                 {
-                    uint8_t k = left;
                     if ( k - i % 2)
                     {
                         sign[min_symbol] = -1;
@@ -551,6 +550,7 @@ std::map< uint8_t, uint8_t > Tuple::orientation_sign( Permutation sigma) const
                         sign[min_symbol] = 1;
                     }
                 }
+                ++k;
             }
         }
         // for all other symbols of the cycle, we set the sign to 1
