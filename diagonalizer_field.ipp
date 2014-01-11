@@ -141,20 +141,11 @@ bool DiagonalizerField< CoefficientT >::SyncList::no_work_left()
 }
 
 template< class CoefficientT >
-void DiagonalizerField< CoefficientT >::SyncList::wait_till_empty()
-{
-    std::unique_lock<std::mutex> lock(mtx);
-    
-    // Wait till list is empty.
-    cond_wait_for_worker.wait( lock, [this]{ return !( row_op_list.empty() == false ); } );
-}
-
-template< class CoefficientT >
 void DiagonalizerField< CoefficientT >::SyncList::put( DiagonalizerField< CoefficientT >::RowOpParam rop )
 {
     std::lock_guard<std::mutex> lock(mtx);
     row_op_list.push_back(rop);
-    cond_wait_for_filler.notify_all();
+    cond_wait_for_filler.notify_one();
 }
 
 template< class CoefficientT >
@@ -164,14 +155,19 @@ bool DiagonalizerField< CoefficientT >::SyncList::get( DiagonalizerField< Coeffi
     // Notify filler thread if necessary.
     if( row_op_list.empty() == true )
     {
+        // Worker is not busy anymore.
+        num_busy_workers--;
         cond_wait_for_worker.notify_one();
+        
+        // wait blocks as long the lambda function returns false, i.e. as long as the condition A in {return !( A );} is true.
+        cond_wait_for_filler.wait( lock, [&]{ return ! (row_op_list.empty() == true && work_done == false );} );
+    
+        // Worker will obtain the next job.
+        num_busy_workers++;
     }
-    
-    // wait blocks as long the lambda function returns false, i.e. as long as the condition A in {return !( A );} is true.
-    cond_wait_for_filler.wait( lock, [&]{ return ! (row_op_list.empty() == true && work_done == false );} );
-    
+
     // Why did we continue? Is there still work?
-    if( work_done == false && row_op_list.empty() == false )
+    if( work_done == false )
     {
         rop = row_op_list.front();
         row_op_list.pop_front();
@@ -181,6 +177,17 @@ bool DiagonalizerField< CoefficientT >::SyncList::get( DiagonalizerField< Coeffi
     {
         return false;
     }
+}
+
+template< class CoefficientT >
+void DiagonalizerField< CoefficientT >::SyncList::wait_for_workers()
+{
+    std::unique_lock<std::mutex> lock(mtx);
+    // Wait till the list is empty.
+    cond_wait_for_worker.wait( lock, [&]{ return !( row_op_list.empty() == false ); } );
+
+    // Wait for worker threads to finish their jobs.
+    cond_wait_for_worker.wait( lock, [&]{ return !( num_busy_workers > 0 ); } );
 }
 
 template< class CoefficientT >
@@ -244,7 +251,7 @@ void DiagonalizerField< CoefficientT >::Filler::work(MatrixType& matrix, atomic_
                     }
                 }
                 // Wait till all work for the current column is done.
-                sync_list.wait_till_empty();
+                sync_list.wait_for_workers();
             }
         }
     }
@@ -269,7 +276,7 @@ void DiagonalizerField< CoefficientT >::Worker::work(MatrixType& matrix)
 template< class CoefficientT >
 uint32_t DiagonalizerField< CoefficientT >::diag_field_parallelized(MatrixType& matrix, atomic_uint & current_rank, uint32_t number_threads )
 {
-    SyncList sync_list;
+    SyncList sync_list(number_threads);
     Filler filler(sync_list);
     std::vector<Worker> worker_vector;
     for( size_t i = 0; i < number_threads; ++i )

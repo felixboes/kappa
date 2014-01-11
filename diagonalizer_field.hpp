@@ -100,13 +100,12 @@ public:
     class SyncList
     {
     public:
-        SyncList() : work_done(false) {}
+        SyncList(uint32_t number_of_working_threads ) : num_busy_workers(number_of_working_threads), work_done(false) {}
         
         /**
          *  blocks till queue is empty.
          */
         void wait_till_empty();
-        
         
         /**
          *  puts a new job into the queue.
@@ -118,7 +117,12 @@ public:
          *  get returns true iff there was a new job.
          */
         bool get(RowOpParam & new_job);
-    
+        
+        /**
+         *  Tell the waiting workers that there is new work to do, if the number of workers is n.
+         */
+        void wait_for_workers();
+        
         /**
          *  Tell the SyncList that all work is done.
          */
@@ -133,6 +137,7 @@ public:
         std::mutex mtx;
         std::condition_variable cond_wait_for_filler;
         std::condition_variable cond_wait_for_worker;
+        uint32_t num_busy_workers;
         bool work_done;
     };
     
