@@ -6,9 +6,9 @@
  * Description:  initialize static members
  *--------------------------------------------------------------------------------------
  */
-uint32_t Zm::prim;
-uint32_t Zm::expo;
-int32_t Zm::base;
+uint8_t Zm::prim;
+uint8_t Zm::expo;
+int8_t Zm::base;
 std::vector<int8_t> Zm::inv;
 
 /*
@@ -19,7 +19,7 @@ std::vector<int8_t> Zm::inv;
  *--------------------------------------------------------------------------------------
  */
 
-void Zm::set_modulus(const uint p, const uint k)
+void Zm::set_modulus(const uint8_t p, const uint8_t k)
 {
     // Wir benutzen: Der Koeffizient i ist in Z/(p^k) genau dann invertierbar, wenn i%p != 0 ist.
     // Nach dem Satz von Euler ist dann a^{p^k - p^{k-1} - 1} = a^{-1} in Z/(p^k)
@@ -29,14 +29,14 @@ void Zm::set_modulus(const uint p, const uint k)
     inv.clear();
     inv.push_back(0);
     inv.push_back(1);
-    int m = pow(p,k) - pow(p,k-1) - 1;
-    for(int i = 2; i < base; i++)    // calculate modulo exponent
+    int32_t m = pow(p,k) - pow(p,k-1) - 1;
+    for(int8_t i = 2; i < base; i++)    // calculate modulo exponent
     {
         if(i % p != 0)
         {
-            int ex = m;
-            int factor = i;
-            int result = 1;
+            int32_t ex = m;
+            int8_t factor = i;
+            int8_t result = 1;
             while(ex > 0)
             {
                 if(ex % 2 == 1)
@@ -67,7 +67,7 @@ bool Zm::is_field()
     return (prim > 0 && expo == 1);
 }
 
-Zm::Zm(const int m) : n( ((m%base)+base)%base ) {}
+Zm::Zm(const int8_t m) : n( ((m%base)+base)%base ) {}
 
 /*
  *--------------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ Zm::Zm(const int m) : n( ((m%base)+base)%base ) {}
 
 void const Zm::print_modulus()
 {
-    std::cout << "The Coefficientring is F_" << base << ".\n";
+    std::cout << "The Coefficientring is F_" << (int32_t)base << ".\n";
 }
 
 /*
@@ -93,8 +93,8 @@ void const Zm::print_modulus()
 void const Zm::print_inversetable()
 {
     std::cout << "Printing inversetable:\n";
-    for(int i = 1; i < base; i++)
-    std::cout << i  << " " << inv[i] << "\n";
+    for(size_t i = 1; i < base; i++)
+    std::cout << (int32_t)i  << " " << inv[i] << "\n";
 }
 
 /*
@@ -120,7 +120,7 @@ bool const Zm::is_invertible()
 
 Zm const Zm::inverse()
 {
-    return Zm(  inv[(((n % base)+base)%base)] );
+    return Zm( inv[(((n % base)+base)%base)] );
 }
 
 /*
@@ -137,7 +137,7 @@ void const Zm::show()
 
 std::ostream& operator<< (std::ostream& stream, const Zm& coeff)
 {
-    return stream << ((coeff.n %coeff.base)+coeff.base)%coeff.base;
+    return stream << (int32_t)((coeff.n %coeff.base)+coeff.base)%coeff.base;
 }
 
 /*
@@ -148,7 +148,7 @@ std::ostream& operator<< (std::ostream& stream, const Zm& coeff)
  *--------------------------------------------------------------------------------------
  */
 
-bool Zm::operator==(const int b) const
+bool Zm::operator==(const int8_t b) const
 {
     return (n - b) % base == 0;
 }
@@ -164,7 +164,7 @@ bool operator !=( const Zm a, const Zm b )
 }
 
 
-Zm& Zm::operator=(const int a)
+Zm& Zm::operator=(const int8_t a)
 {
     n = ((a%base)+base)%base;
     return *this;
@@ -229,7 +229,7 @@ Zm operator/ (Zm a, Zm b)
     return r /= b;
 }
 
-Zm operator*(Zm a, const int b)
+Zm operator*(Zm a, const int8_t b)
 {
     Zm r(a);
     return r *= Zm(b);

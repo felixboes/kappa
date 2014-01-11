@@ -21,8 +21,8 @@ typedef mpq_class Q;
  */
 class Zm{
 public:
-    Zm(const int m = 0);
-    static void set_modulus(const uint prime, const uint expo);
+    Zm(const int8_t m = 0);
+    static void set_modulus(const uint8_t prime, const uint8_t expo = 1);
     static void const print_modulus();
     static void const print_inversetable();
     bool const is_invertible();
@@ -32,9 +32,9 @@ public:
     static bool is_field();
     
     // arithmetic operators
-    bool operator==(const int) const;
+    bool operator==(const int8_t) const;
     bool operator==(const Zm a) const;
-    Zm& operator=(const int);
+    Zm& operator=(const int8_t);
     Zm& operator+=(const Zm);
     Zm& operator-=(const Zm);
     Zm& operator*=(const Zm);
@@ -46,9 +46,9 @@ public:
     
 private:
     int8_t n;
-    static uint prim;
-    static uint expo;
-    static int base;        // base =  p^k
+    static uint8_t prim;
+    static uint8_t expo;
+    static int8_t base;        // base =  p^k
     static std::vector<int8_t> inv;
     operator int() const;
     operator unsigned() const;
@@ -68,7 +68,7 @@ Zm operator-(const Zm, const Zm);
 Zm operator*(const Zm, const Zm);
 Zm operator/(const Zm, const Zm);
 
-Zm operator*(const Zm, const int);
+Zm operator*(const Zm, const int8_t);
 
 
 
