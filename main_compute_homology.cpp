@@ -36,6 +36,10 @@ void compute_homology( SessionConfig conf )
         // Generate a single differential.
         monocomplex.gen_differential(p);
         max_possible_rank = std::min( monocomplex.matrix_complex[p].size1(), monocomplex.matrix_complex[p].size2() );
+        if( (uint32_t)homology.get_kern(p-1) > 0 )
+        {
+            max_possible_rank = std::min( max_possible_rank, (uint32_t)homology.get_kern(p-1) );
+        }
         
         // Compute the induced homology.
         Clock measure_duration;
