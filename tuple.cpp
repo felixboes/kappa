@@ -459,8 +459,12 @@ Tuple Tuple :: d_hor_naive( uint8_t i ) const
 }
 
 /**
- * Determines the decompositions of sigma into cycles ignoring fix points.
- * \return A map consisting of all cycles of sigma with their smallest element as key.
+ * Determines the decompositions of sigma into cycles including fix points.
+ * \return A map consisting of all cycles of sigma with their smallest element as key (except for
+ * the liniel, for which the key is p)
+ * \warning Since Mehner's example in the orientation chapter looks as if fix points were considered
+ * in the cycle decomposition, we also consider them here.
+ * \todo We assume that the liniel is not a fix point. Is that always true?
  */
 std::map< uint8_t, Tuple::Permutation > Tuple::cycle_decomposition ( const Tuple::Permutation& sigma ) const
 {
@@ -471,25 +475,31 @@ std::map< uint8_t, Tuple::Permutation > Tuple::cycle_decomposition ( const Tuple
         // consider the next cycle
         Tuple::Permutation cycle;
         visited[i] = true;
-        // don't consider fix points
-        if ( sigma.at(i) == i )
-        {
-            continue;
-        }
         uint8_t j = i;
         uint8_t k = sigma.at(i);
         cycle[j] = k;
+        bool liniel_found = false;
         while( k != i ) // mark all symbols in this cycle
         {
             visited[k] = true;
             j = k;
             k = sigma.at(k);
             cycle[j] = k;
+            if ( j == p)
+            {
+                liniel_found = true;
+            }
         }
         // note that since the for-loop runs ascendingly, the smallest element of the cycle
         // is i
-        cycles[i] = cycle;
-
+        if ( liniel_found == true )
+        {
+            cycles[p] = cycle;
+        }
+        else
+        {
+            cycles[i] = cycle;
+        }
         // find the next unvisited cycle
         for( ++i; i <= p && visited[i]; ++i )
         {
@@ -502,73 +512,76 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( const Tuple::Permutation& s
 {
     std::map< uint8_t, Tuple::Permutation > cycles = cycle_decomposition(sigma);
     std::map< uint8_t, int8_t > sign;
-    // set the sign to 1 for all elements of the cycle of 0
-    for ( auto &it : cycles.at(0) )
+    // set the sign to 1 for all elements of the cycle of p
+    for ( auto &it : cycles.at(p) )
     {
         uint8_t k = it.first;
         sign[k] = 1;
     }
 
     uint8_t i = 1; // counter of cycles
-    for ( auto &it_1 : cycles )
+    for ( auto &it_1 = cycles.begin(); it_1.first != p; ++it_1 )
     {
         Permutation cycle = it_1.second;
-        // for the minimum symbol of the cycle, we set the sign according to the formula
+        
         uint8_t min_symbol = it_1.first;
-        uint8_t second_min_symbol = (std::next(cycle.begin()))->first;
-
-        if (second_min_symbol > (std::prev(cycle.end())->first))
+        
+        // if the cycle is a fixpoint (a), we set sign(a) = 0.
+        if ( cycle.size() == 1)
         {
-            uint8_t k = cycles.size();
-            if ( k - i % 2)
+            sign[min_symbol] = 0;
+        }
+        else 
+        {
+            // for the minimum symbol of the cycle, we set the sign according to the formula
+            uint8_t second_min_symbol = (std::next(cycle.begin()))->first;
+
+            // \Note The liniel does not seem to appear in Mehner's cycle decomposition, thus
+            // we need to ingore it
+            if ( second_min_symbol > (std::prev(std::prev(cycle.end()))->first) )
             {
-                sign[min_symbol] = -1;
+                uint8_t k = cycles.size() - 1;
+                if ( k - i % 2)
+                {
+                    sign[min_symbol] = -1;
+                }
+                else
+                {
+                    sign[min_symbol] = 1;
+                }
             }
             else
             {
-                sign[min_symbol] = 1;
-            }
-        }
-        else
-        {
-            uint8_t k = 1;
-            // note that since we exclude the case min_symbol > cycle.last().first above,
-            // min_symbol can be sorted in between the cycles and this loop will never
-            // reach &it_2 = cycle.last
-            for ( auto &it_2 : cycle)
-            {
-                uint8_t left = it_2.first;
-                uint8_t right = (std::next(&it_2))->first;
-                if ( left < min_symbol && min_symbol < right)
+                uint8_t k = 1;
+                // note that since we exclude the case that second_min_sybols will be sorted in at the end,
+                // min_symbol can be sorted in between the cycles and this loop will never reach the liniel.
+                for ( auto &it_2 : cycles)
                 {
-                    if ( k - i % 2)
+                    uint8_t left = it_2.first;
+                    uint8_t right = (std::next(&it_2))->first;
+                    if ( left < min_symbol && min_symbol < right)
                     {
-                        sign[min_symbol] = -1;
+                        if ( k - i % 2)
+                        {
+                            sign[min_symbol] = -1;
+                        }
+                        else
+                        {
+                            sign[min_symbol] = 1;
+                        }
+                        break;
                     }
-                    else
-                    {
-                        sign[min_symbol] = 1;
-                    }
+                    ++k;
                 }
-                ++k;
             }
-        }
-        // for all other symbols of the cycle, we set the sign to 1
-        for ( auto &it_2 = ++cycle.begin(); it_2 != cycle.end(); ++it_2)
-        {
-            uint8_t k = it_2->first;
-            sign[k] = 1;
+            // for all other symbols of the cycle, we set the sign to 1
+            for ( auto &it_2 = ++cycle.begin(); it_2 != cycle.end(); ++it_2)
+            {
+                uint8_t k = it_2->first;
+                sign[k] = 1;
+            }
         }
         ++i;
-    }
-
-    // for all fix points, i.e. for symbols not considered yet, we set the sign to 0
-    for ( uint8_t j = 1; j <= p; ++j)
-    {
-        if ( ! sign[j] )
-        {
-            sign[j] = 0;
-        }
     }
 }
 
