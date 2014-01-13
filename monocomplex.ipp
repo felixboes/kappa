@@ -226,6 +226,7 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
             // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
             if( norm_preserved )   // Compute all horizontal boundaries.
             {
+                //std::map< uint8_t, int8_t > or_sign = current_basis.orientation_sign();
                 for( uint32_t i = 1; i < p; i++ )
                 {
                     if( (boundary = current_basis.d_hor(i)) )
@@ -235,6 +236,14 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
                             boundary.id = basis_complex[p-1].id_of(boundary);
                             
                             int32_t actual_parity = (parity + i) % 2;
+ //                           if ( or_sign[i] == -1)
+ //                           {
+ //                               actual_parity = (parity + 1) % 2;
+ //                           }
+ //                           else if ( or_sign[i]  == 0)
+ //                           {
+ //                               std::cout << "Some orientation sign is 0" << std::endl;
+ //                          }
 //                            std::cout << it << " " << i << ": The d^hor_i boundary of " << current_basis << ". This is " << boundary << std::endl;
 //                            std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << actual_parity << std::endl;
 //                            std::cout << std::endl;

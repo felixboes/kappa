@@ -19,6 +19,11 @@ Transposition& Tuple :: at(size_t n)
     return rep[n-1];
 }
 
+Transposition const & Tuple :: at(size_t n) const
+{
+    return rep[n-1];
+}
+
 Transposition& Tuple :: operator[](size_t n)
 {
     return at(n);
@@ -384,7 +389,6 @@ Tuple Tuple :: d_hor( uint8_t k ) const
             b--;
         }
     }
-    
     return boundary;
 }
 
@@ -458,6 +462,28 @@ Tuple Tuple :: d_hor_naive( uint8_t i ) const
     return boundary;
 }
 
+Tuple::Permutation Tuple::sigma_q() const
+{
+    // initialize with sigma_0
+    Tuple::Permutation sigma = long_cycle();
+    Tuple::Permutation sigma_inv = long_cycle_inv();
+
+    for (uint8_t i = 0; i <= norm(); ++i)
+    {
+        // write tau_i = (a, b)
+        uint8_t a = at(i).first;
+        uint8_t b = at(i).second;
+
+        // compute sigma_i = tau_i sigma_{i-1}
+        sigma[ sigma_inv[a] ] = b;
+        sigma[ sigma_inv[b] ] = a;
+
+        // compute sigma_i^{-1}
+        std::swap( sigma_inv[ a ], sigma_inv[ b ] );
+    }
+    return sigma;
+}
+
 /**
  * Determines the decompositions of sigma into cycles including fix points.
  * \return A map consisting of all cycles of sigma with their smallest element as key (except for
@@ -466,7 +492,7 @@ Tuple Tuple :: d_hor_naive( uint8_t i ) const
  * in the cycle decomposition, we also consider them here.
  * \todo We assume that the liniel is not a fix point. Is that always true?
  */
-std::map< uint8_t, Tuple::Permutation > Tuple::cycle_decomposition ( const Tuple::Permutation& sigma ) const
+std::map< uint8_t, Tuple::Permutation > Tuple::cycle_decomposition ( const Tuple::Permutation & sigma ) const
 {
     std::map<uint8_t, Tuple::Permutation> cycles;
     std::vector<bool> visited(p+1, false);
@@ -508,8 +534,9 @@ std::map< uint8_t, Tuple::Permutation > Tuple::cycle_decomposition ( const Tuple
     return cycles;
 }
 
-std::map< uint8_t, int8_t > Tuple::orientation_sign( const Tuple::Permutation& sigma ) const
+std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
 {
+    Tuple::Permutation sigma = sigma_q();
     std::map< uint8_t, Tuple::Permutation > cycles = cycle_decomposition(sigma);
     std::map< uint8_t, int8_t > sign;
     // set the sign to 1 for all elements of the cycle of p
