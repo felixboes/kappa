@@ -1,4 +1,5 @@
 #include <future>
+#include <fstream>
 #include <iostream>
 
 #include <homology.hpp>
@@ -11,16 +12,37 @@ void print_usage(int argc, char** argv)
 }
 
 template< class MonoComplexT >
-void compute_homology( SessionConfig conf )
+void compute_homology( SessionConfig conf, int argc, char** argv )
 {
+    std::ofstream ofs;
+    std::string filename = argv[0];
+    
+    for( int i = 1; i < argc; ++i )
+    {
+        filename += std::string("_") + std::string(argv[i]);
+    }
+    
+    ofs.open( filename );
+    
     std::cout << "-------- Constructing bases --------" << std::endl;
+    ofs << "-------- Constructing bases --------" << std::endl;
     
     // Compute all bases.
+    Clock measure_duration;
+    std::cout << "Constructing bases";
+    std::cout.flush();
+    ofs << "Constructing bases";
+    
     MonoComplexT monocomplex( conf.genus, conf.num_punctures );
     typename MonoComplexT::HomologyType homology;
-    
+    std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
     std::cout << std::endl;
+    std::cout.flush();
+    ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+    ofs << std::endl;
+    
     std::cout << "-------- Computing Homology --------" << std::endl;
+    ofs << "-------- Computing Homology --------" << std::endl;
     
     // Compute all differentials and homology consecutively.
     for( auto& it : monocomplex.basis_complex )
@@ -34,7 +56,17 @@ void compute_homology( SessionConfig conf )
         uint32_t max_possible_rank(0);
         
         // Generate a single differential.
+        std::cout << "Constructing the " << p << "-th differential";
+        std::cout.flush();
+        ofs << "Constructing the " << p << "-th differential";
+        
+        measure_duration = Clock();
         monocomplex.gen_differential(p);
+        
+        std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+        std::cout.flush();
+        ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+        
         max_possible_rank = std::min( monocomplex.matrix_complex[p].size1(), monocomplex.matrix_complex[p].size2() );
         if( (uint32_t)homology.get_kern(p-1) > 0 )
         {
@@ -42,7 +74,7 @@ void compute_homology( SessionConfig conf )
         }
         
         // Compute the induced homology.
-        Clock measure_duration;
+        measure_duration = Clock();
         
         // Diagonalzing thread.
         auto partial_homology_thread = std::async( std::launch::async, [&]()
@@ -70,8 +102,16 @@ void compute_homology( SessionConfig conf )
         
         // Print status message.
         std::cout << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
-        std::cout << "    dim(H_" << (int32_t)(p-1) << ") = " << (int32_t)(homology.get_kern(p-1) - homology.get_tors(p-1)) << std::endl;
+        std::cout << "    dim(H_" << (int32_t)(p-1) << ") = " << (int32_t)(homology.get_kern(p-1) - homology.get_tors(p-1))
+                  << "; dim(im D_" << (int32_t)(p) << ") = " << (int32_t)(homology.get_tors(p-1))
+                  << "; dim(ker D_" << (int32_t)(p) << ") = " << (int32_t)(homology.get_kern(p)) << std::endl;
         std::cout << std::endl;
+        std::cout.flush();
+        ofs << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+        ofs << "    dim(H_" << (int32_t)(p-1) << ") = " << (int32_t)(homology.get_kern(p-1) - homology.get_tors(p-1))
+            << "; dim(im D_" << (int32_t)(p) << ") = " << (int32_t)(homology.get_tors(p-1))
+            << "; dim(ker D_" << (int32_t)(p) << ") = " << (int32_t)(homology.get_kern(p)) << std::endl;
+        ofs << std::endl;
         
         // Delete the differential.
         monocomplex.erase_differential(p);
@@ -81,9 +121,15 @@ void compute_homology( SessionConfig conf )
     std::cout << std::endl;
     std::cout << "------------  Results   ------------" << std::endl;
     std::cout << std::endl;
+    ofs << std::endl;
+    ofs << "------------  Results   ------------" << std::endl;
+    ofs << std::endl;
     
     // Print results.
     std::cout << homology << std::endl;
+    ofs << homology << std::endl;
+    
+    ofs.close();
 }
 
 int main(int argc, char** argv)
@@ -109,7 +155,7 @@ int main(int argc, char** argv)
     }
     else
     {
-        compute_homology< MonoComplexZm >( conf );
+        compute_homology< MonoComplexZm >( conf, argc, argv );
     }
     
     return 0;
