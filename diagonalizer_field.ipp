@@ -278,18 +278,18 @@ uint32_t DiagonalizerField< CoefficientT >::diag_field_parallelized(MatrixType& 
 {
     SyncList sync_list(number_threads);
     Filler filler(sync_list);
-    std::vector<Worker> worker_vector;
+    std::list<Worker> worker_list;
     for( size_t i = 0; i < number_threads; ++i )
     {
-        worker_vector.push_back( Worker(i, sync_list) );
+        worker_list.emplace_back( Worker( i, sync_list ) );
     }
     
     // Start threads.
     auto filler_thread = std::async( std::launch::async, [&]{ filler.work(matrix, current_rank); } );
     std::vector< std::future<void> > worker_threads;
-    for( auto& it: worker_vector )
+    for( auto& it: worker_list )
     {   
-        worker_threads.push_back( std::async( std::launch::async, [&]{ it.work(matrix); } ) );
+        worker_threads.emplace_back( std::async( std::launch::async, [&]{ it.work(matrix); } ) );
     }
     
     // Wait to finish.
