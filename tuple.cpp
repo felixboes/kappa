@@ -520,7 +520,7 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( const Tuple::Permutation& s
     }
 
     uint8_t i = 1; // counter of cycles
-    for ( auto &it_1 = cycles.begin(); it_1.first != p; ++it_1 )
+    for ( auto &it_1 : cycles )
     {
         Permutation cycle = it_1.second;
         

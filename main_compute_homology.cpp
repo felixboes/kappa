@@ -105,7 +105,7 @@ int main(int argc, char** argv)
     // We may start with the computations.
     if(conf.rational == true)
     {
-        compute_homology< MonoComplexQ >( conf );
+        //compute_homology< MonoComplexQ >( conf );
     }
     else
     {
