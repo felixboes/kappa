@@ -468,7 +468,7 @@ Tuple::Permutation Tuple::sigma_q() const
     Tuple::Permutation sigma = long_cycle();
     Tuple::Permutation sigma_inv = long_cycle_inv();
 
-    for (uint8_t i = 0; i <= norm(); ++i)
+    for (uint8_t i = 1; i <= norm(); ++i)
     {
         // write tau_i = (a, b)
         uint8_t a = at(i).first;
@@ -534,10 +534,27 @@ std::map< uint8_t, Tuple::Permutation > Tuple::cycle_decomposition ( const Tuple
     return cycles;
 }
 
+/**
+ * \return true iff sigma contains p
+ */
+bool contains( Tuple::Permutation sigma, uint8_t p )
+{
+    for ( auto &it : sigma )
+    {
+        if ( it.first == p )
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
 {
     Tuple::Permutation sigma = sigma_q();
+
     std::map< uint8_t, Tuple::Permutation > cycles = cycle_decomposition(sigma);
+
     std::map< uint8_t, int8_t > sign;
     // set the sign to 1 for all elements of the cycle of p
     for ( auto &it : cycles.at(p) )
@@ -545,14 +562,17 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
         uint8_t k = it.first;
         sign[k] = 1;
     }
-
     uint8_t i = 1; // counter of cycles
     for ( auto &it_1 : cycles )
     {
         Permutation cycle = it_1.second;
         
+        // the liniel does not seem to belong to the cycle decomposition
+        if (contains(cycle, p))
+        {
+            continue;
+        }
         uint8_t min_symbol = it_1.first;
-        
         // if the cycle is a fixpoint (a), we set sign(a) = 0.
         if ( cycle.size() == 1)
         {
@@ -610,6 +630,7 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
         }
         ++i;
     }
+    return sign;
 }
 
 Tuple::Permutation Tuple::long_cycle() const
