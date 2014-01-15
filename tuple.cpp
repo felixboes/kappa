@@ -465,22 +465,25 @@ Tuple Tuple :: d_hor_naive( uint8_t i ) const
 Tuple::Permutation Tuple::sigma_q() const
 {
     // initialize with sigma_0
-    Tuple::Permutation sigma = long_cycle();
     Tuple::Permutation sigma_inv = long_cycle_inv();
 
     for (uint8_t i = 1; i <= norm(); ++i)
     {
         // write tau_i = (a, b)
-        uint8_t a = at(i).first;
-        uint8_t b = at(i).second;
-
-        // compute sigma_i = tau_i sigma_{i-1}
-        sigma[ sigma_inv[a] ] = b;
-        sigma[ sigma_inv[b] ] = a;
-
+        const uint8_t& a = at(i).first;
+        const uint8_t& b = at(i).second;
+        
         // compute sigma_i^{-1}
         std::swap( sigma_inv[ a ], sigma_inv[ b ] );
     }
+    
+    // compute sigma
+    Tuple::Permutation sigma;
+    for( auto& it : sigma_inv )
+    {
+        sigma[it.second] = it.first;
+    }
+    
     return sigma;
 }
 
@@ -494,44 +497,44 @@ Tuple::Permutation Tuple::sigma_q() const
  */
 std::map< uint8_t, Tuple::Permutation > Tuple::cycle_decomposition ( const Tuple::Permutation & sigma ) const
 {
-    std::map<uint8_t, Tuple::Permutation> cycles;
+    std::map<uint8_t, Tuple::Permutation> cycle_decomp;
     std::vector<bool> visited(p+1, false);
     for( uint8_t i = 1; i <= p; ) // We iterate through all cycles and mark the used symbols.
     {
-        // consider the next cycle
+        // determine the cycle of i.
         Tuple::Permutation cycle;
-        visited[i] = true;
-        uint8_t j = i;
-        uint8_t k = sigma.at(i);
-        cycle[j] = k;
+        
+        uint8_t j;     // previous symbol
+        uint8_t k = i; // current symbol
         bool liniel_found = false;
-        while( k != i ) // mark all symbols in this cycle
+        
+        do // mark all symbols in this cycle
         {
             visited[k] = true;
             j = k;
             k = sigma.at(k);
             cycle[j] = k;
-            if ( j == p)
+            if ( j == p )
             {
                 liniel_found = true;
             }
-        }
+        }while( k != i );
         // note that since the for-loop runs ascendingly, the smallest element of the cycle
         // is i
         if ( liniel_found == true )
         {
-            cycles[p] = cycle;
+            cycle_decomp[p] = cycle;
         }
         else
         {
-            cycles[i] = cycle;
+            cycle_decomp[i] = cycle;
         }
         // find the next unvisited cycle
         for( ++i; i <= p && visited[i]; ++i )
         {
         }
     }
-    return cycles;
+    return cycle_decomp;
 }
 
 /**
@@ -553,80 +556,74 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
 {
     Tuple::Permutation sigma = sigma_q();
 
-    std::map< uint8_t, Tuple::Permutation > cycles = cycle_decomposition(sigma);
+    std::map< uint8_t, Tuple::Permutation > cycle_decomp = cycle_decomposition(sigma);
 
     std::map< uint8_t, int8_t > sign;
     // set the sign to 1 for all elements of the cycle of p
-    for ( auto &it : cycles.at(p) )
+    for ( auto &it : cycle_decomp.at(p) )
     {
-        uint8_t k = it.first;
-        sign[k] = 1;
+        sign[ it.first ] = 1;
     }
+    
     uint8_t i = 1; // counter of cycles
-    for ( auto &it_1 : cycles )
+    for ( auto it_1 = cycle_decomp.begin(); it_1 != cycle_decomp.end(); ++it_1 )
     {
-        Permutation cycle = it_1.second;
-        
-        // the liniel does not seem to belong to the cycle decomposition
-        if (contains(cycle, p))
+        // The liniel is treated seperately and is stored in cycle_decomp[p]
+        if( it_1->first == p )
         {
             continue;
         }
-        uint8_t min_symbol = it_1.first;
-        // if the cycle is a fixpoint (a), we set sign(a) = 0.
+    
+        Permutation cycle = it_1->second;
+        uint8_t min_symbol = it_1->first;
+        // if the cycle is a fixpoint (a), we set sign(a) = 0 for the sake of completeness.
         if ( cycle.size() == 1)
         {
             sign[min_symbol] = 0;
+            ++i;
+            continue;
         }
-        else 
-        {
-            // for the minimum symbol of the cycle, we set the sign according to the formula
-            uint8_t second_min_symbol = (std::next(cycle.begin()))->first;
+        
+        // for the minimum symbol of the cycle, we set the sign according to the formula
+        // as a map is a set of pairs sorted by the key, the second smallest symbol is the key of the successor of cycle.begin().
+        uint8_t b = (std::next(cycle.begin()))->first;
 
-            // \Note The liniel does not seem to appear in Mehner's cycle decomposition, thus
-            // we need to ingore it
-            if ( second_min_symbol > (std::prev(std::prev(cycle.end()))->first) )
+        // Find k.
+        // note that
+        //   a_{1,1} < ... < a_{i,1} < b ,
+        // hence
+        //   a_{i-l,1} < b    for    l >= 0
+        // is impossible and we can start to search at the position k = i.
+        uint8_t k = i;
+        
+        // note that since we exclude the case that second_min_sybols will be sorted in at the end,
+        // min_symbol can be sorted in between the cycles and this loop will never reach the liniel.
+        
+        // note that initially (for k = i) it_2.first = a_{k,1} < b and we found our position k iff the first time b < a_{k+1,1}
+        // in the other case we have again a_{k+1,1} < b. Induction.
+        // Moreover the case 'b > a_{m,1}' is also included as the liniel is stored at cycle_decomp[p] and b < p.
+        for ( auto it_2 = it_1; it_2 != cycle_decomp.end(); ++it_2 )
+        {
+            uint8_t next_min_symbol = (std::next(it_2))->first;
+            if ( b < next_min_symbol )
             {
-                uint8_t k = cycles.size() - 1;
-                if ( k - i % 2)
-                {
-                    sign[min_symbol] = -1;
-                }
-                else
+                if ( ((k - i) % 2) == 0 )
                 {
                     sign[min_symbol] = 1;
                 }
-            }
-            else
-            {
-                uint8_t k = 1;
-                // note that since we exclude the case that second_min_sybols will be sorted in at the end,
-                // min_symbol can be sorted in between the cycles and this loop will never reach the liniel.
-                for ( auto &it_2 : cycles)
+                else
                 {
-                    uint8_t left = it_2.first;
-                    uint8_t right = (std::next(&it_2))->first;
-                    if ( left < min_symbol && min_symbol < right)
-                    {
-                        if ( k - i % 2)
-                        {
-                            sign[min_symbol] = -1;
-                        }
-                        else
-                        {
-                            sign[min_symbol] = 1;
-                        }
-                        break;
-                    }
-                    ++k;
+                    sign[min_symbol] = -1;
                 }
+                break;
             }
-            // for all other symbols of the cycle, we set the sign to 1
-            for ( auto &it_2 = ++cycle.begin(); it_2 != cycle.end(); ++it_2)
-            {
-                uint8_t k = it_2->first;
-                sign[k] = 1;
-            }
+            ++k;
+        }
+        
+        // for all other symbols of the cycle, we set the sign to 1
+        for ( auto it = std::next(cycle.begin()); it != cycle.end(); ++it )
+        {
+            sign[ it->first ] = 1;
         }
         ++i;
     }

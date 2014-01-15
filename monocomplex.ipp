@@ -239,7 +239,7 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
                             int32_t actual_parity = (parity + i) % 2;
                             if ( or_sign[i] == -1)
                             {
-                                actual_parity = (parity + 1) % 2;
+                                actual_parity = (actual_parity + 1) % 2;
                             }
                             //std::cout << it << " " << i << ": The d^hor_i boundary of " << current_basis << ". This is " << boundary << std::endl;
                             //std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << actual_parity << std::endl;

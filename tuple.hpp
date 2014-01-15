@@ -86,7 +86,7 @@ public:
     bool phi( uint32_t q, uint32_t i);      ///< Applies the function \f$ \Phi^q_i \f$ and returns true iff the norm is preserved thereby..
     Tuple d_hor( uint8_t i ) const;         ///< Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} and returns true iff the norm is preserved thereby.
     Tuple d_hor_naive( uint8_t i ) const;   ///< Different implementation of the i-th horizontal boundary.
-    std::map< uint8_t, int8_t > orientation_sign( ) const;
+    std::map< uint8_t, int8_t > orientation_sign() const;
 
     uint32_t p;  ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
     uint32_t id; ///< The index of this Tuple in the basis of the MonoComplex.
