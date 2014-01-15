@@ -33,7 +33,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     std::cout.flush();
     ofs << "Constructing bases";
     
-    MonoComplexT monocomplex( conf.genus, conf.num_punctures );
+    MonoComplexT monocomplex( conf.genus, conf.num_punctures, conf.sgn_conv );
     typename MonoComplexT::HomologyType homology;
     std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
     std::cout << std::endl;

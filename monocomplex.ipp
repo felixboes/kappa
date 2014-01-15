@@ -6,7 +6,7 @@
  *
  */
 template< class MatrixComplex >
-MonoComplex< MatrixComplex > :: MonoComplex(uint32_t _g, uint32_t _m) : g(_g), m(_m), h(2*_g + _m)
+MonoComplex< MatrixComplex > :: MonoComplex(uint32_t _g, uint32_t _m, SignConvention sgn) : g(_g), m(_m), h(2*_g + _m), sign_conv(sgn)
 {
     Tuple tuple(h);
     tuple[1] = Transposition(2, 1);
@@ -196,11 +196,9 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     
     // For each tuple t in the basis, we compute all basis elements that 
     // occur in kappa(t). 
+    int32_t parity = 0;
     for( auto it : basis_complex[p].basis )
     {
-        // parity of the exponent of the sign of the current summand of the differential
-        int32_t parity = ((h*(h+1))/2) % 2;
-        
         Tuple boundary;
         uint32_t s_q;
         
@@ -209,13 +207,21 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
 		{
             Tuple current_basis = it;
             bool norm_preserved = true;
-            parity = ((h*(h+1))/2) % 2;
+            
+            // parity of the exponent of the sign of the current summand of the differential
+            if( sign_conv != no_signs ) 
+            {
+                parity = ((h*(h+1))/2) % 2;
+            }
             
             // Calculate phi_{(s_h, ..., s_1)}( Sigma )
             for( uint32_t q = 1; q <= h; q++ )
             {
                 s_q = 1 + ( ( k / factorial(q-1)) % q );   
-                parity += s_q;
+                if( sign_conv != no_signs )
+                {
+                    parity += s_q;
+                }
                 if( current_basis.phi(q, s_q) == false )
                 {
                     norm_preserved = false;
@@ -226,7 +232,11 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
             // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
             if( norm_preserved )   // Compute all horizontal boundaries.
             {
-                std::map< uint8_t, int8_t > or_sign = current_basis.orientation_sign();
+                std::map< uint8_t, int8_t > or_sign;
+                if( sign_conv == all_signs )
+                {
+                    or_sign.operator =(std::move(current_basis.orientation_sign()));
+                }
 
                 for( uint32_t i = 1; i < p; i++ )
                 {
@@ -236,21 +246,39 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
                         {
                             boundary.id = basis_complex[p-1].id_of(boundary);
                             
-                            int32_t actual_parity = (parity + i) % 2;
-                            if ( or_sign[i] == -1)
+                            if( sign_conv == all_signs )
                             {
-                                actual_parity = (actual_parity + 1) % 2;
+                                int32_t actual_parity = (parity + i) % 2;
+                                if ( or_sign[i] == -1 )
+                                {
+                                    actual_parity = (actual_parity + 1) % 2;
+                                }
+                                //std::cout << it << " " << i << ": The d^hor_i boundary of " << current_basis << ". This is " << boundary << std::endl;
+                                //std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << actual_parity << std::endl;
+                                //std::cout << std::endl;
+                                if ( actual_parity == 0 )
+                                {
+                                    differential(boundary.id, it.id) += 1;
+                                }
+                                else
+                                {
+                                    differential(boundary.id, it.id) += -1;
+                                }
                             }
-                            //std::cout << it << " " << i << ": The d^hor_i boundary of " << current_basis << ". This is " << boundary << std::endl;
-                            //std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << actual_parity << std::endl;
-                            //std::cout << std::endl;
-                            if (actual_parity == 0)
+                            else if( sign_conv == no_orientation_sign )
                             {
-                                differential(boundary.id, it.id) += 1;
+                                if ( (parity + i) % 2 == 0 )
+                                {
+                                    differential(boundary.id, it.id) += 1;
+                                }
+                                else
+                                {
+                                    differential(boundary.id, it.id) += -1;
+                                }
                             }
                             else
                             {
-                                differential(boundary.id, it.id) += -1;
+                                differential(boundary.id, it.id) += 1;
                             }
                         }
                     }

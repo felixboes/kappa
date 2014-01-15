@@ -18,9 +18,22 @@ bool SessionConfig::setup_configuration()
 {
     if( valid )
     {
+        if( num_punctures >= 2 )
+        {
+            sgn_conv = all_signs;
+        }
+        else
+        {
+            sgn_conv = no_orientation_sign;
+        }
+        
         if( rational == false )
         {
-            Zm::set_modulus(prime, 1);
+            Zm::set_modulus(prime);
+            if(prime == 2)
+            {
+                sgn_conv = no_signs;
+            }
         }
         return true;
     }

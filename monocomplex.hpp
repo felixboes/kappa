@@ -13,6 +13,7 @@
 
 #include "factorial.hpp"
 #include "serialization.hpp"
+#include "sessionconfig.hpp"
 #include "tuple.hpp"
 
 
@@ -83,7 +84,7 @@ public:
     typedef typename MatrixComplex::MatrixType MatrixType;
     typedef typename MatrixComplex::HomologyType HomologyType;
     
-    MonoComplex(uint32_t genus, uint32_t num_punctures);
+    MonoComplex(uint32_t genus, uint32_t num_punctures, SignConvention sgn);
     /** Recursive function initializing the basis_complex.
         In the call of gen_bases with the parameters l, p and tuple, we assume that the first l transpositions
         containing symbols 1, ..., p are fixed and append all possible transpositions at position l+1, applying 	the function recursively in an appropriate way.
@@ -104,10 +105,12 @@ public:
     void show_differential_naive( int32_t p ) const;    ///< print a differential to std::out (if the differential was generated the naive way)
     //std::string show_bases() const;
 //private:
+
     uint32_t g;     ///< genus
     uint32_t m;     ///< number of punctures
     uint32_t h;     ///< h = 2*g+m
     
+    SignConvention sign_conv;  ///< The sign convention.
     MatrixComplex matrix_complex;                         ///< underlying matrix complex of this MonoComplex
     MatrixComplex matrix_complex_naive;                   ///< underlying matrix complex of this MonoComplex (genereted the naive way)
     std::map< uint32_t, MonoBasis > basis_complex;        ///< basis_complex[n] is the n-th MonoBasis, i.e. the basis of the n-th module of this MonoComplex.
