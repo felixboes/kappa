@@ -1,6 +1,12 @@
 #ifndef CHAIN_COMPLEX_HPP
 #define CHAIN_COMPLEX_HPP
 
+// Description:
+//
+// This header defines a very generic chain complex type.
+// Thus the implementation may look a bit messy at first glance.
+// Our chain complex depents on coefficients, matrix types, a function object that diagonalizes such matrices and a homology type.
+
 #include <cinttypes>
 #include <iostream>
 #include <map>
@@ -10,21 +16,22 @@
 #include "parallelization.hpp"
 
 /**
+ *  In our applications we do not always need explicit basis.
+ *  Therefore we realized a chaincomplex as a list of matrices.
+ *
  *  We assume, that \f$ 0 \times n \f$- and \f$ n \times 0 \f$-matrices require negligible RAM.
- *  Using standard tools, our tests where successfull for the types MatrixZm and MatrixQ.
  */
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
 class ChainComplex
 {
 public:
-    typedef ChainComplex<CoefficientT, MatrixT, DiagonalizerT, HomologyT> SelfType;
-    typedef CoefficientT CoefficientType;
-    typedef MatrixT MatrixType;
-    typedef DiagonalizerT DiagonalizerType;
-    typedef HomologyT HomologyType;
+    typedef ChainComplex<CoefficientT, MatrixT, DiagonalizerT, HomologyT> SelfType; ///< We use this typedef to grant access this type from other classes.
+    typedef CoefficientT CoefficientType;   ///< We use this typedef to grant access this type from other classes.
+    typedef MatrixT MatrixType;             ///< We use this typedef to grant access this type from other classes.
+    typedef DiagonalizerT DiagonalizerType; ///< We use this typedef to grant access this type from other classes.
+    typedef HomologyT HomologyType;         ///< We use this typedef to grant access this type from other classes.
     
-    ChainComplex();
-    
+    ChainComplex(); ///< Constructs an empty chain complex.
     
     /**
      *  Access the \f$n\f$-th differential.
@@ -82,7 +89,7 @@ public:
     bool exists_differential( int32_t n );
     
 private:
-    std::map< int32_t, MatrixT > differential;
+    std::map< int32_t, MatrixT > differential;  ///< Realizes the data.
     
     friend class boost::serialization::access;
     

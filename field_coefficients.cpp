@@ -21,14 +21,15 @@ std::vector<int8_t> Zm::inv;
 
 void Zm::set_modulus(const uint8_t p, const uint8_t k)
 {
-    // Wir benutzen: Der Koeffizient i ist in Z/(p^k) genau dann invertierbar, wenn i%p != 0 ist.
-    // Nach dem Satz von Euler ist dann a^{p^k - p^{k-1} - 1} = a^{-1} in Z/(p^k)
+    // A coefficient Z/(p^k) is invertible iff i%p != 0 .
+    // By Eulers theorem a^{p^k - p^{k-1} - 1} = a^{-1} in Z/(p^k)
     prim = p;
     expo = k;
     base = pow(p,k);
     inv.clear();
-    inv.push_back(0);
-    inv.push_back(1);
+    inv.push_back(0);   // Here the inverse of zero is zero.
+    inv.push_back(1);   // The inverse of 1 is cleary 1.
+    
     int32_t m = pow(p,k) - pow(p,k-1) - 1;
     for(int8_t i = 2; i < base; i++)    // calculate modulo exponent
     {
@@ -64,6 +65,7 @@ void Zm::clean_up()
 
 bool Zm::is_field()
 {
+    // todo check primeness.
     return (prim > 0 && expo == 1);
 }
 
@@ -120,19 +122,7 @@ bool const Zm::is_invertible()
 
 Zm const Zm::inverse()
 {
-    return Zm( inv[(((n % base)+base)%base)] );
-}
-
-/*
- *--------------------------------------------------------------------------------------
- *       Class:  Zm
- *      Method:  Zm :: print_Zm
- * Description:     prints our a Zmicient
- *--------------------------------------------------------------------------------------
- */
-void const Zm::show()
-{
-    std::cout << ((n%base)+base)%base;
+    return Zm( inv[(((n % base)+base)%base)] != 0 );
 }
 
 std::ostream& operator<< (std::ostream& stream, const Zm& coeff)

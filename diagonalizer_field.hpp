@@ -1,6 +1,11 @@
 #ifndef DIAGONALIZER_FIELD_HPP
 #define DIAGONALIZER_FIELD_HPP
 
+// Description:
+//
+// This header defines a function object that diagonalizes matrices with field coefficients 'CoefficientT'.
+// Here we offer single- and multithreaded versions.
+
 #include <chrono>
 #include <cinttypes>
 #include <functional>
@@ -20,42 +25,31 @@
  *  \f]
  *  at position \f$n\f$, it suffices to compute the dimension of the kernel and the image of the respective matrices. 
  *  Therefore we need to diagonalize the matrices representing the two differentials (here only for matrices with
- *  coefficients in \f$ \mathbb{F}_p \f$).
+ *  coefficients in \f$\mathbb Q\f$ and \f$ \mathbb{F}_p \f$).
  */
-
 template < class CoefficientT >
 class DiagonalizerField
 {
 public:
-    typedef CoefficientT CoefficientType;
-    typedef MatrixField<CoefficientType> MatrixType;
+    typedef CoefficientT CoefficientType;   ///< We use this typedef to grant access the coefficient type from other classes.
+    typedef MatrixField<CoefficientType> MatrixType;    ///< We use this typedef to grant access the matrix type from other classes.
     
-    /**  constructor */
+    /** 
+     *  Constructor.
+     */
     DiagonalizerField() {}
     
     /**
-    *   Diagonalize a given matrix.
+    *   Diagonalizes a given matrix.
+    *   If the number of threads is given and greater then 1, we use the multithreaded version.
     **/
     void operator() ( MatrixType &matrix, uint32_t number_threads=0 );
+    
+    /**
+    *   Diagonalizes a given matrix and gives access to the progress by writing the current rank to current_rank.
+    *   If the number of threads is given and greater then 1, we use the multithreaded version.
+    **/
     void operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t number_threads=0 );
-    
-    /**
-     *  Diagonalize matrix and apply the base change to post_matrix.
-     *  One should have the following picture in mind.
-     *  \f[
-     *      C_{n-2} \xleftarrow{\partial_{postmatrix}} C_{n-1} \xleftarrow{\partial_{matrix}} C_n
-     *  \f]
-     */
-    void operator() ( MatrixType &post_matrix, MatrixType &matrix );
-    
-    /**
-     *  Diagonalize matrix and apply the base change to pre_matrix and post_matrix.
-     *  One should have the following picture in mind.
-     *  \f[
-     *      C_{n-2} \xleftarrow{\partial_{postmatrix}} C_{n-1} \xleftarrow{\partial_{matrix}} C_n \xleftarrow{\partial{prematrix}} C_{n+1}
-     *  \f]
-     */
-    void operator() ( MatrixType &post_matrix, MatrixType &matrix, MatrixType &pre_matrix );
     
     /**  @return defect of the matrix */
     uint32_t dfct();   
@@ -72,16 +66,25 @@ public:
      *  The matrix is diagonalized via Gauss to compute the number of linearly independant columns or rows.
      */
     uint32_t diag_field(MatrixType& matrix);
+    
+    /**
+     *  @return rank of matrix and gives access to the progress by writing the current rank to current_rank.
+     *  The matrix is diagonalized via Gauss to compute the number of linearly independant columns or rows.
+     */
     uint32_t diag_field(MatrixType& matrix, atomic_uint & current_rank);
     
+    /**
+     *  @return rank of matrix and gives access to the progress by writing the current rank to current_rank.
+     *  The matrix is diagonalized via Gauss to compute the number of linearly independant columns or rows.
+     *  This version is parallelized and uses number_threads many threads.
+     */
     uint32_t diag_field_parallelized(MatrixType& matrix, atomic_uint & current_rank, uint32_t number_threads);
-    
-    MatrixType in;
-    MatrixType out;
-    uint32_t def;
-    uint32_t rnk;
+
+    uint32_t def;   ///< The defect of the matrix.
+    uint32_t rnk;   ///< The rank of the matrix.
      
     // Classes for paralellization:
+    // Todo: give a detailed explanation.
     /**
      *   A RowOpParam can be seen as a job that has to be processed by one of the worker threads.
      */

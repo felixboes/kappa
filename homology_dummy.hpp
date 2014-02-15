@@ -1,10 +1,15 @@
 #ifndef HOMOLOGY_DUMMY_HPP
 #define HOMOLOGY_DUMMY_HPP
 
+// Description:
+//
+// This header defines a dummy version of homology.
+// This is used if we are not at all interested in homology computations, for example when we construct and save differentials.
+
 #include <iostream>
 
 /**
- *  Dummy class. See HomologyField
+ *  This is a dummy class that mimes the functionality of HomologyField, but does nothing.
  */
 class HomologyDummy
 {

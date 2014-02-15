@@ -93,6 +93,7 @@ uint32_t DiagonalizerField< CoefficientT >::diag_field(MatrixType &matrix, atomi
 template< class CoefficientT >
 void DiagonalizerField< CoefficientT >::operator() ( MatrixType &matrix, uint32_t number_threads )
 {
+    // call operator() ( MatrixType &m, atomic_uint &, uint32_t ).
     atomic_uint current_rank;
     this->operator ()(matrix, current_rank, number_threads);
 }
@@ -109,20 +110,6 @@ void DiagonalizerField< CoefficientT >::operator() ( MatrixType &matrix, atomic_
         rnk = diag_field_parallelized( matrix, current_rank, number_threads );
     }
     def = matrix.size2() - rnk;
-}
-
-template< class CoefficientT >
-void DiagonalizerField< CoefficientT >::operator() ( MatrixType &post_matrix, MatrixType &matrix )
-{
-    operator ()(matrix);
-    std::cerr << "TODO: Additional ops in DiagonalizerField::operator() ( MatrixType &post_matrix, MatrixType &matrix )" << std::endl;
-}
-
-template< class CoefficientT >
-void DiagonalizerField< CoefficientT >::operator() ( MatrixType &post_matrix, MatrixType &matrix, MatrixType &pre_matrix )
-{
-    operator ()(matrix);
-    std::cerr << "TODO: Additional ops in DiagonalizerField::operator() ( MatrixType &post_matrix, MatrixType &matrix, MatrixType &pre_matrix )" << std::endl;
 }
 
 template< class CoefficientT >
@@ -256,6 +243,7 @@ void DiagonalizerField< CoefficientT >::Filler::work(MatrixType& matrix, atomic_
         }
     }
     
+    // Tell worker threads that there will be no more work.
     sync_list.all_work_done();
 }
 

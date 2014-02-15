@@ -8,7 +8,8 @@
 /**
  *  The coefficient ring \f$ \mathbb{Z} \f$.
  *  Use these matrices only for saving generated differentials.
- *  Do not diagonalize these matrices as the coefficients will overflow.
+ *  Do not diagonalize these matrices as the coefficients will probalby overflow.
+ *  In order to avoid overflows use matrices with 'gmp' coefficients.
  */
 
 typedef boost::numeric::ublas::matrix< int32_t > MatrixZDontDiagonalize;

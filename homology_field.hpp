@@ -1,6 +1,11 @@
 #ifndef HOMOLOGY_FIELD_HPP
 #define HOMOLOGY_FIELD_HPP
 
+// Description:
+//
+// This header defines the homology for chaincomplexes over a field.
+// Till now we are only interested in the dimensions of kernels and images.
+
 #include <cinttypes>
 #include <iomanip>
 #include <iostream>

@@ -1,6 +1,12 @@
 #ifndef HOMOLOGY_HPP
 #define HOMOLOGY_HPP
 
+// Description:
+//
+// This header is should used as in include in other projects.
+// It defines chaincomplexes with coefficients in Q and Zm and offers homology computations.
+// It defines chaincomplexes with coefficients in Z but denies homology computations.
+
 #include "chain_complex.hpp"
 #include "clock.hpp"
 #include "field_coefficients.hpp"
