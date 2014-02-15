@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     if(conf.rational == true)
     {
         // Compute all bases.
-        MonoComplexZStorageOnly monocomplex( conf.genus, conf.num_punctures );
+        MonoComplexZStorageOnly monocomplex( conf.genus, conf.num_punctures, conf.sgn_conv );
         
         // Save bases to file
         std::string prefix_basis("./cache/bases/");
