@@ -4,6 +4,7 @@
 
 #include <gmpxx.h>
 
+#include <blockfinder.hpp>
 #include <homology.hpp>
 
 #include "kappa.hpp"
@@ -79,8 +80,8 @@ int main(int argc, char** argv)
     }
     
     MatrixZDontDiagonalize M = load_from_file_bz2<MatrixZDontDiagonalize>( "./cache/differentials/" + std::string(argv[1]) + "_" + std::string(argv[2]) + "_" + std::string(argv[3]) );
-    std::cout << M << std::endl;
+    //std::cout << M << std::endl;
     print_statistics(M);
-    
+
     return 0;
 }

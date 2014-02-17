@@ -6,8 +6,9 @@
 
 #include "tuple.hpp"
 
-typedef std::vector< std::vector< Tuple > > BasisPartition;
-typedef std::pair< BasisPartition, BasisPartition > Block;
+typedef std::vector< int > Component;
+typedef std::pair< Component, Component > Block;
+typedef std::vector< Block > BlockPartition;
 
 template< class MatrixT >
 class BlockFinder
@@ -16,8 +17,7 @@ public:
     typedef MatrixT MatrixType;
 
     BlockFinder();
-    Block operator() ( MatrixType & );
-    
+    BlockPartition operator() ( MatrixType & );
 };
 
 #include "blockfinder.ipp"
