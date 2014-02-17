@@ -3,6 +3,7 @@
 
 #include <homology.hpp>
 
+#include "blockfinder.hpp"
 #include "factorial.hpp"
 #include "monocomplex.hpp"
 #include "serialization.hpp"

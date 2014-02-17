@@ -1,9 +1,11 @@
 #include "blockfinder.hpp"
 
-BlockFinder::BlockFinder()
+template < class MatrixT >
+BlockFinder<MatrixT>::BlockFinder()
 {
 }
 
+template < class MatrixT >
 void add_incident_cols(int                 row,
                        MatrixT &           matrix,
                        std::stack< int > & stack_cols,
@@ -20,6 +22,7 @@ void add_incident_cols(int                 row,
     }
 }
 
+template< class MatrixT >
 void add_incident_rows(int                 col,
                        MatrixT &           matrix,
                        std::stack< int > & stack_rows,
@@ -62,7 +65,7 @@ static Block find_block(int initial_row,
         {
             int col = stack_cols.top();
             add_incident_rows(col, matrix, stack_rows, visited_rows);
-            comp_cols.pus_back(col);
+            comp_cols.push_back(col);
             stack_cols.pop();
         }
     }
@@ -70,7 +73,7 @@ static Block find_block(int initial_row,
 }
 
 template< class MatrixT >
-Block BlockFinder::operator() (MatrixType & matrix)
+BlockPartition BlockFinder<MatrixT>::operator() (MatrixType & matrix)
 {
     BlockPartition block_part;
     
@@ -89,9 +92,3 @@ Block BlockFinder::operator() (MatrixType & matrix)
     return block;
 }
 
-static int main ()
-{
-    BlockFinder block_finder;
-    block_finder();
-    return 0;
-}
