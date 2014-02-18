@@ -92,18 +92,17 @@ BlockPartition & BlockFinder<MatrixT>::block_partition()
 }
 
 template< class MatrixT >
-int BlockFinder<MatrixT>::num_blocks()
+int BlockFinder<MatrixT>::num_blocks() const
 {
     return _block_part.size();
 }
 
 template< class MatrixT >
-int BlockFinder<MatrixT>::num_non_zero_blocks()
+int BlockFinder<MatrixT>::num_non_zero_blocks() const
 {
-    int num;
-    for (auto & it : _block_part)
+    int num = 0;
+    for (auto & block : _block_part)
     {
-        Block & block = it;
         if (not (block.first.size() == 1 && block.second.size() == 0))
         {
             ++num;

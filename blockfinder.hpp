@@ -28,12 +28,12 @@ public:
     /**
      * @return Total number of blocks in _block_part.
      */
-    int num_blocks();
+    int num_blocks() const;
 
     /**
      * @return Number of blocks in _block_part which are not zero rows.
      */
-    int num_non_zero_blocks();
+    int num_non_zero_blocks() const;
 
 private:
     BlockPartition _block_part;
