@@ -1,9 +1,5 @@
 #include "blockfinder.hpp"
 
-template < class MatrixT >
-BlockFinder<MatrixT>::BlockFinder()
-{
-}
 
 template < class MatrixT >
 void add_incident_cols(int                 row,
@@ -74,10 +70,8 @@ static Block find_block(int initial_row,
 }
 
 template< class MatrixT >
-BlockPartition BlockFinder<MatrixT>::operator() (MatrixType & matrix)
+BlockFinder<MatrixT>::BlockFinder(MatrixType & matrix)
 {
-    BlockPartition block_part;
-    
     int num_rows = matrix.size1();
     int num_cols = matrix.size2();
     std::vector<bool> visited_rows(num_rows, false);
@@ -86,10 +80,34 @@ BlockPartition BlockFinder<MatrixT>::operator() (MatrixType & matrix)
     {
         if ( visited_rows[row] == false )
         {
-            block_part.push_back(find_block(row, matrix, visited_rows, visited_cols));
+            _block_part.push_back(find_block(row, matrix, visited_rows, visited_cols));
         }
-    }
-    
-    return block_part;
+    }   
 }
 
+template< class MatrixT >
+BlockPartition & BlockFinder<MatrixT>::block_partition()
+{
+    return _block_part;
+}
+
+template< class MatrixT >
+int BlockFinder<MatrixT>::num_blocks()
+{
+    return _block_part.size();
+}
+
+template< class MatrixT >
+int BlockFinder<MatrixT>::num_non_zero_blocks()
+{
+    int num;
+    for (auto & it : _block_part)
+    {
+        Block & block = it;
+        if (not (block.first.size() == 1 && block.second.size() == 0))
+        {
+            ++num;
+        }
+    }
+    return num;
+}
