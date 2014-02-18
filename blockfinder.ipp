@@ -14,7 +14,7 @@ void add_incident_cols(int                 row,
     int num_cols = matrix.size2();
     for ( int col = 0; col < num_cols; ++col )
     {
-        if ( (matrix[row][col] != 0) && (visited_cols[col] == false) )
+        if ( (matrix(row, col) != 0) && (visited_cols[col] == false) )
         {
             stack_cols.push(col);
             visited_cols[col] = true;
@@ -28,10 +28,10 @@ void add_incident_rows(int                 col,
                        std::stack< int > & stack_rows,
                        std::vector<bool> & visited_rows)
 {
-    int num_rows = matrix.size2();
+    int num_rows = matrix.size1();
     for ( int row = 0; row < num_rows; ++row )
     {
-        if ( (matrix[row][col] != 0) && (visited_rows[row] == false) )
+        if ( (matrix(row, col) != 0) && (visited_rows[row] == false) )
         {
             stack_rows.push(row);
             visited_rows[row] = true;
@@ -52,6 +52,7 @@ static Block find_block(int initial_row,
     std::stack< int > stack_cols;
 
     stack_rows.push(initial_row);
+
     while ( stack_rows.size() != 0 or stack_cols.size() != 0 )
     {
         if ( stack_rows.size() != 0 )
@@ -77,18 +78,18 @@ BlockPartition BlockFinder<MatrixT>::operator() (MatrixType & matrix)
 {
     BlockPartition block_part;
     
-    std::vector<bool> visited_cols;
-    
     int num_rows = matrix.size1();
+    int num_cols = matrix.size2();
     std::vector<bool> visited_rows(num_rows, false);
-    for ( int r = 0; r < num_rows; ++r )
+    std::vector<bool> visited_cols(num_cols, false);
+    for ( int row = 0; row < num_rows; ++row )
     {
-        if ( visited_rows[r] == false )
+        if ( visited_rows[row] == false )
         {
-            block_part.push_back(find_block(r));
+            block_part.push_back(find_block(row, matrix, visited_rows, visited_cols));
         }
     }
     
-    return block;
+    return block_part;
 }
 
