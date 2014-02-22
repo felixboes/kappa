@@ -63,7 +63,7 @@ Tuple :: operator bool() const
 {
     for( auto const &it : rep )
     {
-        if( it.first == 0 || it.second == 0 )
+        if( it.first == 0 || it.first > p || it.second == 0 || it.second > p)
         {
             return false;
         }
