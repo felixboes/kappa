@@ -14,7 +14,8 @@ typedef std::vector< Block > BlockPartition; ///< used to store a partition of t
  * @brief Determines the block structure of a given matrix of type MatrixT.
  * Thereby a block of a matrix is defined as a maximal collection C of rows and columns
  * of the matrix such that for each row r and each column c, there is an alternating 
- * sequence of rows and columns in C starting at r and ending at c.
+ * sequence of rows and columns in C starting at r and ending at c such that for all consecutive pairs of 
+ * a row r and a column c (or the other way around) the entry matrix(r, c) is non-zero. .
  */
 template< class MatrixT >
 class BlockFinder
