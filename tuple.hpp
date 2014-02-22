@@ -66,7 +66,7 @@ public:
     bool operator!=(const Tuple& t) const;
     
     /**
-     *  @return Returns true iff no Transposition contains the symbol 0.
+     *  @return Returns true iff all Transpositions use the symbols 1,..., p only.
      *  It is used in del2. @sa Tuple::del2.
      */
     operator bool() const;
