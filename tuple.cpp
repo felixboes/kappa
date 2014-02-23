@@ -489,13 +489,10 @@ Tuple::Permutation Tuple::sigma_q() const
 
 /**
  * Determines the decompositions of sigma into cycles including fix points.
- * \return A map consisting of all cycles of sigma with their smallest element as key (except for
+ * \return A map consisting of all cycles of pi with their smallest element as key (except for
  * the liniel, for which the key is p)
- * \warning Since Mehner's example in the orientation chapter looks as if fix points were considered
- * in the cycle decomposition, we also consider them here.
- * \todo We assume that the liniel is not a fix point. Is that always true?
  */
-std::map< uint8_t, Tuple::Permutation > Tuple::cycle_decomposition ( const Tuple::Permutation & sigma ) const
+std::map< uint8_t, Tuple::Permutation > Tuple::cycle_decomposition ( const Tuple::Permutation & pi ) const
 {
     std::map<uint8_t, Tuple::Permutation> cycle_decomp;
     std::vector<bool> visited(p+1, false);
@@ -504,21 +501,21 @@ std::map< uint8_t, Tuple::Permutation > Tuple::cycle_decomposition ( const Tuple
         // determine the cycle of i.
         Tuple::Permutation cycle;
         
-        uint8_t j;     // previous symbol
-        uint8_t k = i; // current symbol
+        uint8_t prev;     // previous symbol
+        uint8_t cur = i; // current symbol
         bool liniel_found = false;
         
         do // mark all symbols in this cycle
         {
-            visited[k] = true;
-            j = k;
-            k = sigma.at(k);
-            cycle[j] = k;
-            if ( j == p )
+            visited[cur] = true;
+            prev = cur;
+            cur = pi.at(prev);
+            cycle[prev] = cur;
+            if ( prev == p )
             {
                 liniel_found = true;
             }
-        }while( k != i );
+        }while( cur != i );
         // note that since the for-loop runs ascendingly, the smallest element of the cycle
         // is i
         if ( liniel_found == true )
