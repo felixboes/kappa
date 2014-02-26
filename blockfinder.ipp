@@ -4,6 +4,7 @@
 /**
  * Determines all columns c with matrix(row, c) non-zero that have not been visited before,
  * puts them into stack_cols and marks them as visited.
+ */
 template < class MatrixT >
 void add_incident_cols(int                 row,
                        MatrixT &           matrix,
