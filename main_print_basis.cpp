@@ -16,6 +16,7 @@ void print_basis( MonoBasis& M )
     for( auto tup : M.basis )
     {
         std::cout << tup << std::endl;
+        tup.connected_components();
     }
 }
 

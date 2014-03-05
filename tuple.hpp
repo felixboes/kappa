@@ -7,6 +7,9 @@
 #include <map>
 #include <vector>
 
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/connected_components.hpp>
+
 #include "serialization.hpp"
 
 /**
@@ -37,6 +40,7 @@ class Tuple
     
 public:
     typedef std::map<uint8_t, uint8_t> Permutation;  ///< Data structure to store a permutation, where a -> perm[a] if perm is a Permutation
+    typedef std::vector<int32_t> ConnectedComponents;   ///< Data structure to store the connected components, where comp[i] is the component in which i lies.
 
     /**
      *  Construct a Tuple of norm h which has to be filled.
@@ -80,6 +84,8 @@ public:
      *  Tells the number of cycles and intern punctures of the permutation \f$ \tau_h \cdot \ldots \cdot \tau_1 \cdot (1,2,\ldots,p) \f$.
      */
     PermutationType permutation_type();
+
+    ConnectedComponents connected_components() const; ///< @returns the number connected compontents of the corresponding graph, where \f$ \tau_j \f$ is seen an edge.
     
     bool monotone();                        ///< Returns true iff the tuple is monotone.
     bool f(uint32_t i);                     ///< Applies the function \f$ f_i \f$ fuer \f$ 1 \le i < h \f$ and returns true iff the norm is preserved thereby.
