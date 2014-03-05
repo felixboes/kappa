@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include <homology.hpp>
 
@@ -15,8 +16,34 @@ void print_basis( MonoBasis& M )
     std::cout << "Number of basis elements: " << M.size() << std::endl;
     for( auto tup : M.basis )
     {
-        std::cout << tup << std::endl;
-        tup.connected_components();
+        Tuple::ConnectedComponents comp = tup.connected_components();
+        
+        std::cout << " " << tup << "; Listing components: ";
+        
+        std::vector<bool> visited( comp.size(), false );    // visited[0] is not used
+        for( uint32_t i = 1; i < comp.size(); )  // We iterate through all cycles and mark the used symbols.
+        {
+            // consider the next cycl
+            std::cout << comp[i] << ":" << i;
+            visited[i] = true;
+            
+            for( int32_t j = i+1; j < comp.size(); ++j )   // mark all symbols in this cycle
+            {
+                if( comp[j] == comp[i] )
+                {
+                    visited[j] = true;
+                    std::cout << " " << j;
+                }
+            }
+            std::cout << "; ";
+    
+            // find the next unvisited cycle
+            for( ++i; i <= comp.size() && visited[i]; ++i )
+            {
+            }
+        }
+        
+        std::cout << std::endl;
     }
 }
 

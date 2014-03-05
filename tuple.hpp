@@ -40,7 +40,13 @@ class Tuple
     
 public:
     typedef std::map<uint8_t, uint8_t> Permutation;  ///< Data structure to store a permutation, where a -> perm[a] if perm is a Permutation
-    typedef std::vector<int32_t> ConnectedComponents;   ///< Data structure to store the connected components, where comp[i] is the component in which i lies.
+    /**
+     *  Data structure to store the connected components.
+     *  The zeroth entry stores the number of connected components.
+     *  The components are labled by the natural numbers > 0 and the i-th entry of ConnectedComponents is the component in which i lies.
+     */
+    
+    typedef std::vector<int32_t> ConnectedComponents;
 
     /**
      *  Construct a Tuple of norm h which has to be filled.

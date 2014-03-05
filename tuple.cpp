@@ -139,21 +139,19 @@ Tuple::ConnectedComponents Tuple::connected_components() const
     // Compare http://www.boost.org/doc/libs/1_49_0/libs/graph/example/connected_components.cpp
     typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS> Graph;
 
+    // Build graph.
     Graph G;
     for( auto edge : rep )
     {
         boost::add_edge(edge.first, edge.second, G);
     }
 
-    ConnectedComponents component(p+1);
-    int32_t num = boost::connected_components(G, &component[0]);
+    // Let boost compute the connected compontents.
+    ConnectedComponents components(p+1);
+    int32_t num = boost::connected_components(G, &components[0]);
+    components[0] = num;
 
-    std::vector<int32_t>::size_type i;
-    std::cout << "Total number of components: " << num - 1 << std::endl;
-    for (i = 1; i != component.size(); ++i)
-        std::cout << "Vertex " << i <<" is in component " << component[i] << std::endl;
-    std::cout << std::endl;
-    return component;
+    return components;
 }
 
 bool Tuple :: monotone()
