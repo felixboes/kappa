@@ -61,13 +61,13 @@ public:
     /**
      *  Compute the homology at the \f$n\f$-th spot.
      */
-    HomologyT homology( int32_t n );
+    HomologyT homology( int32_t n, uint32_t number_threads = 0 );
     
     /**
      *  Compute the homology at the \f$n\f$-th spot.
      */
-    HomologyT homology( int32_t n, atomic_uint & current_rank );
-    
+    HomologyT homology( int32_t n, atomic_uint & current_rank, uint32_t number_threads = 0 );
+
     /**
      *  Compute the kernel at the \f$n\f$-th spot and the torsion at the \f$(n-1)\f$-th spot.
      */
@@ -86,7 +86,7 @@ public:
     /**
      *  Checks if the \f$n\f$-th differential exists.
      */
-    bool exists_differential( int32_t n );
+    bool exists_differential( const int32_t& n ) const;
     
 private:
     std::map< int32_t, MatrixT > differential;  ///< Realizes the data.

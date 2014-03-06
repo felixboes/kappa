@@ -36,17 +36,17 @@ CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::o
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-bool ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::exists_differential( int32_t n )
+bool ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::exists_differential( const int32_t& n ) const
 {
     // The n-th module exists iff there exists a matrix leaving it.
     return differential.count(n) > 0;
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homology( int32_t n )
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homology( int32_t n, uint32_t number_threads )
 {
     atomic_uint current_rank;
-    return homology(n, current_rank);
+    return homology(n, current_rank, number_threads);
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
@@ -102,7 +102,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homology( int32_t n, atomic_uint & current_rank )
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homology( int32_t n, atomic_uint & current_rank, uint32_t number_threads )
 {
     HomologyT homol;
     // Case by case anaylsis:
@@ -135,7 +135,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
     {
         // Diagonalize.
         DiagonalizerT diago;
-        diago( differential[n], current_rank );
+        diago( differential[n], current_rank, number_threads );
         homol.set_kern( n, diago.kern() );
     }
     // diff_{n+1} is 0
@@ -157,7 +157,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
         }
         // Diagonalize.
         DiagonalizerT diago;
-        diago( differential[n+1], current_rank );
+        diago( differential[n+1], current_rank, number_threads );
         homol.set_tors( n, diago.tors() );
     }
     
