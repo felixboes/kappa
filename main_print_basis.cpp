@@ -20,14 +20,13 @@ void print_basis( MonoBasis& M )
         
         std::cout << " " << tup << "; Listing components: ";
         
-        std::vector<bool> visited( comp.size(), false );    // visited[0] is not used
-        for( uint32_t i = 1; i < comp.size(); )  // We iterate through all cycles and mark the used symbols.
+        std::vector<bool> visited( comp.size()+1, false );    // visited[0] will not used
+        for( uint32_t i = 1; i < comp.size(); )
         {
-            // consider the next cycl
             std::cout << comp[i] << ":" << i;
             visited[i] = true;
             
-            for( int32_t j = i+1; j < comp.size(); ++j )   // mark all symbols in this cycle
+            for( int32_t j = i+1; j < comp.size(); ++j )   // mark all visited vertices
             {
                 if( comp[j] == comp[i] )
                 {
@@ -37,7 +36,7 @@ void print_basis( MonoBasis& M )
             }
             std::cout << "; ";
     
-            // find the next unvisited cycle
+            // find the next unvisited vertex
             for( ++i; i <= comp.size() && visited[i]; ++i )
             {
             }

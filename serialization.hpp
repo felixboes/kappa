@@ -23,7 +23,8 @@
  *  Save a given class T to filename.bz2.
  */
 template <class T>
-void save_to_file_bz2( T& t, std::string filename, bool print_duration = true ){
+void save_to_file_bz2( T& t, std::string filename, bool print_duration = true )
+{
     if( print_duration == true )
     {
         std::cout << "Saving '" + filename + ".bz2'";
