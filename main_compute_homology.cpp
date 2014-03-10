@@ -74,24 +74,28 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         }
         
         // Compute the induced homology.
-        measure_duration = Clock();
-        
+        measure_duration = Clock(); // Measure duration.
+        atomic_uint state(0);   // Set state to 1 iff kernel and torsion are computed. This is done to terminate the 'monitoring thread'.
+
         // Diagonalzing thread.
         auto partial_homology_thread = std::async( std::launch::async, [&]()
         {
-            return monocomplex.matrix_complex.compute_kernel_and_torsion( p, current_rank, conf.num_threads );
+            auto ret = monocomplex.matrix_complex.compute_kernel_and_torsion( p, current_rank, conf.num_threads );
+            state = 1;
+            return ret;
         } );
-        
+
         // Monitoring thread.
         auto monitor_thread = std::async( std::launch::async, [&]()
         {
-            while( thread_running( partial_homology_thread ) )
+            while( state != 1 )
             {
                 std::cout << "Diagonalization " << current_rank << "/" << max_possible_rank << "\r";
                 std::cout.flush();
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
         } );
-        
+
         // Wait for threads to terminate.
         auto partial_homology = partial_homology_thread.get();
         monitor_thread.get();

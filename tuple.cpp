@@ -129,6 +129,26 @@ uint32_t Tuple :: num_cycles()
     return num_cycles;
 }
 
+Tuple::ConnectedComponents Tuple::connected_components() const
+{
+    // Compare http://www.boost.org/doc/libs/1_49_0/libs/graph/example/connected_components.cpp
+    typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS> Graph;
+
+    // Build graph.
+    Graph G;
+    for( auto edge : rep )
+    {
+        boost::add_edge(edge.first, edge.second, G);
+    }
+
+    // Let boost compute the connected compontents.
+    ConnectedComponents components(p+1);
+    int32_t num = boost::connected_components(G, &components[0]);
+    components[0] = num;
+
+    return components;
+}
+
 bool Tuple :: monotone()
 {
     // A tuple is monotone iff the sequence of all at(i) is monotone.

@@ -21,6 +21,9 @@ compute_statistics:$(OBJ) ${INCLUDES} main_compute_statistics.cpp
 compute_cache:$(OBJ) ${INCLUDES} main_compute_cache.cpp
 	$(CPP) $(CPPFLAGS) -o compute_cache main_compute_cache.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) 
 
+print_basis:$(OBJ) ${INCLUDES} main_print_basis.cpp
+	$(CPP) $(CPPFLAGS) -o print_basis main_print_basis.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS)
+
 %.o: %.cpp ${INCLUDES}
 	$(CPP) $(CPPFLAGS) -c  $< -I../libhomology/
 

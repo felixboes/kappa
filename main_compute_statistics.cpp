@@ -67,7 +67,15 @@ void print_statistics( MatrixT& M )
     {
         total += num_entries_per_col[i];
     }
-    std::cout << "Average number of non-zero entries (arithmetic mean): exact: " << mpq_class(total) / num_cols << " floored:" << total / num_cols << std::endl;
+    if( num_cols > 0 )
+    {
+        std::cout << "Average number of non-zero entries (arithmetic mean): exact: " << mpq_class(total) / num_cols << " floored:" << total / num_cols << std::endl;
+    }
+    else
+    {
+        std::cout << "Average number of non-zero entries (arithmetic mean): exact: 0 floored: 0" << std::endl;
+    }
+
 }
 
 int main(int argc, char** argv)
@@ -86,7 +94,7 @@ int main(int argc, char** argv)
     {
         for (int j = 0; j < M.size2(); ++j)
         {
-            std::cout << M(i, j) * M(i, j) << " ";
+            std::cout << (M(i,j) == 0 ? "0" : "*") << " ";
         }
         std::cout << std::endl;
     }
