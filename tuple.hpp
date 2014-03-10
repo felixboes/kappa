@@ -15,17 +15,6 @@
 typedef std::pair< uint8_t, uint8_t > Transposition;
 
 /**
- *  A Tuple has a permutation type which stores the number of cycles of \f$ \sigma_h \f$ and the number of internal punctures.
- */ 
-struct PermutationType
-{
-    PermutationType() : num_cycles(0), num_punctures(0) {}
-    
-    uint32_t num_cycles;
-    uint32_t num_punctures;
-};
-
-/**
  *  A Tuple of Transpositions \f$ ( \tau_h \mid \ldots \mid \tau_1 ) \f$.
  *  
  *  Convention: We want an easy-to-check condition, to test if a Tuple is in a bad state.
@@ -77,9 +66,9 @@ public:
     friend std::ostream& operator<< (std::ostream& stream, const Tuple& tuple);
     
     /**
-     *  Tells the number of cycles and intern punctures of the permutation \f$ \tau_h \cdot \ldots \cdot \tau_1 \cdot (1,2,\ldots,p) \f$.
+     *  Tells the number of cycles of the permutation \f$ \tau_h \cdot \ldots \cdot \tau_1 \cdot (1,2,\ldots,p) \f$.
      */
-    PermutationType permutation_type();
+    uint32_t num_cycles();
     
     bool monotone();                        ///< Returns true iff the tuple is monotone.
     bool f(uint32_t i);                     ///< Applies the function \f$ f_i \f$ fuer \f$ 1 \le i < h \f$ and returns true iff the norm is preserved thereby.
@@ -96,7 +85,7 @@ private:
     std::vector< Transposition > rep;                ///< Representation of a tuple of transpositions.
     Permutation long_cycle() const;                  ///< Returns the cycle 1 -> 2 -> ... -> p-1 -> p -> 1.
     Permutation long_cycle_inv() const;              ///< Returns the cycle 1 -> p -> p-2 -> ... -> 2 -> 1.
-    Permutation sigma_q() const;
+    Permutation sigma_h() const;
     void print_permutation( Permutation sigma ) const;
     std::map< uint8_t, Tuple::Permutation > cycle_decomposition ( const Tuple::Permutation & sigma ) const;
     

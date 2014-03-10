@@ -92,20 +92,15 @@ std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
     return stream;
 }
 
-PermutationType Tuple :: permutation_type()
+uint32_t Tuple :: num_cycles()
 {
     // Since the t_i are transpositions, one can instead count the number of cycles of (p p-1 ... 1) t_1 ... t_h.
-    PermutationType pt;   
+    uint32_t num_cycles = 0;
     Tuple::Permutation sigma_inv = long_cycle_inv();
 
-    // multiply with t_1, ..., t_h and count punctures
+    // multiply with t_1, ..., t_h
     for( uint32_t i = 1; i <= norm(); i++ )
     {
-        if(at(i).first == at(i).second)
-        {
-            pt.num_punctures += 1;
-        }
-
         uint8_t k = at(i).first;
         uint8_t l = at(i).second;
         std::swap( sigma_inv[ k ], sigma_inv[ l ] );
@@ -116,7 +111,7 @@ PermutationType Tuple :: permutation_type()
     for( uint8_t i = 1; i <= p; ) // We iterate through all cycles and mark the used symbols.
     {
         // consider the next cycle
-        pt.num_cycles += 1;
+        num_cycles += 1;
         visited[i] = true;
         uint8_t j = sigma_inv[i];
         
@@ -131,7 +126,7 @@ PermutationType Tuple :: permutation_type()
         {
         }
     }
-    return pt;
+    return num_cycles;
 }
 
 bool Tuple :: monotone()
@@ -462,7 +457,7 @@ Tuple Tuple :: d_hor_naive( uint8_t i ) const
     return boundary;
 }
 
-Tuple::Permutation Tuple::sigma_q() const
+Tuple::Permutation Tuple::sigma_h() const
 {
     // initialize with sigma_0
     Tuple::Permutation sigma_inv = long_cycle_inv();
@@ -551,7 +546,7 @@ bool contains( Tuple::Permutation sigma, uint8_t p )
 
 std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
 {
-    Tuple::Permutation sigma = sigma_q();
+    Tuple::Permutation sigma = sigma_h();
 
     std::map< uint8_t, Tuple::Permutation > cycle_decomp = cycle_decomposition(sigma);
 

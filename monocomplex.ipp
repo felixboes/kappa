@@ -150,7 +150,7 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tu
          // number of cycles. If this is the case, we add tuple to the basis elements of the 
          // p-th basis and store the index of tuple in this basis as the id of tuple.
     {
-        if(tuple.permutation_type().num_cycles == m+1)
+        if(tuple.num_cycles() == m+1)
         {
             tuple.id = basis_complex[p].add_basis_element( tuple );
         }
