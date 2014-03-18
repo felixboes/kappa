@@ -8,7 +8,7 @@
 
 void print_usage(int argc, char** argv)
 {
-    std::cout << "Usage: " << argv[0] << " genus num_punctures (rational:0 | Z_r: r > 0) optional: first p for which to compute H_p optional:number of threads for paralellization." << std::endl;
+    std::cout << "Usage: " << argv[0] << " genus num_punctures (rational:0 | Z_r: r > 0) optional:number of threads for paralellization optional: first and last p for which to compute H_p." << std::endl;
 }
 
 template< class MonoComplexT >
@@ -48,7 +48,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     for( auto& it : monocomplex.basis_complex )
     {
         int32_t p = it.first;
-        if ( p < conf.start_p )
+        if ( p < conf.start_p || p > conf.end_p + 1 )
         {
             continue;
         }
@@ -120,6 +120,9 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         // Delete the differential.
         monocomplex.erase_differential(p);
     }
+    
+    homology.erase_tors( conf.start_p - 1 );
+    homology.erase_kern( conf.end_p + 1 );
     
     // Print status message.
     std::cout << std::endl;
