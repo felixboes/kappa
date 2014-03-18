@@ -40,8 +40,14 @@ public:
     /// gets the kernel
     KernT get_kern( int32_t ) const;
     
-    /// sets the kernel
+    /// sets the torsion
     TorsT get_tors( int32_t ) const;
+    
+    /// erase the kernel
+    void erase_kern( int32_t n );
+    
+    /// erase the torsion
+    void erase_tors( int32_t n );
     
     /// output stream
     friend std::ostream& operator<< (std::ostream& stream, const HomologyField& homol);

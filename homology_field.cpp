@@ -44,6 +44,15 @@ HomologyField::TorsT HomologyField::get_tors( int32_t n ) const
     }
 }
 
+void HomologyField::erase_kern( int32_t n )
+{
+    kern.erase(n);
+}
+
+void HomologyField::erase_tors( int32_t n )
+{
+    tors.erase(n);
+}
 
 std::ostream &operator << ( std::ostream& os, const HomologyField& homol )
 {
