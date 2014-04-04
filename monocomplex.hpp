@@ -29,10 +29,10 @@ struct MonoBasis
     friend std::ostream& operator<< (std::ostream& stream, const MonoBasis& mb);
     
     /// Returns the number of basis elements.
-    uint64_t size();
+    uint64_t size() const;
 
     /// Returns the index of the Tuple that is stored in the MonoBasis or -1.
-    int64_t id_of( Tuple& t );
+    int64_t id_of( Tuple& t ) const;
     
     /// Stores the orderd basis.
     std::unordered_set< Tuple, HashTuple > basis;
@@ -81,6 +81,7 @@ template< class MatrixComplex >
 class MonoComplex
 {
 public:
+    typedef typename MatrixComplex::CoefficientType CoefficientType;
     typedef typename MatrixComplex::MatrixType MatrixType;
     typedef typename MatrixComplex::HomologyType HomologyType;
     
@@ -93,7 +94,7 @@ public:
         the case, we add it to the basis in degree p.
     **/
     void gen_bases(uint32_t l, uint32_t p, Tuple& tuple); 
-    void gen_differential(int32_t p);                       ///< generate the p-th differential 
+    void gen_differential( int32_t p ); ///< generate the p-th differential
     void gen_differentials();                               ///< generate all differentials
     void gen_differential_naive(int32_t p);                 ///< generate all differentials (the naive way)
     void erase_differential(int32_t p);                     ///< erases the p-th differential.
@@ -113,7 +114,7 @@ public:
     SignConvention sign_conv;  ///< The sign convention.
     MatrixComplex matrix_complex;                         ///< underlying matrix complex of this MonoComplex
     MatrixComplex matrix_complex_naive;                   ///< underlying matrix complex of this MonoComplex (genereted the naive way)
-    std::map< uint32_t, MonoBasis > basis_complex;        ///< basis_complex[n] is the n-th MonoBasis, i.e. the basis of the n-th module of this MonoComplex.
+    std::map< int32_t, MonoBasis > basis_complex;        ///< basis_complex[n] is the n-th MonoBasis, i.e. the basis of the n-th module of this MonoComplex. 
 };
 
 #include "monocomplex.ipp"

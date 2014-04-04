@@ -144,9 +144,14 @@ Tuple::ConnectedComponents Tuple::connected_components() const
     // Let boost compute the connected compontents.
     ConnectedComponents components(p+1);
     int32_t num = boost::connected_components(G, &components[0]);
-    components[0] = num;
+    components[0] = num - 1;
 
     return components;
+}
+
+int32_t Tuple::num_cluster() const
+{
+    return connected_components()[0];
 }
 
 bool Tuple :: monotone()

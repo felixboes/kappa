@@ -81,6 +81,7 @@ public:
     uint32_t num_cycles();
 
     ConnectedComponents connected_components() const; ///< @returns the number connected compontents of the corresponding graph, where \f$ \tau_j \f$ is seen an edge.
+    int32_t num_cluster() const;
     
     bool monotone();                        ///< Returns true iff the tuple is monotone.
     bool f(uint32_t i);                     ///< Applies the function \f$ f_i \f$ fuer \f$ 1 \le i < h \f$ and returns true iff the norm is preserved thereby.
