@@ -25,11 +25,11 @@ void ClusterSpectralSequence< MatrixComplex > :: show_basis( int32_t p ) const
 }
 
 template< class MatrixComplex >
-void ClusterSpectralSequence< MatrixComplex > :: show_differential( int32_t p, uint32_t l ) const
+void ClusterSpectralSequence< MatrixComplex > :: show_differential( int32_t p, int32_t l ) const
 {
     if( css_page.count(p) )
     {
-        if( css_page[p].count(l) )
+        if( css_page.at(p).count(l) )
         {
             std::cout << "This it the " << l << "-th cluster of the " << p << "-th differential:" << std::endl;
             std::cout << css_page.at(p).at(l);
@@ -38,7 +38,7 @@ void ClusterSpectralSequence< MatrixComplex > :: show_differential( int32_t p, u
     }
     else
     {
-        std::cout << "The " << p << "-th differential is empty." << std::endl;
+        std::cout << "The " << l << "-th differential of E^0_{" << p << ",*} is empty." << std::endl;
     }
 }
 
@@ -155,8 +155,9 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_differentials( int32_t p )
      *  is bijective. This is shown in the document s_qformel.pdf.	
     **/
     
-    for( auto l : basis_complex.at(p) )
+    for( auto l_bases_it : basis_complex[p].basis )
     {
+        auto& l = l_bases_it.first;
         css_page[p][l] = MatrixType ( basis_complex[p-1].basis[l].size(), basis_complex[p].basis[l].size() );
         MatrixType& differential = css_page[p][l];
         // Initialize with zeros.
@@ -258,23 +259,11 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_differentials( int32_t p )
 }
 
 template< class MatrixComplex >
-void ClusterSpectralSequence< MatrixComplex >::erase_differential(int32_t p, uint32_t l)
+void ClusterSpectralSequence< MatrixComplex >::erase_differentials(int32_t p)
 {
     if( css_page.count(p) != 0 )
     {
-        if( css_page[p].count(l) != 0)
-        {
-            // Delete matrix to save space.
-            // Quote from the boost::ublas documentation http://www.boost.org/doc/libs/1_49_0/libs/numeric/ublas/doc/matrix.htm
-            //
-            // void resize (size_type size1, size_type size2, bool preserve = true)
-            // Reallocates a matrix to hold size1 rows of size2 elements. The existing elements of the matrix are preseved when specified.
-            css_page[p][l].resize(0,0,false);
-            css_page[p].erase(l);
-            if( css_page.count(p) == 0 )
-            {
-                css_page.erase(p);
-            }
-        }
+        css_page[p].erase_all(); // Clear differentials
+        css_page.erase(p);
     }
 }

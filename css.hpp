@@ -26,7 +26,7 @@ struct CSSBasis
     typedef std::unordered_set< Tuple, HashTuple > LBasisType;
     
     /// Stores the orderd basis, sorted by cluster sizes.
-    typedef std::map< uint32_t , LBasisType > BasisType;
+    typedef std::map< int32_t , LBasisType > BasisType;
     
     /// Add a basis element.
     uint32_t add_basis_element (Tuple& t);
@@ -35,13 +35,13 @@ struct CSSBasis
     friend std::ostream& operator<< (std::ostream& stream, const CSSBasis& cssb);
     
     /// Returns the number of basis elements that have cluster size l.
-    uint64_t size( uint32_t l) const;
+    uint64_t size( int32_t l) const;
     
     /// Returns the number of basis elements.
     uint64_t total_size() const;
 
     /// Returns the index of the Tuple that is stored in the CSSBasis or -1.
-    int64_t id_of( Tuple& t ); 
+    int64_t id_of( Tuple& t ) const;
     
     BasisType basis;
     
@@ -104,6 +104,7 @@ public:
     typedef typename MatrixComplex::CoefficientType CoefficientType;
     typedef typename MatrixComplex::MatrixType MatrixType;
     typedef typename MatrixComplex::HomologyType HomologyType;
+    typedef std::map< int32_t, HomologyType > CSSHomologyType;
     typedef std::map< int32_t, MatrixComplex > CSSPage;   ///< The \f$E^1\f$-term of the cluster spectral sequence. Every p defines a chain complex \f$E_{p,\ast}\f$.
     
     ClusterSpectralSequence( uint32_t genus, uint32_t num_punctures, SignConvention sgn );
@@ -118,11 +119,11 @@ public:
     **/
     void gen_bases( uint32_t s, uint32_t p, Tuple& tuple );
     void gen_differentials ( int32_t p );          ///< generate all p-th differentials
-    void erase_differential( int32_t p, uint32_t l);          ///< erases the l-th part of the p-th differential.
+    void erase_differentials( int32_t p );          ///< erases all l-th parts of the p-th differential.
     
     void show_basis( int32_t p ) const;          ///< print a basis to std::out
     // todo: add show_diff (p)
-    void show_differential( int32_t p, uint32_t l ) const;  ///< print a differential to std::out
+    void show_differential( int32_t p, int32_t l ) const;  ///< print a differential to std::out
     //std::string show_bases() const;
 //private:
 

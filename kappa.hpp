@@ -4,6 +4,7 @@
 #include <homology.hpp>
 
 #include "blockfinder.hpp"
+#include "css.hpp"
 #include "factorial.hpp"
 #include "monocomplex.hpp"
 #include "serialization.hpp"
@@ -19,5 +20,13 @@ template class MonoComplex<ChainComplexZStorageOnly>;
 typedef MonoComplex<ChainComplexQ> MonoComplexQ;
 typedef MonoComplex<ChainComplexZm> MonoComplexZm;
 typedef MonoComplex<ChainComplexZStorageOnly> MonoComplexZStorageOnly;
+
+template class ClusterSpectralSequence<ChainComplexQ>;
+template class ClusterSpectralSequence<ChainComplexZm>;
+template class ClusterSpectralSequence<ChainComplexZStorageOnly>;
+
+typedef ClusterSpectralSequence<ChainComplexQ> ClusterSpectralSequenceQ;
+typedef ClusterSpectralSequence<ChainComplexZm> ClusterSpectralSequenceZm;
+typedef ClusterSpectralSequence<ChainComplexZStorageOnly> ClusterSpectralSequenceZStorageOnly;
 
 #endif // KAPPA_HPP

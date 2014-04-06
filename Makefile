@@ -3,7 +3,7 @@ LANG = en_US.UTF-8
 CPP = g++
 CPPFLAGS =-std=c++11 -O3
 LIBS = -I../libhomology -lgmpxx -lgmp -lboost_filesystem -lboost_system -lboost_iostreams -lboost_serialization -lpthread
-OBJ = factorial.o monocomplex.o tuple.o sessionconfig.o
+OBJ = factorial.o monocomplex.o tuple.o sessionconfig.o css.o
 INCLUDES = $(wildcard *.hpp)
 GCC_LT_4_7 := $(shell expr `$(CPP) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g'` \< 407)
 
