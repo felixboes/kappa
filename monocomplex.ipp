@@ -334,16 +334,7 @@ void MonoComplex< MatrixComplex > :: gen_differential_naive(int32_t p)
 template< class MatrixComplex >
 void MonoComplex< MatrixComplex >::erase_differential(int32_t p)
 {
-    if( matrix_complex.count(p) != 0 )
-    {
-        // Delete matrix to save space.
-        // Quote from the boost::ublas documentation http://www.boost.org/doc/libs/1_49_0/libs/numeric/ublas/doc/matrix.htm
-        //
-        // void resize (size_type size1, size_type size2, bool preserve = true)
-        // Reallocates a matrix to hold size1 rows of size2 elements. The existing elements of the matrix are preseved when specified.
-        matrix_complex[p].resize(0,0,false);
-        matrix_complex.erase(p);
-    }
+    matrix_complex.erase(p);
 }
 
 // for one sequence s_p, ..., s_1, this calculates the multiple application of phi, of and of the d_i.
