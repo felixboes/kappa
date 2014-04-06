@@ -24,7 +24,7 @@ HomologyField::KernT HomologyField::get_kern( int32_t n ) const
 {
     if( kern.count(n) == 0 )
     {
-        return KernT();
+        return KernT();;
     }
     else
     {

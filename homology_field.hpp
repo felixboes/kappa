@@ -6,6 +6,7 @@
 // This header defines the homology for chaincomplexes over a field.
 // Till now we are only interested in the dimensions of kernels and images.
 
+#include <cassert>
 #include <cinttypes>
 #include <iomanip>
 #include <iostream>
@@ -20,10 +21,10 @@ class HomologyField
 {
 public:
     /// type of the kernel
-    typedef int64_t KernT;
+    typedef int32_t KernT;
 
     /// type of the torsion
-    typedef int64_t TorsT;
+    typedef int32_t TorsT;
     
     /// trivial constructor
     HomologyField();
@@ -54,10 +55,10 @@ public:
 
 private:
     /// stores the kernel for each possibly non-zero homology module
-    std::map< int32_t, int64_t > kern;
+    std::map< int32_t, int32_t > kern;
 
     /// stores the torsion for each possibly non-zero homology module
-    std::map< int32_t, int64_t > tors;
+    std::map< int32_t, int32_t > tors;
 };
 
 std::ostream& operator<< (std::ostream& stream, const HomologyField& homol);

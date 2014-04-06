@@ -26,7 +26,26 @@ size_t ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::count (c
 template < class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
 void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::erase (const int32_t &n)
 {
-    differential.erase(n);
+    if( differential.count(n) != 0 )
+    {
+        // Delete matrix to save space.
+        // Quote from the boost::ublas documentation http://www.boost.org/doc/libs/1_49_0/libs/numeric/ublas/doc/matrix.htm
+        //
+        // void resize (size_type size1, size_type size2, bool preserve = true)
+        // Reallocates a matrix to hold size1 rows of size2 elements. The existing elements of the matrix are preseved when specified.
+        differential[n].resize(0,0,false);
+        differential.erase(n);
+    }
+}
+
+template < class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::erase_all ()
+{
+    for( auto& diff_it: differential )
+    {
+        diff_it.second.resize(0,0,false);
+    }
+    differential.clear();
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
@@ -75,7 +94,8 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
         }
         else // The dimension of the n-th module is unkown.
         {
-            typename HomologyT::KernT k;
+            typedef typename HomologyT::KernT KT;
+            KT k = KT();
             homol.set_kern( n, k );
             std::cerr << "Error: Homology in " << n << " unknown." << std::endl;
         }
@@ -86,7 +106,8 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
         // The dimension equals the number of columns.
         homol.set_kern( n, differential[n].size2() );
         // There is no torsion one dimension below.
-        typename HomologyT::TorsT t;
+        typedef typename HomologyT::TorsT TT;
+        TT t = TT();
         homol.set_tors( n-1, t);
     }
     else
@@ -120,7 +141,8 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
         }
         else // The dimension of the n-th module is unkown.
         {
-            typename HomologyT::KernT k;
+            typedef typename HomologyT::KernT KT;
+            KT k = KT();
             homol.set_kern( n, k );
             std::cerr << "Error: Homology in " << n << " unknown." << std::endl;
         }
@@ -142,7 +164,8 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
     if( differential.count(n+1) == 0 || differential[n+1].size1() == 0 )
     {
         // There is no torsion.
-        typename HomologyT::TorsT t;
+        typedef typename HomologyT::TorsT TT;
+        TT t = TT();
         homol.set_tors( n, t );
     }
     else 
@@ -180,7 +203,8 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
         if( diff.size1() == 0 )
         {
             homol.set_kern( n, diff.size2() );
-            typename HomologyT::TorsT t(0);
+            typedef typename HomologyT::TorsT TT;
+            TT t = TT();
             homol.set_tors( n-1, t );
         }
         else

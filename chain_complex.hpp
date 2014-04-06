@@ -52,6 +52,11 @@ public:
      *  Erases the n-th differential of the complex.
      */
     void erase( const int32_t& n );
+
+    /**
+     *  Erases all differentials of the complex.
+     */
+    void erase_all();
     
     /**
      *  Access the coefficient of the \f$n\f$-th differential at the position (row, col).
