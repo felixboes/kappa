@@ -267,3 +267,142 @@ void ClusterSpectralSequence< MatrixComplex >::erase_differentials(int32_t p)
         css_page.erase(p);
     }
 }
+
+template< class MatrixComplex >
+void ClusterSpectralSequence< MatrixComplex >::draw_differential( int32_t p )
+{
+    if( basis_complex[p-1].total_size() == 0 || basis_complex[p].total_size() == 0 )
+    {
+        return;
+    }
+
+    Magick::Image picture(  Magick::Geometry( std::max(1, basis_complex[p-1].total_size()), std::max(1, basis_complex[p].total_size()) ), Magick::Color("white") );
+    try{
+        // Define color and thickness of a point.
+        picture.strokeColor("red");
+        picture.fillColor("red");
+        
+        MatrixType column( basis_complex[p-1].total_size(), 1 );
+        for( auto l_bases_it : basis_complex[p].basis )
+        {
+            auto& l = l_bases_it.first;
+            
+            // For each tuple t in the basis, we compute all basis elements that 
+            // occur in kappa(t). 
+            int32_t parity = 0;
+            for( auto it : basis_complex[p].basis[l] )
+            {
+                // Initialize column with zeros.
+                column.clear();
+                
+                Tuple boundary;
+                uint32_t s_q;
+                
+                for( uint32_t k = 0; k < factorial(h); k++ )
+                // in each iteration we enumerate one sequence of indices according to the above formula        
+                {
+                    Tuple current_basis = it;
+                    bool norm_preserved = true;
+                    
+                    // parity of the exponent of the sign of the current summand of the differential
+                    if( sign_conv != no_signs ) 
+                    {
+                        parity = ((h*(h+1))/2) % 2;
+                    }
+                    
+                    // Calculate phi_{(s_h, ..., s_1)}( Sigma )
+                    for( uint32_t q = 1; q <= h; q++ )
+                    {
+                        s_q = 1 + ( ( k / factorial(q-1)) % q );   
+                        if( sign_conv != no_signs )
+                        {
+                            parity += s_q;
+                        }
+                        if( current_basis.phi(q, s_q) == false )
+                        {
+                            norm_preserved = false;
+                            break;
+                        }
+                    }
+                    
+                    // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
+                    if( norm_preserved )   // Compute all horizontal boundaries.
+                    {
+                        std::map< uint8_t, int8_t > or_sign;
+                        if( sign_conv == all_signs )
+                        {
+                            or_sign.operator =(std::move(current_basis.orientation_sign()));
+                        }
+        
+                        for( uint32_t i = 1; i < p; i++ )
+                        {
+                            if( (boundary = current_basis.d_hor(i)) )
+                            {
+                                if( boundary.monotone() == true ) // then it contributes to the differential with the computed parity
+                                {
+                                    boundary.id = basis_complex[p-1].total_id_of(boundary);
+                                    
+                                    if( sign_conv == all_signs )
+                                    {
+                                        int32_t actual_parity = (parity + i) % 2;
+                                        if ( or_sign[i] == -1 )
+                                        {
+                                            actual_parity = (actual_parity + 1) % 2;
+                                        }
+                                        //std::cout << it << " " << i << ": The d^hor_i boundary of " << current_basis << ". This is " << boundary << std::endl;
+                                        //std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << actual_parity << std::endl;
+                                        //std::cout << std::endl;
+                                        if ( actual_parity == 0 )
+                                        {
+                                            column(boundary.id, 0) += 1;
+                                        }
+                                        else
+                                        {
+                                            column(boundary.id, 0) += -1;
+                                        }
+                                    }
+                                    else if( sign_conv == no_orientation_sign )
+                                    {
+                                        if ( (parity + i) % 2 == 0 )
+                                        {
+                                            column(boundary.id, 0) += 1;
+                                        }
+                                        else
+                                        {
+                                            column(boundary.id, 0) += -1;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        column(boundary.id, 0) += 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Draw Column
+                for( size_t i = 0; i < column.size1(); ++i )
+                {
+                    if( column(i,0) != ClusterSpectralSequence::CoefficientType(0) )
+                    {
+                        picture.draw( Magick::DrawableCircle(i, it.id, i+1, it.id ) );
+                    }
+                }
+                
+            }
+        }
+        
+        std::string filename = "Differential_";
+        filename += std::to_string(g) + std::string("_") + std::to_string(m) + std::string("_-_") + std::to_string(p) + std::string(".png");
+        picture.write( filename );
+    }
+    catch( Magick::Exception &error_ )
+    {
+        std::cout << "Caught exception: " << error_.what() << std::endl;
+    }
+    
+    
+    
+}

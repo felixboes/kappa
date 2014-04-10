@@ -9,6 +9,8 @@
 #include <map>
 #include <unordered_set>
 
+#include <Magick++.h>
+
 #include <homology.hpp>
 
 #include "factorial.hpp"
@@ -29,19 +31,22 @@ struct CSSBasis
     typedef std::map< int32_t , LBasisType > BasisType;
     
     /// Add a basis element.
-    uint32_t add_basis_element (Tuple& t);
+    int32_t add_basis_element (Tuple& t);
     
     /// output stream
     friend std::ostream& operator<< (std::ostream& stream, const CSSBasis& cssb);
     
     /// Returns the number of basis elements that have cluster size l.
-    uint64_t size( int32_t l) const;
+    int32_t size( int32_t l ) const;
     
     /// Returns the number of basis elements.
-    uint64_t total_size() const;
+    int32_t total_size() const;
 
-    /// Returns the index of the Tuple that is stored in the CSSBasis or -1.
-    int64_t id_of( Tuple& t ) const;
+    /// Returns the relative (i.e. the cluster-) index of the Tuple that is stored in the CSSBasis or -1.
+    int32_t id_of( Tuple& t ) const;
+    
+    /// Returns the total index of the Tuple that is stored in the CSSBasis or -1.
+    int32_t total_id_of( Tuple& t ) const;
     
     BasisType basis;
     
@@ -124,6 +129,7 @@ public:
     void show_basis( int32_t p ) const;          ///< print a basis to std::out
     // todo: add show_diff (p)
     void show_differential( int32_t p, int32_t l ) const;  ///< print a differential to std::out
+    void draw_differential( int32_t p );
     //std::string show_bases() const;
 //private:
 
@@ -135,6 +141,10 @@ public:
     CSSPage css_page;                            ///< differentials of this ClusterSpectralSequence, sorted by cluster sizes and viewed as chain complexes.
     std::map< int32_t, CSSBasis > basis_complex; ///< basis_complex[n] is the n-th MonoBasis, i.e. the basis of the n-th module of this MonoComplex.   
 };
+
+typedef ClusterSpectralSequence<ChainComplexQ> ClusterSpectralSequenceQ;
+typedef ClusterSpectralSequence<ChainComplexZm> ClusterSpectralSequenceZm;
+typedef ClusterSpectralSequence<ChainComplexZStorageOnly> ClusterSpectralSequenceZStorageOnly;
 
 #include "css.ipp"
 
