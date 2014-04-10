@@ -294,6 +294,7 @@ void ClusterSpectralSequence< MatrixComplex >::draw_differential( int32_t p )
             {
                 // Initialize column with zeros.
                 column.clear();
+                int64_t j = basis_complex[p].total_id_of(it);
                 
                 Tuple boundary;
                 uint32_t s_q;
@@ -387,7 +388,7 @@ void ClusterSpectralSequence< MatrixComplex >::draw_differential( int32_t p )
                 {
                     if( column(i,0) != ClusterSpectralSequence::CoefficientType(0) )
                     {
-                        picture.draw( Magick::DrawableCircle(i, it.id, i+1, it.id ) );
+                        picture.draw( Magick::DrawableCircle(i, j, i+1, j ) );
                     }
                 }
                 
