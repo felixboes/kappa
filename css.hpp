@@ -129,7 +129,7 @@ public:
     void show_basis( int32_t p ) const;          ///< print a basis to std::out
     // todo: add show_diff (p)
     void show_differential( int32_t p, int32_t l ) const;  ///< print a differential to std::out
-    void draw_differential( int32_t p );
+    void draw_differential( int32_t p );        ///< Draws a given differential unsing the c++ version of the Imagemagick library.
     //std::string show_bases() const;
 //private:
 

@@ -276,7 +276,7 @@ void ClusterSpectralSequence< MatrixComplex >::draw_differential( int32_t p )
         return;
     }
 
-    Magick::Image picture(  Magick::Geometry( std::max(1, basis_complex[p-1].total_size()), std::max(1, basis_complex[p].total_size()) ), Magick::Color("white") );
+    Magick::Image picture(  Magick::Geometry( basis_complex[p-1].total_size(), basis_complex[p].total_size() ), Magick::Color("white") );
     try{
         // Define color and thickness of a point.
         picture.strokeColor("red");
@@ -403,7 +403,4 @@ void ClusterSpectralSequence< MatrixComplex >::draw_differential( int32_t p )
     {
         std::cout << "Caught exception: " << error_.what() << std::endl;
     }
-    
-    
-    
 }
