@@ -9,7 +9,9 @@
 #include <map>
 #include <unordered_set>
 
+#ifdef COMPILE_WITH_MAGICK
 #include <Magick++.h>
+#endif
 
 #include <homology.hpp>
 
@@ -129,7 +131,9 @@ public:
     void show_basis( int32_t p ) const;          ///< print a basis to std::out
     // todo: add show_diff (p)
     void show_differential( int32_t p, int32_t l ) const;  ///< print a differential to std::out
+#ifdef COMPILE_WITH_MAGICK
     void draw_differential( int32_t p );        ///< Draws a given differential unsing the c++ version of the Imagemagick library.
+#endif
     //std::string show_bases() const;
 //private:
 

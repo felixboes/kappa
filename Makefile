@@ -2,8 +2,9 @@ LANG = en_US.UTF-8
 
 CPP = g++
 CPPFLAGS =-std=c++11 -O3
-LIBS = -I../libhomology -lgmpxx -lgmp -lboost_filesystem -lboost_system -lboost_iostreams -lboost_serialization -lpthread `Magick++-config --cppflags --cxxflags --ldflags --libs`
-OBJ = factorial.o monocomplex.o tuple.o sessionconfig.o css.o
+LIBS = -I../libhomology -lgmpxx -lgmp -lboost_filesystem -lboost_system -lboost_iostreams -lboost_serialization -lpthread 
+MAGICK_LIBS = `Magick++-config --cppflags --cxxflags --ldflags --libs`
+OBJ = factorial.o monocomplex.o tuple.o sessionconfig.o
 INCLUDES = $(wildcard *.hpp)
 GCC_LT_4_7 := $(shell expr `$(CPP) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g'` \< 407)
 
@@ -25,7 +26,7 @@ compute_css:$(OBJ) ${INCLUDES} main_compute_css.cpp
 	$(CPP) $(CPPFLAGS) -o compute_css main_compute_css.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS)
 
 draw_differentials:$(OBJ) ${INCLUDES} main_draw_differentials.cpp
-	$(CPP) $(CPPFLAGS) -o draw_differentials main_draw_differentials.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS)
+	$(CPP) $(CPPFLAGS) -o draw_differentials main_draw_differentials.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) $(MAGICK_LIBS) -DCOMPILE_WITH_MAGICK
 
 print_basis:$(OBJ) ${INCLUDES} main_print_basis.cpp
 	$(CPP) $(CPPFLAGS) -o print_basis main_print_basis.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS)
