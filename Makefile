@@ -19,9 +19,11 @@ all:$(OBJ)
 %o: %.cpp 
 	$(CPP) -c -o @ $< $(CPPFLAGS)
 
+.PHONY: doc
+
 doc:
 	doxygen
 
 clean:
 	rm -f $(OBJ) libhomology.a 
-	rm -Rf html/ latex/
+	rm -Rf doc/html/ doc/latex/
