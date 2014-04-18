@@ -54,7 +54,12 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    #ifndef WE_USE_AN_OLD_COMPILER_THAT_DOES_NOT_SUPPORT_ALL_CPP_ELEVEN_FEATURES_OR_OPTIMIZATION
     MonoBasis B = load_from_file_bz2<MonoBasis>("./cache/bases/" + std::string(argv[1]) + "_" + std::string(argv[2]) + "_" + std::string(argv[3]) );
+    #else
+    MonoBasis B;
+    load_from_file_bz2<MonoBasis>( B, "./cache/bases/" + std::string(argv[1]) + "_" + std::string(argv[2]) + "_" + std::string(argv[3]) );
+    #endif
 
     print_basis(B);
 

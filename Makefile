@@ -7,6 +7,8 @@ MAGICK_LIBS = `Magick++-config --cppflags --cxxflags --ldflags --libs`
 OBJ = factorial.o monocomplex.o tuple.o sessionconfig.o
 INCLUDES = $(wildcard *.hpp)
 GCC_LT_4_7 := $(shell expr `$(CPP) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g'` \< 407)
+GPP_WORKAROUND_FLAGS = 
+
 
 ifeq "$(GCC_LT_4_7)" "1"
 	CPPFLAGS :=-std=c++0x -O3
@@ -14,25 +16,25 @@ endif
 
 
 compute_homology:$(OBJ) ${INCLUDES} main_compute_homology.cpp
-	$(CPP) $(CPPFLAGS) -o compute_homology main_compute_homology.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS)
+	$(CPP) $(CPPFLAGS) -o compute_homology main_compute_homology.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) $(GPP_WORKAROUND_FLAGS) 
 
 compute_statistics:$(OBJ) ${INCLUDES} main_compute_statistics.cpp
-	$(CPP) $(CPPFLAGS) -o compute_statistics main_compute_statistics.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) 
+	$(CPP) $(CPPFLAGS) -o compute_statistics main_compute_statistics.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) $(GPP_WORKAROUND_FLAGS) 
 
 compute_cache:$(OBJ) ${INCLUDES} main_compute_cache.cpp
-	$(CPP) $(CPPFLAGS) -o compute_cache main_compute_cache.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) 
+	$(CPP) $(CPPFLAGS) -o compute_cache main_compute_cache.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) $(GPP_WORKAROUND_FLAGS) 
 
 compute_css:$(OBJ) ${INCLUDES} main_compute_css.cpp
-	$(CPP) $(CPPFLAGS) -o compute_css main_compute_css.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS)
+	$(CPP) $(CPPFLAGS) -o compute_css main_compute_css.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) $(GPP_WORKAROUND_FLAGS) 
 
 draw_differentials:$(OBJ) ${INCLUDES} main_draw_differentials.cpp
-	$(CPP) $(CPPFLAGS) -o draw_differentials main_draw_differentials.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) $(MAGICK_LIBS) -DCOMPILE_WITH_MAGICK
+	$(CPP) $(CPPFLAGS) -o draw_differentials main_draw_differentials.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) $(GPP_WORKAROUND_FLAGS) $(MAGICK_LIBS) -DCOMPILE_WITH_MAGICK
 
 print_basis:$(OBJ) ${INCLUDES} main_print_basis.cpp
-	$(CPP) $(CPPFLAGS) -o print_basis main_print_basis.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS)
+	$(CPP) $(CPPFLAGS) -o print_basis main_print_basis.cpp $(OBJ) ../libhomology/libhomology.a $(LIBS) $(GPP_WORKAROUND_FLAGS)
 
 %.o: %.cpp ${INCLUDES}
-	$(CPP) $(CPPFLAGS) -c  $< -I../libhomology/ $(LIBS)
+	$(CPP) $(CPPFLAGS) -c  $< -I../libhomology/ $(LIBS) $(GPP_WORKAROUND_FLAGS) 
 
 doc:
 	doxygen

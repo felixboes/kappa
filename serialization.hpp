@@ -56,8 +56,13 @@ void save_to_file_bz2( T& t, std::string filename, bool print_duration = true )
 /**
  *  Load a given class T from filename.bz2.
  */
+#ifndef WE_USE_AN_OLD_COMPILER_THAT_DOES_NOT_SUPPORT_ALL_CPP_ELEVEN_FEATURES_OR_OPTIMIZATION
 template <class T>
 T load_from_file_bz2( std::string filename, bool print_duration = true)
+#else
+template <class T>
+void load_from_file_bz2( T& t, std::string filename, bool print_duration = true)
+#endif
 {
     if( boost::filesystem::exists(filename + ".bz2") && boost::filesystem::is_regular(filename + ".bz2") )
     {
@@ -77,7 +82,9 @@ T load_from_file_bz2( std::string filename, bool print_duration = true)
         in.push(ifs);
         
         // Open binary_archive and deserialize the given class.
+        #ifndef WE_USE_AN_OLD_COMPILER_THAT_DOES_NOT_SUPPORT_ALL_CPP_ELEVEN_FEATURES_OR_OPTIMIZATION
         T t;
+        #endif
         boost::archive::binary_iarchive(in) >> t;
         
         if( print_duration == true )
@@ -85,13 +92,17 @@ T load_from_file_bz2( std::string filename, bool print_duration = true)
             std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
             std::cout.flush();
         }
+        #ifndef WE_USE_AN_OLD_COMPILER_THAT_DOES_NOT_SUPPORT_ALL_CPP_ELEVEN_FEATURES_OR_OPTIMIZATION
         return t;
+        #endif
     }
     else
     {
         std::cout << "This '" << filename + ".bz2' is not a file." << std::endl;
         std::cout.flush();
+        #ifndef WE_USE_AN_OLD_COMPILER_THAT_DOES_NOT_SUPPORT_ALL_CPP_ELEVEN_FEATURES_OR_OPTIMIZATION
         return T();
+        #endif
     }
 }
 #endif // SERIALIZATION_HPP

@@ -86,7 +86,13 @@ int main(int argc, char** argv)
         return 1;
     }
     
+    #ifndef WE_USE_AN_OLD_COMPILER_THAT_DOES_NOT_SUPPORT_ALL_CPP_ELEVEN_FEATURES_OR_OPTIMIZATION
     MatrixZDontDiagonalize M = load_from_file_bz2<MatrixZDontDiagonalize>( "./cache/differentials/" + std::string(argv[1]) + "_" + std::string(argv[2]) + "_" + std::string(argv[3]) );
+    #else
+    MatrixZDontDiagonalize M;
+    load_from_file_bz2<MatrixZDontDiagonalize>( M, "./cache/differentials/" + std::string(argv[1]) + "_" + std::string(argv[2]) + "_" + std::string(argv[3]) );
+    #endif
+    
     std::cout << "num rows " << M.size1() << " num cols " << M.size2() << std::endl;
     print_statistics(M);
     
