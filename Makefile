@@ -36,9 +36,11 @@ print_basis:$(OBJ) ${INCLUDES} main_print_basis.cpp
 %.o: %.cpp ${INCLUDES}
 	$(CPP) $(CPPFLAGS) -c  $< -I../libhomology/ $(LIBS) $(GPP_WORKAROUND_FLAGS) 
 
+.PHONY: doc
+
 doc:
 	doxygen
 
 clean:
 	rm -f $(OBJ) compute_cache compute_homology compute_statistics compute_css draw_differentials print_basis
-	rm -Rf html/ latex/
+	rm -Rf doc/html/ doc/latex/

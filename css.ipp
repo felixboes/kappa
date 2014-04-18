@@ -212,16 +212,16 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_differentials( int32_t p )
      *  Instead of implementing the differential recursively, we use a direct formula to enumerate
      *  the sequences of indices in order to use threads.     
      *  The sequences of indices we need to enumerate is given by the set 
-     *  \[ 
+     *  \f[ 
      *      \{(t_h, \ldots, t_1) \mid 0 \le t_q < q \,\}
-     *  \]
+     *  \f]
      *  and for its enumeration we use that the map
-     *  \[ 
+     *  \f[ 
      *      \{0, \ldots, h! - 1\} = \{(t_h, \ldots, t_1) \mid 0 \le t_q < q \,\}
-     *  \]
-     *  \[
-     *      k \mapsto \left( \left\lfloor \frac{k}{(q-1)!| \right\rfloor \pmod q\right)_q\,,
-     *  \]
+     *  \f]
+     *  \f[
+     *      k \mapsto \left( \left\lfloor \frac{k}{(q-1)!}| \right\rfloor \pmod q\right)_q\,,
+     *  \f]
      *  is bijective. This is shown in the document s_qformel.pdf.	
     **/
     
