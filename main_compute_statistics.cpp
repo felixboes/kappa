@@ -86,11 +86,10 @@ int main(int argc, char** argv)
         return 1;
     }
     
-    MatrixZDontDiagonalize M;
-    load_from_file_bz2<MatrixZDontDiagonalize>( M, "./cache/differentials/" + std::string(argv[1]) + "_" + std::string(argv[2]) + "_" + std::string(argv[3]) );
+    MatrixZDontDiagonalize M = load_from_file_bz2<MatrixZDontDiagonalize>( "./cache/differentials/" + std::string(argv[1]) + "_" + std::string(argv[2]) + "_" + std::string(argv[3]) );
     std::cout << "num rows " << M.size1() << " num cols " << M.size2() << std::endl;
-    /*print_statistics(M);
-
+    print_statistics(M);
+    
     for (int i = 0; i < M.size1(); ++i)
     {
         for (int j = 0; j < M.size2(); ++j)
@@ -102,6 +101,6 @@ int main(int argc, char** argv)
     std::cout << M << std::endl;
     BlockFinder<MatrixZDontDiagonalize> block_finder(M);
     std::cout << "num blocks " << block_finder.num_blocks() << std::endl;
-    std::cout << "num non zero blocks " << block_finder.num_non_zero_blocks() << std::endl;*/
+    std::cout << "num non zero blocks " << block_finder.num_non_zero_blocks() << std::endl;
     return 0;
 }

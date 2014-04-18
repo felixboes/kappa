@@ -57,7 +57,7 @@ void save_to_file_bz2( T& t, std::string filename, bool print_duration = true )
  *  Load a given class T from filename.bz2.
  */
 template <class T>
-void load_from_file_bz2( T & t, std::string filename, bool print_duration = true)
+T load_from_file_bz2( std::string filename, bool print_duration = true)
 {
     if( boost::filesystem::exists(filename + ".bz2") && boost::filesystem::is_regular(filename + ".bz2") )
     {
@@ -77,19 +77,21 @@ void load_from_file_bz2( T & t, std::string filename, bool print_duration = true
         in.push(ifs);
         
         // Open binary_archive and deserialize the given class.
+        T t;
         boost::archive::binary_iarchive(in) >> t;
         
         if( print_duration == true )
         {
             std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
             std::cout.flush();
-            std::cout << "num rows " << t.size1() << " num cols " << t.size2() << std::endl;
         }
+        return t;
     }
     else
     {
         std::cout << "This '" << filename + ".bz2' is not a file." << std::endl;
         std::cout.flush();
+        return T();
     }
 }
 #endif // SERIALIZATION_HPP
