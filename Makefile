@@ -2,7 +2,7 @@ LANG = en_US.UTF-8
 
 CPP = g++
 CPPFLAGS =-std=c++11 -O3
-LIBS = -I../libhomology -lgmpxx -lgmp -lboost_filesystem -lboost_system -lboost_iostreams -lboost_serialization -lpthread 
+LIBS = -I../libhomology -lgmpxx -lgmp -lboost_filesystem -lboost_system -lboost_iostreams -lboost_serialization -lboost_program_options -lpthread 
 MAGICK_LIBS = `Magick++-config --cppflags --cxxflags --ldflags --libs`
 OBJ = factorial.o monocomplex.o tuple.o sessionconfig.o
 INCLUDES = $(wildcard *.hpp)

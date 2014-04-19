@@ -10,7 +10,7 @@
 
 void print_usage(int argc, char** argv)
 {
-    std::cout << "Usage: " << argv[0] << " genus num_punctures num_differential" << std::endl;
+    std::cout << "Usage: " << argv[0] << " -g arg -m arg --first_diff arg --last_diff arg" << std::endl;
 }
 
 template< class MatrixT >
@@ -80,33 +80,55 @@ void print_statistics( MatrixT& M )
 
 int main(int argc, char** argv)
 {
-    if(argc < 4)
+    // Parse configuration from command line arguments.
+    SessionConfig conf(argc, argv);
+    if( conf.option_set("help") )
     {
         print_usage(argc, argv);
+        std::cout << conf.desc << std::endl;
+        return 0;
+    }
+    
+    if( ! ( conf.option_set( "gen" ) && conf.option_set( "pun" ) && conf.option_set( "first_diff" ) && conf.option_set( "last_diff" ) ) )
+    {
+        print_usage(argc, argv);
+        std::cout << conf.desc << std::endl;
         return 1;
     }
     
-    #ifndef WE_USE_AN_OLD_COMPILER_THAT_DOES_NOT_SUPPORT_ALL_CPP_ELEVEN_FEATURES_OR_OPTIMIZATION
-    MatrixZDontDiagonalize M = load_from_file_bz2<MatrixZDontDiagonalize>( "./cache/differentials/" + std::string(argv[1]) + "_" + std::string(argv[2]) + "_" + std::string(argv[3]) );
-    #else
-    MatrixZDontDiagonalize M;
-    load_from_file_bz2<MatrixZDontDiagonalize>( M, "./cache/differentials/" + std::string(argv[1]) + "_" + std::string(argv[2]) + "_" + std::string(argv[3]) );
-    #endif
-    
-    std::cout << "num rows " << M.size1() << " num cols " << M.size2() << std::endl;
-    print_statistics(M);
-    
-    for (int i = 0; i < M.size1(); ++i)
+    if ( conf.setup_configuration() == false )
     {
-        for (int j = 0; j < M.size2(); ++j)
-        {
-            std::cout << (M(i,j) == 0 ? "0" : "*") << " ";
-        }
-        std::cout << std::endl;
+        std::cout << "The configuration could not been setup." << std::endl;
+        return 2;
     }
-    std::cout << M << std::endl;
-    BlockFinder<MatrixZDontDiagonalize> block_finder(M);
-    std::cout << "num blocks " << block_finder.num_blocks() << std::endl;
-    std::cout << "num non zero blocks " << block_finder.num_non_zero_blocks() << std::endl;
+    
+    for( auto i =std::max<uint32_t>( conf.start_p, conf.num_punctures+1 ); i <= std::min<uint32_t>( conf.end_p, 4*conf.genus + 2*conf.num_punctures ); ++i )
+    {
+        #ifndef WE_USE_AN_OLD_COMPILER_THAT_DOES_NOT_SUPPORT_ALL_CPP_ELEVEN_FEATURES_OR_OPTIMIZATION
+        MatrixZDontDiagonalize M = load_from_file_bz2<MatrixZDontDiagonalize>( "./cache/differentials/" + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_" + std::to_string(i) );
+        #else
+        MatrixZDontDiagonalize M;
+        load_from_file_bz2<MatrixZDontDiagonalize>( M, "./cache/differentials/" + std::string(conf.genus) + "_" + std::string(conf.num_punctures) + "_" + std::string(i) );
+        #endif
+        
+        std::cout << "num rows " << M.size1() << " num cols " << M.size2() << std::endl;
+        print_statistics(M);
+        std::cout << std::endl;
+//        std::cout << M << std::endl;
+//        std::cout << std::endl;
+//        for (int i = 0; i < M.size1(); ++i)
+//        {
+//            for (int j = 0; j < M.size2(); ++j)
+//            {
+//                std::cout << (M(i,j) == 0 ? "0" : "*") << " ";
+//            }
+//            std::cout << std::endl;
+//        }
+//        std::cout << M << std::endl;
+//        BlockFinder<MatrixZDontDiagonalize> block_finder(M);
+//        std::cout << "num blocks " << block_finder.num_blocks() << std::endl;
+//        std::cout << "num non zero blocks " << block_finder.num_non_zero_blocks() << std::endl;
+    }
+    
     return 0;
 }

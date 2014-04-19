@@ -8,7 +8,7 @@
 
 void print_usage(int argc, char** argv)
 {
-    std::cout << "Usage: " << argv[0] << " genus num_punctures (rational:0 | Z_r: r > 0) optional:number of threads for paralellization optional: first and last p for which to compute H_p." << std::endl;
+    std::cout << "Usage: " << argv[0] << " -g arg -m arg (-r|-n arg)" << std::endl;
 }
 
 template< class MonoComplexT >
@@ -143,9 +143,17 @@ int main(int argc, char** argv)
 {
     // Parse configuration from command line arguments.
     SessionConfig conf(argc, argv);
-    if( conf.valid == false )
+    if( conf.option_set("help") )
     {
         print_usage(argc, argv);
+        std::cout << conf.desc << std::endl;
+        return 0;
+    }
+    
+    if( ! ( conf.option_set( "gen" ) && conf.option_set( "pun" ) && ( conf.option_set( "rat" ) || conf.option_set( "fin" ) ) ) )
+    {
+        print_usage(argc, argv);
+        std::cout << conf.desc << std::endl;
         return 1;
     }
     

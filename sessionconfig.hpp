@@ -2,6 +2,9 @@
 #define SESSIONCONFIG_HPP
 
 #include <limits>
+#include <string>
+
+#include <boost/program_options.hpp>
 
 #include <homology.hpp>
 
@@ -25,8 +28,14 @@ struct SessionConfig
     /// Sometimes we have to work a litte, before we can use a configurration. Here we check parameters and setup Z_p coefficients.
     bool setup_configuration();
     
+    /// @returns true iff the command line option was set.
+    bool option_set( const std::string opt ) const;
+    
     /// @returns wether the given configuration is valid or not.
     inline operator bool() {return valid;}
+    
+    boost::program_options::options_description desc;
+    boost::program_options::variables_map vm;
     
     uint32_t genus;
     uint32_t num_punctures;
@@ -35,8 +44,11 @@ struct SessionConfig
     uint32_t num_threads;
     uint32_t start_p;
     uint32_t end_p;
+    uint32_t first_basis;
+    uint32_t last_basis;
     SignConvention sgn_conv;
     bool valid;
+    bool print_help;
 };
 
 #endif // SESSIONCONFIG_HPP
