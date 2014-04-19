@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 
+#include "factorial.hpp"
 #include "tuple.hpp"
 
 //          Zelle aus Text          //
@@ -179,16 +180,82 @@ Tuple parse( int32_t argc, char** argv )
 
     return zelle;
 }
-
 //          Zelle aus Text          //
 //          Zelle aus Text          //
 //          Zelle aus Text          //
 
+//          Brechstange             //
+//          Brechstange             //
+//          Brechstange             //
+void S_(size_t i, Tuple& zelle )
+{
+    auto k = zelle[i].first;
+    for( auto j = i+1; j <= zelle.norm(); ++j )
+    {
+        zelle[j].first++;
+        if( zelle[j].second >= k )
+        {
+            zelle[j].second++;
+        }
+    }
+    zelle.p++;
+}
+//          Brechstange             //
+//          Brechstange             //
+//          Brechstange             //
 
-
+std::string s_q_folge(uint32_t k, uint32_t h)
+{
+    std::string str = "1)";
+    for( uint32_t q = 2; q <= h; q++ )
+    {
+        str = std::to_string( 1 + ( ( k / factorial(q-1)) % q ) ) + "," + str;
+    }
+    
+    return "(" + str;
+}
 
 int main( int argc, char** argv )
 {
-    std::cout << parse(argc, argv) << std::endl;
+    Tuple zelle = parse(argc, argv);
+    S_(1,zelle);
+    std::cout << zelle << std::endl;
+    
+    uint32_t h = zelle.norm();
+    uint32_t p = zelle.p;
+    
+    for( uint32_t k = 0; k < factorial(h); k++ )
+    {
+        Tuple test_zelle = zelle;
+        uint32_t s_q;
+        bool norm_preserved = true;
+        
+        // Calculate phi_{(s_h, ..., s_1)}( Sigma )
+        for( uint32_t q = 1; q <= h; q++ )
+        {
+            s_q = 1 + ( ( k / factorial(q-1)) % q );   
+            if( test_zelle.phi(q, s_q) == false )
+            {
+                norm_preserved = false;
+                break;
+            }
+        }
+        
+        // Calculate its faces
+        if( norm_preserved )   // Compute all horizontal faces.
+        {
+            Tuple boundary;
+            std::cout << "K_" << s_q_folge(k,h) << " -> " << test_zelle << std::endl;
+            for( uint32_t i = 1; i < p; i++ )
+            {
+                if( (boundary = test_zelle.d_hor(i)) && boundary.monotone() )
+                {
+                    std::cout << "           d_" << i << " -> " << boundary << std::endl;
+                }
+            }
+        }
+        std::cout << std::endl;
+    }
+    
     return 0;
 }
