@@ -190,7 +190,8 @@ Tuple parse( int32_t argc, char** argv )
 void S_(size_t i, Tuple& zelle )
 {
     auto k = zelle[i].first;
-    for( auto j = i+1; j <= zelle.norm(); ++j )
+    auto h = zelle.norm();
+    for( auto j = i+1; j <= h; ++j )
     {
         zelle[j].first++;
         if( zelle[j].second >= k )
@@ -217,45 +218,62 @@ std::string s_q_folge(uint32_t k, uint32_t h)
 
 int main( int argc, char** argv )
 {
-    Tuple zelle = parse(argc, argv);
-    S_(1,zelle);
-    std::cout << zelle << std::endl;
+    Tuple start_zelle = parse(argc, argv);
+    uint32_t h = start_zelle.norm();
+    uint32_t p = start_zelle.p;
     
-    uint32_t h = zelle.norm();
-    uint32_t p = zelle.p;
-    
-    for( uint32_t k = 0; k < factorial(h); k++ )
+    for( auto i = 1; i <= h-1; ++i )
     {
-        Tuple test_zelle = zelle;
-        uint32_t s_q;
-        bool norm_preserved = true;
+        Tuple zelle = start_zelle;
+        S_(i,zelle);
+        std::cout << zelle << std::endl;
         
-        // Calculate phi_{(s_h, ..., s_1)}( Sigma )
-        for( uint32_t q = 1; q <= h; q++ )
-        {
-            s_q = 1 + ( ( k / factorial(q-1)) % q );   
-            if( test_zelle.phi(q, s_q) == false )
-            {
-                norm_preserved = false;
-                break;
-            }
-        }
+        uint32_t h = zelle.norm();
+        uint32_t p = zelle.p;
         
-        // Calculate its faces
-        if( norm_preserved )   // Compute all horizontal faces.
+        for( uint32_t k = 0; k < factorial(h); k++ )
         {
-            Tuple boundary;
-            std::cout << "K_" << s_q_folge(k,h) << " -> " << test_zelle << std::endl;
-            for( uint32_t i = 1; i < p; i++ )
+            Tuple test_zelle = zelle;
+            uint32_t s_q;
+            bool norm_preserved = true;
+            bool printed = false;
+            
+            // Calculate phi_{(s_h, ..., s_1)}( Sigma )
+            for( uint32_t q = 1; q <= h; q++ )
             {
-                if( (boundary = test_zelle.d_hor(i)) && boundary.monotone() )
+                s_q = 1 + ( ( k / factorial(q-1)) % q );   
+                if( test_zelle.phi(q, s_q) == false )
                 {
-                    std::cout << "           d_" << i << " -> " << boundary << std::endl;
+                    norm_preserved = false;
+                    break;
                 }
             }
+            
+            // Calculate its faces
+            if( norm_preserved )   // Compute all horizontal faces.
+            {
+                Tuple boundary;
+                printed = false;
+                for( uint32_t i = 1; i < p; i++ )
+                {
+                    if( (boundary = test_zelle.d_hor(i)) && boundary.monotone() )
+                    {
+                        if(printed == false)
+                        {
+                            std::cout << "K_" << s_q_folge(k,h) << " -> " << test_zelle << std::endl;
+                            printed = true;
+                        }
+                        std::cout << "           d_" << i << " -> " << boundary << std::endl;
+                    }
+                }
+            }
+            if(printed == true)
+            {
+                std::cout << std::endl;
+            }
         }
+        
         std::cout << std::endl;
     }
-    
     return 0;
 }
