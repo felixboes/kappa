@@ -57,6 +57,11 @@ SessionConfig::SessionConfig( int argc, char **argv ) :
         end_p = 4*genus+2*num_punctures; // this is 2h.
     }
     
+    if( vm.count("last_basis") == false )
+    {
+        last_basis = 4*genus+2*num_punctures; // this is 2h.
+    }
+    
     valid = true;
 }
 
