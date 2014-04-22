@@ -26,6 +26,7 @@ template class ChainComplex<int32_t, MatrixZDontDiagonalize, DiagonalizerDummy<M
 typedef ChainComplex<Q, MatrixQ, DiagonalizerField<Q>, HomologyField> ChainComplexQ;
 typedef ChainComplex<Zm, MatrixZm, DiagonalizerField<Zm>, HomologyField> ChainComplexZm;
 typedef ChainComplex<int32_t, MatrixZDontDiagonalize, DiagonalizerDummy<MatrixZDontDiagonalize>, HomologyDummy> ChainComplexZStorageOnly;
+typedef ChainComplex<bool, MatrixBool, DiagonalizerBool, HomologyField> ChainComplexBool;
 
 
 #endif // HOMOLOGY_HPP
