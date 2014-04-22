@@ -2,8 +2,6 @@
 #include <fstream>
 #include <iostream>
 
-#include <homology.hpp>
-
 #include "kappa.hpp"
 
 void print_usage(int argc, char** argv)
@@ -167,6 +165,10 @@ int main(int argc, char** argv)
     if(conf.rational == true)
     {
         compute_homology< MonoComplexQ >( conf, argc, argv );
+    }
+    else if (conf.prim == 2)
+    {
+        compute_homology<MonoComplexBool > ( conf, argc, argv);
     }
     else
     {

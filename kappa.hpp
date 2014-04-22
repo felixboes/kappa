@@ -16,6 +16,7 @@
 
 typedef MonoComplex<ChainComplexQ> MonoComplexQ;
 typedef MonoComplex<ChainComplexZm> MonoComplexZm;
+typedef MonoComplex<ChainComplexBool> MonoComplexBool;
 typedef MonoComplex<ChainComplexZStorageOnly> MonoComplexZStorageOnly;
 
 #endif // KAPPA_HPP
