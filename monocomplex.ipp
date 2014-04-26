@@ -166,6 +166,59 @@ void MonoComplex< MatrixComplex > :: gen_differentials()
     }
 }
 
+static int8_t sign(int32_t          parity,
+                   int8_t           i,
+                   int8_t           or_sign,
+                   SignConvention & sign_conv )
+{
+    if ( sign_conv == no_signs)
+    {
+        return 1;
+    }
+    if( sign_conv == all_signs )
+    {
+        int32_t actual_parity = (parity + i) % 2;
+        if ( or_sign == -1 )
+        {
+            actual_parity = (actual_parity + 1) % 2;
+        }
+        //std::cout << it << " " << i << ": The d^hor_i boundary of " << current_basis << ". This is " << boundary << std::endl;
+        //std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << actual_parity << std::endl;
+        //std::cout << std::endl;
+       if ( actual_parity == 0 )
+        {
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+    else if( sign_conv == no_orientation_sign )
+    {
+        if ( (parity + i) % 2 == 0 )
+        {
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+}
+
+template <class MatrixType>
+void update_differential(MatrixType &      differential,
+                         Tuple &           tuple,
+                         Tuple &           boundary,
+                         int32_t           parity,
+                         int8_t            i,
+                         int8_t            or_sign,
+                         SignConvention &  sign_conv)
+{
+    std::cout << "You need to implement this function for the specific MatrixType" << std::endl;
+}
+
 template< class MatrixComplex >
 void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
 {
@@ -189,6 +242,7 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     
     // Allocate enough space for the differential.
     // Todo: Test this.
+
     matrix_complex[p] = MatrixType ( basis_complex[p-1].size(), basis_complex[p].size() );
     MatrixType& differential = matrix_complex[p];
     // Initialize with zeros.
@@ -245,41 +299,8 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
                         if( boundary.monotone() == true ) // then it contributes to the differential with the computed parity
                         {
                             boundary.id = basis_complex[p-1].id_of(boundary);
-                            
-                            if( sign_conv == all_signs )
-                            {
-                                int32_t actual_parity = (parity + i) % 2;
-                                if ( or_sign[i] == -1 )
-                                {
-                                    actual_parity = (actual_parity + 1) % 2;
-                                }
-                                //std::cout << it << " " << i << ": The d^hor_i boundary of " << current_basis << ". This is " << boundary << std::endl;
-                                //std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << actual_parity << std::endl;
-                                //std::cout << std::endl;
-                                if ( actual_parity == 0 )
-                                {
-                                    differential(boundary.id, it.id) += 1;
-                                }
-                                else
-                                {
-                                    differential(boundary.id, it.id) += -1;
-                                }
-                            }
-                            else if( sign_conv == no_orientation_sign )
-                            {
-                                if ( (parity + i) % 2 == 0 )
-                                {
-                                    differential(boundary.id, it.id) += 1;
-                                }
-                                else
-                                {
-                                    differential(boundary.id, it.id) += -1;
-                                }
-                            }
-                            else
-                            {
-                                differential(boundary.id, it.id) += 1;
-                            }
+                            update_differential<MatrixType>(differential, it, boundary,
+                                                parity, i, or_sign[i], sign_conv);
                         }
                     }
                 }

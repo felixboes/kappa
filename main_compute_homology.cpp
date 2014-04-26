@@ -166,7 +166,7 @@ int main(int argc, char** argv)
     {
         compute_homology< MonoComplexQ >( conf, argc, argv );
     }
-    else if (conf.prim == 2)
+    else if (conf.prime == 2)
     {
         compute_homology<MonoComplexBool > ( conf, argc, argv);
     }

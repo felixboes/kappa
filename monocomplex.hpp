@@ -72,6 +72,53 @@ struct MonoBasis
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
+/**
+ * This function is supposed to update the differential according to the contribution
+ * of tuple and its boundary to improve readability of the method gen_differential.
+ *
+ * @warning We don't give a general implementation for this template function since the
+ * two specializations we do implement below use specific functions not both of
+ * them support.
+ *
+ * @param parity Parity due to kappa.
+ * @param i Number of the differential.
+ * @param or_sign Orientation sign.
+ */
+template <class MatrixType>
+void update_differential(MatrixType & differential,
+                         Tuple &           tuple,
+                         Tuple &           boundary,
+                         int32_t           parity,
+                         int8_t            i,
+                         int8_t            or_sign,
+                         SignConvention &  sign_conv);
+
+/**
+ * This function updates the differential of type MatrixField<Zm> according to the contribution
+ * of tuple and its boundary.
+ */
+template<>
+void update_differential(MatrixField<Zm> & differential,
+                         Tuple &           tuple,
+                         Tuple &           boundary,
+                         int32_t           parity,
+                         int8_t            i,
+                         int8_t            or_sign,
+                         SignConvention &  sign_conv);
+/**
+ * This function updates the differential of type MatrixBool according to the contribution
+ * of tuple and its boundary.
+ */
+template<>
+void update_differential(MatrixBool &     differential,
+                         Tuple &          tuple,
+                         Tuple &          boundary,
+                         int32_t          parity,
+                         int8_t           i,
+                         int8_t           or_sign,
+                         SignConvention & sign_conv);
+
+
 std::ostream& operator<< (std::ostream& stream, const MonoBasis& basis);
 
 /**
