@@ -146,7 +146,7 @@ public:
      *  @return The function returns a reference to the given entry.
      *  @todo throw an exception if necessary i.e. if (i,j) is not a valid entry.
      */
-    bool operator()( size_t i, size_t j );
+    bool & operator()( size_t i, size_t j );
 
     void add_entry( size_t i, size_t j);
 
@@ -194,7 +194,7 @@ private:
      *  In order to keep constness, we go the usual way and implement the function at.
      *  You may want to take a look at the at()-methods of the standard containers like std::vector.
      */
-    const bool at( size_t i, size_t j ) const;
+    const bool & at( size_t i, size_t j ) const;
 
     MatrixStorageType data; ///< This realizes the data.
     size_t num_rows;    ///< The number of rows.
