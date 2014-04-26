@@ -120,6 +120,13 @@ typedef MatrixField<Zm> MatrixZm;   ///< This defines Matrices with \f$\mathbb Z
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+/**
+ * @brief Class for a matrix with boolean coefficients
+ * A MatrixBool has the same structure as the MatrixField,
+ * but for a better performance, here each row of the matrix is a dynamic_bitsets,
+ * and for thread safety, the total matrix is a vector of its rows.
+ */
 class MatrixBool
 {
 public:
@@ -127,10 +134,7 @@ public:
 
     MatrixBool();  ///< Creates a \f$ 0 \times 0\f$ matrix.
     /**
-     *  Creates a matrix with num_rows rows and num_cols columns.
-     *  The entries are determined by the standard constructor of CoefficientT.
-     *  @warning If the standard constructor of CoefficientT does not create a coefficient with value zero (e.g. usind standard int types)
-     *  the result differ from your imagination.
+     *  Creates a matrix with num_rows rows and num_cols columns with entries 0.
      *  In order to get a zero matrix you may use clear();
      */
     MatrixBool( size_t number_rows, size_t number_cols );  ///<
@@ -148,6 +152,11 @@ public:
      */
     bool & operator()( size_t i, size_t j );
 
+    /**
+     * Adds 1 to the entry (i, j) of the matrix.
+     * @note We need this function for writing access to the matrix
+     * since the dynamic bitsets does not provide a reasonable reference operator.
+     */
     void add_entry( size_t i, size_t j);
 
     /**
@@ -164,7 +173,7 @@ public:
     size_t size1() const;   ///< @returns the number of rows.
     size_t size2() const;   ///< @returns the number of columns.
 
-    void clear();   ///< Fills every entry with CoefficientT(0);
+    void clear();   ///< Fills every entry with 0;
 
      /**
      *  grant std::ostream access in order to print coefficients to ostreams like 'std::cout << Zm(44) << std::endl;'
@@ -201,7 +210,7 @@ private:
     size_t num_cols;    ///< The number of columns.
 
     /**
-     *  In order to save Zm coefficients we have to grad boost::serialization::access access.
+     *  In order to save coefficients we have to grad boost::serialization::access access.
      */
     friend class boost::serialization::access;
 
