@@ -148,6 +148,8 @@ public:
      */
     bool operator()( size_t i, size_t j );
 
+    void add_entry( size_t i, size_t j);
+
     /**
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
      *  In order to do so call resize(0,0);
@@ -155,9 +157,8 @@ public:
     void resize (size_t size1, size_t size2, bool preserve = false)
     {
         data.clear();
-        num_rows = size1;
-        num_cols = size2;
-        data = MatrixStorageType( size1, boost::dynamic_bitset<> (size2, 0) );
+        std::vector< boost::dynamic_bitset<> > new_data( size1, boost::dynamic_bitset<>(size2, 0) );
+        std::swap(data, new_data);
     }
 
     size_t size1() const;   ///< @returns the number of rows.
