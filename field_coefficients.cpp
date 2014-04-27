@@ -122,7 +122,7 @@ bool const Zm::is_invertible()
 
 Zm const Zm::inverse()
 {
-    return Zm( inv[(((n % base)+base)%base)] != 0 );
+    return Zm( inv[(((n % base)+base)%base)]);
 }
 
 std::ostream& operator<< (std::ostream& stream, const Zm& coeff)
