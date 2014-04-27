@@ -13,7 +13,7 @@ void MatrixBool::row_operation( size_t row_1, size_t row_2, size_t col )
     data[row_2] ^= data[row_1];
 }
 
- bool & MatrixBool::operator()( size_t i, size_t j )
+ bool MatrixBool::operator()( size_t i, size_t j )
  {
      return data[i][j];
  }

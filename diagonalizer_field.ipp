@@ -1,25 +1,25 @@
 #include "diagonalizer_field.hpp"
 
-template< class CoefficientT >
-uint32_t DiagonalizerField< CoefficientT >::dfct()
+template< class MatrixType >
+uint32_t DiagonalizerField< MatrixType >::dfct()
 {
     return def;
 }
 
-template< class CoefficientT >
-HomologyField::KernT DiagonalizerField< CoefficientT >::kern()
+template< class MatrixType >
+HomologyField::KernT DiagonalizerField< MatrixType >::kern()
 {
     return def;
 }
 
-template< class CoefficientT >
-uint32_t DiagonalizerField< CoefficientT >::rank()
+template< class MatrixType >
+uint32_t DiagonalizerField< MatrixType >::rank()
 {
     return rnk;
 }
 
-template< class CoefficientT >
-HomologyField::TorsT DiagonalizerField< CoefficientT >::tors()
+template< class MatrixType >
+HomologyField::TorsT DiagonalizerField< MatrixType >::tors()
 {
     return rnk;
 }
@@ -28,8 +28,8 @@ HomologyField::TorsT DiagonalizerField< CoefficientT >::tors()
  *  Compute the dimension of the image of matrix.
  *  This done by computing the number of lineary independent columns or rows.
  */ 
-template< class CoefficientT >
-uint32_t DiagonalizerField< CoefficientT >::diag_field(MatrixType &matrix, atomic_uint& current_rank)
+template< class MatrixType >
+uint32_t DiagonalizerField< MatrixType >::diag_field(MatrixType &matrix, atomic_uint& current_rank)
 {
     size_t num_rows = matrix.size1();
     size_t num_cols = matrix.size2();
@@ -60,7 +60,7 @@ uint32_t DiagonalizerField< CoefficientT >::diag_field(MatrixType &matrix, atomi
         {
             // Find first invertible (i.e. non-zero) entry in the remaining rows.
             auto it = rows_to_check.begin();
-            for( ; it != rows_to_check.end() && matrix( *it, col ) == CoefficientType(0); ++it )
+            for( ; it != rows_to_check.end() && matrix( *it, col ) == typename MatrixType::CoefficientType(0); ++it )
             {
             }
             
@@ -79,7 +79,7 @@ uint32_t DiagonalizerField< CoefficientT >::diag_field(MatrixType &matrix, atomi
                     size_t row_2 = *it;
                     // Assuming that the entry (row_2, col) differs from zero, we perform
                     // a row operation to matrix to zeroize the entry (row_2, col) using the entry (row_1, col). 
-                    if( matrix( row_2, col ) != CoefficientType(0) )
+                    if( matrix( row_2, col ) != typename MatrixType::CoefficientType(0) )
                     {
                         matrix.row_operation( row_1, row_2, col );
                     }
@@ -90,16 +90,16 @@ uint32_t DiagonalizerField< CoefficientT >::diag_field(MatrixType &matrix, atomi
     return current_rank;
 }
 
-template< class CoefficientT >
-void DiagonalizerField< CoefficientT >::operator() ( MatrixType &matrix, uint32_t number_threads )
+template< class MatrixType >
+void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, uint32_t number_threads )
 {
     // call operator() ( MatrixType &m, atomic_uint &, uint32_t ).
     atomic_uint current_rank;
     this->operator ()(matrix, current_rank, number_threads);
 }
 
-template< class CoefficientT >
-void DiagonalizerField< CoefficientT >::operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t number_threads )
+template< class MatrixType >
+void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t number_threads )
 {
     if( number_threads == 0 )
     {
@@ -112,31 +112,31 @@ void DiagonalizerField< CoefficientT >::operator() ( MatrixType &matrix, atomic_
     def = matrix.size2() - rnk;
 }
 
-template< class CoefficientT >
-void DiagonalizerField< CoefficientT >::SyncList::all_work_done()
+template< class MatrixType >
+void DiagonalizerField< MatrixType >::SyncList::all_work_done()
 {
     std::lock_guard<std::mutex> lock(mtx);
     work_done = true;
     cond_wait_for_filler.notify_all();
 }
 
-template< class CoefficientT >
-bool DiagonalizerField< CoefficientT >::SyncList::no_work_left()
+template< class MatrixType >
+bool DiagonalizerField< MatrixType >::SyncList::no_work_left()
 {
     std::lock_guard<std::mutex> lock(mtx);
     return work_done == true;
 }
 
-template< class CoefficientT >
-void DiagonalizerField< CoefficientT >::SyncList::put( DiagonalizerField< CoefficientT >::RowOpParam rop )
+template< class MatrixType >
+void DiagonalizerField< MatrixType >::SyncList::put( DiagonalizerField< MatrixType >::RowOpParam rop )
 {
     std::lock_guard<std::mutex> lock(mtx);
     row_op_list.push_back(rop);
     cond_wait_for_filler.notify_one();
 }
 
-template< class CoefficientT >
-bool DiagonalizerField< CoefficientT >::SyncList::get( DiagonalizerField< CoefficientT >::RowOpParam & rop )
+template< class MatrixType >
+bool DiagonalizerField< MatrixType >::SyncList::get( DiagonalizerField< MatrixType >::RowOpParam & rop )
 {
     std::unique_lock<std::mutex> lock(mtx);
     // Notify filler thread if necessary.
@@ -166,8 +166,8 @@ bool DiagonalizerField< CoefficientT >::SyncList::get( DiagonalizerField< Coeffi
     }
 }
 
-template< class CoefficientT >
-void DiagonalizerField< CoefficientT >::SyncList::wait_for_workers()
+template< class MatrixType >
+void DiagonalizerField< MatrixType >::SyncList::wait_for_workers()
 {
     std::unique_lock<std::mutex> lock(mtx);
     // Wait till the list is empty.
@@ -177,11 +177,11 @@ void DiagonalizerField< CoefficientT >::SyncList::wait_for_workers()
     cond_wait_for_worker.wait( lock, [&]{ return !( num_busy_workers > 0 ); } );
 }
 
-template< class CoefficientT >
-DiagonalizerField< CoefficientT >::Filler::Filler( SyncList &sl ) : sync_list(sl) {}
+template< class MatrixType >
+DiagonalizerField< MatrixType >::Filler::Filler( SyncList &sl ) : sync_list(sl) {}
 
-template< class CoefficientT >
-void DiagonalizerField< CoefficientT >::Filler::work(MatrixType& matrix, atomic_uint& current_rank)
+template< class MatrixType >
+void DiagonalizerField< MatrixType >::Filler::work(MatrixType& matrix, atomic_uint& current_rank)
 {
     size_t num_rows = matrix.size1();
     size_t num_cols = matrix.size2();
@@ -213,7 +213,7 @@ void DiagonalizerField< CoefficientT >::Filler::work(MatrixType& matrix, atomic_
             
             // Find first invertible (i.e. non-zero) entry in the remaining rows.
             auto it = rows_to_check.begin();
-            for( ; it != rows_to_check.end() && matrix( *it, col ) == CoefficientType(0); ++it )
+            for( ; it != rows_to_check.end() && matrix( *it, col ) == typename MatrixType::CoefficientType(0); ++it )
             {
             }
             
@@ -232,9 +232,9 @@ void DiagonalizerField< CoefficientT >::Filler::work(MatrixType& matrix, atomic_
                     size_t row_2 = *it;
                     // Assuming that the entry (row_2, col) differs from zero, we perform
                     // a row operation to matrix to zeroize the entry (row_2, col) using the entry (row_1, col). 
-                    if( matrix( row_2, col ) != CoefficientType(0) )
+                    if( matrix( row_2, col ) != typename MatrixType::CoefficientType(0) )
                     {
-                        sync_list.put( DiagonalizerField< CoefficientT >::RowOpParam( row_1, row_2, col ) );
+                        sync_list.put( DiagonalizerField< MatrixType >::RowOpParam( row_1, row_2, col ) );
                     }
                 }
                 // Wait till all work for the current column is done.
@@ -247,13 +247,13 @@ void DiagonalizerField< CoefficientT >::Filler::work(MatrixType& matrix, atomic_
     sync_list.all_work_done();
 }
 
-template< class CoefficientT >
-DiagonalizerField< CoefficientT >::Worker::Worker(uint32_t identification, SyncList &sl) : id(identification), sync_list(sl) {}
+template< class MatrixType >
+DiagonalizerField< MatrixType >::Worker::Worker(uint32_t identification, SyncList &sl) : id(identification), sync_list(sl) {}
 
-template< class CoefficientT >
-void DiagonalizerField< CoefficientT >::Worker::work(MatrixType& matrix)
+template< class MatrixType >
+void DiagonalizerField< MatrixType >::Worker::work(MatrixType& matrix)
 {
-    DiagonalizerField< CoefficientT >::RowOpParam rop;
+    DiagonalizerField< MatrixType >::RowOpParam rop;
     
     while( sync_list.get(rop) == true )
     {
@@ -261,8 +261,8 @@ void DiagonalizerField< CoefficientT >::Worker::work(MatrixType& matrix)
     }
 }
 
-template< class CoefficientT >
-uint32_t DiagonalizerField< CoefficientT >::diag_field_parallelized(MatrixType& matrix, atomic_uint & current_rank, uint32_t number_threads )
+template< class MatrixType >
+uint32_t DiagonalizerField< MatrixType >::diag_field_parallelized(MatrixType& matrix, atomic_uint & current_rank, uint32_t number_threads )
 {
     SyncList sync_list(number_threads);
     Filler filler(sync_list);

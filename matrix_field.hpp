@@ -24,6 +24,7 @@ template < class CoefficientT >
 class MatrixField
 {
 public:
+    typedef CoefficientT CoefficientType;
     typedef std::vector<CoefficientT> MatrixStorageType;    ///< This realizes the implementation of the data.
     
     MatrixField();  ///< Creates a \f$ 0 \times 0\f$ matrix.
@@ -130,6 +131,7 @@ typedef MatrixField<Zm> MatrixZm;   ///< This defines Matrices with \f$\mathbb Z
 class MatrixBool
 {
 public:
+    typedef bool CoefficientType;
     typedef std::vector<boost::dynamic_bitset<> > MatrixStorageType;    ///< This realizes the implementation of the data.
 
     MatrixBool();  ///< Creates a \f$ 0 \times 0\f$ matrix.
@@ -150,7 +152,7 @@ public:
      *  @return The function returns a reference to the given entry.
      *  @todo throw an exception if necessary i.e. if (i,j) is not a valid entry.
      */
-    bool & operator()( size_t i, size_t j );
+    bool operator()( size_t i, size_t j );
 
     /**
      * Adds 1 to the entry (i, j) of the matrix.
@@ -203,7 +205,7 @@ private:
      *  In order to keep constness, we go the usual way and implement the function at.
      *  You may want to take a look at the at()-methods of the standard containers like std::vector.
      */
-    const bool & at( size_t i, size_t j ) const;
+    const bool at( size_t i, size_t j ) const;
 
     MatrixStorageType data; ///< This realizes the data.
     size_t num_rows;    ///< The number of rows.

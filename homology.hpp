@@ -3,7 +3,7 @@
 
 // Description:
 //
-// This header is should used as in include in other projects.
+// This header should be used as in include in other projects.
 // It defines chaincomplexes with coefficients in Q and Zm and offers homology computations.
 // It defines chaincomplexes with coefficients in Z but denies homology computations.
 
@@ -19,14 +19,14 @@
 
 // In order to use chain complexes with rational and Zm coefficients in other projects,
 // we have to use instanciate the templates explicitly.
-template class ChainComplex<Q, MatrixQ, DiagonalizerField<Q>, HomologyField>;
-template class ChainComplex<Zm, MatrixZm, DiagonalizerField<Zm>, HomologyField>;
+template class ChainComplex<Q, MatrixQ, DiagonalizerField<MatrixQ>, HomologyField>;
+template class ChainComplex<Zm, MatrixZm, DiagonalizerField<MatrixZm>, HomologyField>;
 template class ChainComplex<int32_t, MatrixZDontDiagonalize, DiagonalizerDummy<MatrixZDontDiagonalize>, HomologyDummy>;
 
-typedef ChainComplex<Q, MatrixQ, DiagonalizerField<Q>, HomologyField> ChainComplexQ;
-typedef ChainComplex<Zm, MatrixZm, DiagonalizerField<Zm>, HomologyField> ChainComplexZm;
+typedef ChainComplex<Q, MatrixQ, DiagonalizerField<MatrixQ>, HomologyField> ChainComplexQ;
+typedef ChainComplex<Zm, MatrixZm, DiagonalizerField<MatrixZm>, HomologyField> ChainComplexZm;
 typedef ChainComplex<int32_t, MatrixZDontDiagonalize, DiagonalizerDummy<MatrixZDontDiagonalize>, HomologyDummy> ChainComplexZStorageOnly;
-typedef ChainComplex<bool, MatrixBool, DiagonalizerBool, HomologyField> ChainComplexBool;
+typedef ChainComplex<bool, MatrixBool, DiagonalizerField<MatrixBool>, HomologyField> ChainComplexBool;
 
 
 #endif // HOMOLOGY_HPP
