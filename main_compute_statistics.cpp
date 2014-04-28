@@ -116,14 +116,14 @@ int main(int argc, char** argv)
         std::cout << std::endl;
 //        std::cout << M << std::endl;
 //        std::cout << std::endl;
-//        for (int i = 0; i < M.size1(); ++i)
-//        {
-//            for (int j = 0; j < M.size2(); ++j)
-//            {
-//                std::cout << (M(i,j) == 0 ? "0" : "*") << " ";
-//            }
-//            std::cout << std::endl;
-//        }
+        for (int i = 0; i < M.size1(); ++i)
+        {
+            for (int j = 0; j < M.size2(); ++j)
+            {
+                std::cout << (M(i,j) == 0 ? "0" : "*") << " ";
+            }
+            std::cout << std::endl;
+        }
 //        std::cout << M << std::endl;
 //        BlockFinder<MatrixZDontDiagonalize> block_finder(M);
 //        std::cout << "num blocks " << block_finder.num_blocks() << std::endl;
