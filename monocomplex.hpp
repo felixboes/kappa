@@ -141,7 +141,10 @@ public:
         the case, we add it to the basis in degree p.
     **/
     void gen_bases(uint32_t l, uint32_t p, Tuple& tuple); 
-    void gen_differential( int32_t p ); ///< generate the p-th differential
+    /** Generates the p-th differential.
+     * @warning We assume the p-th differential to exist and to be filled with zeroes before the call.
+     */
+    void gen_differential( int32_t p );
     void gen_differentials();                               ///< generate all differentials
     void gen_differential_naive(int32_t p);                 ///< generate all differentials (the naive way)
     void erase_differential(int32_t p);                     ///< erases the p-th differential.

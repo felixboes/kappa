@@ -245,9 +245,7 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
 
     matrix_complex[p] = MatrixType ( basis_complex[p-1].size(), basis_complex[p].size() );
     MatrixType& differential = matrix_complex[p];
-    // Initialize with zeros.
-    differential.clear();
-    
+
     // For each tuple t in the basis, we compute all basis elements that 
     // occur in kappa(t). 
     int32_t parity = 0;
