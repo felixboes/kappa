@@ -13,7 +13,7 @@
 #include <Magick++.h>
 #endif
 
-#include <homology.hpp>
+#include <libhomology/homology.hpp>
 
 #include "factorial.hpp"
 #include "serialization.hpp"

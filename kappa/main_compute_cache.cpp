@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include <homology.hpp>
+#include <libhomology/homology.hpp>
 
 #include "kappa.hpp"
 

@@ -15,7 +15,7 @@
 #include "homology_field.hpp"
 #include "matrix_zm.hpp"
 
-#include <homology.hpp>
+#include <libhomology/homology.hpp>
 
 // This is a deterministic random generator.
 // The initial seed is the system time.

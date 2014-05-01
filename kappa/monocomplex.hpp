@@ -9,7 +9,7 @@
 #include <map>
 #include <unordered_set>
 
-#include <homology.hpp>
+#include <libhomology/homology.hpp>
 
 #include "factorial.hpp"
 #include "serialization.hpp"

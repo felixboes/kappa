@@ -3,7 +3,7 @@
 #include <string>
 #include <unordered_set>
 
-#include <homology.hpp>
+#include <libhomology/homology.hpp>
 
 #include "serialization.hpp"
 #include "kappa.hpp"
