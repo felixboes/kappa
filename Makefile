@@ -1,6 +1,5 @@
 LANG = en_US.UTF-8
 
-# TODO: Disable gcc4.9 flags by default
 CXXFLAGS      := -O3 -std=c++11 -D_GLIBCXX_USE_NANOSLEEP -g \
                  -Wextra -Wall -Wno-long-long -pedantic-errors
 LIBS          := -lgmpxx -lgmp -lpthread \
@@ -20,13 +19,13 @@ DOXYGEN       := doxygen
 endif
 
 ifeq ($(shell expr `$(CXX) -dumpversion` \<= 4.7.7), 1)
-	CXXFLAGS :=-std=c++0x -O3
+CXXFLAGS      := $(patsubst -std=c++11,-std=c++0x, $(CXXFLAGS))
 endif
 ifeq ($(shell expr `$(CXX) -dumpversion` \>= 4.9.0), 1)
 	CXXFLAGS := $(CXXFLAGS) -fdiagnostics-color=auto  -fsanitize=undefined
 endif
 ifeq ($(shell expr `doxygen --version` \>= 1.8.7),1)
-	DOXYGENFLAGS := $(DOXYGENFLAGS) -d Validate
+DOXYGENFLAGS  := $(DOXYGENFLAGS) -d Validate
 endif
 
 INCL      := -I.
@@ -42,7 +41,7 @@ STDOBJ := $(filter-out $(foreach d,$(SRCDIRS), build/$(d)/main_%.o), $(OBJ))
 TARGETS := $(patsubst kappa/main_%.$(EXT),%, $(filter $(foreach d,$(SRCDIRS),$(d)/main_%.$(EXT)), $(foreach d,$(SRCDIRS), $(wildcard $(d)/*.$(EXT)))))
 
 ifneq ($(MAKECMDGOALS),clean)
-	-include $(CXXDEP) $(CDEP)
+-include $(CXXDEP) $(CDEP)
 endif
 
 ifeq ($(MAKECMDGOALS),draw_differentials)
