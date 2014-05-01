@@ -78,7 +78,8 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         // Diagonalzing thread.
         auto partial_homology_thread = std::async( std::launch::async, [&]()
         {
-            auto ret = monocomplex.matrix_complex.compute_kernel_and_torsion( p, current_rank, conf.num_threads );
+            // Always use one thread for diagonalizing at the moment!
+            auto ret = monocomplex.matrix_complex.compute_kernel_and_torsion( p, current_rank, 1 );
             state = 1;
             return ret;
         } );
