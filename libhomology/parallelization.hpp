@@ -8,6 +8,7 @@
 #include <atomic>
 #include <future>
 
+
 /**
  *  In order to work with thread save integers we define an atomic uint.
  */

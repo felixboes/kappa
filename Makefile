@@ -22,6 +22,9 @@ endif
 ifeq ($(shell expr `$(CXX) -dumpversion` \<= 4.7.7), 1)
 	CXXFLAGS :=-std=c++0x -O3
 endif
+ifeq ($(shell expr `$(CXX) -dumpversion` \>= 4.9.0), 1)
+	CXXFLAGS := $(CXXFLAGS) -fdiagnostics-color=auto  -fsanitize=undefined
+endif
 ifeq ($(shell expr `doxygen --version` \>= 1.8.7),1)
 	DOXYGENFLAGS := $(DOXYGENFLAGS) -d Validate
 endif

@@ -6,6 +6,7 @@
 // This header defines the coefficient rings Q and Z/mZ.
 // Befor using Z/mZ coefficients you must use the static directive set_modulus.
 
+#include <cstddef> // has to be included before gmpxx with gcc 4.9
 #include <cinttypes>
 #include <cmath>
 #include <gmpxx.h>
