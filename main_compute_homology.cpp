@@ -31,7 +31,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     std::cout.flush();
     ofs << "Constructing bases";
     
-    MonoComplexT monocomplex( conf.genus, conf.num_punctures, conf.sgn_conv );
+    MonoComplexT monocomplex( conf.genus, conf.num_punctures, conf.sgn_conv, conf.num_threads );
     typename MonoComplexT::HomologyType homology;
     std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
     std::cout << std::endl;
@@ -168,7 +168,7 @@ int main(int argc, char** argv)
     }
     else if (conf.prime == 2)
     {
-        compute_homology<MonoComplexBool > ( conf, argc, argv);
+        compute_homology< MonoComplexBool > ( conf, argc, argv);
     }
     else
     {
