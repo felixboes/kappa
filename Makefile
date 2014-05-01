@@ -29,7 +29,7 @@ ifeq ($(shell expr `doxygen --version` \>= 1.8.7),1)
 	DOXYGENFLAGS := $(DOXYGENFLAGS) -d Validate
 endif
 
-INCL      := $(foreach d,$(SRCDIRS), -I ../$(d)/)
+INCL      := -I.
 override BUILDDIR := $(strip $(BUILDDIR))
 BUILDDIRS := $(patsubst %,%/.tag, $(patsubst %,$(BUILDDIR)/%, $(SRCDIRS)))
 CXXSRC    := $(filter-out $(foreach d,$(SRCDIRS), $(foreach e,$(EXCLUDE), $(d)/$(e)%.$(EXT))), $(foreach d,$(SRCDIRS), $(wildcard $(d)/*.$(EXT))))
