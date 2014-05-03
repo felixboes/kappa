@@ -219,9 +219,6 @@ void update_differential(MatrixType &      differential,
     std::cout << "You need to implement this function for the specific MatrixType" << std::endl;
 }
 
-
-static std::mutex differential_mutex;
-
 template< class MatrixComplex >
 void MonoComplex<MatrixComplex>::compute_boundary(Tuple & tuple, uint32_t p, typename MatrixComplex::MatrixType & differential)
 {
@@ -271,10 +268,8 @@ void MonoComplex<MatrixComplex>::compute_boundary(Tuple & tuple, uint32_t p, typ
                     if( boundary.monotone() == true ) // then it contributes to the differential with the computed parity
                     {
                         boundary.id = basis_complex[p-1].id_of(boundary);
-                        differential_mutex.lock();
                         update_differential<MatrixType>(differential, tuple, boundary,
                                             parity, i, or_sign[i], sign_conv);
-                        differential_mutex.unlock();
                     }
                 }
             }
