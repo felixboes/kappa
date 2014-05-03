@@ -6,13 +6,13 @@ ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::ChainComplex()
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::get_current_differential( int32_t n )
+MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::get_current_differential()
 {
     return current_differential;
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-const MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::get_current_differential( int32_t n ) const
+const MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::get_current_differential() const
 {
     return current_differential;
 }
@@ -20,7 +20,7 @@ const MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::
 template < class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
 void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::erase ()
 {
-    current_differential.erase();
+    current_differential.resize(0, 0, false);
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
@@ -51,11 +51,10 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
 HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads )
 {
- {
     HomologyT homol;
     // Diagonalize.
     DiagonalizerT diago;
-    diago( differential[n], current_rank, number_threads );
+    diago( current_differential, current_rank, number_threads );
     homol.set_kern( n, diago.kern() );
     homol.set_tors( n-1, diago.tors() );
     
