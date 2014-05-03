@@ -2,9 +2,10 @@
 #include <functional>
 #include <string>
 
+#include <cstddef> // has to be included before gmpxx with gcc 4.9
 #include <gmpxx.h>
 
-#include <homology.hpp>
+#include <libhomology/homology.hpp>
 
 #include "kappa.hpp"
 

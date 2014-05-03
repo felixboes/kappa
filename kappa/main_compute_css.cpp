@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 
-#include <homology.hpp>
+#include <libhomology/homology.hpp>
 
 #include "kappa.hpp"
 

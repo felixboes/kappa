@@ -1,7 +1,7 @@
 #ifndef KAPPA_HPP
 #define KAPPA_HPP
 
-#include <homology.hpp>
+#include <libhomology/homology.hpp>
 
 #include "blockfinder.hpp"
 #include "css.hpp"
