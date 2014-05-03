@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include <homology.hpp>
+#include <libhomology/homology.hpp>
 #include "monocomplex.hpp"
 
 template< class MatrixType >

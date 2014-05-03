@@ -15,7 +15,7 @@
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/vector.hpp>
 
-#include <homology.hpp>
+#include <libhomology/homology.hpp>
 
 /// @warning: unorders_set is not yet supported by boost::serialization.
 

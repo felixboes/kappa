@@ -6,7 +6,7 @@
 
 #include <boost/program_options.hpp>
 
-#include <homology.hpp>
+#include <libhomology/homology.hpp>
 
     
 enum SignConvention

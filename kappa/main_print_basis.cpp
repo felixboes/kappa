@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-#include <homology.hpp>
+#include <libhomology/homology.hpp>
 
 #include "kappa.hpp"
 
