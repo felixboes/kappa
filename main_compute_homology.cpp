@@ -54,9 +54,9 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         uint32_t max_possible_rank(0);
         
         // Generate a single differential.
-        std::cout << "Constructing the " << p << "-th differential";
+        std::cout << "Constructing the " << p << "-th differential of size " << monocomplex.basis_complex[p].size() << " x " << monocomplex.basis_complex[p-1].size();
         std::cout.flush();
-        ofs << "Constructing the " << p << "-th differential";
+        ofs << "Constructing the " << p << "-th differential of size " << monocomplex.basis_complex[p].size() << " x " << monocomplex.basis_complex[p-1].size();
         
         measure_duration = Clock();
         monocomplex.gen_differential(p);
