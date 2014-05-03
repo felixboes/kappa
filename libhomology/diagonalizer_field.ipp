@@ -101,7 +101,7 @@ void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, uint32_t 
 template< class MatrixType >
 void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t number_threads )
 {
-    if( number_threads == 0 )
+    if( number_threads == 1 )
     {
         rnk = diag_field(matrix, current_rank);
     }
