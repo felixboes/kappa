@@ -323,7 +323,7 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     std::vector<std::thread> workers(num_threads);
     for (uint32_t t = 0; t < num_threads; ++t)
     {
-        workers[t] = std::thread(work<MatrixComplex>, *this, elements_per_threads[t], p, std::ref(differential));
+        workers[t] = std::thread(work<MatrixComplex>, std::ref(*this), std::ref(elements_per_threads[t]), p, std::ref(differential));
     }
     for (uint32_t t = 0; t < num_threads; ++t)
     {
