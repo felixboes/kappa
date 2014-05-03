@@ -212,6 +212,12 @@ int main(int argc, char** argv)
         return 1;
     }
     
+    if ( conf.setup_configuration() == false )
+    {
+        std::cout << "The configuration could not been setup." << std::endl;
+        return 2;
+    }
+    
     // We may start with the computations.
     if(conf.rational == true)
     {
