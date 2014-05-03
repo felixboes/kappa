@@ -146,9 +146,8 @@ public:
      * @warning We assume the p-th differential to exist and to be filled with zeroes before the call.
      */
     void gen_differential( int32_t p );
-    void gen_differentials();                               ///< generate all differentials
-    void gen_differential_naive(int32_t p);                 ///< generate all differentials (the naive way)
-    void erase_differential(int32_t p);                     ///< erases the p-th differential.
+    void gen_differential_naive(int32_t p);                 ///< generate the p-th (the naive way)
+    void erase_differential();                              ///< erases the current differential.
     
     void pi_del_phi_naive(const Tuple& it, std::vector<int32_t> & s);
     

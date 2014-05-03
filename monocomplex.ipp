@@ -157,15 +157,6 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tu
     }
 }
 
-template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: gen_differentials()
-{
-    for( auto& it : basis_complex )
-    {
-        gen_differential(it.first);
-    }
-}
-
 static int8_t sign(int32_t          parity,
                    int8_t           i,
                    int8_t           or_sign,
@@ -312,9 +303,9 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     // Allocate enough space for the differential.
     // Todo: Test this.
     Clock measure_duration;
-    matrix_complex[p] = MatrixType ( basis_complex[p].size(), basis_complex[p-1].size() );
-    MatrixType & differential = matrix_complex[p];
-    // For each tuple t in the basis, we compute all basis elements that 
+    matrix_complex.get_current_differential().resize( basis_complex[p].size(), basis_complex[p-1].size() );
+    MatrixType & differential = matrix_complex.get_current_differential();
+    // For each tuple t in the basis, we compute all basis elements that
     // occur in kappa(t).
     std::vector<Work> elements_per_threads (num_threads);
     uint32_t num_elements_per_thread = basis_complex[p].size() / num_threads;
@@ -384,9 +375,9 @@ void MonoComplex< MatrixComplex > :: gen_differential_naive(int32_t p)
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex >::erase_differential(int32_t p)
+void MonoComplex< MatrixComplex >::erase_differential()
 {
-    matrix_complex.erase(p);
+    matrix_complex.erase();
 }
 
 // for one sequence s_p, ..., s_1, this calculates the multiple application of phi, of and of the d_i.

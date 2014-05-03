@@ -65,7 +65,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         std::cout.flush();
         ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         
-        max_possible_rank = std::min( monocomplex.matrix_complex[0].size1(), monocomplex.matrix_complex[0].size2() );
+        max_possible_rank = std::min( monocomplex.matrix_complex.num_rows(), monocomplex.matrix_complex.num_cols() );
         if( (uint32_t)homology.get_kern(p-1) > 0 )
         {
             max_possible_rank = std::min( max_possible_rank, (uint32_t)homology.get_kern(p-1) );
@@ -115,9 +115,6 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             << "; dim(im D_" << (int32_t)(p) << ") = " << (int32_t)(homology.get_tors(p-1))
             << "; dim(ker D_" << (int32_t)(p) << ") = " << (int32_t)(homology.get_kern(p)) << std::endl;
         ofs << std::endl;
-        
-        // Delete the differential.
-        monocomplex.erase_differential(p);
     }
     
     homology.erase_tors( conf.start_p - 1 );
