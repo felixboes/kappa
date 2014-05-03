@@ -16,9 +16,11 @@
 #include "parallelization.hpp"
 
 /**
- *  In our applications we do not always need explicit basis.
- *  Therefore we realized a chaincomplex as a list of matrices.
- *
+  *  In our applications we do not always need explicit basis.
+  *  Therefore we realized a chaincomplex as a list of matrices.
+  *  Therefore we imagine a chaincomplex as a list of matrices.
+  *  In order to avoid a high memory usage and reallocations,
+  *  we only store a single differnential at each time.
  *  We assume, that \f$ 0 \times n \f$- and \f$ n \times 0 \f$-matrices require negligible RAM.
  */
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
@@ -33,75 +35,47 @@ public:
     
     ChainComplex(); ///< Constructs an empty chain complex.
     
-    /**
-     *  Access the \f$n\f$-th differential.
-     */
-    MatrixT &operator[] ( int32_t n );
+     /**
+      *  Access the transpose of the current differential.
+      */
+     MatrixT &       get_current_differential();
+     const MatrixT & get_current_differential() const;
+     
+     /**
+      *  Erases the current differential of the complex.
+      */
+     void erase();
     
-    /**
-     *  Access the \f$n\f$-th differential.
-     */
-    const MatrixT &at ( const int32_t& n ) const;
-    
-    /**
-     *  @returns 0 iff there is no differential stored and 1 else.
-     */
-    size_t count( const int32_t& n ) const;
-    
-    /**
-     *  Erases the n-th differential of the complex.
-     */
-    void erase( const int32_t& n );
-
-    /**
-     *  Erases all differentials of the complex.
-     */
-    void erase_all();
-    
-    /**
-     *  Access the coefficient of the \f$n\f$-th differential at the position (row, col).
-     */
-    CoefficientT &operator() ( int32_t n, uint32_t row, uint32_t col );
-    
-    /**
-     *  Compute the homology at the \f$n\f$-th spot.
-     */
-    HomologyT homology( int32_t n, uint32_t number_threads = 0 );
-    
-    /**
-     *  Compute the homology at the \f$n\f$-th spot.
-     */
-    HomologyT homology( int32_t n, atomic_uint & current_rank, uint32_t number_threads = 0 );
+     /**
+      *  Access the coefficient of the current differential at the position (row, col).
+      */
+     CoefficientT &operator() ( uint32_t row, uint32_t col );
+     
+     /**
+       * @return number of rows resp. columns of the current differential
+       */
+     size_t num_rows() const;
+     size_t num_cols() const;
 
     /**
      *  Compute the kernel at the \f$n\f$-th spot and the torsion at the \f$(n-1)\f$-th spot.
      */
-    HomologyT compute_kernel_and_torsion( int32_t n, uint32_t number_threads=0 );
+    HomologyT compute_kernel_and_torsion( int32_t n, uint32_t number_threads = 1 );
     
     /**
      *  Compute the kernel at the \f$n\f$-th spot and the torsion at the \f$(n-1)\f$-th spot.
      */
-    HomologyT compute_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads=0 );
-    
-    /**
-     *  Compute all the homology.
-     */
-    HomologyT homology();
-
-    /**
-     *  Checks if the \f$n\f$-th differential exists.
-     */
-    bool exists_differential( const int32_t& n ) const;
+    HomologyT compute_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads = 1 );
     
 private:
-    std::map< int32_t, MatrixT > differential;  ///< Realizes the data.
-    
+    MatrixT current_differential; ///< Realizes the transpose of a single differential.
+
     friend class boost::serialization::access;
     
     template <class Archive>
     void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization.
     {
-        ar & differential;
+        ar & current_differential;
     }
 };
 

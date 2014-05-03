@@ -56,10 +56,9 @@ public:
      */ 
     void resize (size_t size1, size_t size2, bool preserve = false)
     {
-        data.clear();
         num_rows = size1;
         num_cols = size2;
-        data = MatrixStorageType( size1 * size2, CoefficientT(0) );
+        data.assign( size1 * size2, CoefficientT(0) );
     } 
     
     size_t size1() const;   ///< @returns the number of rows.
@@ -167,10 +166,18 @@ public:
      */
     void resize (size_t size1, size_t size2, bool preserve = false)
     {
-        data.clear();
-        std::vector< boost::dynamic_bitset<> > new_data( size1, boost::dynamic_bitset<>(size2, 0) );
-        std::swap(data, new_data);
-    }
+        for (size_t i = 0; i < data.size(); ++i)
+        {
+            data[i].reset();
+        }
+
+        data.resize(size1);
+        for (size_t i = 0; i < size1; ++i)
+        {
+            data[i].resize(size2);
+        }
+        num_rows = size1;
+    }      
 
     size_t size1() const;   ///< @returns the number of rows.
     size_t size2() const;   ///< @returns the number of columns.
