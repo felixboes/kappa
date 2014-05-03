@@ -109,7 +109,7 @@ void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, atomic_ui
     {
         rnk = diag_field_parallelized( matrix, current_rank, number_threads );
     }
-    def = matrix.size2() - rnk;
+    def = matrix.size1() - rnk;
 }
 
 template< class MatrixType >
