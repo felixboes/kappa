@@ -65,7 +65,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         std::cout.flush();
         ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         
-        max_possible_rank = std::min( monocomplex.matrix_complex[p].size1(), monocomplex.matrix_complex[p].size2() );
+        max_possible_rank = std::min( monocomplex.matrix_complex[0].size1(), monocomplex.matrix_complex[0].size2() );
         if( (uint32_t)homology.get_kern(p-1) > 0 )
         {
             max_possible_rank = std::min( max_possible_rank, (uint32_t)homology.get_kern(p-1) );

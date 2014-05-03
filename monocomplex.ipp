@@ -228,7 +228,6 @@ void MonoComplex<MatrixComplex>::compute_boundary(Tuple & tuple, uint32_t p, typ
     int32_t parity = 0;
     Tuple boundary;
     uint32_t s_q;
-
     for( uint32_t k = 0; k < factorial(h); k++ )
     // in each iteration we enumerate one sequence of indices according to the above formula
     {
@@ -318,9 +317,8 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     // Allocate enough space for the differential.
     // Todo: Test this.
     Clock measure_duration;
-    matrix_complex[p] = MatrixType ( basis_complex[p-1].size(), basis_complex[p].size() );
+    matrix_complex[p] = MatrixType ( basis_complex[p].size(), basis_complex[p-1].size() );
     MatrixType & differential = matrix_complex[p];
-
     // For each tuple t in the basis, we compute all basis elements that 
     // occur in kappa(t).
     std::vector<Work> elements_per_threads (num_threads);
