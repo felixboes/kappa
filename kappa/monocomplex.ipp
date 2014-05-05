@@ -6,7 +6,8 @@
  *
  */
 template< class MatrixComplex >
-MonoComplex< MatrixComplex > :: MonoComplex(uint32_t _g, uint32_t _m, SignConvention sgn, uint32_t t) : g(_g), m(_m), h(2*_g + _m), sign_conv(sgn), num_threads(t)
+MonoComplex< MatrixComplex > :: MonoComplex( uint32_t _g, uint32_t _m, SignConvention sgn, uint32_t number_threads )
+    : g(_g), m(_m), h(2*_g + _m), sign_conv(sgn), num_threads(number_threads)
 {
     Tuple tuple(h);
     tuple[1] = Transposition(2, 1);
@@ -303,7 +304,7 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     // Allocate enough space for the differential.
     // Todo: Test this.
     Clock measure_duration;
-    matrix_complex.get_current_differential().resize( basis_complex[p].size(), basis_complex[p-1].size() );
+    matrix_complex.get_current_differential().resize( basis_complex[p].size(), basis_complex[p-1].size(), true );
     MatrixType & differential = matrix_complex.get_current_differential();
     // For each tuple t in the basis, we compute all basis elements that
     // occur in kappa(t).

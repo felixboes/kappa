@@ -17,6 +17,9 @@ void print_usage(int argc, char** argv)
 template< class MatrixT >
 void print_statistics( MatrixT& M )
 {
+
+    // Watch out: Since we store the transpose of the differential,
+    // we act as though rows were columns and vise versa.
     uint32_t num_rows = M.size1();
     uint32_t num_cols = M.size2();
     int32_t pos_infty = std::numeric_limits<int32_t>::max();
@@ -25,24 +28,24 @@ void print_statistics( MatrixT& M )
     std::cout << "Number of rows: " << num_rows << std::endl;
     std::cout << "Number of columns: " << num_cols << std::endl;
     
-    std::vector<mpz_class> num_entries_per_col( num_cols, 0 );
-    std::vector<mpz_class> largest_entry_per_col( num_cols, neg_infty );
-    std::vector<mpz_class> smallest_entry_per_col( num_cols, pos_infty );
+    std::vector<mpz_class> num_entries_per_col( num_rows, 0 );
+    std::vector<mpz_class> largest_entry_per_col( num_rows, neg_infty );
+    std::vector<mpz_class> smallest_entry_per_col( num_rows, pos_infty );
     
-    for( uint32_t i = 0; i < num_cols; ++i )
+    for( uint32_t i = 0; i < num_rows; ++i )
     {
-        for( uint32_t j = 0; j < num_rows; ++j )
+        for( uint32_t j = 0; j < num_cols; ++j )
         {
-            if( M(j,i) != 0 )
+            if( M(i,j) != 0 )
             {
                 num_entries_per_col[i]++;
             }
-            largest_entry_per_col[i] = std::max( largest_entry_per_col[i], mpz_class(M(j,i)) );
-            smallest_entry_per_col[i] = std::min( smallest_entry_per_col[i], mpz_class(M(j,i)) );
+            largest_entry_per_col[i] = std::max( largest_entry_per_col[i], mpz_class(M(i,j)) );
+            smallest_entry_per_col[i] = std::min( smallest_entry_per_col[i], mpz_class(M(i,j)) );
         }
     }
     
-    std::cout << "Number of non-zero entries (per column): |";
+    std::cout << "Number of non-zero entries (per column): |" << std::flush;
     for( auto& it : num_entries_per_col )
     {
         std::cout << it << "|";
@@ -61,16 +64,15 @@ void print_statistics( MatrixT& M )
     {
         std::cout << it << "|";
     }
-    std::cout << std::endl;
-    
+
     mpz_class total(0);
-    for( uint32_t i = 0; i < num_cols; ++i )
+    for( uint32_t i = 0; i < num_rows; ++i )
     {
         total += num_entries_per_col[i];
     }
-    if( num_cols > 0 )
+    if( num_rows > 0 )
     {
-        std::cout << "Average number of non-zero entries (arithmetic mean): exact: " << mpq_class(total) / num_cols << " floored:" << total / num_cols << std::endl;
+        std::cout << "Average number of non-zero entries (arithmetic mean): exact: " << mpq_class(total) / num_rows << " floored:" << total / num_rows << std::endl;
     }
     else
     {

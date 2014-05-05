@@ -118,6 +118,18 @@ void update_differential(MatrixBool &     differential,
                          int8_t           or_sign,
                          SignConvention & sign_conv);
 
+/**
+ * This function updates the differential of type MatrixBool according to the contribution
+ * of tuple and its boundary.
+ */
+template<>
+void update_differential(MatrixZDontDiagonalize & differential,
+                         Tuple &                  tuple,
+                         Tuple &                  boundary,
+                         int32_t                  parity,
+                         int8_t                   i,
+                         int8_t                   or_sign,
+                         SignConvention &         sign_conv);
 
 std::ostream& operator<< (std::ostream& stream, const MonoBasis& basis);
 
@@ -132,7 +144,7 @@ public:
     typedef typename MatrixComplex::MatrixType MatrixType;
     typedef typename MatrixComplex::HomologyType HomologyType;
 
-    MonoComplex(uint32_t genus, uint32_t num_punctures, SignConvention sgn, uint32_t t);
+    MonoComplex(uint32_t genus, uint32_t num_punctures, SignConvention sgn, uint32_t number_threads);
     /** Recursive function initializing the basis_complex.
         In the call of gen_bases with the parameters l, p and tuple, we assume that the first l transpositions
         containing symbols 1, ..., p are fixed and append all possible transpositions at position l+1, applying 	the function recursively in an appropriate way.
