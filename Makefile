@@ -50,8 +50,8 @@ CXXFLAGS := $(CXXFLAGS) -DCOMPILE_WITH_MAGICK
 endif
 
 
-$(TARGETS): %: build/kappa/main_%.o $(STDOBJ)
-	$(CXX) $(CXXFLAGS) $(LIBS) $(INCL) $(GPP_WORKAROUND_FLAGS) -o $@ $(STDOBJ) build/kappa/main_$@.o
+$(TARGETS): %: $(BUILDDIR)/kappa/main_%.dep $(BUILDDIR)/.tag $(BUILDDIR)/kappa/main_%.o $(STDOBJ)
+	$(CXX) $(CXXFLAGS) $(LIBS) $(INCL) $(GPP_WORKAROUND_FLAGS) -o $@ $(STDOBJ) $(BUILDDIR)/kappa/main_$@.o
 
 $(CXXOBJ): $(BUILDDIR)/%.o: %.$(EXT) $(BUILDDIR)/%.dep $(BUILDDIR)/.tag
 	$(CXX) $(LIBS) $(CXXFLAGS) $(INCL) -c $< -o $@
