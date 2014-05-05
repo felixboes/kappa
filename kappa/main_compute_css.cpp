@@ -73,7 +73,7 @@ void compute_css( SessionConfig conf, int argc, char** argv )
         {
             auto l = l_basis_it.first;
 
-            max_possible_rank = std::min( cluster_spectral_sequence.css_page[p][l].size1(), cluster_spectral_sequence.css_page[p][l].size2() );
+            max_possible_rank = std::min( cluster_spectral_sequence.css_page[p].get_current_differential().size1(), cluster_spectral_sequence.css_page[p].get_current_differential().size2() );
             if( (uint32_t)homology[p-1].get_kern(l) > 0 )
             {
                 max_possible_rank = std::min( max_possible_rank, (uint32_t)homology[p-1].get_kern(l) );

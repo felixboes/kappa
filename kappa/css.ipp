@@ -228,10 +228,10 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_differentials( int32_t p )
     for( auto l_bases_it : basis_complex[p].basis )
     {
         auto& l = l_bases_it.first;
-        css_page[p][l] = MatrixType ( basis_complex[p-1].basis[l].size(), basis_complex[p].basis[l].size() );
-        MatrixType& differential = css_page[p][l];
+        MatrixType& differential = css_page[p].get_current_differential();
+        differential.resize( basis_complex[p].basis[l].size(), basis_complex[p-1].basis[l].size(), true );
         // Initialize with zeros.
-        differential.clear();
+        //differential.clear();
         
         // For each tuple t in the basis, we compute all basis elements that 
         // occur in kappa(t). 
@@ -333,7 +333,7 @@ void ClusterSpectralSequence< MatrixComplex >::erase_differentials(int32_t p)
 {
     if( css_page.count(p) != 0 )
     {
-        css_page[p].erase_all(); // Clear differentials
+        css_page[p].erase(); // Clear differentials
         css_page.erase(p);
     }
 }
