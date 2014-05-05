@@ -177,7 +177,8 @@ public:
             data[i].resize(size2);
         }
         num_rows = size1;
-    }      
+        num_cols = size2;
+    }
 
     size_t size1() const;   ///< @returns the number of rows.
     size_t size2() const;   ///< @returns the number of columns.
