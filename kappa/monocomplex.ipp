@@ -6,7 +6,8 @@
  *
  */
 template< class MatrixComplex >
-MonoComplex< MatrixComplex > :: MonoComplex(uint32_t _g, uint32_t _m, SignConvention sgn) : g(_g), m(_m), h(2*_g + _m), sign_conv(sgn)
+MonoComplex< MatrixComplex > :: MonoComplex( uint32_t _g, uint32_t _m, SignConvention sgn, uint32_t number_threads )
+    : g(_g), m(_m), h(2*_g + _m), sign_conv(sgn), num_threads(number_threads)
 {
     Tuple tuple(h);
     tuple[1] = Transposition(2, 1);
@@ -157,15 +158,6 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tu
     }
 }
 
-template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: gen_differentials()
-{
-    for( auto& it : basis_complex )
-    {
-        gen_differential(it.first);
-    }
-}
-
 static int8_t sign(int32_t          parity,
                    int8_t           i,
                    int8_t           or_sign,
@@ -220,6 +212,76 @@ void update_differential(MatrixType &      differential,
 }
 
 template< class MatrixComplex >
+void MonoComplex<MatrixComplex>::compute_boundary(Tuple & tuple, uint32_t p, typename MatrixComplex::MatrixType & differential)
+{
+    int32_t parity = 0;
+    Tuple boundary;
+    uint32_t s_q;
+    for( uint32_t k = 0; k < factorial(h); k++ )
+    // in each iteration we enumerate one sequence of indices according to the above formula
+    {
+        Tuple current_basis = tuple;
+        bool norm_preserved = true;
+
+        // parity of the exponent of the sign of the current summand of the differential
+        if( sign_conv != no_signs )
+        {
+            parity = ((h*(h+1))/2) % 2;
+        }
+
+        // Calculate phi_{(s_h, ..., s_1)}( Sigma )
+        for( uint32_t q = 1; q <= h; q++ )
+        {
+            s_q = 1 + ( ( k / factorial(q-1)) % q );
+            if( sign_conv != no_signs )
+            {
+                parity += s_q;
+            }
+            if( current_basis.phi(q, s_q) == false )
+            {
+                norm_preserved = false;
+                break;
+            }
+        }
+
+        // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
+        if( norm_preserved )   // Compute all horizontal boundaries.
+        {
+            std::map< uint8_t, int8_t > or_sign;
+            if( sign_conv == all_signs )
+            {
+                or_sign.operator =(std::move(current_basis.orientation_sign()));
+            }
+
+            for( uint32_t i = 1; i < p; i++ )
+            {
+                if( (boundary = current_basis.d_hor(i)) )
+                {
+                    if( boundary.monotone() == true ) // then it contributes to the differential with the computed parity
+                    {
+                        boundary.id = basis_complex[p-1].id_of(boundary);
+                        update_differential<MatrixType>(differential, tuple, boundary,
+                                            parity, i, or_sign[i], sign_conv);
+                    }
+                }
+            }
+        }
+    }
+}
+
+typedef std::vector<Tuple> Work;
+
+template< class MatrixComplex >
+void work(MonoComplex<MatrixComplex> & monocomplex, Work & work, uint32_t p, typename MatrixComplex::MatrixType & differential)
+{
+    for ( auto it : work)
+    {
+        Tuple & tuple = it;
+        monocomplex.compute_boundary(tuple, p, differential);
+    }
+}
+
+template< class MatrixComplex >
 void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
 {
     /**
@@ -238,74 +300,35 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
 	 *  \f]
 	 *  is bijective. This is shown in the document s_qformel.pdf.	
     **/
-    
-    
+
     // Allocate enough space for the differential.
     // Todo: Test this.
-
-    matrix_complex[p] = MatrixType ( basis_complex[p-1].size(), basis_complex[p].size() );
-    MatrixType& differential = matrix_complex[p];
-    // Initialize with zeros.
-    differential.clear();
-    
-    // For each tuple t in the basis, we compute all basis elements that 
-    // occur in kappa(t). 
-    int32_t parity = 0;
-    for( auto it : basis_complex[p].basis )
+    Clock measure_duration;
+    matrix_complex.get_current_differential().resize( basis_complex[p].size(), basis_complex[p-1].size(), true );
+    MatrixType & differential = matrix_complex.get_current_differential();
+    // For each tuple t in the basis, we compute all basis elements that
+    // occur in kappa(t).
+    std::vector<Work> elements_per_threads (num_threads);
+    uint32_t num_elements_per_thread = basis_complex[p].size() / num_threads;
+    uint32_t t = 0;
+    uint32_t cur = 0;
+    for ( auto it : basis_complex[p].basis )
     {
-        Tuple boundary;
-        uint32_t s_q;
-        
-        for( uint32_t k = 0; k < factorial(h); k++ )
-		// in each iteration we enumerate one sequence of indices according to the above formula        
-		{
-            Tuple current_basis = it;
-            bool norm_preserved = true;
-            
-            // parity of the exponent of the sign of the current summand of the differential
-            if( sign_conv != no_signs ) 
-            {
-                parity = ((h*(h+1))/2) % 2;
-            }
-            
-            // Calculate phi_{(s_h, ..., s_1)}( Sigma )
-            for( uint32_t q = 1; q <= h; q++ )
-            {
-                s_q = 1 + ( ( k / factorial(q-1)) % q );   
-                if( sign_conv != no_signs )
-                {
-                    parity += s_q;
-                }
-                if( current_basis.phi(q, s_q) == false )
-                {
-                    norm_preserved = false;
-                    break;
-                }
-            }
-            
-            // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
-            if( norm_preserved )   // Compute all horizontal boundaries.
-            {
-                std::map< uint8_t, int8_t > or_sign;
-                if( sign_conv == all_signs )
-                {
-                    or_sign.operator =(std::move(current_basis.orientation_sign()));
-                }
-
-                for( uint32_t i = 1; i < p; i++ )
-                {
-                    if( (boundary = current_basis.d_hor(i)) )
-                    {
-                        if( boundary.monotone() == true ) // then it contributes to the differential with the computed parity
-                        {
-                            boundary.id = basis_complex[p-1].id_of(boundary);
-                            update_differential<MatrixType>(differential, it, boundary,
-                                                parity, i, or_sign[i], sign_conv);
-                        }
-                    }
-                }
-            }
+        elements_per_threads[t].push_back(it);
+        ++cur;
+        if ((t < num_threads - 1) && (cur == num_elements_per_thread * (t+1)))
+        {
+            ++t;
         }
+    }
+    std::vector<std::thread> workers(num_threads);
+    for (uint32_t t = 0; t < num_threads; ++t)
+    {
+        workers[t] = std::thread(work<MatrixComplex>, std::ref(*this), std::ref(elements_per_threads[t]), p, std::ref(differential));
+    }
+    for (uint32_t t = 0; t < num_threads; ++t)
+    {
+        workers[t].join();
     }
 }
 
@@ -353,9 +376,9 @@ void MonoComplex< MatrixComplex > :: gen_differential_naive(int32_t p)
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex >::erase_differential(int32_t p)
+void MonoComplex< MatrixComplex >::erase_differential()
 {
-    matrix_complex.erase(p);
+    matrix_complex.erase();
 }
 
 // for one sequence s_p, ..., s_1, this calculates the multiple application of phi, of and of the d_i.

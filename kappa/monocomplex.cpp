@@ -53,11 +53,11 @@ void update_differential(MatrixField<Zm> & differential,
 
     if (sign_in_differential == 1)
     {
-        differential(boundary.id, tuple.id) += 1;
+        differential(tuple.id, boundary.id) += 1;
     }
     else if (sign_in_differential == -1)
     {
-        differential(boundary.id, tuple.id) += -1;
+        differential(tuple.id, boundary.id) += -1;
     }
 }
 
@@ -70,5 +70,26 @@ void update_differential(MatrixBool &     differential,
                          int8_t           or_sign,
                          SignConvention & sign_conv)
 {
-    differential.add_entry(boundary.id, tuple.id);
+    differential.add_entry(tuple.id, boundary.id);
+}
+
+template<>
+void update_differential(MatrixZDontDiagonalize & differential,
+                         Tuple &                  tuple,
+                         Tuple &                  boundary,
+                         int32_t                  parity,
+                         int8_t                   i,
+                         int8_t                   or_sign,
+                         SignConvention &         sign_conv)
+{
+    int8_t sign_in_differential = sign(parity, i, or_sign, sign_conv);
+
+    if (sign_in_differential == 1)
+    {
+        differential(tuple.id, boundary.id) += 1;
+    }
+    else if (sign_in_differential == -1)
+    {
+        differential(tuple.id, boundary.id) += -1;
+    }
 }

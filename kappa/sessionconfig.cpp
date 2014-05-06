@@ -6,7 +6,7 @@ SessionConfig::SessionConfig( int argc, char **argv ) :
     num_punctures(0),
     rational(false),
     prime(2),
-    num_threads(0),
+    num_threads(1),
     start_p(0),
     end_p(0),
     first_basis(0),

@@ -118,6 +118,18 @@ void update_differential(MatrixBool &     differential,
                          int8_t           or_sign,
                          SignConvention & sign_conv);
 
+/**
+ * This function updates the differential of type MatrixBool according to the contribution
+ * of tuple and its boundary.
+ */
+template<>
+void update_differential(MatrixZDontDiagonalize & differential,
+                         Tuple &                  tuple,
+                         Tuple &                  boundary,
+                         int32_t                  parity,
+                         int8_t                   i,
+                         int8_t                   or_sign,
+                         SignConvention &         sign_conv);
 
 std::ostream& operator<< (std::ostream& stream, const MonoBasis& basis);
 
@@ -131,8 +143,8 @@ public:
     typedef typename MatrixComplex::CoefficientType CoefficientType;
     typedef typename MatrixComplex::MatrixType MatrixType;
     typedef typename MatrixComplex::HomologyType HomologyType;
-    
-    MonoComplex(uint32_t genus, uint32_t num_punctures, SignConvention sgn);
+
+    MonoComplex(uint32_t genus, uint32_t num_punctures, SignConvention sgn, uint32_t number_threads);
     /** Recursive function initializing the basis_complex.
         In the call of gen_bases with the parameters l, p and tuple, we assume that the first l transpositions
         containing symbols 1, ..., p are fixed and append all possible transpositions at position l+1, applying 	the function recursively in an appropriate way.
@@ -140,11 +152,14 @@ public:
         We check whether its number of cycles is appropriate for it to be a basis element, and if this is
         the case, we add it to the basis in degree p.
     **/
-    void gen_bases(uint32_t l, uint32_t p, Tuple& tuple); 
-    void gen_differential( int32_t p ); ///< generate the p-th differential
-    void gen_differentials();                               ///< generate all differentials
-    void gen_differential_naive(int32_t p);                 ///< generate all differentials (the naive way)
-    void erase_differential(int32_t p);                     ///< erases the p-th differential.
+    void gen_bases(uint32_t l, uint32_t p, Tuple& tuple);
+    void compute_boundary(Tuple & tuple, uint32_t p, MatrixType & differential);
+    /** Generates the p-th differential.
+     * @warning We assume the p-th differential to exist and to be filled with zeroes before the call.
+     */
+    void gen_differential( int32_t p );
+    void gen_differential_naive(int32_t p);                 ///< generate the p-th (the naive way)
+    void erase_differential();                              ///< erases the current differential.
     
     void pi_del_phi_naive(const Tuple& it, std::vector<int32_t> & s);
     
@@ -157,7 +172,8 @@ public:
     uint32_t g;     ///< genus
     uint32_t m;     ///< number of punctures
     uint32_t h;     ///< h = 2*g+m
-    
+    uint32_t num_threads; ///< number of threads used to construct the differential
+
     SignConvention sign_conv;  ///< The sign convention.
     MatrixComplex matrix_complex;                         ///< underlying matrix complex of this MonoComplex
     MatrixComplex matrix_complex_naive;                   ///< underlying matrix complex of this MonoComplex (genereted the naive way)

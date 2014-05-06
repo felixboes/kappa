@@ -31,7 +31,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     std::cout.flush();
     ofs << "Constructing bases";
     
-    MonoComplexT monocomplex( conf.genus, conf.num_punctures, conf.sgn_conv );
+    MonoComplexT monocomplex( conf.genus, conf.num_punctures, conf.sgn_conv, conf.num_threads );
     typename MonoComplexT::HomologyType homology;
     std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
     std::cout << std::endl;
@@ -54,9 +54,9 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         uint32_t max_possible_rank(0);
         
         // Generate a single differential.
-        std::cout << "Constructing the " << p << "-th differential";
+        std::cout << "Constructing the " << p << "-th differential of size " << monocomplex.basis_complex[p].size() << " x " << monocomplex.basis_complex[p-1].size();
         std::cout.flush();
-        ofs << "Constructing the " << p << "-th differential";
+        ofs << "Constructing the " << p << "-th differential of size " << monocomplex.basis_complex[p].size() << " x " << monocomplex.basis_complex[p-1].size();
         
         measure_duration = Clock();
         monocomplex.gen_differential(p);
@@ -65,7 +65,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         std::cout.flush();
         ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         
-        max_possible_rank = std::min( monocomplex.matrix_complex[p].size1(), monocomplex.matrix_complex[p].size2() );
+        max_possible_rank = std::min( monocomplex.matrix_complex.num_rows(), monocomplex.matrix_complex.num_cols() );
         if( (uint32_t)homology.get_kern(p-1) > 0 )
         {
             max_possible_rank = std::min( max_possible_rank, (uint32_t)homology.get_kern(p-1) );
@@ -78,7 +78,8 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         // Diagonalzing thread.
         auto partial_homology_thread = std::async( std::launch::async, [&]()
         {
-            auto ret = monocomplex.matrix_complex.compute_kernel_and_torsion( p, current_rank, conf.num_threads );
+            // Always use one thread for diagonalizing at the moment!
+            auto ret = monocomplex.matrix_complex.compute_kernel_and_torsion( p, current_rank, 1 );
             state = 1;
             return ret;
         } );
@@ -114,9 +115,6 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             << "; dim(im D_" << (int32_t)(p) << ") = " << (int32_t)(homology.get_tors(p-1))
             << "; dim(ker D_" << (int32_t)(p) << ") = " << (int32_t)(homology.get_kern(p)) << std::endl;
         ofs << std::endl;
-        
-        // Delete the differential.
-        monocomplex.erase_differential(p);
     }
     
     homology.erase_tors( conf.start_p - 1 );
@@ -168,7 +166,7 @@ int main(int argc, char** argv)
     }
     else if (conf.prime == 2)
     {
-        compute_homology<MonoComplexBool > ( conf, argc, argv);
+        compute_homology< MonoComplexBool > ( conf, argc, argv);
     }
     else
     {
