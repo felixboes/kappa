@@ -498,10 +498,10 @@ Tuple::Permutation Tuple::sigma_h() const
     }
     
     // compute sigma
-    Tuple::Permutation sigma;
-    for( auto& it : sigma_inv )
+    Tuple::Permutation sigma(p+1, 0);
+    for( uint8_t i = 0; i <= p; ++i )
     {
-        sigma[it.second] = it.first;
+        sigma[sigma[i]] = i;
     }
     
     return sigma;
@@ -519,7 +519,7 @@ std::map< uint8_t, Tuple::Permutation > Tuple::cycle_decomposition ( const Tuple
     for( uint8_t i = 1; i <= p; ) // We iterate through all cycles and mark the used symbols.
     {
         // determine the cycle of i.
-        Tuple::Permutation cycle;
+        Tuple::Permutation cycle(p+1, 0);
         
         uint8_t prev;     // previous symbol
         uint8_t cur = i; // current symbol
@@ -561,7 +561,7 @@ bool contains( Tuple::Permutation sigma, uint8_t p )
 {
     for ( auto &it : sigma )
     {
-        if ( it.first == p )
+        if ( it == p )
         {
             return true;
         }
@@ -579,7 +579,7 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
     // set the sign to 1 for all elements of the cycle of p
     for ( auto &it : cycle_decomp.at(p) )
     {
-        sign[ it.first ] = 1;
+        sign[ it ] = 1;
     }
     
     uint8_t i = 1; // counter of cycles
@@ -603,7 +603,7 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
         
         // for the minimum symbol of the cycle, we set the sign according to the formula
         // as a map is a set of pairs sorted by the key, the second smallest symbol is the key of the successor of cycle.begin().
-        uint8_t b = (std::next(cycle.begin()))->first;
+        uint8_t b = *(std::next(cycle.begin()));
 
         // Find k.
         // note that
@@ -640,7 +640,7 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
         // for all other symbols of the cycle, we set the sign to 1
         for ( auto it = std::next(cycle.begin()); it != cycle.end(); ++it )
         {
-            sign[ it->first ] = 1;
+            sign[ *it ] = 1;
         }
         ++i;
     }
@@ -649,7 +649,7 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
 
 Tuple::Permutation Tuple::long_cycle() const
 {
-    Tuple::Permutation sigma;
+    Tuple::Permutation sigma(p+1, 0);
     for(uint8_t k = 1; k < p; ++k)
     {
         sigma[k] = k+1;
@@ -660,7 +660,7 @@ Tuple::Permutation Tuple::long_cycle() const
 
 Tuple::Permutation Tuple::long_cycle_inv() const
 {
-    Tuple::Permutation sigma;
+    Tuple::Permutation sigma(p+1, 0);
     for(uint8_t k = 2; k <= p; ++k)
     {
         sigma[k] = k-1;
