@@ -18,8 +18,71 @@
 typedef std::pair< uint8_t, uint8_t > Transposition;
 
 /**
+ * @brief Class representing a permutation
+ *
+ * We assume that the permutation acts on the symbols 1, ..., p.
+ * The permutation is stored in the vector data, where for each symbol i in 0, ... p,
+ * 0 maps to the symbol data[i]. Thereby, 0 is NOT really part of the permutation!
+ * Thus the 0th index of the vector is not used, and we can use data[i] = 0 to
+ * represent that the symbol i does not belong to the permutation.
+ */
+class Permutation
+{
+public:
+    /**
+     * Constructs an empty permutation.
+     */
+    Permutation();
+
+    /**
+     * Constructs a permutation of the given size with the given
+     * initialization value in each entry.
+     */
+    Permutation(uint8_t size, uint8_t init);
+
+    /**
+     * Copy constructor copying the data vector from other.
+     */
+    Permutation(const Permutation & other);
+
+    /**
+     * Returns the data vector of this Permutation.
+     */
+    std::vector<uint8_t> operator()() const;
+
+    /**
+     * Returns the element the symbol i is mapped to by this Permutation.
+     */
+    uint8_t & operator[](uint8_t i);
+    uint8_t const & operator[](uint8_t i) const;
+
+    /**
+     * Returns the number of elements of this permutation.
+     */
+    uint8_t size() const;
+
+    /**
+     * Returns true iff the symbol i is contained in this Permutation.
+     */
+    bool is_contained(uint8_t i) const;
+
+    /**
+     * Returns true iff the symbol i is a fix point of this Permutation.
+     */
+    bool is_fix_point(uint8_t i) const;
+
+    /**
+     * Prints this Permutation.
+     */
+    void print() const;
+
+private:
+    std::vector<uint8_t> data; ///< stores the Permutation
+};
+
+/**
  *  A Tuple of Transpositions \f$ ( \tau_h \mid \ldots \mid \tau_1 ) \f$.
- *  
+ *
  *  Convention: We want an easy-to-check condition, to test if a Tuple is in a bad state.
  *  We require that good Tuples use only the symbols \f$ 1 \f$ to \f$ p \f$.
 **/
@@ -28,7 +91,7 @@ class Tuple
     friend class HashTuple;
     
 public:
-    typedef std::vector<uint8_t> Permutation; ///< represents a permutation, for each i we store its successor in the permutation as permutation[i]
+
     /**
      *  Data structure to store the connected components.
      *  The zeroth entry stores the number of connected components.
@@ -99,8 +162,7 @@ private:
     Permutation long_cycle() const;                  ///< Returns the cycle 1 -> 2 -> ... -> p-1 -> p -> 1.
     Permutation long_cycle_inv() const;              ///< Returns the cycle 1 -> p -> p-2 -> ... -> 2 -> 1.
     Permutation sigma_h() const;
-    void print_permutation( Permutation sigma ) const;
-    std::map< uint8_t, Tuple::Permutation > cycle_decomposition ( const Tuple::Permutation & sigma ) const;
+    std::map< uint8_t, Permutation > cycle_decomposition ( const Permutation & sigma ) const;
     
     friend class boost::serialization::access;
     template <class Archive> void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization of Tuple.
