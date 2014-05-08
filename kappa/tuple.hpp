@@ -28,7 +28,7 @@ class Tuple
     friend class HashTuple;
     
 public:
-    typedef std::map<uint8_t, uint8_t> Permutation;  ///< Data structure to store a permutation, where a -> perm[a] if perm is a Permutation
+    typedef std::vector<uint8_t> Permutation; ///< represents a permutation, for each i we store its successor in the permutation as permutation[i]
     /**
      *  Data structure to store the connected components.
      *  The zeroth entry stores the number of connected components.
