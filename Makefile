@@ -30,10 +30,10 @@ endif
 
 INCL      := -I.
 override BUILDDIR := $(strip $(BUILDDIR))
-BUILDDIRS := $(patsubst %,%/.tag, $(patsubst %,$(BUILDDIR)/%, $(SRCDIRS)))
 CXXSRC    := $(filter-out $(foreach d,$(SRCDIRS), $(foreach e,$(EXCLUDE), $(d)/$(e)%.$(EXT))), $(foreach d,$(SRCDIRS), $(wildcard $(d)/*.$(EXT))))
 CXXOBJ    := $(patsubst %,build/%, $(CXXSRC:.$(EXT)=.o))
 CXXDEP    := $(CXXOBJ:.o=.dep)
+TAGS      := $(patsubst %,$(BUILDDIR)/%/.tag, $(SRCDIRS))
 
 OBJ    := $(CXXOBJ)
 STDOBJ := $(filter-out $(foreach d,$(SRCDIRS), build/$(d)/main_%.o), $(OBJ))
@@ -50,15 +50,14 @@ CXXFLAGS := $(CXXFLAGS) -DCOMPILE_WITH_MAGICK
 endif
 
 
-$(TARGETS): %: $(BUILDDIR)/kappa/main_%.dep $(BUILDDIR)/.tag $(BUILDDIR)/kappa/main_%.o $(STDOBJ)
+$(TARGETS): %: $(BUILDDIR)/kappa/main_%.o $(STDOBJ)
 	$(CXX) $(CXXFLAGS) $(LIBS) $(INCL) $(GPP_WORKAROUND_FLAGS) -o $@ $(STDOBJ) $(BUILDDIR)/kappa/main_$@.o
 
-$(CXXOBJ): $(BUILDDIR)/%.o: %.$(EXT) $(BUILDDIR)/%.dep $(BUILDDIR)/.tag
+$(CXXOBJ): $(BUILDDIR)/%.o: %.$(EXT) $(BUILDDIR)/%.dep
 	$(CXX) $(LIBS) $(CXXFLAGS) $(INCL) -c $< -o $@
 
-$(CXXDEP): $(BUILDDIR)/%.dep: %.$(EXT) $(BUILDDIR)/.tag
-	@mkdir -p $(dir $(@))
-	$(CXX) $(CXXFLAGS) -MM $< -MT $@ -MT $(<:.$(EXT)=.o) -o $@
+$(CXXDEP): $(BUILDDIR)/%.dep: %.$(EXT) $(TAGS)
+	$(CXX) $(CXXFLAGS) $(INCL) -MM $< -MT $@ -MT $(<:.$(EXT)=.o) -o $@
 
 %.tag:
 	@mkdir -p $(dir $(@))
