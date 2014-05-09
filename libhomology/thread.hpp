@@ -2,7 +2,6 @@
 #define THREAD_HPP
 
 #include <functional>
-#include <thread>
 
 
 /*! \class Thread
