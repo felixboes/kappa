@@ -141,6 +141,10 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tu
                         tmp[j].second++;
                     }
                 }
+                else
+                {
+                    break;
+                }
             }
 
             tmp[l+1] = Transposition(p+2, i);
@@ -257,12 +261,9 @@ void MonoComplex<MatrixComplex>::compute_boundary(Tuple & tuple, uint32_t p, typ
             {
                 if( (boundary = current_basis.d_hor(i)) )
                 {
-                    if( boundary.monotone() == true ) // then it contributes to the differential with the computed parity
-                    {
-                        boundary.id = basis_complex[p-1].id_of(boundary);
-                        update_differential<MatrixType>(differential, tuple, boundary,
+                    boundary.id = basis_complex[p-1].id_of(boundary);
+                    update_differential<MatrixType>(differential, tuple, boundary,
                                             parity, i, or_sign[i], sign_conv);
-                    }
                 }
             }
         }
@@ -310,13 +311,17 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     // occur in kappa(t).
     std::vector<Work> elements_per_threads (num_threads);
     uint32_t num_elements_per_thread = basis_complex[p].size() / num_threads;
+    if (basis_complex[p].size() % num_threads != 0)
+    {
+        ++num_elements_per_thread;
+    }
     uint32_t t = 0;
     uint32_t cur = 0;
     for ( auto it : basis_complex[p].basis )
     {
         elements_per_threads[t].push_back(it);
         ++cur;
-        if ((t < num_threads - 1) && (cur == num_elements_per_thread * (t+1)))
+        if ((t < num_threads - 1) and (cur == num_elements_per_thread * (t+1)))
         {
             ++t;
         }

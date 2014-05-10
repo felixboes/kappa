@@ -149,7 +149,11 @@ public:
     bool monotone();                        ///< Returns true iff the tuple is monotone.
     bool f(uint32_t i);                     ///< Applies the function \f$ f_i \f$ fuer \f$ 1 \le i < h \f$ and returns true iff the norm is preserved thereby.
     bool phi( uint32_t q, uint32_t i);      ///< Applies the function \f$ \Phi^q_i \f$ and returns true iff the norm is preserved thereby..
-    Tuple d_hor( uint8_t i ) const;         ///< Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} and returns true iff the norm is preserved thereby.
+    /** Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} and the projection on the monotonous cells.
+     *  Returns an empty tuple if the boundary is degenerate, the boundary tuple otherwise.
+     *  \note The parameter i has to fulfill 0 < i < p.
+     */
+    Tuple d_hor( uint8_t i ) const;
     Tuple d_hor_naive( uint8_t i ) const;   ///< Different implementation of the i-th horizontal boundary.
     std::map< uint8_t, int8_t > orientation_sign() const;
 

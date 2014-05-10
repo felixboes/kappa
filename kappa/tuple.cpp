@@ -228,97 +228,44 @@ bool Tuple :: monotone()
 
 bool Tuple :: f(uint32_t i)
 {
-    // Compare Mehner: page 49, computed by a clear case distinction.
-    if( i == 0 || i >= norm() ) // i has to be smaller than h.
+    // Denote g_{i+1} | g_i by (ab)(cd).
+    uint8_t a = at(i+1).first;
+    uint8_t b = at(i+1).second;
+    uint8_t c = at(i).first;
+    uint8_t d = at(i).second;
+
+    if( a == c ) // (a )(a )
     {
-        std::cerr << "Error in 'bool Tuple :: f(uint32_t i)' -> i=" << i << " >= h=" << norm() << std::endl;
-        return false;
+        if( b == d ) // (ab)(ab) = id and (a*)(a*) = 0
+        {
+            rep.assign( norm(), Transposition(0,0) );
+            return false;
+        }
+        else if( a == b ) // (a*)(ad) = (ad*) -> (d*)(ad)
+        {
+            at(i+1) = Transposition(d,d);
+            return true;
+        }
+        else if( a == d ) // (ab)(a*) = (ab*) -> (b*)(ab)
+        {
+            at(i+1) = Transposition(b,b);
+            at(i)   = Transposition(a,b);
+            return true;
+        }
+        else // (ab)(ad) = (adb) = (bd)(ab) or (db)(ab)
+        {
+            at(i+1) = Transposition(std::max(b,d), std::min(b,d));
+            at(i)   = Transposition(a,b);
+            return true;
+        }
     }
-    else    // Denote g_{i+1} | g_i by (ab)(cd).
+    else if( a == b ) // (a*)(  )
     {
-        uint8_t a = at(i+1).first;
-        uint8_t b = at(i+1).second;
-        uint8_t c = at(i).first;
-        uint8_t d = at(i).second;
-        
-        if( a == c ) // (a )(a )
-        {
-            if( b == d ) // (ab)(ab) = id and (a*)(a*) = 0
-            {
-                rep.assign( norm(), Transposition(0,0) );
-                return false;
-            }
-            else if( a == b ) // (a*)(ad) = (ad*) -> (d*)(ad)
-            {
-                at(i+1) = Transposition(d,d);
-                return true;
-            }
-            else if( a == d ) // (ab)(a*) = (ab*) -> (b*)(ab)
-            {
-                at(i+1) = Transposition(b,b);
-                at(i)   = Transposition(a,b);
-                return true;
-            }
-            else // (ab)(ad) = (adb) = (bd)(ab) or (db)(ab)
-            {
-                at(i+1) = Transposition(std::max(b,d), std::min(b,d));
-                at(i)   = Transposition(a,b);
-                return true;
-            }
-        }
-        else if( a == b ) // (a*)(  )
-        {
-            if( a == d ) // (a*)(ca) = (ca*) -> (a*)(ca)
-            {
-                return true;
-            }
-            else // (a*)(c*) or (a*)(cd) and the two transpositions commute
-            {
-                if( a < c )
-                {
-                    return true;
-                }
-                else
-                {
-                    std::swap( at(i+1), at(i));
-                    return true;
-                }
-            }
-        }
-        // Case: a > b
-        else if( b == c ) // (ab)(b )
-        {
-            if( c == d ) // (ab)(b*) = (ab*) -> (b*)(ab)
-            {
-                std::swap( at(i), at(i) );
-                return true;
-            }
-            else // (ab)(bd) = (abd) and (abd)' = (ad) and (abd)(ad) = (bd)
-            {
-                at(i+1) = Transposition(b,d);
-                at(i)   = Transposition(a,d);
-                return true;
-            }
-            // These are all cases since a > b >= d.
-        }
-        else if( a == d ) // (ab)(ca) = (acb) and c > a -> (ab)(ca)
+        if( a == d ) // (a*)(ca) = (ca*) -> (a*)(ca)
         {
             return true;
         }
-        else if( b == d ) // (ab)(cb) = (abc) -> a < c: (ab)(cb) oder a > c:(cb)(ac) 
-        {
-            if( a < c )
-            {
-                return true;
-            }
-            else    // (abc)' = (ac) and (abc)(ac) = (cb)
-            {
-                at(i+1) = Transposition(c,b);
-                at(i)   = Transposition(a,c);
-                return true;
-            }
-        }
-        else // (ab)(c ) with d not a and not b, hence disjoint transpositions
+        else // (a*)(c*) or (a*)(cd) and the two transpositions commute
         {
             if( a < c )
             {
@@ -326,9 +273,54 @@ bool Tuple :: f(uint32_t i)
             }
             else
             {
-                std::swap( at(i+1), at(i) );
+                std::swap( at(i+1), at(i));
                 return true;
             }
+        }
+    }
+    // Case: a > b
+    else if( b == c ) // (ab)(b )
+    {
+        if( c == d ) // (ab)(b*) = (ab*) -> (b*)(ab)
+        {
+            std::swap( at(i), at(i) );
+            return true;
+        }
+        else // (ab)(bd) = (abd) and (abd)' = (ad) and (abd)(ad) = (bd)
+        {
+            at(i+1) = Transposition(b,d);
+            at(i)   = Transposition(a,d);
+            return true;
+        }
+        // These are all cases since a > b >= d.
+    }
+    else if( a == d ) // (ab)(ca) = (acb) and c > a -> (ab)(ca)
+    {
+        return true;
+    }
+    else if( b == d ) // (ab)(cb) = (abc) -> a < c: (ab)(cb) oder a > c:(cb)(ac)
+    {
+        if( a < c )
+        {
+            return true;
+        }
+        else    // (abc)' = (ac) and (abc)(ac) = (cb)
+        {
+            at(i+1) = Transposition(c,b);
+            at(i)   = Transposition(a,c);
+            return true;
+        }
+    }
+    else // (ab)(c ) with d not a and not b, hence disjoint transpositions
+    {
+        if( a < c )
+        {
+            return true;
+        }
+        else
+        {
+            std::swap( at(i+1), at(i) );
+            return true;
         }
     }
     std::cerr << "Error in 'bool Tuple::f(uint32_t i)' -> Reached impossible case." << std::endl;
@@ -367,11 +359,6 @@ bool Tuple :: phi( uint32_t q, uint32_t i )
 
 Tuple Tuple :: d_hor( uint8_t k ) const
 {
-    if(0 == k || k >= p)
-    {
-        return Tuple(this->norm());
-    }
-    
     Tuple boundary = *this;
     
     // start with sigma_0.
@@ -393,16 +380,11 @@ Tuple Tuple :: d_hor( uint8_t k ) const
         if( k != a && k != b && l != a && l != b )
         {
         }
-        // The degenerate cases:
-        // k and k = sigma_{q-1}(k) are both part of tau_q.
-        else if( k == l && ( a == k || b == k ) )
+        // The degenerate case:
+        // k and l are both part of tau_q.
+        else if( a == std::max(k, l) and ( b == std::min(k, l) or k == l))
         {
             return Tuple();
-        }
-        // tau_q = (k, sigma_{q-1}(k)).
-        else if( a == std::max(k, l) && b == std::min(k, l) )
-        {
-            return Tuple(boundary.norm());
         }
         // The non degenerate case:
         else
@@ -447,6 +429,12 @@ Tuple Tuple :: d_hor( uint8_t k ) const
         // this is done by interchanging the values of a and b under sigma^{-1}
         std::swap( sigma_inv[a], sigma_inv[b] );
     }
+
+    // boundary is monotone iff its renormalization is monotone. Thus we check for monotony now to avoid unnecessary renormalization.
+    if (not boundary.monotone())
+    {
+        return Tuple();
+    }
     
     // Renormalize all tau'
     for(uint8_t q = 1; q <= boundary.norm(); ++q)
@@ -454,11 +442,7 @@ Tuple Tuple :: d_hor( uint8_t k ) const
         // Write tau_q = (a,b)
         auto& a = boundary[q].first;
         auto& b = boundary[q].second;
-        
-        if(a == k || b == k)
-        {
-            std::cerr << "Error in 'Tuple Tuple::d_hor( uint32_t k )' -> Reached impossible case." << std::endl;
-        }
+
         if(a > k)
         {
             a--;
