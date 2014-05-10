@@ -65,10 +65,10 @@ template<>
 void update_differential(MatrixBool &     differential,
                          Tuple &          tuple,
                          Tuple &          boundary,
-                         int32_t          parity,
-                         int8_t           i,
-                         int8_t           or_sign,
-                         SignConvention & sign_conv)
+                         int32_t,
+                         int8_t,
+                         int8_t,
+                         SignConvention &)
 {
     differential.add_entry(tuple.id, boundary.id);
 }

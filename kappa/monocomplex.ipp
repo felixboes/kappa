@@ -7,7 +7,7 @@
  */
 template< class MatrixComplex >
 MonoComplex< MatrixComplex > :: MonoComplex( uint32_t _g, uint32_t _m, SignConvention sgn, uint32_t number_threads )
-    : g(_g), m(_m), h(2*_g + _m), sign_conv(sgn), num_threads(number_threads)
+    : g(_g), m(_m), h(2*_g + _m), num_threads(number_threads), sign_conv(sgn)
 {
     Tuple tuple(h);
     tuple[1] = Transposition(2, 1);
@@ -201,16 +201,12 @@ static int8_t sign(int32_t          parity,
             return -1;
         }
     }
+
+    return 0;
 }
 
 template <class MatrixType>
-void update_differential(MatrixType &      differential,
-                         Tuple &           tuple,
-                         Tuple &           boundary,
-                         int32_t           parity,
-                         int8_t            i,
-                         int8_t            or_sign,
-                         SignConvention &  sign_conv)
+void update_differential(MatrixType &, Tuple &, Tuple &, int32_t, int8_t, int8_t, SignConvention &)
 {
     std::cout << "You need to implement this function for the specific MatrixType" << std::endl;
 }

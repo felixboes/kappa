@@ -54,7 +54,7 @@ public:
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
      *  In order to do so call resize(0,0);
      */ 
-    void resize (size_t size1, size_t size2, bool preserve = false)
+    void resize (size_t size1, size_t size2, bool)
     {
         num_rows = size1;
         num_cols = size2;
@@ -164,7 +164,7 @@ public:
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
      *  In order to do so call resize(0,0);
      */
-    void resize (size_t size1, size_t size2, bool preserve = false)
+    void resize (size_t size1, size_t size2, bool)
     {
         for (size_t i = 0; i < data.size(); ++i)
         {
@@ -213,7 +213,7 @@ private:
      *  In order to keep constness, we go the usual way and implement the function at.
      *  You may want to take a look at the at()-methods of the standard containers like std::vector.
      */
-    const bool at( size_t i, size_t j ) const;
+    bool at( size_t i, size_t j ) const;
 
     MatrixStorageType data; ///< This realizes the data.
     size_t num_rows;    ///< The number of rows.

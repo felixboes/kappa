@@ -29,9 +29,9 @@ class Zm{
 public:
     Zm(const int8_t m = 0);    ///< The default constructor creates a coefficient with value zero.
     static void set_modulus(const uint8_t prime, const uint8_t expo = 1);    ///< Befor using Zm coefficients, you must define the modulus i.e. m = p^e.
-    static void const print_modulus();    ///< Print the modulus to std::cout.
-    static void const print_inversetable();    ///< Print the table of invertible elements to std::cout.
-    bool const is_invertible(); ///< @returns true iff the coefficient is invertible.
+    static void print_modulus();    ///< Print the modulus to std::cout.
+    static void print_inversetable();    ///< Print the table of invertible elements to std::cout.
+    bool is_invertible() const; ///< @returns true iff the coefficient is invertible.
     Zm const inverse();         ///< @returns the inverse of a given coefficient. If the coefficient is not invertible the value zero is returned.
     static void clean_up();     ///< Clean up all static data e.g. the table of invertible elements.
     static bool is_field();     ///< @returns true iff m = p^e is a prime number. @todo: primeness of p is not yet verified.

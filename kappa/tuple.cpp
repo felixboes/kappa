@@ -158,7 +158,7 @@ uint32_t Tuple :: num_cycles()
     Permutation sigma_inv = long_cycle_inv();
 
     // multiply with t_1, ..., t_h
-    for( uint32_t i = 1; i <= norm(); i++ )
+    for( int32_t i = 1; i <= norm(); i++ )
     {
         uint8_t k = at(i).first;
         uint8_t l = at(i).second;
@@ -216,7 +216,7 @@ int32_t Tuple::num_cluster() const
 bool Tuple :: monotone()
 {
     // A tuple is monotone iff the sequence of all at(i) is monotone.
-    for( uint32_t i = 1; i <= norm() - 1; i++ )
+    for( int32_t i = 1; i <= norm() - 1; i++ )
     {
         if( at(i+1).first < at(i).first )
         {
@@ -467,7 +467,7 @@ Tuple Tuple :: d_hor_naive( uint8_t i ) const
     
     // Compute the permutations sigma_i. The only symbols that change when we multiply with tau_i = (k,l) are
     // sigma_{i-1}^{-1}(k) and sigma_{i-1}^{-1}(l).
-    for( uint32_t l = 1; l <= boundary.norm(); l++ )
+    for( int32_t l = 1; l <= boundary.norm(); l++ )
     {
         // write tau_l = (a,b)
         uint8_t a = boundary.at(l).first;

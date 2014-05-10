@@ -1,7 +1,7 @@
 #include "matrix_field.hpp"
 
 template< class CoefficientT >
-MatrixField<CoefficientT>::MatrixField() : data(), num_cols(0), num_rows(0)
+MatrixField<CoefficientT>::MatrixField() : data(), num_rows(0), num_cols(0)
 {
 }
 

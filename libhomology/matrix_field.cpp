@@ -1,6 +1,6 @@
 #include "matrix_field.hpp"
 
-MatrixBool::MatrixBool() : data(), num_cols(0), num_rows(0)
+MatrixBool::MatrixBool() : data(), num_rows(0), num_cols(0)
 {
 }
 
@@ -8,7 +8,7 @@ MatrixBool::MatrixBool( size_t number_rows, size_t number_cols ) : data( number_
 {
 }
 
-void MatrixBool::row_operation( size_t row_1, size_t row_2, size_t col )
+void MatrixBool::row_operation( size_t row_1, size_t row_2, size_t )
 {
     data[row_2] ^= data[row_1];
 }
@@ -23,7 +23,7 @@ void MatrixBool::row_operation( size_t row_1, size_t row_2, size_t col )
         data[i][j].flip();
  }
 
- const bool MatrixBool::at(size_t i, size_t j) const
+ bool MatrixBool::at(size_t i, size_t j) const
 {
     return data[i][j];
 }

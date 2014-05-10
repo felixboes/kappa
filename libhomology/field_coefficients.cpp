@@ -79,7 +79,7 @@ Zm::Zm(const int8_t m) : n( ((m%base)+base)%base ) {}
  *--------------------------------------------------------------------------------------
  */
 
-void const Zm::print_modulus()
+void Zm::print_modulus()
 {
     std::cout << "The Coefficientring is F_" << (int32_t)base << ".\n";
 }
@@ -92,10 +92,10 @@ void const Zm::print_modulus()
  *--------------------------------------------------------------------------------------
  */
 
-void const Zm::print_inversetable()
+void Zm::print_inversetable()
 {
     std::cout << "Printing inversetable:\n";
-    for(size_t i = 1; i < base; i++)
+    for(int8_t i = 1; i < base; i++)
     std::cout << (int32_t)i  << " " << inv[i] << "\n";
 }
 
@@ -107,7 +107,7 @@ void const Zm::print_inversetable()
  *--------------------------------------------------------------------------------------
  */
 
-bool const Zm::is_invertible()
+bool Zm::is_invertible() const
 {
     return inv[((n % base)+base)%base];
 }

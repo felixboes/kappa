@@ -18,12 +18,12 @@ public:
     typedef int64_t TorsT;
     HomologyDummy() {}
     HomologyDummy( int32_t, KernT, TorsT ) {}
-    inline void set_kern( int32_t n, KernT k ) {}
-    inline void set_tors( int32_t n, TorsT t ) {}
+    inline void set_kern( int32_t, KernT ) {}
+    inline void set_tors( int32_t, TorsT ) {}
     friend std::ostream& operator<< (std::ostream& stream, const HomologyDummy& homol);
 };
 
-inline std::ostream& operator<< (std::ostream& stream, const HomologyDummy& homol)
+inline std::ostream& operator<< (std::ostream& stream, const HomologyDummy&)
 {
     return stream << "This is a dummy module for homology computations.";
 }
