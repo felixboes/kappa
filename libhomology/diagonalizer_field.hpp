@@ -104,8 +104,14 @@ public:
     class JobQueue
     {
     public:
-        //! Basic constructor
+        //! Basic constructors
         JobQueue(MatrixType & matrix_init, uint32_t number_of_working_threads );
+
+
+#ifdef BROKEN_VECTOR_IMPLEMENTATION
+        JobQueue(JobQueue const & other);
+        JobQueue & operator=(JobQueue const & other);
+#endif
 
         //! Access operation with a given id
         RowOpParam const & get_operation(size_t op_id) const;
@@ -127,7 +133,7 @@ public:
         std::vector<RowOpParam>   operations;
 
         size_t                    cur_chunk_size;
-        size_t const              number_of_threads;
+        size_t                    number_of_threads;
 
         std::vector<size_t>       rows_to_check; //!< Auxiliary for recompute_chunk_size
         size_t                    col;
@@ -140,6 +146,12 @@ public:
     {
     public:
         Worker( uint32_t identification, JobQueue & sl );
+
+#ifdef BROKEN_VECTOR_IMPLEMENTATION
+        Worker( Worker const & other);
+        Worker & operator=(Worker const & other);
+#endif
+
 
         //! Perform the thread dedicated work. (As determined by the JobQueue.)
         void work(MatrixType & matrix);

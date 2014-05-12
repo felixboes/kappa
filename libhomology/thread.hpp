@@ -93,8 +93,13 @@ public:
 
 private:
     class Impl;
+#ifdef BROKEN_UNIQUE_PTR_IMPLEMENTATION
+    std::shared_ptr<Impl>      pimpl;
+#else
     std::unique_ptr<Impl>      pimpl;
+#endif
 }; // class Thread
 
 
 #endif // THREAD_HPP
+

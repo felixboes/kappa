@@ -130,6 +130,29 @@ DiagonalizerField< MatrixType >::JobQueue::JobQueue(MatrixType & matrix_init, ui
     }
 }
 
+#ifdef BROKEN_VECTOR_IMPLEMENTATION
+template < class MatrixType >
+DiagonalizerField< MatrixType >::JobQueue::JobQueue(JobQueue const & other)
+:
+   matrix(other.matrix),
+   number_of_threads(other.number_of_threads),
+   rows_to_check(std::move(other.rows_to_check)),
+   col(other.col)
+{}
+
+template < class MatrixType >
+typename DiagonalizerField< MatrixType >::JobQueue &
+DiagonalizerField< MatrixType >::JobQueue::operator=(JobQueue const & other)
+{
+   matrix             = other.matrix;
+   number_of_threads  = other.number_of_threads;
+   rows_to_check      = other.rows_to_check;
+   col                = other.col;
+}
+#endif
+
+
+
 template < class MatrixType >
 typename DiagonalizerField< MatrixType >::RowOpParam const &
 DiagonalizerField< MatrixType >::JobQueue::get_operation(size_t op_id) const
@@ -214,6 +237,23 @@ DiagonalizerField< MatrixType >::Worker::Worker(uint32_t identification, JobQueu
     jobs(sl)
 {}
 
+#ifdef BROKEN_VECTOR_IMPLEMENTATION
+template< class MatrixType >
+DiagonalizerField< MatrixType >::Worker::Worker(Worker const & other)
+:
+    id(other.id),
+    jobs(other.jobs)
+{}
+
+template< class MatrixType >
+typename DiagonalizerField< MatrixType >::Worker & 
+DiagonalizerField< MatrixType >::Worker::operator=(Worker const & other)
+{
+    id = other.id;
+    jobs = other.jobs;
+}
+#endif
+
 template< class MatrixType >
 void DiagonalizerField< MatrixType >::Worker::work(MatrixType& matrix)
 {
@@ -238,7 +278,7 @@ uint32_t DiagonalizerField< MatrixType >::diag_field_parallelized(
     std::vector<Thread> threads;
     for( size_t i = 0; i < number_threads; ++i )
     {
-        workers.emplace_back( Worker( i, jobs ) );
+        workers.emplace_back( i, jobs );
         threads.emplace_back( [i, &matrix, &workers]{workers[i].work(matrix);} );
     }
 

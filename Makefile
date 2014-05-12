@@ -22,7 +22,10 @@ ifeq ($(shell expr `$(CXX) -dumpversion` \<= 4.7.7), 1)
 CXXFLAGS      := $(patsubst -std=c++11,-std=c++0x, $(CXXFLAGS))
 endif
 ifeq ($(shell expr `$(CXX) -dumpversion` \>= 4.9.0), 1)
-	CXXFLAGS := $(CXXFLAGS) -fdiagnostics-color=auto  -fsanitize=undefined
+CXXFLAGS      := $(CXXFLAGS) -fdiagnostics-color=auto  -fsanitize=undefined
+endif
+ifeq ($(shell expr `$(CXX) -dumpversion` \<= 4.7.0), 1)
+CXXFLAGS      := $(CXXFLAGS) -DBROKEN_VECTOR_IMPLEMENTATION -DBROKEN_UNIQUE_PTR_IMPLEMENTATION
 endif
 ifeq ($(shell expr `doxygen --version` \>= 1.8.7),1)
 DOXYGENFLAGS  := $(DOXYGENFLAGS) -d Validate
@@ -51,7 +54,7 @@ endif
 
 
 $(TARGETS): %: $(BUILDDIR)/kappa/main_%.o $(STDOBJ)
-	$(CXX) $(CXXFLAGS) $(LIBS) $(INCL) $(GPP_WORKAROUND_FLAGS) -o $@ $(STDOBJ) $(BUILDDIR)/kappa/main_$@.o
+	$(CXX) $(CXXFLAGS) $(LIBS) $(INCL) -o $@ $(STDOBJ) $(BUILDDIR)/kappa/main_$@.o
 
 $(CXXOBJ): $(BUILDDIR)/%.o: %.$(EXT) $(BUILDDIR)/%.dep
 	$(CXX) $(LIBS) $(CXXFLAGS) $(INCL) -c $< -o $@

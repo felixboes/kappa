@@ -76,7 +76,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         atomic_uint state(0);   // Set state to 1 iff kernel and torsion are computed. This is done to terminate the 'monitoring thread'.
 
         // Diagonalzing thread.
-        auto partial_homology_thread = std::async( std::launch::async, [&]()
+        auto partial_homology_thread = std::async( std::launch::async, [&]() -> HomologyField
         {
             // Always use one thread for diagonalizing at the moment!
             auto ret = monocomplex.matrix_complex.compute_kernel_and_torsion( p, current_rank, conf.num_threads );
