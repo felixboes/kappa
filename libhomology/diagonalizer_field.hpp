@@ -110,7 +110,7 @@ public:
 
 #ifdef BROKEN_VECTOR_IMPLEMENTATION
         JobQueue(JobQueue const & other);
-        JobQueue & operator=(JobQueue const & other);
+        void operator=(JobQueue const & other);
 #endif
 
         //! Access operation with a given id
@@ -149,7 +149,7 @@ public:
 
 #ifdef BROKEN_VECTOR_IMPLEMENTATION
         Worker( Worker const & other);
-        Worker & operator=(Worker const & other);
+        void operator=(Worker const & other);
 #endif
 
 

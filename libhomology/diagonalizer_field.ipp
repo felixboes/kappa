@@ -141,8 +141,7 @@ DiagonalizerField< MatrixType >::JobQueue::JobQueue(JobQueue const & other)
 {}
 
 template < class MatrixType >
-typename DiagonalizerField< MatrixType >::JobQueue &
-DiagonalizerField< MatrixType >::JobQueue::operator=(JobQueue const & other)
+void DiagonalizerField< MatrixType >::JobQueue::operator=(JobQueue const & other)
 {
    matrix             = other.matrix;
    number_of_threads  = other.number_of_threads;
@@ -246,8 +245,7 @@ DiagonalizerField< MatrixType >::Worker::Worker(Worker const & other)
 {}
 
 template< class MatrixType >
-typename DiagonalizerField< MatrixType >::Worker & 
-DiagonalizerField< MatrixType >::Worker::operator=(Worker const & other)
+void DiagonalizerField< MatrixType >::Worker::operator=(Worker const & other)
 {
     id = other.id;
     jobs = other.jobs;
