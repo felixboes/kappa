@@ -24,7 +24,7 @@ endif
 ifeq ($(shell expr `$(CXX) -dumpversion` \>= 4.9.0), 1)
 CXXFLAGS      := $(CXXFLAGS) -fdiagnostics-color=auto  -fsanitize=undefined
 endif
-ifeq ($(shell expr `$(CXX) -dumpversion` \<= 4.7.0), 1)
+ifeq ($(shell expr `$(CXX) -dumpversion` \< 4.7), 1)
 CXXFLAGS      := $(CXXFLAGS) -DBROKEN_VECTOR_IMPLEMENTATION -DBROKEN_UNIQUE_PTR_IMPLEMENTATION
 endif
 ifeq ($(shell expr `doxygen --version` \>= 1.8.7),1)
