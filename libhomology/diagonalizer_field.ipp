@@ -121,12 +121,12 @@ DiagonalizerField< MatrixType >::JobQueue::JobQueue(MatrixType & matrix_init, ui
 :
     matrix(matrix_init),
     number_of_threads(number_of_working_threads),
-    rows_to_check(matrix.size1()),
+    rows_to_check(),
     col(0)
 {
     for( size_t row = 0; row < matrix.size1(); ++row )
     {
-        rows_to_check[row] = row;
+        rows_to_check.push_back(row);
     }
 }
 
@@ -180,7 +180,6 @@ bool DiagonalizerField< MatrixType >::JobQueue::compute_operations(atomic_uint &
     // Iterate through columns. We may stop if the rank is maximal.
     for (; col < num_cols && current_rank < num_rows; ++col )
     {
-
         // Find first invertible (i.e. non-zero) entry in the remaining rows.
         auto it = rows_to_check.begin();
         for( ; it != rows_to_check.end() && matrix( *it, col ) == typename MatrixType::CoefficientType(0); ++it )
@@ -197,7 +196,7 @@ bool DiagonalizerField< MatrixType >::JobQueue::compute_operations(atomic_uint &
             // After erasing, it will point to the next element in the list.
             it = rows_to_check.erase(it);
             // Use row operations to zeroize the remaining elements of the column.
-            for( size_t relative_position=0 ; it != rows_to_check.end(); ++it, ++relative_position )
+            for( ; it != rows_to_check.end(); ++it )
             {
                 size_t row_2 = *it;
                 // Assuming that the entry (row_2, col) differs from zero, we perform

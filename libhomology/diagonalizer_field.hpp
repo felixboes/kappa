@@ -135,7 +135,7 @@ public:
         size_t                    cur_chunk_size;
         size_t                    number_of_threads;
 
-        std::vector<size_t>       rows_to_check; //!< Auxiliary for recompute_chunk_size
+        std::list<size_t>         rows_to_check; //!< Auxiliary for recompute_chunk_size
         size_t                    col;
     };
 
