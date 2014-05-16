@@ -4,13 +4,13 @@
 
 #include "kappa.hpp"
 
-void print_usage(int argc, char** argv)
+void print_usage(int, char** argv)
 {
     std::cout << "Usage: " << argv[0] << " -g arg -m arg (-r|-n arg)" << std::endl;
 }
 
 template< class ClusterSpectralSequenceT >
-void draw_differentials( SessionConfig conf, int argc, char** argv )
+void draw_differentials( SessionConfig conf )
 {
     std::cout << "-------- Constructing bases --------" << std::endl;
     
@@ -81,11 +81,11 @@ int main( int argc, char** argv )
     
     if(conf.rational == true)
     {
-        draw_differentials< ClusterSpectralSequenceQ >( conf, argc, argv );
+        draw_differentials< ClusterSpectralSequenceQ >( conf );
     }
     else
     {
-        draw_differentials< ClusterSpectralSequenceZm >( conf, argc, argv );
+        draw_differentials< ClusterSpectralSequenceZm >( conf );
     }
     
     return 0;

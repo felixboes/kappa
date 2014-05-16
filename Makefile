@@ -48,7 +48,7 @@ ifneq ($(MAKECMDGOALS),clean)
 endif
 
 ifeq ($(MAKECMDGOALS),draw_differentials)
-LIBS     := $(LIBS) Magick++-config --cppflags --cxxflags --ldflags --libs
+LIBS     := $(LIBS) `Magick++-config --cppflags --cxxflags --ldflags --libs`
 CXXFLAGS := $(CXXFLAGS) -DCOMPILE_WITH_MAGICK
 endif
 
