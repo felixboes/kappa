@@ -147,8 +147,8 @@ public:
     void row_operation( size_t row_1, size_t row_2, size_t col );
 
     /**
-     *  In order to access elements of the matrix you want to use this function.
-     *  @return The function returns a reference to the given entry.
+     *  In order to read elements of the matrix you want to use this function.
+     *  @return The function returns a copy of the given entry.
      *  @todo throw an exception if necessary i.e. if (i,j) is not a valid entry.
      */
     bool operator()( size_t i, size_t j );
