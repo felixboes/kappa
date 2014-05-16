@@ -29,7 +29,7 @@ uint8_t & Permutation::operator[](uint8_t i)
     return data[i];
 }
 
-uint8_t const & Permutation::operator[](uint8_t i) const
+uint8_t const & Permutation::at(uint8_t i) const
 {
     return data.at(i);
 }
@@ -49,16 +49,17 @@ bool Permutation::is_fix_point(uint8_t i) const
     return (data[i] == i);
 }
 
-void Permutation::print() const
+std::ostream& operator<< (std::ostream& stream, const Permutation& permutation)
 {
-    std::cout << "permutation: " << std::endl;
-    for (uint8_t i = 0; i < size(); ++i)
+    stream << "permutation: " << std::endl;
+    for (uint8_t i = 0; i < permutation.size(); ++i)
     {
-        if (is_contained(i))
+        if (permutation.is_contained(i))
         {
-            std::cout << (size_t) i << " maps to " << data[i] << std::endl;
+            stream << (size_t) i << " maps to " << permutation.at(i) << std::endl;
         }
     }
+    return stream;
 }
 
 Tuple :: Tuple(size_t h) :
@@ -572,7 +573,7 @@ std::map< uint8_t, Permutation > Tuple::cycle_decomposition ( const Permutation 
         {
             visited[cur] = true;
             prev = cur;
-            cur = pi[prev];
+            cur = pi.at(prev);
             cycle[prev] = cur;
             if ( prev == p )
             {

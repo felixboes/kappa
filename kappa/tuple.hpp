@@ -54,7 +54,7 @@ public:
      * Returns the element the symbol i is mapped to by this Permutation.
      */
     uint8_t & operator[](uint8_t i);
-    uint8_t const & operator[](uint8_t i) const;
+    uint8_t const & at(uint8_t i) const;
 
     /**
      * Returns the number of elements of this permutation.
@@ -71,10 +71,10 @@ public:
      */
     bool is_fix_point(uint8_t i) const;
 
-    /**
-     * Prints this Permutation.
+    /** 
+     *  output stream
      */
-    void print() const;
+    friend std::ostream& operator<< (std::ostream& stream, const Permutation& permutation);
 
 private:
     std::vector<uint8_t> data; ///< stores the Permutation
