@@ -5,7 +5,7 @@
 
 #include "kappa.hpp"
 
-void print_usage(int argc, char** argv)
+void print_usage(int, char** argv)
 {
     std::cout << "Usage: " << argv[0] << " -g arg -m arg" << std::endl;
 }

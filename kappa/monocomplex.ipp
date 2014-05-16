@@ -162,49 +162,6 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tu
     }
 }
 
-static int8_t sign(int32_t          parity,
-                   int8_t           i,
-                   int8_t           or_sign,
-                   SignConvention & sign_conv )
-{
-    if ( sign_conv == no_signs)
-    {
-        return 1;
-    }
-    if( sign_conv == all_signs )
-    {
-        int32_t actual_parity = (parity + i) % 2;
-        if ( or_sign == -1 )
-        {
-            actual_parity = (actual_parity + 1) % 2;
-        }
-        //std::cout << it << " " << i << ": The d^hor_i boundary of " << current_basis << ". This is " << boundary << std::endl;
-        //std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << actual_parity << std::endl;
-        //std::cout << std::endl;
-       if ( actual_parity == 0 )
-        {
-            return 1;
-        }
-        else
-        {
-            return -1;
-        }
-    }
-    else if( sign_conv == no_orientation_sign )
-    {
-        if ( (parity + i) % 2 == 0 )
-        {
-            return 1;
-        }
-        else
-        {
-            return -1;
-        }
-    }
-
-    return 0;
-}
-
 template <class MatrixType>
 void update_differential(MatrixType &, Tuple &, Tuple &, int32_t, int8_t, int8_t, SignConvention &)
 {

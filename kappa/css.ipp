@@ -277,7 +277,7 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_differentials( int32_t p )
                         or_sign.operator =(std::move(current_basis.orientation_sign()));
                     }
     
-                    for( uint32_t i = 1; i < p; i++ )
+                    for( int32_t i = 1; i < p; i++ )
                     {
                         if( (boundary = current_basis.d_hor(i)) )
                         {

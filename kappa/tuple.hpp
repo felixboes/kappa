@@ -169,7 +169,7 @@ private:
     std::map< uint8_t, Permutation > cycle_decomposition ( const Permutation & sigma ) const;
     
     friend class boost::serialization::access;
-    template <class Archive> void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization of Tuple.
+    template <class Archive> void serialize(Archive &ar, const unsigned int) ///< Implements the serialization of Tuple.
     {
         ar & p & id & rep;
     }
@@ -189,7 +189,7 @@ public:
     friend class boost::serialization::access;
     
     template <class Archive>
-    void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization.
+    void serialize(Archive &, const unsigned int) ///< Implements the serialization.
     {
     }
 };

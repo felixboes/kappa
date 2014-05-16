@@ -9,7 +9,7 @@
 
 #include "kappa.hpp"
 
-void print_usage(int argc, char** argv)
+void print_usage(int, char** argv)
 {
     std::cout << "Usage: " << argv[0] << " -g arg -m arg --first_diff arg --last_diff arg" << std::endl;
 }
@@ -119,9 +119,9 @@ int main(int argc, char** argv)
         std::cout << std::endl;
 //        std::cout << M << std::endl;
 //        std::cout << std::endl;
-        for (int i = 0; i < M.size1(); ++i)
+        for (size_t i = 0; i < M.size1(); ++i)
         {
-            for (int j = 0; j < M.size2(); ++j)
+            for (size_t j = 0; j < M.size2(); ++j)
             {
                 std::cout << (M(i,j) == 0 ? "0" : "*") << " ";
             }

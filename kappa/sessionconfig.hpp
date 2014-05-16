@@ -42,10 +42,10 @@ struct SessionConfig
     bool rational;
     uint32_t prime;
     uint32_t num_threads;
-    uint32_t start_p;
-    uint32_t end_p;
-    uint32_t first_basis;
-    uint32_t last_basis;
+    int32_t start_p;
+    int32_t end_p;
+    int32_t first_basis;
+    int32_t last_basis;
     SignConvention sgn_conv;
     bool valid;
     bool print_help;

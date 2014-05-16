@@ -4,7 +4,7 @@
 
 #include "kappa.hpp"
 
-void print_usage(char** argv)
+void print_usage(int, char** argv)
 {
     std::cout << "Usage: " << argv[0] << " -g arg -m arg (-r|-n arg)" << std::endl;
 }
@@ -45,7 +45,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     // Compute all differentials and homology consecutively.
     for( auto& it : monocomplex.basis_complex )
     {
-        uint32_t p = it.first;
+        int32_t p = it.first;
         if ( p < conf.start_p || p > conf.end_p + 1 )
         {
             continue;
@@ -141,14 +141,14 @@ int main(int argc, char** argv)
     SessionConfig conf(argc, argv);
     if( conf.option_set("help") )
     {
-        print_usage(argv);
+        print_usage(argc, argv);
         std::cout << conf.desc << std::endl;
         return 0;
     }
 
     if( ! ( conf.option_set( "gen" ) && conf.option_set( "pun" ) && ( conf.option_set( "rat" ) || conf.option_set( "fin" ) ) ) )
     {
-        print_usage(argv);
+        print_usage(argc, argv);
         std::cout << conf.desc << std::endl;
         return 1;
     }

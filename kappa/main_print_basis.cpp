@@ -6,7 +6,7 @@
 
 #include "kappa.hpp"
 
-void print_usage(int argc, char** argv)
+void print_usage(int, char** argv)
 {
     std::cout << "Usage: " << argv[0] << " -g arg -m arg --first_basis arg --last_basis arg" << std::endl;
 }
@@ -26,7 +26,7 @@ void print_basis( MonoBasis& M )
             std::cout << comp[i] << ":" << i;
             visited[i] = true;
             
-            for( int32_t j = i+1; j < comp.size(); ++j )   // mark all visited vertices
+            for( size_t j = i+1; j < comp.size(); ++j )   // mark all visited vertices
             {
                 if( comp[j] == comp[i] )
                 {
