@@ -162,10 +162,26 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tu
     }
 }
 
+
 template <class MatrixType>
-void update_differential(MatrixType &, Tuple &, Tuple &, int32_t, int8_t, int8_t, SignConvention &)
+void update_differential(MatrixType &     differential,
+                         Tuple &          tuple,
+                         Tuple &          boundary,
+                         int32_t          parity,
+                         int8_t           i,
+                         int8_t           or_sign,
+                         SignConvention & sign_conv)
 {
-    std::cout << "You need to implement this function for the specific MatrixType" << std::endl;
+    int8_t sign_in_differential = sign(parity, i, or_sign, sign_conv);
+
+    if (sign_in_differential == 1)
+    {
+        differential(tuple.id, boundary.id) += 1;
+    }
+    else if (sign_in_differential == -1)
+    {
+        differential(tuple.id, boundary.id) += -1;
+    }
 }
 
 template< class MatrixComplex >

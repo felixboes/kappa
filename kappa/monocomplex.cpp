@@ -41,27 +41,6 @@ std::ostream& operator<< ( std::ostream& os, const MonoBasis& mb )
 }
 
 template<>
-void update_differential(MatrixField<Zm> & differential,
-                         Tuple &           tuple,
-                         Tuple &           boundary,
-                         int32_t           parity,
-                         int8_t            i,
-                         int8_t            or_sign,
-                         SignConvention &  sign_conv)
-{
-    int8_t sign_in_differential = sign(parity, i, or_sign, sign_conv);
-
-    if (sign_in_differential == 1)
-    {
-        differential(tuple.id, boundary.id) += 1;
-    }
-    else if (sign_in_differential == -1)
-    {
-        differential(tuple.id, boundary.id) += -1;
-    }
-}
-
-template<>
 void update_differential(MatrixBool &     differential,
                          Tuple &          tuple,
                          Tuple &          boundary,
@@ -71,27 +50,6 @@ void update_differential(MatrixBool &     differential,
                          SignConvention &)
 {
     differential.add_entry(tuple.id, boundary.id);
-}
-
-template<>
-void update_differential(MatrixZDontDiagonalize & differential,
-                         Tuple &                  tuple,
-                         Tuple &                  boundary,
-                         int32_t                  parity,
-                         int8_t                   i,
-                         int8_t                   or_sign,
-                         SignConvention &         sign_conv)
-{
-    int8_t sign_in_differential = sign(parity, i, or_sign, sign_conv);
-
-    if (sign_in_differential == 1)
-    {
-        differential(tuple.id, boundary.id) += 1;
-    }
-    else if (sign_in_differential == -1)
-    {
-        differential(tuple.id, boundary.id) += -1;
-    }
 }
 
 int8_t sign(int32_t          parity,
@@ -136,3 +94,4 @@ int8_t sign(int32_t          parity,
 
     return 0;
 }
+
