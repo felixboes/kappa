@@ -19,6 +19,7 @@ class DiagonalizerDummy
 {
 public:
     DiagonalizerDummy() {}
+    void operator() ( MatrixClass & ) {}
     void operator() ( MatrixClass &, uint32_t ) {}
     void operator() ( MatrixClass &, atomic_uint &, uint32_t ) {}
     uint32_t dfct() {return 0;}

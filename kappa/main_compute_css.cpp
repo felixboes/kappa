@@ -86,7 +86,7 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             // Diagonalzing thread.
             auto partial_homology_thread = std::async( std::launch::async, [&]()
             {
-                auto ret = cluster_spectral_sequence.css_page[p].compute_kernel_and_torsion( l, current_rank, conf.num_threads );
+                auto ret = cluster_spectral_sequence.css_page[p].compute_current_kernel_and_torsion( l, current_rank, conf.num_threads );
                 state = 1;
                 return ret;
             } );
