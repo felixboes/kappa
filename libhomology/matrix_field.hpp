@@ -48,46 +48,24 @@ public:
      *  @return The function returns a reference to the given entry.
      *  @todo throw an exception if necessary i.e. if (i,j) is not a valid entry.
      */ 
-    CoefficientT & operator()( size_t i, size_t j );
+    inline CoefficientT & operator()( size_t i, size_t j );
 
     /**
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
      *  In order to do so call resize(0,0);
      */ 
-    void resize (size_t size1, size_t size2, bool)
-    {
-        num_rows = size1;
-        num_cols = size2;
-        data.assign( size1 * size2, CoefficientT(0) );
-    } 
+    void resize (size_t size1, size_t size2, bool);
     
-    size_t size1() const;   ///< @returns the number of rows.
-    size_t size2() const;   ///< @returns the number of columns.
+    inline size_t size1() const;   ///< @returns the number of rows.
+    inline size_t size2() const;   ///< @returns the number of columns.
     
     void clear();   ///< Fills every entry with CoefficientT(0);
     
      /**
      *  grant std::ostream access in order to print coefficients to ostreams like 'std::cout << Zm(44) << std::endl;'
      */
-    friend std::ostream& operator<< ( std::ostream& stream, const MatrixField<CoefficientT> & matrix )
-    {
-        for( size_t i = 0; i < matrix.num_rows; ++i )
-        {
-            for( size_t j = 0; j < matrix.num_cols; )
-            {
-                stream << matrix.at(i,j);
-                if( ++j < matrix.num_cols )
-                {
-                    stream << ",";
-                }
-                else
-                {
-                    stream << std::endl;
-                }
-            }
-        }
-        return stream;
-    }
+    template< class T >
+    friend std::ostream& operator<< ( std::ostream& stream, const MatrixField<T> & matrix );
 
 private:
     /**
@@ -106,11 +84,14 @@ private:
     friend class boost::serialization::access;
 
     template <class Archive>
-    void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization.
+    void serialize(Archive &ar, const unsigned int ) ///< Implements the serialization.
     {
         ar & num_rows & num_cols & data;
     }
 };
+
+template< class CoefficientT >
+std::ostream& operator<< ( std::ostream& stream, const MatrixField<CoefficientT> & matrix );
 
 template class MatrixField<Q>;
 template class MatrixField<Zm>;
@@ -120,6 +101,129 @@ typedef MatrixField<Zm> MatrixZm;   ///< This defines Matrices with \f$\mathbb Z
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+/**
+ *  This template class defines a matrix type subject to the field coeffiecients 'CoefficientT'.
+ *  Our implementation mimes the functionality of ublas::matrix but performs faster.
+ *  You can access elements via operator() e.g. MatrixField M(10,200) M(0,0) = CoefficientT(-3);
+ *  It is used to compute the cluster spectral sequence step by step, therefore it consists of
+ *  a main matrix corresponding to the zero-th ifferential in the css and a matrix that will play the
+ *  role of the first differential.
+ */
+template < class CoefficientT >
+class MatrixFieldCSS
+{
+public:
+    typedef CoefficientT CoefficientType;
+    typedef std::vector<CoefficientT> MatrixStorageType;    ///< This realizes the implementation of the data.
+    
+    enum MatrixFieldCSSInitialization
+    {
+        only_main,
+        only_secondary,
+        both
+    };
+    
+    MatrixFieldCSS();  ///< Creates a \f$ 0 \times 0\f$ matrix.
+    /**
+     *  Creates a matrix with num_rows rows and num_cols columns.
+     *  The entries are determined by the standard constructor of CoefficientT.
+     *  @warning If the standard constructor of CoefficientT does not create a coefficient with value zero (e.g. usind standard int types)
+     *  the result differ from your imagination.
+     *  In order to get a zero matrix you may use clear();
+     */
+    MatrixFieldCSS( MatrixFieldCSSInitialization ini, size_t num_rows1, size_t num_cols1, size_t num_rows2 = 0, size_t num_cols2 = 0 );
+    
+    MatrixFieldCSS( size_t num_rows1, size_t num_cols1 ); ///< Equivalent to MatrixFieldCSS( only_main, num_rows1, num_cols1, 0, 0 );
+    
+    /**
+     *  This performs a row operation in the Gauss algorithm.
+     *  The entry in (row_1, col) is the given entry that is used to erase the entry in (row_2, col).
+     *  It is applied to both the \f$d^0\f$ and the \f$d^1\f$ part and is so to speak
+     *  triggerd by the \f$d^0\f$ matrix.
+     */ 
+    void row_operation( size_t row_1, size_t row_2, size_t col );
+    
+    /**
+     *  In order to access elements of the matrix you want to use this function.
+     *  @return The function returns a reference to the given entry.
+     *  @todo throw an exception if necessary i.e. if (i,j) is not a valid entry.
+     */ 
+    inline CoefficientT & operator()( size_t i, size_t j );
+    
+    /**
+     *  In order to access elements of the secondary matrix you want to use this function.
+     *  @return The function returns a reference to the given entry.
+     *  @todo throw an exception if necessary i.e. if (i,j) is not a valid entry.
+     */ 
+    inline CoefficientT & sec( size_t i, size_t j );
+
+    /**
+     *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
+     *  In order to do so call resize(0,0);
+     */ 
+    void resize (size_t size1, size_t size2, bool);
+    
+    /**
+     *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
+     *  In order to do so call sec_resize(0,0);
+     */ 
+    void sec_resize (size_t size1, size_t size2, bool);
+    
+    inline size_t size1() const;   ///< @returns the number of rows.
+    inline size_t size2() const;   ///< @returns the number of columns.
+    
+    inline size_t sec_size1() const;   ///< @returns the number of rows of the secondary matrix.
+    inline size_t sec_size2() const;   ///< @returns the number of columns of the secondary matrix.
+    
+    void clear();   ///< Fills every entry with CoefficientT(0);
+    void sec_clear();   ///< Fills every entry of the secondary matrix with CoefficientT(0);
+    
+     /**
+     *  grant std::ostream access in order to print matrix to ostreams.
+     */
+    template< class T >
+    friend std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<T> & matrix );
+
+private:
+    /**
+     *  In order to keep constness, we go the usual way and implement the function at.
+     *  You may want to take a look at the at()-methods of the standard containers like std::vector.
+     */
+    inline const CoefficientT& at( size_t i, size_t j ) const;
+    inline const CoefficientT& sec_at( size_t i, size_t j ) const;
+    
+    MatrixStorageType data; ///< This realizes the data.
+    MatrixStorageType sec_data; ///< This realizes the data.
+    
+    size_t num_rows;    ///< The number of rows.
+    size_t num_cols;    ///< The number of columns.
+    size_t sec_num_rows;    ///< The number of rows.
+    size_t sec_num_cols;    ///< The number of columns.
+    
+    /**
+     *  In order to save Zm coefficients we have to grad boost::serialization::access access.
+     */ 
+    friend class boost::serialization::access;
+
+    template <class Archive>
+    void serialize(Archive &ar, const unsigned int ) ///< Implements the serialization.
+    {
+        ar & num_rows & num_cols & data 
+           & sec_num_rows & sec_num_cols & sec_data;
+    }
+};
+
+template< class CoefficientT >
+std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<CoefficientT> & matrix );
+
+template class MatrixFieldCSS<Q>;
+template class MatrixFieldCSS<Zm>;
+
+typedef MatrixFieldCSS<Q> MatrixCSSQ;     ///< This defines Matrices with \f$\mathbb Q\f$ coefficients.
+typedef MatrixFieldCSS<Zm> MatrixCSSZm;   ///< This defines Matrices with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * @brief Class for a matrix with boolean coefficients
@@ -164,21 +268,7 @@ public:
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
      *  In order to do so call resize(0,0);
      */
-    void resize (size_t size1, size_t size2, bool)
-    {
-        for (size_t i = 0; i < data.size(); ++i)
-        {
-            data[i].reset();
-        }
-
-        data.resize(size1);
-        for (size_t i = 0; i < size1; ++i)
-        {
-            data[i].resize(size2);
-        }
-        num_rows = size1;
-        num_cols = size2;
-    }
+    void resize (size_t size1, size_t size2, bool);
 
     size_t size1() const;   ///< @returns the number of rows.
     size_t size2() const;   ///< @returns the number of columns.
@@ -188,25 +278,7 @@ public:
      /**
      *  grant std::ostream access in order to print coefficients to ostreams like 'std::cout << Zm(44) << std::endl;'
      */
-    friend std::ostream& operator<< ( std::ostream& stream, const MatrixBool & matrix)
-    {
-        for( size_t i = 0; i < matrix.num_rows; ++i )
-        {
-            for( size_t j = 0; j < matrix.num_cols; )
-            {
-                stream << matrix.at(i,j);
-                if( ++j < matrix.num_cols )
-                {
-                    stream << ",";
-                }
-                else
-                {
-                    stream << std::endl;
-                }
-            }
-        }
-        return stream;
-    }
+    friend std::ostream& operator<< ( std::ostream& stream, const MatrixBool & matrix);
 
 private:
     /**
@@ -225,11 +297,13 @@ private:
     friend class boost::serialization::access;
 
     template <class Archive>
-    void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization.
+    void serialize(Archive &ar, const unsigned int ) ///< Implements the serialization.
     {
         ar & num_rows & num_cols & data;
     }
 };
+
+std::ostream& operator<< ( std::ostream& stream, const MatrixBool & matrix);
 
 #include "matrix_field.ipp"
 #endif // MATRIX_FIELD_HPP
