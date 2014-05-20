@@ -7,6 +7,7 @@ SessionConfig::SessionConfig( int argc, char **argv ) :
     rational(false),
     prime(2),
     num_threads(1),
+    num_remaining_threads(0),
     start_p(0),
     end_p(0),
     first_basis(0),
@@ -22,6 +23,7 @@ SessionConfig::SessionConfig( int argc, char **argv ) :
             ("rat,r", "uses rational numbers as coefficients")
             ("fin,n", boost::program_options::value(&prime), "uses the finite field F_n with n a prime number")
             ("num_threads,t", boost::program_options::value(&num_threads), "the number of threads used in matrix computations")
+            ("num_remaining_threads,z", boost::program_options::value(&num_remaining_threads), "the number of additional threads used in diagonalization")
             ("first_diff", boost::program_options::value(&start_p), "start with the differential first_diff")
             ("last_diff", boost::program_options::value(&end_p), "end with the differential last_diff")
             ("first_basis", boost::program_options::value(&first_basis), "start with the basis first_basis")

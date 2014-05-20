@@ -50,7 +50,7 @@ public:
     *   Diagonalizes a given matrix and gives access to the progress by writing the current rank to current_rank.
     *   If the number of threads is given and greater then 1, we use the multithreaded version.
     **/
-    void operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t number_threads=0 );
+    void operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t num_working_threads=1, uint32_t num_remaining_threads = 0 );
 
     /**  @return defect of the matrix */
     uint32_t dfct();
@@ -79,7 +79,7 @@ public:
      *  The matrix is diagonalized via Gauss to compute the number of linearly independant columns or rows.
      *  This version is parallelized and uses number_threads many threads.
      */
-    uint32_t diag_field_parallelized(MatrixType& matrix, atomic_uint & current_rank, uint32_t number_threads);
+    uint32_t diag_field_parallelized(MatrixType& matrix, atomic_uint & current_rank, uint32_t num_working_threads, uint32_t num_remaining_threads);
 
     uint32_t def;   ///< The defect of the matrix.
     uint32_t rnk;   ///< The rank of the matrix.
@@ -104,7 +104,7 @@ public:
     {
     public:
         //! Collect initial work.
-        JobQueue(MatrixType & matrix_init, uint32_t number_of_working_threads, atomic_uint & current_rank );
+        JobQueue(MatrixType & matrix_init, uint32_t number_of_working_threads, uint32_t number_of_remaining_threads, atomic_uint & current_rank );
 
 #ifdef BROKEN_VECTOR_IMPLEMENTATION
         JobQueue(JobQueue const & other);
@@ -132,10 +132,11 @@ public:
         bool update_rank_and_work(atomic_uint & current_rank, std::vector<Worker> & workers);
 
         //! Get the chunk [begin, end) of rows_to_work_at dedicated to the given thread.
-        void get_chunk(uint32_t const thread_id, size_t & begin, size_t & end) const;
+        void get_work_chunk(uint32_t const thread_id, size_t & begin, size_t & end) const;
+        void get_remaining_chunk(uint32_t const thread_id, size_t & begin, size_t & end) const;
 
         //! Recomputes the chunk size based on the current number of rows_to_work_at.
-        void recompute_chunk_size();
+        void recompute_chunk_sizes();
 
         MatrixType &              matrix;
         /*!
@@ -154,14 +155,16 @@ public:
          * Number of rows in the vector rows_to_work_at
          * a single thread has to work at.
          */
-        size_t                    cur_chunk_size;
+        size_t                    work_chunk_size;
+        size_t                    remaining_chunk_size;
         /*!
          * Total number of threads used for parallelization.
          * One thread takes care of the remaining_rows while all the others
          * perform row operations on the rows_to_work_at.
          * TODO Check whether this can be improved!
          */
-        size_t                    number_of_threads;
+        size_t                    num_working_threads;
+        size_t                    num_remaining_threads;
         /*!
          * Row which is currently added to other rows for row operations.
          */

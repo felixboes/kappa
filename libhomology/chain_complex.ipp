@@ -44,19 +44,19 @@ CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::o
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_current_kernel_and_torsion( int32_t n, uint32_t number_threads )
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_current_kernel_and_torsion( int32_t n, uint32_t number_threads, uint32_t num_remaining_threads )
 {
     atomic_uint current_rank(0);
-    return compute_kernel_and_torsion(n, current_rank, number_threads);
+    return compute_kernel_and_torsion(n, current_rank, number_threads, num_remaining_threads);
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_current_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads )
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_current_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads, uint32_t num_remaining_threads )
 {
     HomologyT homol;
     // Diagonalize.
     DiagonalizerT diago;
-    diago( current_differential, current_rank, number_threads );
+    diago( current_differential, current_rank, number_threads, num_remaining_threads );
     homol.set_kern( n, diago.kern() );
     homol.set_tors( n-1, diago.tors() );
     
@@ -125,7 +125,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads )
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads, uint32_t num_remaining_threads )
 {
     HomologyT homol;
     // Case by case anaylsis:
@@ -163,7 +163,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
     {
         // Diagonalize.
         DiagonalizerT diago;
-        diago( differential[n], current_rank, number_threads );
+        diago( differential[n], current_rank, number_threads, num_remaining_threads );
         homol.set_kern( n, diago.kern() );
         homol.set_tors( n-1, diago.tors() );
     }

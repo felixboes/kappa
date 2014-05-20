@@ -31,7 +31,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     std::cout.flush();
     ofs << "Constructing bases";
 
-    MonoComplexT monocomplex( conf.genus, conf.num_punctures, conf.sgn_conv, conf.num_threads );
+    MonoComplexT monocomplex( conf.genus, conf.num_punctures, conf.sgn_conv, conf.num_threads + conf.num_remaining_threads);
     typename MonoComplexT::HomologyType homology;
     std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
     std::cout << std::endl;
@@ -79,7 +79,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         auto partial_homology_thread = std::async( std::launch::async, [&]() -> HomologyField
         {
             // Always use one thread for diagonalizing at the moment!
-            auto ret = monocomplex.matrix_complex.compute_current_kernel_and_torsion( p, current_rank, conf.num_threads );
+            auto ret = monocomplex.matrix_complex.compute_current_kernel_and_torsion( p, current_rank, conf.num_threads, conf.num_remaining_threads );
             state = 1;
             return ret;
         } );
