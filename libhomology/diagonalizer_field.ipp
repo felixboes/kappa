@@ -101,6 +101,7 @@ void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, uint32_t 
 template< class MatrixType >
 void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t num_working_threads, uint32_t num_remaining_threads )
 {
+    // We use the non-parallel version.
     if( num_working_threads == 1 && num_remaining_threads == 0)
     {
         rnk = diag_field(matrix, current_rank);
@@ -135,10 +136,11 @@ DiagonalizerField< MatrixType >::JobQueue::JobQueue(MatrixType & matrix_init, ui
     row_1(0),
     col(0)
 {
-    if (matrix.size2() == 0)
+    if (matrix.size2() == 0) // Then no diagonalizing is necessary.
     {
         return;
     }
+    // Sort the entries of the first column by whether they are zero or not.
     for( size_t row = 0; row < matrix.size1(); ++row )
     {
         if ( matrix(row, col) == typename MatrixType::CoefficientType(0))
@@ -150,10 +152,15 @@ DiagonalizerField< MatrixType >::JobQueue::JobQueue(MatrixType & matrix_init, ui
             rows_to_work_at.push_back(row);
         }
     }
+
+    // If we have found a row with non-zero entry in the first column, take
+    // one row as the row which is added to all the other rows in the set of
+    // row operations for the first column.
     if (rows_to_work_at.size() != 0)
     {
         row_1 = rows_to_work_at.back();
         rows_to_work_at.pop_back();
+        // This row contributes to the rank.
         ++current_rank;
     }
 
@@ -398,15 +405,15 @@ uint32_t DiagonalizerField< MatrixType >::diag_field_parallelized(
     std::vector<Worker> workers;
     std::vector<Thread> threads;
 
-    // Initialize (number_threads - 1) threads to perform row operations.
+    // Initialize num_working_threads threads to perform row operations.
     for( size_t i = 0; i < num_working_threads; ++i )
     {
         workers.emplace_back( i, jobs );
         threads.emplace_back( [i, &matrix, &workers]{workers[i].work(matrix);} );
     }
 
-    // Initialize another thread to check for new operations among the rows
-    // for which no row operation is performed.
+    // Initialize num_remaining_threads further threads to check for row operations of the next column
+    // among the rows for which no row operation is performed.
     for ( size_t i = 0; i < num_remaining_threads; ++i)
     {
         workers.emplace_back(i, jobs);

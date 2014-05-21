@@ -48,9 +48,10 @@ public:
 
     /**
     *   Diagonalizes a given matrix and gives access to the progress by writing the current rank to current_rank.
-    *   If the number of threads is given and greater then 1, we use the multithreaded version.
+    *   If the number of working threads is greater than 1 and the number of remaining threads is greater than zero,
+    *   we use the multithreaded version.
     **/
-    void operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t num_working_threads=1, uint32_t num_remaining_threads = 0 );
+    void operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t num_working_threads = 1, uint32_t num_remaining_threads = 0 );
 
     /**  @return defect of the matrix */
     uint32_t dfct();
@@ -77,7 +78,8 @@ public:
     /**
      *  @return rank of matrix and gives access to the progress by writing the current rank to current_rank.
      *  The matrix is diagonalized via Gauss to compute the number of linearly independant columns or rows.
-     *  This version is parallelized and uses number_threads many threads.
+     *  This version is parallelized and uses num_working_threads + num_remaining_threads many threads.
+     *  For an explanation of the parallelization, see \c Worker.
      */
     uint32_t diag_field_parallelized(MatrixType& matrix, atomic_uint & current_rank, uint32_t num_working_threads, uint32_t num_remaining_threads);
 
@@ -88,14 +90,15 @@ public:
     // Todo: give a detailed explanation.
 
     /**
-     *  A JobQueue keeps track of the work that has to be done.
+     *  A JobQueue keeps track of the work that has to be done by all Workers.
      *  This work consists of:
      *  - A column and a row s.t. the corresponding matrix entry is non-zero.
      *    With this row, we want to erase all other entries in this column
      *    that do not belong to rows that already contribute to the rank.
      *  - A previously computed vector of all rows on which such
-     *    row operations have to be performed.
-     *  - A vector of the remaining rows of the matrix which do not yet
+     *    row operations have to be performed, i.e. of the non-zero rows
+     *    that do not yet contribute to the rank.
+     *  - A vector of the zero rows of the matrix which do not yet
      *    contribute to the rank.
      *  When a new column is considered, the JobQueue can update this information.
      *  This assumes that the workers finish their work before.
@@ -135,20 +138,28 @@ public:
         void get_work_chunk(uint32_t const thread_id, size_t & begin, size_t & end) const;
         void get_remaining_chunk(uint32_t const thread_id, size_t & begin, size_t & end) const;
 
-        //! Recomputes the chunk size based on the current number of rows_to_work_at.
+        /*! Recomputes the chunk size for the working threads based on
+        * num_working_threads and the current number of rows_to_work_at,
+        * and the chunk size for the remaining threads based on num_remaining_threads
+        * and the current number of remaining_rows.
+        */
         void recompute_chunk_sizes();
 
-        MatrixType &              matrix;
         /*!
-         * Rows of the matrix on which row operations w.r.t. col and row_1
-         * have to be performed.
+         * \brief Matrix to diagonalize.
+         */
+        MatrixType &              matrix;
+
+        /*!
+         * \brief Vector of rows r s.t. the entry (r, jobs.col) of the matrix is non-zero.
+         * \note Rows that already contribute to the rank are not considered anymore.
          */
         std::vector<size_t>       rows_to_work_at;
-        /*!
-         * All rows of the matrix that do not yet contribute to the rank
-         * and that are not within the vector rows_to_work_at.
-         */
 
+        /*!
+         * \brief Vector of rows r s.t. the entry (r, jobs.col) of the matrix is zero.
+         * \note Rows that already contribute to the rank are not considered anymore.
+         */
         std::vector<size_t>       remaining_rows;
 
         /*!
@@ -157,13 +168,15 @@ public:
          */
         size_t                    work_chunk_size;
         size_t                    remaining_chunk_size;
+
         /*!
-         * Total number of threads used for parallelization.
-         * One thread takes care of the remaining_rows while all the others
-         * perform row operations on the rows_to_work_at.
-         * TODO Check whether this can be improved!
+         * \brief Number of working_threads used.
          */
         size_t                    num_working_threads;
+
+        /*!
+         * \brief Number of remaining_threads used.
+         */
         size_t                    num_remaining_threads;
         /*!
          * Row which is currently added to other rows for row operations.
@@ -179,22 +192,24 @@ public:
      * A Worker is supposed to perform row operations for a given column and to determine
      * the row operations for the next column.
      * More precisely:
+     * At the beginning of the diagonalization of a matrix, we introduce
+     * Workers and Threads of two different kinds explained later.
      * All Workers maintain a JobQueue of their current shared work.
      * At initialization, the JobQueue consists of
      *  - the 0th column of the matrix,
-     *  - the first row for which the entry (col, row_1) is non-zero,
-     *  - the set of non-zero rows rows_to_work_at of the 0th column (except for row_1),
-     *  - the set of remaining rows remaining_rows of the 0th column (except for row_1).
-     * Now, a Worker can either
-     *  - perform the function work and thus performs row operations on a
+     *  - the first row row_1 for which the entry (col, row_1) is non-zero,
+     *  - the vector of non-zero rows rows_to_work_at of the 0th column (except for row_1),
+     *  - the vector of zero rows remaining_rows of the 0th column (except for row_1).
+     * Now, we use all the Workers to either
+     *  - perform the function work and thus perform row operations on a
      *    part of the rows_to_work_at, and thereby sort these rows into two new vectors,
      *    depending on whether their entry in the next column is zero or not,
      *  - sort the remaining_rows into two new vectors,
      *    depending on whether their entry in the next column is zero or not.
-     * The Workers must be distributed s.t. all rows are considered.
      * Afterwards, the function jobs.update_rank_and_work collects the rows
      * computed by the Workers, and they can continue their work until there is
      * no work left.
+     * \note We assume that num_working_threads > 0 and num_remaining_threads > 0.
      */
     class Worker
     {
@@ -205,6 +220,9 @@ public:
         Worker( Worker const & other);
         void operator=(Worker const & other);
 #endif
+        /*!
+         * \brief Returns the id of this Worker, see \c id.
+         */
         uint32_t get_id()
         {
             return id;
@@ -223,14 +241,40 @@ public:
          */
         void collect_remaining_work(MatrixType & matrix);
 
+        /*!
+         * \brief Returns the new_rows_to_work_at.
+         */
         std::vector<size_t> & get_new_rows_to_work_at();
 
+        /*!
+         * \brief Returns the new_remaining_rows.
+         */
         std::vector<size_t> & get_new_remaining_rows();
 
     private:
+        /*!
+         * \brief id of this Worker
+         * \note There are two kinds of ids: One for the working workers, one for the remaining workers.
+         */
         uint32_t            id;
+
+        /*!
+         * \brief Contains all current job information of the workers.
+         */
         JobQueue &          jobs;
+
+        /*!
+         * \brief Vector of rows r s.t. the entry (r, jobs.col + 1) of the matrix is non-zero.
+         * This vector is built up by the worker.
+         * \note Rows that already contribute to the rank are not considered anymore.
+         */
         std::vector<size_t> new_rows_to_work_at;
+
+        /*!
+         * \brief Vector of rows r s.t. the entry (r, jobs.col + 1) of the matrix is zero.
+         * This vector is built up by the worker.
+         * \note Rows that already contribute to the rank are not considered anymore.
+         */
         std::vector<size_t> new_remaining_rows;
     };
 };
