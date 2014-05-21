@@ -101,12 +101,18 @@ void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, uint32_t 
 template< class MatrixType >
 void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t num_working_threads, uint32_t num_remaining_threads )
 {
-    if( num_working_threads == 1 )
+    if( num_working_threads == 1 && num_remaining_threads == 0)
     {
         rnk = diag_field(matrix, current_rank);
     }
     else
     {
+        // Parallelized diagonalization needs at least one remaining_thread.
+        if (num_remaining_threads == 0)
+        {
+            --num_working_threads;
+            ++num_remaining_threads;
+        }
         rnk = diag_field_parallelized( matrix, current_rank, num_working_threads, num_remaining_threads );
     }
     def = matrix.size1() - rnk;
