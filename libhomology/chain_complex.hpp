@@ -43,7 +43,7 @@ public:
     typedef DiagonalizerT DiagonalizerType; ///< We use this typedef to grant access this type from other classes.
     typedef HomologyT HomologyType;         ///< We use this typedef to grant access this type from other classes.
     
-    ChainComplex(); ///< Constructs an empty chain complex.
+    ChainComplex(bool matrices_are_transposed = false) : transp(matrices_are_transposed) {} ///< Constructs an empty chain complex.
 
     // Methods for the usage of current_differential.
 
@@ -140,6 +140,7 @@ public:
 
 
 private:
+    bool transp;
     MatrixT current_differential; ///< Realizes the transpose of a single differential.
 
     std::map< int32_t, MatrixT > differential;  ///< Realizes all differentials.

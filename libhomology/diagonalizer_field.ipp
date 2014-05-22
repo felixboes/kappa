@@ -1,6 +1,35 @@
 #include "diagonalizer_field.hpp"
 
 template< class MatrixType >
+void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, uint32_t number_threads, bool matrix_is_transposed )
+{
+    // call operator() ( MatrixType &m, atomic_uint &, uint32_t ).
+    atomic_uint current_rank;
+    this->operator ()(matrix, current_rank, number_threads, matrix_is_transposed);
+}
+
+template< class MatrixType >
+void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t number_threads, bool matrix_is_transposed )
+{
+    if( number_threads == 1 )
+    {
+        rnk = diag_field(matrix, current_rank);
+    }
+    else
+    {
+        rnk = diag_field_parallelized( matrix, current_rank, number_threads );
+    }
+    if( matrix_is_transposed == false )
+    {
+        def = matrix.size2() - rnk;
+    }
+    else
+    {
+        def = matrix.size1() - rnk;
+    }
+}
+
+template< class MatrixType >
 uint32_t DiagonalizerField< MatrixType >::dfct()
 {
     return def;
@@ -89,29 +118,6 @@ uint32_t DiagonalizerField< MatrixType >::diag_field(MatrixType &matrix, atomic_
     }
     return current_rank;
 }
-
-template< class MatrixType >
-void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, uint32_t number_threads )
-{
-    // call operator() ( MatrixType &m, atomic_uint &, uint32_t ).
-    atomic_uint current_rank;
-    this->operator ()(matrix, current_rank, number_threads);
-}
-
-template< class MatrixType >
-void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t number_threads )
-{
-    if( number_threads == 1 )
-    {
-        rnk = diag_field(matrix, current_rank);
-    }
-    else
-    {
-        rnk = diag_field_parallelized( matrix, current_rank, number_threads );
-    }
-    def = matrix.size1() - rnk;
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -7,7 +7,7 @@
  */
 template< class MatrixComplex >
 MonoComplex< MatrixComplex > :: MonoComplex( uint32_t _g, uint32_t _m, SignConvention sgn, uint32_t number_threads )
-    : g(_g), m(_m), h(2*_g + _m), num_threads(number_threads), sign_conv(sgn)
+    : g(_g), m(_m), h(2*_g + _m), num_threads(number_threads), sign_conv(sgn), matrix_complex(true)
 {
     Tuple tuple(h);
     tuple[1] = Transposition(2, 1);

@@ -44,13 +44,13 @@ public:
     *   Diagonalizes a given matrix.
     *   If the number of threads is given and greater then 1, we use the multithreaded version.
     **/
-    void operator() ( MatrixType &matrix, uint32_t number_threads=0 );
+    void operator() ( MatrixType &matrix, uint32_t number_threads=0, bool matrix_is_transposed = false);
 
     /**
     *   Diagonalizes a given matrix and gives access to the progress by writing the current rank to current_rank.
     *   If the number of threads is given and greater then 1, we use the multithreaded version.
     **/
-    void operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t number_threads=0 );
+    void operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t number_threads=0, bool matrix_is_transposed = false);
 
     /**  @return defect of the matrix */
     uint32_t dfct();
