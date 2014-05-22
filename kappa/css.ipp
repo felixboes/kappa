@@ -71,7 +71,8 @@ std::ostream& operator<< ( std::ostream& os, const CSSBasis& cb )
 
 
 template< class MatrixComplex >
-ClusterSpectralSequence< MatrixComplex > :: ClusterSpectralSequence(uint32_t _g, uint32_t _m, SignConvention sgn) : g(_g), m(_m), h(2*_g + _m), sign_conv(sgn)
+ClusterSpectralSequence< MatrixComplex > :: ClusterSpectralSequence(uint32_t _g, uint32_t _m, SignConvention sgn) :
+    g(_g), m(_m), h(2*_g + _m), sign_conv(sgn), diff_complex(true)
 {
     Tuple tuple(h);
     tuple[1] = Transposition(2, 1);
@@ -93,25 +94,6 @@ void ClusterSpectralSequence< MatrixComplex > :: show_basis( int32_t p ) const
         std::cout << "The " << p << "-th basis is empty" << std::endl;
     }
 }
-
-template< class MatrixComplex >
-void ClusterSpectralSequence< MatrixComplex > :: show_differential( int32_t p, int32_t l ) const
-{
-    if( css_page.count(p) )
-    {
-        if( css_page.at(p).count(l) )
-        {
-            std::cout << "This it the " << l << "-th cluster of the " << p << "-th differential:" << std::endl;
-            std::cout << css_page.at(p).at(l);
-            std::cout << std::endl;
-        }
-    }
-    else
-    {
-        std::cout << "The " << l << "-th differential of E^0_{" << p << ",*} is empty." << std::endl;
-    }
-}
-
 
 template< class MatrixComplex >
 void ClusterSpectralSequence< MatrixComplex > :: gen_bases(uint32_t s, uint32_t p, Tuple& tuple)
@@ -206,119 +188,98 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_bases(uint32_t s, uint32_t 
 }
 
 template< class MatrixComplex >
-void ClusterSpectralSequence< MatrixComplex > :: gen_differentials( int32_t p )
+void ClusterSpectralSequence< MatrixComplex > :: gen_d0( int32_t p, int32_t l )
 {
-    /**
-     *  Instead of implementing the differential recursively, we use a direct formula to enumerate
-     *  the sequences of indices in order to use threads.     
-     *  The sequences of indices we need to enumerate is given by the set 
-     *  \f[ 
-     *      \{(t_h, \ldots, t_1) \mid 0 \le t_q < q \,\}
-     *  \f]
-     *  and for its enumeration we use that the map
-     *  \f[ 
-     *      \{0, \ldots, h! - 1\} = \{(t_h, \ldots, t_1) \mid 0 \le t_q < q \,\}
-     *  \f]
-     *  \f[
-     *      k \mapsto \left( \left\lfloor \frac{k}{(q-1)!}| \right\rfloor \pmod q\right)_q\,,
-     *  \f]
-     *  is bijective. This is shown in the document s_qformel.pdf.	
-    **/
+    MatrixType& differential = diff_complex.get_current_differential();
+    differential.resize( basis_complex[p].basis[l].size(), basis_complex[p-1].basis[l].size(), true );
+    // Initialize with zeros.
+    differential.clear();
     
-    for( auto l_bases_it : basis_complex[p].basis )
+    // For each tuple t in the basis, we compute all basis elements that 
+    // occur in kappa(t). 
+    int32_t parity = 0;
+    for( auto it : basis_complex[p].basis[l] )
     {
-        auto& l = l_bases_it.first;
-        MatrixType& differential = css_page[p].get_current_differential();
-        differential.resize( basis_complex[p].basis[l].size(), basis_complex[p-1].basis[l].size(), true );
-        // Initialize with zeros.
-        //differential.clear();
+        Tuple boundary;
+        uint32_t s_q;
         
-        // For each tuple t in the basis, we compute all basis elements that 
-        // occur in kappa(t). 
-        int32_t parity = 0;
-        for( auto it : basis_complex[p].basis[l] )
+        for( uint32_t k = 0; k < factorial(h); k++ )
+        // in each iteration we enumerate one sequence of indices according to the above formula        
         {
-            Tuple boundary;
-            uint32_t s_q;
+            Tuple current_basis = it;
+            bool norm_preserved = true;
             
-            for( uint32_t k = 0; k < factorial(h); k++ )
-            // in each iteration we enumerate one sequence of indices according to the above formula        
+            // parity of the exponent of the sign of the current summand of the differential
+            if( sign_conv != no_signs ) 
             {
-                Tuple current_basis = it;
-                bool norm_preserved = true;
-                
-                // parity of the exponent of the sign of the current summand of the differential
-                if( sign_conv != no_signs ) 
+                parity = ((h*(h+1))/2) % 2;
+            }
+            
+            // Calculate phi_{(s_h, ..., s_1)}( Sigma )
+            for( uint32_t q = 1; q <= h; q++ )
+            {
+                s_q = 1 + ( ( k / factorial(q-1)) % q );   
+                if( sign_conv != no_signs )
                 {
-                    parity = ((h*(h+1))/2) % 2;
+                    parity += s_q;
                 }
-                
-                // Calculate phi_{(s_h, ..., s_1)}( Sigma )
-                for( uint32_t q = 1; q <= h; q++ )
+                if( current_basis.phi(q, s_q) == false )
                 {
-                    s_q = 1 + ( ( k / factorial(q-1)) % q );   
-                    if( sign_conv != no_signs )
-                    {
-                        parity += s_q;
-                    }
-                    if( current_basis.phi(q, s_q) == false )
-                    {
-                        norm_preserved = false;
-                        break;
-                    }
+                    norm_preserved = false;
+                    break;
                 }
-                
-                // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
-                if( norm_preserved )   // Compute all horizontal boundaries.
+            }
+            
+            // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
+            if( norm_preserved )   // Compute all horizontal boundaries.
+            {
+                std::map< uint8_t, int8_t > or_sign;
+                if( sign_conv == all_signs )
                 {
-                    std::map< uint8_t, int8_t > or_sign;
-                    if( sign_conv == all_signs )
+                    or_sign.operator=(std::move(current_basis.orientation_sign()));
+                }
+
+                for( int32_t i = 1; i < p; i++ )
+                {
+                    if( (boundary = current_basis.d_hor(i)) )
                     {
-                        or_sign.operator =(std::move(current_basis.orientation_sign()));
-                    }
-    
-                    for( int32_t i = 1; i < p; i++ )
-                    {
-                        if( (boundary = current_basis.d_hor(i)) )
+                        if( boundary.monotone() == true && boundary.num_cluster() == l ) // then it contributes to the differential with the computed parity
                         {
-                            if( boundary.monotone() == true && boundary.num_cluster() == l ) // then it contributes to the differential with the computed parity
+                            boundary.id = basis_complex[p-1].id_of(boundary);
+                            
+                            if( sign_conv == all_signs )
                             {
-                                boundary.id = basis_complex[p-1].id_of(boundary);
-                                
-                                if( sign_conv == all_signs )
+                                int32_t actual_parity = (parity + i) % 2;
+                                if ( or_sign[i] == -1 )
                                 {
-                                    int32_t actual_parity = (parity + i) % 2;
-                                    if ( or_sign[i] == -1 )
-                                    {
-                                        actual_parity = (actual_parity + 1) % 2;
-                                    }
-                                    //std::cout << it << " " << i << ": The d^hor_i boundary of " << current_basis << ". This is " << boundary << std::endl;
-                                    //std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << actual_parity << std::endl;
-                                    //std::cout << std::endl;
-                                    if ( actual_parity == 0 )
-                                    {
-                                        differential(boundary.id, it.id) += 1;
-                                    }
-                                    else
-                                    {
-                                        differential(boundary.id, it.id) += -1;
-                                    }
+                                    actual_parity = (actual_parity + 1) % 2;
                                 }
-                                else if( sign_conv == no_orientation_sign )
+                                //std::cout << it << " " << i << ": The d^hor_i boundary of " << current_basis << ". This is " << boundary << std::endl;
+                                //std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << actual_parity << std::endl;
+                                //std::cout << std::endl;
+                                if ( actual_parity == 0 )
                                 {
-                                    if ( (parity + i) % 2 == 0 )
-                                    {
-                                        differential(boundary.id, it.id) += 1;
-                                    }
-                                    else
-                                    {
-                                        differential(boundary.id, it.id) += -1;
-                                    }
+                                    differential(it.id, boundary.id) += 1;
                                 }
                                 else
                                 {
-                                    differential(boundary.id, it.id) += 1;
+                                    differential(it.id, boundary.id) += -1;
                                 }
+                            }
+                            else if( sign_conv == no_orientation_sign )
+                            {
+                                if ( (parity + i) % 2 == 0 )
+                                {
+                                    differential(it.id, boundary.id) += 1;
+                                }
+                                else
+                                {
+                                    differential(it.id, boundary.id) += -1;
+                                }
+                            }
+                            else
+                            {
+                                differential(it.id, boundary.id) += 1;
                             }
                         }
                     }
@@ -329,13 +290,17 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_differentials( int32_t p )
 }
 
 template< class MatrixComplex >
-void ClusterSpectralSequence< MatrixComplex >::erase_differentials(int32_t p)
+void ClusterSpectralSequence< MatrixComplex >::erase_d0( int32_t, int32_t )
 {
-    if( css_page.count(p) != 0 )
-    {
-        css_page[p].erase(); // Clear differentials
-        css_page.erase(p);
-    }
+    MatrixType& differential = diff_complex.get_current_differential();
+    differential.resize(0,0,true);
+}
+
+template< class MatrixComplex >
+void ClusterSpectralSequence< MatrixComplex >::erase_d1( int32_t, int32_t )
+{
+    MatrixType& differential = diff_complex.get_current_differential();
+    differential.sec_resize(0,0,true);
 }
 
 #ifdef COMPILE_WITH_MAGICK

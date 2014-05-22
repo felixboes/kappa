@@ -54,26 +54,26 @@ void compute_css( SessionConfig conf, int argc, char** argv )
         {
             continue;
         }
-        atomic_uint current_rank(0);
-        uint32_t max_possible_rank(0);
-        
-        // Generate a single differential.
-        std::cout << "Constructing the differentials of E^0_{" << p << ",*}.";
-        std::cout.flush();
-        ofs << "Constructing the differentials of E^0_{" << p << ",*}.";
-
-        measure_duration = Clock();
-        cluster_spectral_sequence.gen_differentials(p);
-        
-        std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
-        std::cout.flush();
-        ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
 
         for( auto& l_basis_it : l_bases )
         {
             auto l = l_basis_it.first;
+            atomic_uint current_rank(0);
+            uint32_t max_possible_rank(0);
 
-            max_possible_rank = std::min( cluster_spectral_sequence.css_page[p].get_current_differential().size1(), cluster_spectral_sequence.css_page[p].get_current_differential().size2() );
+            // Generate a single differential.
+            std::cout << "Constructing the differential d^0_{" << p << "," << l << "}.";
+            std::cout.flush();
+            ofs << "Constructing the differential d^0_{" << p << "," << l << "}.";
+    
+            measure_duration = Clock();
+            cluster_spectral_sequence.gen_d0(p,l);
+            
+            std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+            std::cout.flush();
+            ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+
+            max_possible_rank = std::min( cluster_spectral_sequence.diff_complex.get_current_differential().size1(), cluster_spectral_sequence.diff_complex.get_current_differential().size2() );
             if( (uint32_t)homology[p-1].get_kern(l) > 0 )
             {
                 max_possible_rank = std::min( max_possible_rank, (uint32_t)homology[p-1].get_kern(l) );
@@ -86,7 +86,7 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             // Diagonalzing thread.
             auto partial_homology_thread = std::async( std::launch::async, [&]()
             {
-                auto ret = cluster_spectral_sequence.css_page[p].compute_current_kernel_and_torsion( l, current_rank, conf.num_threads );
+                auto ret = cluster_spectral_sequence.diff_complex.compute_current_kernel_and_torsion( l, current_rank, conf.num_threads );
                 state = 1;
                 return ret;
             } );
@@ -120,10 +120,10 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             ofs << "    dim(E_" << (int32_t)(p-1) << "," << (int32_t)(l) << ") = " << (int32_t)(homology[p-1].get_kern(l) - homology[p-1].get_tors(l))
                       << "; dim(im d_" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << (int32_t)(homology[p-1].get_tors(l))
                       << "; dim(ker d_" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << (int32_t)(homology[p].get_kern(l)) << std::endl;
+                      
+            // Delete the differential.
+            cluster_spectral_sequence.erase_d0(p,l);
         }
-        
-        // Delete the differential.
-        cluster_spectral_sequence.erase_differentials(p);
     }
 
     
