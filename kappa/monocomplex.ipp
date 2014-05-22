@@ -273,8 +273,10 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
 
     // Allocate enough space for the differential.
     // Todo: Test this.
-    matrix_complex.get_current_differential().resize( basis_complex[p].size(), basis_complex[p-1].size(), true );
     MatrixType & differential = matrix_complex.get_current_differential();
+    differential.resize( basis_complex[p].size(), basis_complex[p-1].size(), true );
+    differential.diagonal.clear();
+    
     // For each tuple t in the basis, we compute all basis elements that
     // occur in kappa(t).
     std::vector<Work> elements_per_threads (num_threads);

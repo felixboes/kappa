@@ -10,6 +10,7 @@
 
 #include <boost/dynamic_bitset.hpp>
 #include <iostream>
+#include <list>
 #include <vector>
 
 #include "field_coefficients.hpp"
@@ -26,6 +27,8 @@ class MatrixField
 public:
     typedef CoefficientT CoefficientType;
     typedef std::vector<CoefficientT> MatrixStorageType;    ///< This realizes the implementation of the data.
+    typedef std::pair< size_t, size_t > MatrixEntryType;
+    typedef std::list< MatrixEntryType > DiagonalType;
     
     MatrixField();  ///< Creates a \f$ 0 \times 0\f$ matrix.
     /**
@@ -67,6 +70,7 @@ public:
     template< class T >
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixField<T> & matrix );
 
+    DiagonalType diagonal;
 private:
     /**
      *  In order to keep constness, we go the usual way and implement the function at.
@@ -116,6 +120,8 @@ class MatrixFieldCSS
 public:
     typedef CoefficientT CoefficientType;
     typedef std::vector<CoefficientT> MatrixStorageType;    ///< This realizes the implementation of the data.
+    typedef std::pair< size_t, size_t > MatrixEntryType;
+    typedef std::list< MatrixEntryType > DiagonalType;
     
     enum MatrixFieldCSSInitialization
     {
@@ -185,6 +191,7 @@ public:
     template< class T >
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<T> & matrix );
 
+    DiagonalType diagonal;
 private:
     /**
      *  In order to keep constness, we go the usual way and implement the function at.
@@ -236,6 +243,8 @@ class MatrixBool
 public:
     typedef bool CoefficientType;
     typedef std::vector<boost::dynamic_bitset<> > MatrixStorageType;    ///< This realizes the implementation of the data.
+    typedef std::pair< size_t, size_t > MatrixEntryType;
+    typedef std::list< MatrixEntryType > DiagonalType;
 
     MatrixBool();  ///< Creates a \f$ 0 \times 0\f$ matrix.
     /**
@@ -280,6 +289,7 @@ public:
      */
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixBool & matrix);
 
+    DiagonalType diagonal;
 private:
     /**
      *  In order to keep constness, we go the usual way and implement the function at.

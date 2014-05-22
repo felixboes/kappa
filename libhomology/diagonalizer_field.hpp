@@ -33,6 +33,9 @@ class DiagonalizerField
 {
 public:
     typedef MatrixT MatrixType;    ///< We use this typedef to grant access the matrix type from other classes.
+    typedef typename MatrixType::MatrixEntryType MatrixEntryType;
+    typedef typename MatrixType::DiagonalType DiagonalType;
+
     class Worker;
 
     /**
@@ -83,7 +86,7 @@ public:
 
     uint32_t def;   ///< The defect of the matrix.
     uint32_t rnk;   ///< The rank of the matrix.
-
+    
     // Classes for paralellization:
     // Todo: give a detailed explanation.
 
@@ -104,7 +107,7 @@ public:
     {
     public:
         //! Collect initial work.
-        JobQueue(MatrixType & matrix_init, uint32_t number_of_working_threads, atomic_uint & current_rank );
+        JobQueue(DiagonalType& diag, MatrixType & matrix_init, uint32_t number_of_working_threads, atomic_uint & current_rank );
 
 #ifdef BROKEN_VECTOR_IMPLEMENTATION
         JobQueue(JobQueue const & other);
@@ -170,6 +173,8 @@ public:
          * Current column.
          */
         size_t                    col;
+    private:
+        DiagonalType& diagonal;
     };
 
     /**

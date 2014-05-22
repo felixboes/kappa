@@ -123,7 +123,7 @@ uint32_t DiagonalizerField< MatrixType >::diag_field(MatrixType &matrix, atomic_
 
 
 template < class MatrixType >
-DiagonalizerField< MatrixType >::JobQueue::JobQueue(MatrixType & matrix_init, uint32_t number_of_working_threads, atomic_uint & current_rank )
+DiagonalizerField< MatrixType >::JobQueue::JobQueue(DiagonalizerField< MatrixType >::DiagonalType& diag, MatrixType & matrix_init, uint32_t number_of_working_threads, atomic_uint & current_rank )
 :
     matrix(matrix_init),
     rows_to_work_at(),
@@ -131,7 +131,8 @@ DiagonalizerField< MatrixType >::JobQueue::JobQueue(MatrixType & matrix_init, ui
     cur_chunk_size(0),
     number_of_threads(number_of_working_threads),
     row_1(0),
-    col(0)
+    col(0),
+    diagonal(diag)
 {
     if (matrix.size2() == 0)
     {
@@ -151,6 +152,7 @@ DiagonalizerField< MatrixType >::JobQueue::JobQueue(MatrixType & matrix_init, ui
     if (rows_to_work_at.size() != 0)
     {
         row_1 = rows_to_work_at.back();
+        diagonal.emplace_back( row_1, col );
         rows_to_work_at.pop_back();
         ++current_rank;
     }
@@ -240,6 +242,7 @@ bool DiagonalizerField< MatrixType >::JobQueue::update_rank_and_work(atomic_uint
         if (rows_to_work_at.size() != 0)
         {
             row_1 = rows_to_work_at.back();
+            diagonal.push_back( MatrixEntryType(row_1, col) );
             rows_to_work_at.pop_back();
             ++current_rank;
         }
@@ -371,7 +374,7 @@ uint32_t DiagonalizerField< MatrixType >::diag_field_parallelized(
     atomic_uint &  current_rank,
     uint32_t       number_threads )
 {
-    JobQueue jobs(matrix, number_threads, current_rank);
+    JobQueue jobs(matrix.diagonal, matrix, number_threads, current_rank);
     std::vector<Worker> workers;
     std::vector<Thread> threads;
 
