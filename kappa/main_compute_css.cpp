@@ -65,8 +65,10 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             // Construct the first stage of d_1
             cluster_spectral_sequence.gen_d1_stage_1(p,l);
 
+            // Forget the old d0
             cluster_spectral_sequence.erase_d0();
-            // Generate a single differential.
+            
+            // Generate the new d0
             std::cout << "Constructing the differential d^0_{" << p << "," << l << "}.";
             std::cout.flush();
             ofs << "Constructing the differential d^0_{" << p << "," << l << "}.";
@@ -84,9 +86,9 @@ void compute_css( SessionConfig conf, int argc, char** argv )
                 max_possible_rank = std::min( max_possible_rank, (uint32_t)homology[p-1].get_kern(l) );
             }
 
-            // Compute the induced homology.
+            // Compute the induced homology of d0.
             measure_duration = Clock(); // Measure duration.
-            atomic_uint state(0);   // Set state to 1 iff kernel and torsion are computed. This is done to terminate the 'monitoring thread'.
+            atomic_uint state(0);       // Set state to 1 iff kernel and torsion are computed. This is done to terminate the 'monitoring thread'.
 
             // Diagonalzing thread.
             auto partial_homology_thread = std::async( std::launch::async, [&]()
@@ -125,6 +127,12 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             ofs << "    dim(E_" << (int32_t)(p-1) << "," << (int32_t)(l) << ") = " << (int32_t)(homology[p-1].get_kern(l) - homology[p-1].get_tors(l))
                       << "; dim(im d^0_" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << (int32_t)(homology[p-1].get_tors(l))
                       << "; dim(ker d^0_" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << (int32_t)(homology[p].get_kern(l)) << std::endl;
+            
+            // Compute the induced homology of d1.
+            // todo
+            
+            // Forget d1
+            cluster_spectral_sequence.erase_d1();
         }
     }
 

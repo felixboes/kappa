@@ -51,7 +51,13 @@ public:
      *  @return The function returns a reference to the given entry.
      *  @todo throw an exception if necessary i.e. if (i,j) is not a valid entry.
      */ 
-    inline CoefficientT & operator()( size_t i, size_t j );
+    CoefficientT & operator()( size_t i, size_t j );
+    
+    /**
+     *  In order to keep constness, we go the usual way and implement the function at.
+     *  You may want to take a look at the at()-methods of the standard containers like std::vector.
+     */
+    const CoefficientT& at( size_t i, size_t j ) const;
 
     /**
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
@@ -59,8 +65,8 @@ public:
      */ 
     void resize (size_t size1, size_t size2, bool);
     
-    inline size_t size1() const;   ///< @returns the number of rows.
-    inline size_t size2() const;   ///< @returns the number of columns.
+    size_t size1() const;   ///< @returns the number of rows.
+    size_t size2() const;   ///< @returns the number of columns.
     
     void clear();   ///< Fills every entry with CoefficientT(0);
     
@@ -71,13 +77,8 @@ public:
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixField<T> & matrix );
 
     DiagonalType diagonal;
+
 private:
-    /**
-     *  In order to keep constness, we go the usual way and implement the function at.
-     *  You may want to take a look at the at()-methods of the standard containers like std::vector.
-     */
-    const CoefficientT& at( size_t i, size_t j ) const;
-    
     MatrixStorageType data; ///< This realizes the data.
     size_t num_rows;    ///< The number of rows.
     size_t num_cols;    ///< The number of columns.
@@ -155,15 +156,27 @@ public:
      *  @return The function returns a reference to the given entry.
      *  @todo throw an exception if necessary i.e. if (i,j) is not a valid entry.
      */ 
-    inline CoefficientT & operator()( size_t i, size_t j );
+    CoefficientT & operator()( size_t i, size_t j );
+    
+    /**
+     *  In order to keep constness, we go the usual way and implement the function at.
+     *  You may want to take a look at the at()-methods of the standard containers like std::vector.
+     */
+    const CoefficientT& at( size_t i, size_t j ) const;
     
     /**
      *  In order to access elements of the secondary matrix you want to use this function.
      *  @return The function returns a reference to the given entry.
      *  @todo throw an exception if necessary i.e. if (i,j) is not a valid entry.
      */ 
-    inline CoefficientT & sec( size_t i, size_t j );
-
+    CoefficientT & sec( size_t i, size_t j );
+    
+    /**
+     *  In order to keep constness, we go the usual way and implement the function at.
+     *  You may want to take a look at the at()-methods of the standard containers like std::vector.
+     */
+    const CoefficientT& sec_at( size_t i, size_t j ) const;
+    
     /**
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
      *  In order to do so call resize(0,0);
@@ -176,11 +189,11 @@ public:
      */ 
     void sec_resize (size_t size1, size_t size2, bool);
     
-    inline size_t size1() const;   ///< @returns the number of rows.
-    inline size_t size2() const;   ///< @returns the number of columns.
+    size_t size1() const;   ///< @returns the number of rows.
+    size_t size2() const;   ///< @returns the number of columns.
     
-    inline size_t sec_size1() const;   ///< @returns the number of rows of the secondary matrix.
-    inline size_t sec_size2() const;   ///< @returns the number of columns of the secondary matrix.
+    size_t sec_size1() const;   ///< @returns the number of rows of the secondary matrix.
+    size_t sec_size2() const;   ///< @returns the number of columns of the secondary matrix.
     
     void clear();   ///< Fills every entry with CoefficientT(0);
     void sec_clear();   ///< Fills every entry of the secondary matrix with CoefficientT(0);
@@ -192,14 +205,8 @@ public:
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<T> & matrix );
 
     DiagonalType diagonal;
-private:
-    /**
-     *  In order to keep constness, we go the usual way and implement the function at.
-     *  You may want to take a look at the at()-methods of the standard containers like std::vector.
-     */
-    inline const CoefficientT& at( size_t i, size_t j ) const;
-    inline const CoefficientT& sec_at( size_t i, size_t j ) const;
-    
+
+private:    
     MatrixStorageType data; ///< This realizes the data.
     MatrixStorageType sec_data; ///< This realizes the data.
     
@@ -265,6 +272,11 @@ public:
      *  @todo throw an exception if necessary i.e. if (i,j) is not a valid entry.
      */
     bool operator()( size_t i, size_t j );
+    /**
+     *  In order to keep constness, we go the usual way and implement the function at.
+     *  You may want to take a look at the at()-methods of the standard containers like std::vector.
+     */
+    bool at( size_t i, size_t j ) const;
 
     /**
      * Adds 1 to the entry (i, j) of the matrix.
@@ -290,13 +302,8 @@ public:
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixBool & matrix);
 
     DiagonalType diagonal;
-private:
-    /**
-     *  In order to keep constness, we go the usual way and implement the function at.
-     *  You may want to take a look at the at()-methods of the standard containers like std::vector.
-     */
-    bool at( size_t i, size_t j ) const;
 
+private:
     MatrixStorageType data; ///< This realizes the data.
     size_t num_rows;    ///< The number of rows.
     size_t num_cols;    ///< The number of columns.

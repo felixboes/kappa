@@ -376,11 +376,35 @@ typename ClusterSpectralSequence< MatrixComplex >::MatrixType ClusterSpectralSeq
 }
 
 template< class MatrixComplex >
+void ClusterSpectralSequence< MatrixComplex >::gen_d1_apply_operations( MatrixType& row )
+{
+    MatrixType& differential = diff_complex.get_current_differential();
+    typename MatrixType::DiagonalType diagonal = differential.diagonal;
+    size_t num_cols = row.size2();
+    
+    for( const auto& diag_pos : diagonal )
+    {
+        const auto& diag_row = diag_pos.first;
+        const auto& diag_col = diag_pos.second;
+        
+        if( row.at( 0, diag_col ) != CoefficientType(0) )
+        {
+            CoefficientType lambda( -differential.at(diag_row, diag_col) / row.at(0, diag_col) );     
+            for( size_t j = diag_col; j < num_cols; ++j )
+            {
+                CoefficientType& a = row( 0, j );
+                a = lambda * a + differential.at( diag_row, j );
+            }
+        }
+    }
+}
+
+template< class MatrixComplex >
 void ClusterSpectralSequence< MatrixComplex >::gen_d1_stage_1(int32_t p, int32_t l)
 {
     MatrixType& differential = diff_complex.get_current_differential();
-    size_t num_rows = basis_complex[p].basis[l].size();
-    size_t num_cols = basis_complex[p-1].basis[l-1].size() - differential.diagonal.size();
+    const size_t num_rows = basis_complex[p].basis[l].size();
+    const size_t num_cols = basis_complex[p-1].basis[l-1].size() - differential.diagonal.size();
     differential.sec_resize(num_rows, num_cols, true );
     
     if( num_rows == 0 || num_cols == 0 )
@@ -388,21 +412,13 @@ void ClusterSpectralSequence< MatrixComplex >::gen_d1_stage_1(int32_t p, int32_t
         return;
     }
     
-    // Sort the diagonal entries
-    typename MatrixType::DiagonalType& diagonal = differential.diagonal;
-    diagonal.sort();
-    
-//    for( auto& it : diagonal )
-//    {
-//        std::cout << it.first << " ";
-//    }
-//    std::cout << std::endl;
-    
+    // Sort the diagonal entries to compute offset
+    typename MatrixType::DiagonalType diagonal_copy(differential.diagonal);
+    diagonal_copy.sort();
     // Compute offset
     std::vector< size_t > column_offset( num_cols, 0 );
-    
-    auto diag_it = diagonal.begin();
     size_t offset = 0;
+    auto diag_it = diagonal_copy.begin();
     for( size_t pos = 0; pos < num_cols; ++pos )
     {
         if( diag_it->first == pos )
@@ -413,21 +429,16 @@ void ClusterSpectralSequence< MatrixComplex >::gen_d1_stage_1(int32_t p, int32_t
         column_offset[pos] = offset;
     }
     
-//    for( auto& it : column_offset )
-//    {
-//        std::cout << it << " ";
-//    }
-//    std::cout  << std::endl;
-
     // Compute differential and apply row operations.
     for( auto it : basis_complex[p].basis[l] )
     {
-        
-        MatrixType single_row = gen_d1_row(p,l, it);
-        
-        std::cout << single_row;
+        MatrixType single_row = gen_d1_row( p, l, it );
+        gen_d1_apply_operations( single_row );
+        for( size_t j = 0; j < num_cols; ++j )
+        {
+            differential.sec( it.id, j ) = single_row( 0, j + column_offset[j] );
+        }
     }
-    
 }
 
 template< class MatrixComplex >
