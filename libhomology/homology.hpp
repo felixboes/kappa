@@ -28,6 +28,7 @@ typedef ChainComplex<Zm, MatrixZm, DiagonalizerField<MatrixZm>, HomologyField> C
 typedef ChainComplex<int32_t, MatrixZDontDiagonalize, DiagonalizerDummy<MatrixZDontDiagonalize>, HomologyDummy> ChainComplexZStorageOnly;
 typedef ChainComplex<bool, MatrixBool, DiagonalizerField<MatrixBool>, HomologyField> ChainComplexBool;
 typedef ChainComplex<Q, MatrixCSSQ, DiagonalizerField<MatrixCSSQ>, HomologyField> ChainComplexQCSS;
+typedef ChainComplex<Zm, MatrixCSSZm, DiagonalizerField<MatrixCSSZm>, HomologyField> ChainComplexZmCSS;
 
 
 #endif // HOMOLOGY_HPP

@@ -33,6 +33,7 @@ void MatrixField<CoefficientT>::resize (size_t size1, size_t size2, bool)
     num_rows = size1;
     num_cols = size2;
     data.assign( size1 * size2, CoefficientT(0) );
+    diagonal.clear();
 }
  
 template< class CoefficientT >
@@ -166,6 +167,7 @@ void MatrixFieldCSS<CoefficientT>::resize (size_t size1, size_t size2, bool)
     num_rows = size1;
     num_cols = size2;
     data.assign( size1 * size2, CoefficientT(0) );
+    diagonal.clear();
 }
 
 template< class CoefficientT >

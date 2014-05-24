@@ -54,13 +54,18 @@ void compute_css( SessionConfig conf, int argc, char** argv )
         {
             continue;
         }
-
+        
+        cluster_spectral_sequence.erase_d0();
         for( auto& l_basis_it : l_bases )
         {
             auto l = l_basis_it.first;
             atomic_uint current_rank(0);
             uint32_t max_possible_rank(0);
 
+            // Construct the first stage of d_1
+            cluster_spectral_sequence.gen_d1_stage_1(p,l);
+
+            cluster_spectral_sequence.erase_d0();
             // Generate a single differential.
             std::cout << "Constructing the differential d^0_{" << p << "," << l << "}.";
             std::cout.flush();
@@ -113,16 +118,13 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             // Print status message.
             std::cout << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
             std::cout << "    dim(E^1_{" << (int32_t)(p-1) << "," << (int32_t)(l) << "}) = " << (int32_t)(homology[p-1].get_kern(l) - homology[p-1].get_tors(l))
-                      << "; dim(im d^1_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << (int32_t)(homology[p-1].get_tors(l))
-                      << "; dim(ker d^1_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << (int32_t)(homology[p].get_kern(l)) << std::endl;
+                      << "; dim(im d^0_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << (int32_t)(homology[p-1].get_tors(l))
+                      << "; dim(ker d^0_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << (int32_t)(homology[p].get_kern(l)) << std::endl;
             std::cout.flush();
             ofs << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
             ofs << "    dim(E_" << (int32_t)(p-1) << "," << (int32_t)(l) << ") = " << (int32_t)(homology[p-1].get_kern(l) - homology[p-1].get_tors(l))
-                      << "; dim(im d_" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << (int32_t)(homology[p-1].get_tors(l))
-                      << "; dim(ker d_" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << (int32_t)(homology[p].get_kern(l)) << std::endl;
-                      
-            // Delete the differential.
-            cluster_spectral_sequence.erase_d0(p,l);
+                      << "; dim(im d^0_" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << (int32_t)(homology[p-1].get_tors(l))
+                      << "; dim(ker d^0_" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << (int32_t)(homology[p].get_kern(l)) << std::endl;
         }
     }
 

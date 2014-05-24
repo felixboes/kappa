@@ -37,6 +37,8 @@ void MatrixBool::row_operation( size_t row_1, size_t row_2, size_t )
      }
      num_rows = size1;
      num_cols = size2;
+     
+     diagonal.clear();
  }
  
  bool MatrixBool::at(size_t i, size_t j) const

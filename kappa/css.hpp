@@ -125,9 +125,10 @@ public:
     **/
     void gen_bases( uint32_t s, uint32_t p, Tuple& tuple );
     void gen_d0( int32_t p, int32_t l );
-    void gen_d1( int32_t p, int32_t l, const CSSBasis::LBasisType subbasis );
-    void erase_d0( int32_t p, int32_t l );
-    void erase_d1( int32_t p, int32_t l );
+    MatrixType gen_d1_row( int32_t, int32_t l, const Tuple& basis_element );
+    void gen_d1_stage_1( int32_t p, int32_t l );
+    void erase_d0();
+    void erase_d1();
     
     void show_basis( int32_t p ) const;         ///< print a basis to std::out
 #ifdef COMPILE_WITH_MAGICK
@@ -146,8 +147,8 @@ public:
     
 };
 
-typedef ClusterSpectralSequence<ChainComplexQ> ClusterSpectralSequenceQ;
-typedef ClusterSpectralSequence<ChainComplexZm> ClusterSpectralSequenceZm;
+typedef ClusterSpectralSequence<ChainComplexQCSS> ClusterSpectralSequenceQ;
+typedef ClusterSpectralSequence<ChainComplexZmCSS> ClusterSpectralSequenceZm;
 typedef ClusterSpectralSequence<ChainComplexZStorageOnly> ClusterSpectralSequenceZStorageOnly;
 
 #include "css.ipp"
