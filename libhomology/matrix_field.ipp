@@ -93,7 +93,9 @@ MatrixFieldCSS<CoefficientT>::MatrixFieldCSS() : data(), sec_data(), num_rows(0)
 
 template< class CoefficientT >
 MatrixFieldCSS<CoefficientT>::MatrixFieldCSS( MatrixFieldCSSInitialization ini, size_t num_rows1, size_t num_cols1, size_t num_rows2, size_t num_cols2 ) :
-    data(), sec_data(), num_rows(0), num_cols(0), sec_num_rows(0), sec_num_cols(0)
+    data(), sec_data(),
+    num_rows(0), num_cols(0), sec_num_rows(0), sec_num_cols(0),
+    row_operation_funct( &ThisType::row_operation_main_and_secondary )
 {
     if( ini == only_main )
     {
@@ -132,6 +134,12 @@ MatrixFieldCSS<CoefficientT>::MatrixFieldCSS( size_t number_rows, size_t number_
 template< class CoefficientT >
 void MatrixFieldCSS<CoefficientT>::row_operation( size_t row_1, size_t row_2, size_t col )
 {
+   (this->*row_operation_funct)(row_1, row_2, col);
+}
+
+template< class CoefficientT >
+void MatrixFieldCSS<CoefficientT>::row_operation_main_and_secondary( size_t row_1, size_t row_2, size_t col )
+{
     CoefficientT lambda( -at(row_1,col) / at(row_2, col) );
     
     // Process main matrix
@@ -146,6 +154,32 @@ void MatrixFieldCSS<CoefficientT>::row_operation( size_t row_1, size_t row_2, si
     {
         CoefficientT & a = sec( row_2, j );
         a = lambda * a + sec_at( row_1, j );
+    }
+}
+
+template< class CoefficientT >
+void MatrixFieldCSS<CoefficientT>::row_operation_secondary( size_t row_1, size_t row_2, size_t col )
+{
+    CoefficientT lambda( -sec_at(row_1,col) / sec_at(row_2, col) );
+    
+    // Process secondary matrix
+    for( size_t j = col; j < sec_num_cols; ++j )
+    {
+        CoefficientT & a = sec( row_2, j );
+        a = lambda * a + sec_at( row_1, j );
+    }
+}
+
+template< class CoefficientT >
+void MatrixFieldCSS< CoefficientT >::define_row_operation( RowOperationType rt )
+{
+    if( rt == main_and_secondary )
+    {
+        row_operation_funct = &ThisType::row_operation_main_and_secondary;
+    }
+    else
+    {
+        row_operation_funct = &ThisType::row_operation_secondary;
     }
 }
 

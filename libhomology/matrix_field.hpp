@@ -98,14 +98,7 @@ private:
 template< class CoefficientT >
 std::ostream& operator<< ( std::ostream& stream, const MatrixField<CoefficientT> & matrix );
 
-template class MatrixField<Q>;
-template class MatrixField<Zm>;
-
-typedef MatrixField<Q> MatrixQ;     ///< This defines Matrices with \f$\mathbb Q\f$ coefficients.
-typedef MatrixField<Zm> MatrixZm;   ///< This defines Matrices with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 /**
  *  This template class defines a matrix type subject to the field coeffiecients 'CoefficientT'.
@@ -123,12 +116,18 @@ public:
     typedef std::vector<CoefficientT> MatrixStorageType;    ///< This realizes the implementation of the data.
     typedef std::pair< size_t, size_t > MatrixEntryType;
     typedef std::list< MatrixEntryType > DiagonalType;
+    typedef MatrixFieldCSS< CoefficientType > ThisType;
     
     enum MatrixFieldCSSInitialization
     {
         only_main,
         only_secondary,
         both
+    };
+    
+    enum RowOperationType {
+        main_and_secondary,
+        secondary
     };
     
     MatrixFieldCSS();  ///< Creates a \f$ 0 \times 0\f$ matrix.
@@ -150,6 +149,9 @@ public:
      *  triggerd by the \f$d^0\f$ matrix.
      */ 
     void row_operation( size_t row_1, size_t row_2, size_t col );
+    void row_operation_main_and_secondary( size_t row_1, size_t row_2, size_t col );
+    void row_operation_secondary( size_t row_1, size_t row_2, size_t col );
+    void define_row_operation( RowOperationType );
     
     /**
      *  In order to access elements of the matrix you want to use this function.
@@ -205,7 +207,7 @@ public:
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<T> & matrix );
 
     DiagonalType diagonal;
-
+    
 private:    
     MatrixStorageType data; ///< This realizes the data.
     MatrixStorageType sec_data; ///< This realizes the data.
@@ -214,6 +216,8 @@ private:
     size_t num_cols;    ///< The number of columns.
     size_t sec_num_rows;    ///< The number of rows.
     size_t sec_num_cols;    ///< The number of columns.
+    
+    void (ThisType::* row_operation_funct)( size_t, size_t , size_t );
     
     /**
      *  In order to save Zm coefficients we have to grad boost::serialization::access access.
@@ -230,12 +234,6 @@ private:
 
 template< class CoefficientT >
 std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<CoefficientT> & matrix );
-
-template class MatrixFieldCSS<Q>;
-template class MatrixFieldCSS<Zm>;
-
-typedef MatrixFieldCSS<Q> MatrixCSSQ;     ///< This defines Matrices with \f$\mathbb Q\f$ coefficients.
-typedef MatrixFieldCSS<Zm> MatrixCSSZm;   ///< This defines Matrices with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -323,4 +321,18 @@ private:
 std::ostream& operator<< ( std::ostream& stream, const MatrixBool & matrix);
 
 #include "matrix_field.ipp"
+
+// Force instancations
+template class MatrixField<Q>;
+template class MatrixField<Zm>;
+typedef MatrixField<Q> MatrixQ;     ///< This defines Matrices with \f$\mathbb Q\f$ coefficients.
+typedef MatrixField<Zm> MatrixZm;   ///< This defines Matrices with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
+
+template class MatrixFieldCSS<Q>;
+template class MatrixFieldCSS<Zm>;
+typedef MatrixFieldCSS<Q> MatrixCSSQ;     ///< This defines Matrices with \f$\mathbb Q\f$ coefficients.
+typedef MatrixFieldCSS<Zm> MatrixCSSZm;   ///< This defines Matrices with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
+
+
+
 #endif // MATRIX_FIELD_HPP

@@ -287,6 +287,8 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_d0( int32_t p, int32_t l )
             }
         }
     }
+    
+    differential.define_row_operation(MatrixType::main_and_secondary);
 }
 
 template< class MatrixComplex >
