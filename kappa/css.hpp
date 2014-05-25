@@ -128,6 +128,7 @@ public:
     MatrixType gen_d1_row( int32_t, int32_t l, const Tuple& basis_element );
     void gen_d1_apply_operations( MatrixType& row );
     void gen_d1_stage_1( int32_t p, int32_t l );
+    void prepare_d1_diag();
     void erase_d0();
     void erase_d1();
     

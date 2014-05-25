@@ -444,6 +444,12 @@ void ClusterSpectralSequence< MatrixComplex >::gen_d1_stage_1(int32_t p, int32_t
 }
 
 template< class MatrixComplex >
+void ClusterSpectralSequence< MatrixComplex >::prepare_d1_diag()
+{
+    diff_complex.get_current_differential().define_row_operation( MatrixType::RowOperationType::secondary );
+}
+
+template< class MatrixComplex >
 void ClusterSpectralSequence< MatrixComplex >::erase_d0()
 {
     MatrixType& differential = diff_complex.get_current_differential();
