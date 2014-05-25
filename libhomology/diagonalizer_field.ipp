@@ -338,14 +338,16 @@ void DiagonalizerField< MatrixType >::Worker::work(MatrixType& matrix)
 {
     size_t begin = 0, end = 0;
     size_t new_col = jobs.col + 1;
-    bool compute_next_row = (new_col < matrix.size2());
     for ( jobs.get_work_chunk(id, begin, end); begin < end; ++begin )
     {
         size_t row_2 = jobs.rows_to_work_at[begin];
         matrix.row_operation( jobs.row_1, row_2, jobs.col );
-        // ToDo: Improve performance!
-        if (compute_next_row)
+    }
+    if (new_col < matrix.size2())
+    {
+        for ( jobs.get_work_chunk(id, begin, end); begin < end; ++begin )
         {
+            size_t row_2 = jobs.rows_to_work_at[begin];
             if (matrix(row_2, new_col) == typename MatrixType::CoefficientType(0))
             {
                 new_remaining_rows.push_back(row_2);
