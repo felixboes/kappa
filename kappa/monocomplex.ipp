@@ -6,14 +6,29 @@
  *
  */
 template< class MatrixComplex >
-MonoComplex< MatrixComplex > :: MonoComplex( uint32_t _g, uint32_t _m, SignConvention sgn, uint32_t number_threads )
-    : g(_g), m(_m), h(2*_g + _m), num_threads(number_threads), sign_conv(sgn)
+MonoComplex< MatrixComplex > :: MonoComplex( uint32_t _g, uint32_t _m, SignConvention sgn, uint32_t number_threads, bool radial_ )
+    : g(_g), m(_m), num_threads(number_threads), radial(radial_), sign_conv(sgn)
 {
+    h = 2 * g + m;
+    if (radial) // For radial cells, we have h = 2g + m - 1.
+    {
+        --h;
+    }
+    if (h == 0)
+    {
+        return;
+    }
     Tuple tuple(h);
     tuple[1] = Transposition(2, 1);
     tuple.p = 2;
     
-    gen_bases(1, 2, tuple);  // We start with the transposition ... (2 1).
+    gen_bases(1, 2, 1, tuple);  // We start with the transposition ... (2 1).
+    if (radial) // For radial cells, there are also cells containing 0 as non-fixed point.
+    {
+        Tuple radial_tuple(h);
+        radial_tuple[1] = Transposition(1, 0);
+        gen_bases(1, 1, 0, radial_tuple);
+    }
 }
 
 template< class MatrixComplex >
@@ -67,7 +82,7 @@ void MonoComplex< MatrixComplex > :: show_differential_naive( int32_t p ) const
 
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tuple)
+void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, uint32_t min_symbol, Tuple& tuple)
 {
     /* Up to now we have determined all monotonic tuples of l transpositions containing the 
        symbols 1, ..., p, each at least once. We now add an (l+1)-th transposition and continue
@@ -76,16 +91,15 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tu
     {
 	/* From an l-tuple containing p symbols we can build up an (l+1)-tuple 
         with p, p+1 or p+2 symbols. */
-
         /* p -> p
            In this case we use the same number of symbols. Since we only
            enumerate monotonic tuples, the height of the (l+1)-th transposition needs to be p.
            We try out all possibilities for the second symbol in the (l+1)-th transposition. */
         tuple.p = p;
-        for(uint32_t i = p-1; i > 0; i--)
+        for(uint32_t i = min_symbol; i < p; ++i)
         {
             tuple[l+1] = Transposition(p, i); 
-            gen_bases(l+1, p, tuple);
+            gen_bases(l+1, p, min_symbol, tuple);
         }
 
         /* p -> p+1
@@ -94,18 +108,18 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tu
         /* Case 1: The new row in the parallel slit domain is inserted at the top, i.e. 
                    the transpositions 1, ..., l remain the same and we only insert the symbol 
                    p+1 in the (l+1)-th transposition, together with any symbol of 1, ..., p. */
-        for(uint32_t i = p; i > 0; i--)
+        for (uint32_t i = min_symbol; i <= p; ++i)
         {
             tuple[l+1] = Transposition(p+1, i);
-            gen_bases(l+1, p+1, tuple);
+            gen_bases(l+1, p+1, min_symbol, tuple);
         }
 
         /* Case 2: The new row in the parallel slit domain is not inserted at the top but at a position
                    i = 1, ..., p. Thus all indices i+1, ..., p are shifted up by one. */
-        for( uint32_t i = p; i > 0; i-- )
+        for(uint32_t i = min_symbol; i <= p; ++i)
         {
             Tuple tmp = tuple;
-            for( uint32_t j = l; j > 0; j-- )
+            for( uint32_t j = l; j >= 1; --j )
             {
                 if( tmp[j].first >= i )
                 {
@@ -115,10 +129,14 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tu
                         tmp[j].second++;
                     }
                 }
+                else
+                {
+                    break;
+                }
             }
 
             tmp[l+1] = Transposition(p+1, i);
-            gen_bases(l+1, p+1, tmp);
+            gen_bases(l+1, p+1, min_symbol, tmp);
         }
 
         /* p -> p+2
@@ -128,10 +146,10 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tu
            occur in the transpositions 1, ..., l, both cases can be expressed by choosing a symbol
            i = 1, ..., p+1 and by shifting up all indices >= i by one. */ 
         tuple.p = p+2;
-        for( uint32_t i = p+1; i > 0; i-- )
+        for( uint32_t i = min_symbol; i <= p + 1; ++i)
         {
             Tuple tmp = tuple;
-            for( uint32_t j = l; j > 0; j-- )
+            for( uint32_t j = l; j >= 1; j-- )
             {
                 if( tmp[j].first >= i )
                 {
@@ -148,7 +166,7 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tu
             }
 
             tmp[l+1] = Transposition(p+2, i);
-            gen_bases(l+1, p+2, tmp);
+            gen_bases(l+1, p+2, min_symbol, tmp);
         }
     }
     else // Check whether the created h-tuple is really a generator, i.e. if it has the correct 
