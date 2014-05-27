@@ -103,16 +103,6 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         homology.set_kern( p, partial_homology.get_kern(p) );
         homology.set_tors( p-1, partial_homology.get_tors(p-1) );
 
-
-        // Print the diagonal
-        std::cout << monocomplex.matrix_complex.get_current_differential() << std::endl;
-        
-        for( auto& it : monocomplex.matrix_complex.get_current_differential().diagonal )
-        {
-            std::cout << "(" << it.first << "," << it.second << ")  ";
-        }
-        std::cout << std::endl;
-
         // Print status message.
         std::cout << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         std::cout << "    dim(H_" << (int32_t)(p-1) << ") = " << (int32_t)(homology.get_kern(p-1) - homology.get_tors(p-1))

@@ -14,6 +14,18 @@ const MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::
     return current_differential;
 }
 
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+DiagonalizerT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::get_diagonalizer()
+{
+    return diago;
+}
+
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+const DiagonalizerT& ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::get_diagonalizer() const
+{
+    return diago;
+}
+
 template < class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
 void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::erase ()
 {
@@ -50,7 +62,6 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
 {
     HomologyT homol;
     // Diagonalize.
-    DiagonalizerT diago;
     diago( current_differential, current_rank, number_threads, transp );
     homol.set_kern( n, diago.kern() );
     homol.set_tors( n-1, diago.tors() );
@@ -157,7 +168,6 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
     else
     {
         // Diagonalize.
-        DiagonalizerT diago;
         diago( differential[n], current_rank, number_threads, transp );
         homol.set_kern( n, diago.kern() );
         homol.set_tors( n-1, diago.tors() );
@@ -199,7 +209,6 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
     else
     {
         // Diagonalize.
-        DiagonalizerT diago;
         diago( differential[n], current_rank, number_threads, transp );
         homol.set_kern( n, diago.kern() );
     }
@@ -222,7 +231,6 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
             std::cerr << "Error: Column-Rows exception at position " << n << std::endl;
         }
         // Diagonalize.
-        DiagonalizerT diago;
         diago( differential[n+1], current_rank, number_threads, transp );
         homol.set_tors( n, diago.tors() );
     }
@@ -253,7 +261,6 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
         else
         {
             // diagonalize
-            DiagonalizerT diago;
             diago(diff, 0, transp);
             homol.set_kern( n, diago.kern() );
             homol.set_tors( n-1, diago.tors() );

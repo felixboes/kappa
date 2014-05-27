@@ -125,7 +125,7 @@ public:
         both
     };
     
-    enum RowOperationType {
+    enum OperationType {
         main_and_secondary,
         secondary
     };
@@ -151,33 +151,24 @@ public:
     void row_operation( size_t row_1, size_t row_2, size_t col );
     void row_operation_main_and_secondary( size_t row_1, size_t row_2, size_t col );
     void row_operation_secondary( size_t row_1, size_t row_2, size_t col );
-    void define_row_operation( RowOperationType );
+    void define_operations( OperationType );
     
     /**
      *  In order to access elements of the matrix you want to use this function.
      *  @return The function returns a reference to the given entry.
      *  @todo throw an exception if necessary i.e. if (i,j) is not a valid entry.
      */ 
-    CoefficientT & operator()( size_t i, size_t j );
+    CoefficientType & operator()( size_t i, size_t j ); 
+    CoefficientType & main_op( size_t i, size_t j );
+    CoefficientType & sec_op( size_t i, size_t j );
     
     /**
      *  In order to keep constness, we go the usual way and implement the function at.
      *  You may want to take a look at the at()-methods of the standard containers like std::vector.
      */
-    const CoefficientT& at( size_t i, size_t j ) const;
-    
-    /**
-     *  In order to access elements of the secondary matrix you want to use this function.
-     *  @return The function returns a reference to the given entry.
-     *  @todo throw an exception if necessary i.e. if (i,j) is not a valid entry.
-     */ 
-    CoefficientT & sec( size_t i, size_t j );
-    
-    /**
-     *  In order to keep constness, we go the usual way and implement the function at.
-     *  You may want to take a look at the at()-methods of the standard containers like std::vector.
-     */
-    const CoefficientT& sec_at( size_t i, size_t j ) const;
+    const CoefficientType& at( size_t i, size_t j ) const;
+    const CoefficientType& main_at ( size_t i, size_t j) const;
+    const CoefficientType& sec_at( size_t i, size_t j ) const;
     
     /**
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
@@ -193,9 +184,10 @@ public:
     
     size_t size1() const;   ///< @returns the number of rows.
     size_t size2() const;   ///< @returns the number of columns.
-    
-    size_t sec_size1() const;   ///< @returns the number of rows of the secondary matrix.
-    size_t sec_size2() const;   ///< @returns the number of columns of the secondary matrix.
+    size_t main_size1() const;
+    size_t main_size2() const;
+    size_t sec_size1() const;
+    size_t sec_size2() const;
     
     void clear();   ///< Fills every entry with CoefficientT(0);
     void sec_clear();   ///< Fills every entry of the secondary matrix with CoefficientT(0);
@@ -218,6 +210,10 @@ private:
     size_t sec_num_cols;    ///< The number of columns.
     
     void (ThisType::* row_operation_funct)( size_t, size_t , size_t );
+    CoefficientType& (ThisType::* op_funct)( size_t, size_t );
+    const CoefficientType& (ThisType::* at_funct)( size_t, size_t ) const;
+    size_t (ThisType::* size1_funct)() const;
+    size_t (ThisType::* size2_funct)() const;
     
     /**
      *  In order to save Zm coefficients we have to grad boost::serialization::access access.

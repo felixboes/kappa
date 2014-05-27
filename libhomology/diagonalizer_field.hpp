@@ -40,20 +40,26 @@ public:
 
     /**
      *  Constructor.
-     */
+    **/
     DiagonalizerField() {}
 
     /**
-    *   Diagonalizes a given matrix.
-    *   If the number of threads is given and greater then 1, we use the multithreaded version.
+     *  Diagonalizes a given matrix.
+     *  If the number of threads is given and greater then 1, we use the multithreaded version.
+     *  @warning The list of rows we want to ommit has to be sorted.
     **/
-    void operator() ( MatrixType &matrix, uint32_t number_threads=0, bool matrix_is_transposed = false);
+    void operator() ( MatrixType&           matrix,
+                      uint32_t              number_threads = 0,
+                      bool                  matrix_is_transposed = false);
 
     /**
-    *   Diagonalizes a given matrix and gives access to the progress by writing the current rank to current_rank.
-    *   If the number of threads is given and greater then 1, we use the multithreaded version.
+     *   Diagonalizes a given matrix and gives access to the progress by writing the current rank to current_rank.
+     *   If the number of threads is given and greater then 1, we use the multithreaded version.
     **/
-    void operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t number_threads=0, bool matrix_is_transposed = false);
+    void operator() ( MatrixType&           matrix,
+                      atomic_uint&          current_rank,
+                      uint32_t              number_threads = 0,
+                      bool                  matrix_is_transposed = false);
 
     /**  @return defect of the matrix */
     uint32_t dfct();
@@ -87,6 +93,8 @@ public:
     uint32_t def;   ///< The defect of the matrix.
     uint32_t rnk;   ///< The rank of the matrix.
     
+    std::list< size_t > ommit_rows;
+    
     // Classes for paralellization:
     // Todo: give a detailed explanation.
 
@@ -107,7 +115,12 @@ public:
     {
     public:
         //! Collect initial work.
-        JobQueue(DiagonalType& diag, MatrixType & matrix_init, uint32_t number_of_working_threads, atomic_uint & current_rank );
+        JobQueue(
+            MatrixType&                         matrix_init,
+            typename MatrixType::DiagonalType&  diag,
+            const std::list< size_t >&          ommit_these_rows,
+            uint32_t                            number_of_working_threads,
+            atomic_uint&                        current_rank );
 
 #ifdef BROKEN_VECTOR_IMPLEMENTATION
         JobQueue(JobQueue const & other);

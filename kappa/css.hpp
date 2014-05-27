@@ -1,6 +1,7 @@
 #ifndef CSS_H
 #define CSS_H
 
+#include <algorithm>
 #include <chrono>
 #include <stdint.h>
 #include <functional>

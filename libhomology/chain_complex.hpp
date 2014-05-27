@@ -47,103 +47,112 @@ public:
 
     // Methods for the usage of current_differential.
 
-     /**
-      *  Access the transpose of the current differential.
-      */
-     MatrixT &       get_current_differential();
-     const MatrixT & get_current_differential() const;
-     
-     /**
-      *  Erases the current differential of the complex.
-      */
-     void erase();
+    /**
+     *  Access the current differential.
+    **/
+    MatrixT &       get_current_differential();
+    const MatrixT & get_current_differential() const;
     
-     /**
-      *  Access the coefficient of the current differential at the position (row, col).
-      */
-     CoefficientT &operator() ( uint32_t row, uint32_t col );
-     
-     /**
-       * @return number of rows resp. columns of the current differential
-       */
-     size_t num_rows() const;
-     size_t num_cols() const;
-
+    
+    /**
+     *  Access the diagonalizer.
+    **/
+    DiagonalizerType&       get_diagonalizer();
+    const DiagonalizerType& get_diagonalizer() const;
+    
+    /**
+     *  Erases the current differential of the complex.
+    **/
+    void erase();
+    
+    /**
+     *  Access the coefficient of the current differential at the position (row, col).
+    **/
+    CoefficientT &operator() ( uint32_t row, uint32_t col );
+    
+    /**
+     * @return number of rows resp. columns of the current differential
+    **/
+    size_t num_rows() const;
+    size_t num_cols() const;
+    
     /**
      *  Compute the kernel at the \f$n\f$-th spot and the torsion at the \f$(n-1)\f$-th spot.
-     */
+    **/
     HomologyT compute_current_kernel_and_torsion( int32_t n, uint32_t number_threads = 1 );
     
     /**
      *  Compute the kernel at the \f$n\f$-th spot and the torsion at the \f$(n-1)\f$-th spot.
-     */
+    **/
     HomologyT compute_current_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads = 1 );
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    
     // Methods for the use of the map of differentials.
-
+    
     /**
      *  Access the \f$n\f$-th differential.
-     */
+    **/
     MatrixT &operator[] ( int32_t n );
-
+    
     /**
      *  Access the \f$n\f$-th differential.
-     */
+    **/
     const MatrixT &at ( const int32_t& n ) const;
-
+    
     /**
      *  @returns 0 iff there is no differential stored and 1 else.
-     */
+    **/
     size_t count( const int32_t& n ) const;
-
+    
     /**
      *  Erases the n-th differential of the complex.
-     */
+    **/
     void erase( const int32_t& n );
-
+    
     /**
      *  Erases all differentials of the complex.
-     */
+    **/
     void erase_all();
-
+    
     /**
      *  Access the coefficient of the \f$n\f$-th differential at the position (row, col).
-     */
+    **/
     CoefficientT &operator() ( int32_t n, uint32_t row, uint32_t col );
-
+    
     /**
      *  Compute the homology at the \f$n\f$-th spot.
-     */
+    **/
     HomologyT homology( int32_t n, uint32_t number_threads = 1 );
-
+    
     /**
-    *  Compute the homology at the \f$n\f$-th spot.
-    */
+     *  Compute the homology at the \f$n\f$-th spot.
+    **/
     HomologyT homology( int32_t n, atomic_uint & current_rank, uint32_t number_threads = 0 );
-
+    
     /**
      *  Compute the kernel at the \f$n\f$-th spot and the torsion at the \f$(n-1)\f$-th spot.
-     */
+    **/
     HomologyT compute_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads=0 );
-
+    
     /**
      *  Compute all the homology.
-     */
+    **/
     HomologyT homology();
-
+    
     /**
      *  Checks if the \f$n\f$-th differential exists.
-     */
+    **/
     bool exists_differential( const int32_t& n ) const;
 
 
 private:
-    bool transp;
+    bool transp;    ///< True iff the transposed matrices are stored.
     MatrixT current_differential; ///< Realizes the transpose of a single differential.
-
+    
     std::map< int32_t, MatrixT > differential;  ///< Realizes all differentials.
+
+    DiagonalizerType diago; ///< The diagonalizer that is used to perform homology computations.
 
     friend class boost::serialization::access;
     

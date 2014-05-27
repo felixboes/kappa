@@ -95,7 +95,9 @@ template< class CoefficientT >
 MatrixFieldCSS<CoefficientT>::MatrixFieldCSS( MatrixFieldCSSInitialization ini, size_t num_rows1, size_t num_cols1, size_t num_rows2, size_t num_cols2 ) :
     data(), sec_data(),
     num_rows(0), num_cols(0), sec_num_rows(0), sec_num_cols(0),
-    row_operation_funct( &ThisType::row_operation_main_and_secondary )
+    row_operation_funct( &ThisType::row_operation_main_and_secondary ),
+    op_funct( &ThisType::main_op ),
+    at_funct( &ThisType::main_at )
 {
     if( ini == only_main )
     {
@@ -132,6 +134,63 @@ MatrixFieldCSS<CoefficientT>::MatrixFieldCSS( size_t number_rows, size_t number_
 }
 
 template< class CoefficientT >
+void MatrixFieldCSS< CoefficientT >::define_operations( OperationType rt )
+{
+    if( rt == main_and_secondary )
+    {
+        row_operation_funct = &ThisType::row_operation_main_and_secondary;
+        op_funct = &ThisType::main_op;
+        at_funct = &ThisType::main_at;
+        size1_funct = &ThisType::main_size1;
+        size2_funct = &ThisType::main_size2;
+    }
+    else
+    {
+        row_operation_funct = &ThisType::row_operation_secondary;
+        op_funct = &ThisType::sec_op;
+        at_funct = &ThisType::sec_at;
+        size1_funct = &ThisType::sec_size1;
+        size2_funct = &ThisType::sec_size2;
+    }
+}
+
+template< class CoefficientT >
+CoefficientT& MatrixFieldCSS<CoefficientT>::operator()( size_t i, size_t j )
+{
+   return (this->*op_funct)( i, j );
+}
+
+template< class CoefficientT >
+CoefficientT & MatrixFieldCSS<CoefficientT>::main_op( size_t i, size_t j )
+{
+    return data[ i*num_cols + j ];
+}
+
+template< class CoefficientT >
+CoefficientT & MatrixFieldCSS<CoefficientT>::sec_op( size_t i, size_t j )
+{
+    return sec_data[ i*sec_num_cols + j ];
+}
+
+template< class CoefficientT >
+const CoefficientT& MatrixFieldCSS<CoefficientT>::at( size_t i, size_t j ) const
+{
+   return (this->*at_funct)( i, j );
+}
+
+template< class CoefficientT >
+const CoefficientT & MatrixFieldCSS<CoefficientT>::main_at(size_t i, size_t j) const
+{
+    return data.at( i*num_cols + j );
+}
+
+template< class CoefficientT >
+const CoefficientT & MatrixFieldCSS<CoefficientT>::sec_at(size_t i, size_t j) const
+{
+    return sec_data.at( i*sec_num_cols + j );
+}
+
+template< class CoefficientT >
 void MatrixFieldCSS<CoefficientT>::row_operation( size_t row_1, size_t row_2, size_t col )
 {
    (this->*row_operation_funct)(row_1, row_2, col);
@@ -140,19 +199,19 @@ void MatrixFieldCSS<CoefficientT>::row_operation( size_t row_1, size_t row_2, si
 template< class CoefficientT >
 void MatrixFieldCSS<CoefficientT>::row_operation_main_and_secondary( size_t row_1, size_t row_2, size_t col )
 {
-    CoefficientT lambda( -at(row_1,col) / at(row_2, col) );
+    const CoefficientT lambda( -main_at(row_1,col) / main_at(row_2, col) );
     
     // Process main matrix
     for( size_t j = col; j < num_cols; ++j )
     {
-        CoefficientT & a = this->operator()( row_2, j );
-        a = lambda * a + at( row_1, j );
+        CoefficientT & a = main_op( row_2, j );
+        a = lambda * a + main_at( row_1, j );
     }
     
     // Process secondary matrix
     for( size_t j = 0; j < sec_num_cols; ++j )
     {
-        CoefficientT & a = sec( row_2, j );
+        CoefficientT & a = sec_op( row_2, j );
         a = lambda * a + sec_at( row_1, j );
     }
 }
@@ -165,34 +224,9 @@ void MatrixFieldCSS<CoefficientT>::row_operation_secondary( size_t row_1, size_t
     // Process secondary matrix
     for( size_t j = col; j < sec_num_cols; ++j )
     {
-        CoefficientT & a = sec( row_2, j );
+        CoefficientT & a = sec_op( row_2, j );
         a = lambda * a + sec_at( row_1, j );
     }
-}
-
-template< class CoefficientT >
-void MatrixFieldCSS< CoefficientT >::define_row_operation( RowOperationType rt )
-{
-    if( rt == main_and_secondary )
-    {
-        row_operation_funct = &ThisType::row_operation_main_and_secondary;
-    }
-    else
-    {
-        row_operation_funct = &ThisType::row_operation_secondary;
-    }
-}
-
-template< class CoefficientT >
-CoefficientT & MatrixFieldCSS<CoefficientT>::operator()( size_t i, size_t j )
-{
-    return data[ i*num_cols + j ];
-}
-
-template< class CoefficientT >
-CoefficientT & MatrixFieldCSS<CoefficientT>::sec( size_t i, size_t j )
-{
-    return sec_data[ i*sec_num_cols + j ];
 }
  
 template< class CoefficientT >
@@ -212,25 +246,25 @@ void MatrixFieldCSS<CoefficientT>::sec_resize (size_t size1, size_t size2, bool)
 }
 
 template< class CoefficientT >
-const CoefficientT & MatrixFieldCSS<CoefficientT>::at(size_t i, size_t j) const
-{
-    return data.at( i*num_cols + j );
-}
-
-template< class CoefficientT >
-const CoefficientT & MatrixFieldCSS<CoefficientT>::sec_at(size_t i, size_t j) const
-{
-    return sec_data.at( i*sec_num_cols + j );
-}
-
-template< class CoefficientT >
 size_t MatrixFieldCSS<CoefficientT>::size1() const
+{
+    return (this->*size1_funct)();
+}
+
+template< class CoefficientT >
+size_t MatrixFieldCSS<CoefficientT>::size2() const
+{
+    return (this->*size2_funct)();
+}
+
+template< class CoefficientT >
+size_t MatrixFieldCSS<CoefficientT>::main_size1() const
 {
     return num_rows;
 }
 
 template< class CoefficientT >
-size_t MatrixFieldCSS<CoefficientT>::size2() const
+size_t MatrixFieldCSS<CoefficientT>::main_size2() const
 {
     return num_cols;
 }
@@ -274,7 +308,7 @@ std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<Coefficien
     {
         for( size_t j = 0; j < matrix.num_cols; )
         {
-            stream << matrix.at(i,j);
+            stream << matrix.main_at(i,j);
             if( ++j < matrix.num_cols )
             {
                 stream << ",";

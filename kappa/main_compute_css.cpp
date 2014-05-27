@@ -69,15 +69,11 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             // Construct the first stage of d_1
             //
             std::cout << "Constructing the differential d^1_{" << p << "," << l << "}.";
-            std::cout.flush();
-            ofs << "Constructing the differential d^1_{" << p << "," << l << "}.";
     
             measure_duration = Clock();
             cluster_spectral_sequence.gen_d1_stage_1(p,l);
 
             std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
-            std::cout.flush();
-            ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
             
             //
             // Forget the old d0
@@ -87,16 +83,12 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             //
             // Generate the new d0
             //
-            std::cout << "Constructing the differential d^0_{" << p << "," << l << "}.";
-            std::cout.flush();
-            ofs << "Constructing the differential d^0_{" << p << "," << l << "}.";
+            //std::cout << "Constructing the differential d^0_{" << p << "," << l << "}.";
     
             measure_duration = Clock();
             cluster_spectral_sequence.gen_d0(p,l);
             
-            std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
-            std::cout.flush();
-            ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+            //std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
 
             max_possible_rank = std::min( cluster_spectral_sequence.diff_complex.get_current_differential().size1(), cluster_spectral_sequence.diff_complex.get_current_differential().size2() );
             if( (uint32_t)homology_E0[p-1].get_kern(l) > 0 )
@@ -118,39 +110,32 @@ void compute_css( SessionConfig conf, int argc, char** argv )
                 return ret;
             } );
 
-            // Monitoring thread.
-            auto monitor_thread = std::async( std::launch::async, [&]()
-            {
-                while( state != 1 )
-                {
-                    std::cout << "Diagonalization " << current_rank << "/" << max_possible_rank << "\r";
-                    std::cout.flush();
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                }
-            } );
+//            // Monitoring thread.
+//            auto monitor_thread = std::async( std::launch::async, [&]()
+//            {
+//                while( state != 1 )
+//                {
+//                    std::cout << "Diagonalization " << current_rank << "/" << max_possible_rank << "\r";
+//                    std::cout.flush();
+//                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+//                }
+//            } );
 
             // Wait for threads to terminate.
             auto partial_homology = partial_homology_thread.get();
-            monitor_thread.get();
+//            monitor_thread.get();
 
             // Save results.
             homology_E0[p].set_kern( l, partial_homology.get_kern(l) );
             homology_E0[p-1].set_tors( l, partial_homology.get_tors(l-1) ); // Observe that the computed torsion is located in position l-1.
-
+            //homology_E1[p-1].set_tors( l, partial_homology.get_tors(l-1) );
+            
             // Print status message.
-            std::cout << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+            //std::cout << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
             std::cout << "    dim(E^1_{" << (int32_t)(p-1) << "," << (int32_t)(l) << "}) = " << (int32_t)(homology_E0[p-1].get_kern(l) - homology_E0[p-1].get_tors(l))
                       << "; dim(im d^0_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << (int32_t)(homology_E0[p-1].get_tors(l))
                       << "; dim(ker d^0_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << (int32_t)(homology_E0[p].get_kern(l)) << std::endl;
             std::cout.flush();
-            ofs << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
-            ofs << "    dim(E_" << (int32_t)(p-1) << "," << (int32_t)(l) << ") = " << (int32_t)(homology_E0[p-1].get_kern(l) - homology_E0[p-1].get_tors(l))
-                      << "; dim(im d^0_" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << (int32_t)(homology_E0[p-1].get_tors(l))
-                      << "; dim(ker d^0_" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << (int32_t)(homology_E0[p].get_kern(l)) << std::endl;
-            //
-            // Delete superflous rows of d1
-            //
-            //todo
             
             //
             // Save diagonal for the next d1
@@ -159,10 +144,30 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             diagonal.swap( cluster_spectral_sequence.diff_complex.get_current_differential().diagonal );
             
             //
+            // Detect superflous rows.
+            //
+            std::list< size_t > ommit_rows;
+            for( const auto& it : diagonal )
+            {
+                ommit_rows.emplace_back( it.first );
+            }
+            ommit_rows.sort();
+            
+            //
+            // Clean up
+            //
+            auto& diagonalizer = cluster_spectral_sequence.diff_complex.get_diagonalizer();
+            diagonalizer.ommit_rows.clear();
+            diagonalizer.ommit_rows.swap(ommit_rows);
+            diagonalizer.def = 0;
+            diagonalizer.rnk = 0;
+            current_rank = 0;
+            state = 0;       // Set state to 1 iff kernel and torsion are computed. This is done to terminate the 'monitoring thread'.
+            
+            //
             // Compute the induced homology of d1.
             //
             measure_duration = Clock(); // Measure duration.
-            state = 0;       // Set state to 1 iff kernel and torsion are computed. This is done to terminate the 'monitoring thread'.
 
             // Diagonalzing thread.
             cluster_spectral_sequence.prepare_d1_diag();
@@ -173,44 +178,46 @@ void compute_css( SessionConfig conf, int argc, char** argv )
                 return ret;
             } );
 
-            // Monitoring thread.
-            max_possible_rank = std::min( cluster_spectral_sequence.diff_complex.get_current_differential().sec_size1(), cluster_spectral_sequence.diff_complex.get_current_differential().sec_size2() );
-            if( (uint32_t)homology_E1[p-1].get_kern(l) > 0 )
-            {
-                max_possible_rank = std::min( max_possible_rank, (uint32_t)homology_E1[p-1].get_kern(l) );
-            }
-            monitor_thread = std::async( std::launch::async, [&]()
-            {
-                while( state != 1 )
-                {
-                    std::cout << "Diagonalization " << current_rank << "/" << max_possible_rank << "\r";
-                    std::cout.flush();
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                }
-            } );
+//            // Monitoring thread.
+//            max_possible_rank = std::min( cluster_spectral_sequence.diff_complex.get_current_differential().sec_size1(), cluster_spectral_sequence.diff_complex.get_current_differential().sec_size2() );
+//            if( (uint32_t)homology_E1[p-1].get_kern(l) > 0 )
+//            {
+//                max_possible_rank = std::min( max_possible_rank, (uint32_t)homology_E1[p-1].get_kern(l) );
+//            }
+//            monitor_thread = std::async( std::launch::async, [&]()
+//            {
+//                while( state != 1 )
+//                {
+//                    std::cout << "Diagonalization " << current_rank << "/" << max_possible_rank << "\r";
+//                    std::cout.flush();
+//                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+//                }
+//            } );
 
             // Wait for threads to terminate.
             partial_homology = partial_homology_thread.get();
-            monitor_thread.get();
-
+            //monitor_thread.get();
+            
             // Save results.
             homology_E1[p].set_kern( l, partial_homology.get_kern(l) );
             homology_E1[p-1].set_tors( l-1, partial_homology.get_tors(l-1) ); // Observe that the computed torsion is located in position l-1.
 
             // Print status message.
-            std::cout << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
-            std::cout << "    dim(E^2_{" << (int32_t)(p-1) << "," << (int32_t)(l-1) << "}) = " << (int32_t)(homology_E1[p-1].get_kern(l-1) - homology_E1[p-1].get_tors(l-1)) 
+            //std::cout << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+            std::cout << "    dim(E^2_{" << (int32_t)(p-1) << "," << (int32_t)(l-1) << "}) = " << (int32_t)(homology_E1[p-1].get_kern(l-1) - homology_E1[p-1].get_tors(l-1) - homology_E0[p-1].get_tors(l-1)) 
                       << "; dim(im d^1_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << (int32_t)(homology_E1[p-1].get_tors(l-1))
                       << "; dim(ker d^1_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << (int32_t)(homology_E1[p].get_kern(l)) << std::endl;
-            std::cout.flush();
             
             //
             // Forget d1
             //
             cluster_spectral_sequence.erase_d1();
             
-            // Restore Diagonal
+            // Restore Diagonal and Diagoanlizer
             diagonal.swap( cluster_spectral_sequence.diff_complex.get_current_differential().diagonal );
+            diagonalizer.ommit_rows.clear();
+            diagonalizer.def = 0;
+            diagonalizer.rnk = 0;
         }
     }
 
@@ -297,13 +304,9 @@ void compute_css( SessionConfig conf, int argc, char** argv )
         for( auto& l_basis_it : l_bases )
         {
             auto l = l_basis_it.first;
-            std::cout << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << std::setw(4) << (int32_t)(homology_E1[p].get_kern(l) - homology_E1[p].get_tors(l)) << ";    ";
-            std::cout.flush();
-            ofs << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << std::setw(4) << (int32_t)(homology_E1[p].get_kern(l) - homology_E1[p].get_tors(l)) << ";    ";
+            std::cout << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << std::setw(4) << (int32_t)(homology_E1[p].get_kern(l) - homology_E1[p].get_tors(l) - homology_E0[p].get_tors(l)) << ";    ";
         }
         std::cout << std::endl;
-        std::cout.flush();
-        ofs << std::endl;
     }
     
     ofs.close();
@@ -311,6 +314,8 @@ void compute_css( SessionConfig conf, int argc, char** argv )
 
 int main(int argc, char** argv)
 {
+    std::cout.setf(std::ios::unitbuf);
+
     // Parse configuration from command line arguments.
     SessionConfig conf(argc, argv);
     if( conf.option_set("help") )

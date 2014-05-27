@@ -1,7 +1,10 @@
 #include "diagonalizer_field.hpp"
 
 template< class MatrixType >
-void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, uint32_t number_threads, bool matrix_is_transposed )
+void DiagonalizerField< MatrixType >::operator() (
+    MatrixType&             matrix,
+    uint32_t                number_threads,
+    bool                    matrix_is_transposed)
 {
     // call operator() ( MatrixType &m, atomic_uint &, uint32_t ).
     atomic_uint current_rank;
@@ -9,7 +12,11 @@ void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, uint32_t 
 }
 
 template< class MatrixType >
-void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t number_threads, bool matrix_is_transposed )
+void DiagonalizerField< MatrixType >::operator() (
+    MatrixType&             matrix,
+    atomic_uint&            current_rank,
+    uint32_t                number_threads,
+    bool                    matrix_is_transposed)
 {
     if( number_threads == 1 )
     {
@@ -21,11 +28,11 @@ void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, atomic_ui
     }
     if( matrix_is_transposed == false )
     {
-        def = matrix.size2() - rnk;
+        def = matrix.size2() - ommit_rows.size() - rnk;
     }
     else
     {
-        def = matrix.size1() - rnk;
+        def = matrix.size1() - ommit_rows.size() - rnk;
     }
 }
 
@@ -123,7 +130,12 @@ uint32_t DiagonalizerField< MatrixType >::diag_field(MatrixType &matrix, atomic_
 
 
 template < class MatrixType >
-DiagonalizerField< MatrixType >::JobQueue::JobQueue(DiagonalizerField< MatrixType >::DiagonalType& diag, MatrixType & matrix_init, uint32_t number_of_working_threads, atomic_uint & current_rank )
+DiagonalizerField< MatrixType >::JobQueue::JobQueue(
+    MatrixType&                         matrix_init,
+    typename MatrixType::DiagonalType&  diag,
+    const std::list< size_t >&          ommit_rows,
+    uint32_t                            number_of_working_threads,
+    atomic_uint&                        current_rank )
 :
     matrix(matrix_init),
     rows_to_work_at(),
@@ -138,8 +150,14 @@ DiagonalizerField< MatrixType >::JobQueue::JobQueue(DiagonalizerField< MatrixTyp
     {
         return;
     }
-    for( size_t row = 0; row < matrix.size1(); ++row )
+    auto ommit_it = ommit_rows.begin();
+    for( size_t row = 0 ; row < matrix.size1(); ++row )
     {
+        if( ommit_it != ommit_rows.end() && row == *ommit_it )
+        {
+            ++ommit_it;
+            continue;
+        }
         if ( matrix(row, col) == typename MatrixType::CoefficientType(0))
         {
             remaining_rows.push_back(row);
@@ -321,7 +339,7 @@ void DiagonalizerField< MatrixType >::Worker::work(MatrixType& matrix)
         // ToDo: Improve performance!
         if (compute_next_row)
         {
-            if (matrix(row_2, new_col) == typename MatrixType::CoefficientType(0))
+            if (matrix.at(row_2, new_col) == typename MatrixType::CoefficientType(0))
             {
                 new_remaining_rows.push_back(row_2);
             }
@@ -353,10 +371,9 @@ void DiagonalizerField< MatrixType >::Worker::collect_remaining_work(MatrixType 
     size_t new_col = jobs.col + 1;
     if (new_col < matrix.size2())
     {
-        for (std::vector<size_t>::iterator it = remaining_rows.begin(); it != remaining_rows.end(); ++it)
+        for ( const auto& row : remaining_rows )
         {
-            size_t row = *it;
-            if (matrix(row, new_col) == typename MatrixType::CoefficientType(0))
+            if (matrix.at(row, new_col) == typename MatrixType::CoefficientType(0))
             {
                 new_remaining_rows.push_back(row);
             }
@@ -374,7 +391,7 @@ uint32_t DiagonalizerField< MatrixType >::diag_field_parallelized(
     atomic_uint &  current_rank,
     uint32_t       number_threads )
 {
-    JobQueue jobs(matrix.diagonal, matrix, number_threads, current_rank);
+    JobQueue jobs(matrix, matrix.diagonal, ommit_rows, number_threads, current_rank);
     std::vector<Worker> workers;
     std::vector<Thread> threads;
 
