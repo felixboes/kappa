@@ -41,21 +41,21 @@ std::ostream& operator<< ( std::ostream& os, const MonoBasis& mb )
 }
 
 template<>
-void update_differential(MatrixBool &     differential,
-                         Tuple &          tuple,
-                         Tuple &          boundary,
-                         int32_t,
-                         int8_t,
-                         int8_t,
-                         SignConvention &)
+void update_differential(MatrixBool &           differential,
+                         const size_t           row,
+                         const size_t           column,
+                         const int32_t          ,
+                         const int8_t           ,
+                         const int8_t           ,
+                         const SignConvention & )
 {
-    differential.add_entry(tuple.id, boundary.id);
+    differential.add_entry(row, column);
 }
 
-int8_t sign(int32_t          parity,
-            int8_t           i,
-            int8_t           or_sign,
-            SignConvention & sign_conv )
+int32_t sign(const int32_t          parity,
+            const int8_t           i,
+            const int8_t           or_sign,
+            const SignConvention & sign_conv )
 {
     if ( sign_conv == no_signs)
     {
@@ -71,7 +71,7 @@ int8_t sign(int32_t          parity,
         //std::cout << it << " " << i << ": The d^hor_i boundary of " << current_basis << ". This is " << boundary << std::endl;
         //std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << actual_parity << std::endl;
         //std::cout << std::endl;
-       if ( actual_parity == 0 )
+        if ( actual_parity == 0 )
         {
             return 1;
         }

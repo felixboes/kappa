@@ -193,6 +193,7 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_d0( int32_t p, int32_t l )
     MatrixType& differential = diff_complex.get_current_differential();
     differential.define_operations(MatrixType::main_and_secondary);
     differential.resize( basis_complex[p].basis[l].size(), basis_complex[p-1].basis[l].size(), true );
+    differential.diagonal.clear();
     
     // For each tuple t in the basis, we compute all basis elements that 
     // occur in kappa(t). 
@@ -245,41 +246,7 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_d0( int32_t p, int32_t l )
                         if( boundary.monotone() == true && boundary.num_cluster() == l ) // then it contributes to the differential with the computed parity
                         {
                             boundary.id = basis_complex[p-1].id_of(boundary);
-                            
-                            if( sign_conv == all_signs )
-                            {
-                                int32_t actual_parity = (parity + i) % 2;
-                                if ( or_sign[i] == -1 )
-                                {
-                                    actual_parity = (actual_parity + 1) % 2;
-                                }
-                                //std::cout << it << " " << i << ": The d^hor_i boundary of " << current_basis << ". This is " << boundary << std::endl;
-                                //std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << actual_parity << std::endl;
-                                //std::cout << std::endl;
-                                if ( actual_parity == 0 )
-                                {
-                                    differential(it.id, boundary.id) += 1;
-                                }
-                                else
-                                {
-                                    differential(it.id, boundary.id) += -1;
-                                }
-                            }
-                            else if( sign_conv == no_orientation_sign )
-                            {
-                                if ( (parity + i) % 2 == 0 )
-                                {
-                                    differential(it.id, boundary.id) += 1;
-                                }
-                                else
-                                {
-                                    differential(it.id, boundary.id) += -1;
-                                }
-                            }
-                            else
-                            {
-                                differential(it.id, boundary.id) += 1;
-                            }
+                            update_differential(differential, it.id, boundary.id, parity, i, or_sign[i], sign_conv);
                         }
                     }
                 }
@@ -302,14 +269,21 @@ typename ClusterSpectralSequence< MatrixComplex >::MatrixType ClusterSpectralSeq
         Tuple current_basis = basis_element;
         bool norm_preserved = true;
         
+        int32_t parity = 0;
         // parity of the exponent of the sign of the current summand of the differential
-        int32_t parity = ((h*(h+1))/2) % 2;
+        if( sign_conv != no_signs ) 
+        {
+            parity = ((h*(h+1))/2) % 2;
+        }
         
         // Calculate phi_{(s_h, ..., s_1)}( Sigma )
         for( uint32_t q = 1; q <= h; q++ )
         {
-            s_q = 1 + ( ( k / factorial(q-1)) % q );
-            parity += s_q;
+            s_q = 1 + ( ( k / factorial(q-1)) % q );   
+            if( sign_conv != no_signs )
+            {
+                parity += s_q;
+            }
             if( current_basis.phi(q, s_q) == false )
             {
                 norm_preserved = false;
@@ -334,39 +308,7 @@ typename ClusterSpectralSequence< MatrixComplex >::MatrixType ClusterSpectralSeq
                     if( boundary.monotone() == true && boundary.num_cluster() == l - 1) // then it contributes to the differential with the computed parity
                     {
                         boundary.id = basis_complex[p-1].id_of(boundary);
-                        
-                        // Compute sign and store matrix entry.
-                        if( sign_conv == all_signs )
-                        {
-                            int32_t actual_parity = (parity + i) % 2;
-                            if ( or_sign[i] == -1 )
-                            {
-                                actual_parity = (actual_parity + 1) % 2;
-                            }
-                            if ( actual_parity == 0 )
-                            {
-                                single_row(0, boundary.id) += 1;
-                            }
-                            else
-                            {
-                                single_row(0, boundary.id) += -1;
-                            }
-                        }
-                        else if( sign_conv == no_orientation_sign )
-                        {
-                            if ( (parity + i) % 2 == 0 )
-                            {
-                                single_row(0, boundary.id) += 1;
-                            }
-                            else
-                            {
-                                single_row(0, boundary.id) += -1;
-                            }
-                        }
-                        else
-                        {
-                            single_row(0, boundary.id) += 1;
-                        }
+                        update_differential(single_row, 0, boundary.id, parity, i, or_sign[i], sign_conv);
                     }
                 }
             }
@@ -413,19 +355,16 @@ void ClusterSpectralSequence< MatrixComplex >::gen_d1_stage_1(int32_t p, int32_t
         return;
     }
     
-    // Sort the diagonal entries by column to compute offset
+    // The diagonal entries are sorted by column.
     typename MatrixType::DiagonalType diagonal_copy(differential.diagonal);
-    diagonal_copy.sort(
-            [](const typename MatrixType::MatrixEntryType& lhs, const typename MatrixType::MatrixEntryType& rhs )
-            { return lhs.second < rhs.second; }
-        );
+    
     // Compute offset
     std::vector< size_t > column_offset( num_cols, 0 );
     size_t offset = 0;
     
     size_t pos_diff = 0;
     auto diag_entry = diagonal_copy.cbegin();
-    for( size_t pos_row = 0; pos_row < num_cols; ++pos_row )
+    for( size_t pos_row = 0; pos_row < num_cols; ++pos_row, ++pos_diff )
     {
         // skip entries in the diagonal
         while( pos_diff < num_cols_diff && pos_diff == diag_entry->second )
@@ -436,7 +375,6 @@ void ClusterSpectralSequence< MatrixComplex >::gen_d1_stage_1(int32_t p, int32_t
         }
         
         // set pos_diff to the next position.
-        ++pos_diff;
         column_offset[pos_row] = offset;
     }
     

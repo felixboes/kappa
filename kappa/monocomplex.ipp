@@ -162,26 +162,16 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, Tuple& tu
     }
 }
 
-
 template <class MatrixType>
-void update_differential(MatrixType &     differential,
-                         Tuple &          tuple,
-                         Tuple &          boundary,
-                         int32_t          parity,
-                         int8_t           i,
-                         int8_t           or_sign,
-                         SignConvention & sign_conv)
+void update_differential(MatrixType &           differential,
+                         const size_t           row,
+                         const size_t           column,
+                         const int32_t          parity,
+                         const int8_t           i,
+                         const int8_t           or_sign,
+                         const SignConvention & sign_conv)
 {
-    int8_t sign_in_differential = sign(parity, i, or_sign, sign_conv);
-
-    if (sign_in_differential == 1)
-    {
-        differential(tuple.id, boundary.id) += 1;
-    }
-    else if (sign_in_differential == -1)
-    {
-        differential(tuple.id, boundary.id) += -1;
-    }
+    differential(row, column) += typename MatrixType::CoefficientType( sign(parity, i, or_sign, sign_conv) );
 }
 
 template< class MatrixComplex >
@@ -231,7 +221,7 @@ void MonoComplex<MatrixComplex>::compute_boundary(Tuple & tuple, uint32_t p, typ
                 if( (boundary = current_basis.d_hor(i)) )
                 {
                     boundary.id = basis_complex[p-1].id_of(boundary);
-                    update_differential<MatrixType>(differential, tuple, boundary,
+                    update_differential<MatrixType>(differential, tuple.id, boundary.id,
                                             parity, i, or_sign[i], sign_conv);
                 }
             }
