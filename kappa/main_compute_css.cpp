@@ -25,24 +25,59 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     ofs.open( filename );
     
     std::cout << "-------- Constructing bases --------" << std::endl;
-    ofs << "-------- Constructing bases --------" << std::endl;
+    ofs       << "-------- Constructing bases --------" << std::endl;
     
     // Compute all bases.
     Clock measure_duration;
     std::cout << "Constructing bases";
-    std::cout.flush();
-    ofs << "Constructing bases";
+    ofs       << "Constructing bases";
     
     ClusterSpectralSequenceT cluster_spectral_sequence( conf.genus, conf.num_punctures, conf.sgn_conv );
     typename ClusterSpectralSequenceT::CSSHomologyType homology_E0;
     typename ClusterSpectralSequenceT::CSSHomologyType homology_E1;
     std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
     std::cout << std::endl;
-    std::cout.flush();
-    ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
-    ofs << std::endl;
-    std::cout << "-------- Computing E^1-term --------" << std::endl;
-    ofs << "-------- Computing E^1-term --------" << std::endl;
+    ofs       << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+    ofs       << std::endl;
+    
+    // Print Dimensions of the E^0-page
+    std::cout << "Dimensions of the E^0 page" << std::endl;
+    ofs       << "Dimensions of the E^0 page" << std::endl;
+    for( auto& basis_it : cluster_spectral_sequence.basis_complex )
+    {
+        auto p = basis_it.first;
+        auto l_bases = basis_it.second.basis;
+
+        if ( p < conf.start_p || p > conf.end_p + 1 )
+        {
+            continue;
+        }
+        
+        for( int32_t l = 0; l < l_bases.begin()->first ; ++l )
+        {
+            std::stringstream stream;
+            stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
+            std::cout << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
+            ofs       << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
+        }
+        for( auto& l_basis_it : l_bases )
+        {
+            auto l = l_basis_it.first;
+            auto cur_basis = l_basis_it.second;
+            std::stringstream stream;
+            stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
+            std::cout << std::setw(9) << stream.str() << std::setw(6) << cur_basis.size() << ";    ";
+            ofs       << std::setw(9) << stream.str() << std::setw(6) << cur_basis.size() << ";    ";
+        }
+        std::cout << std::endl;
+        ofs       << std::endl;
+    }
+    
+    //
+    // Compute E^1 and E^2 terms.
+    //
+    std::cout << "-------- Computing E^1-term & E^2-term --------" << std::endl;
+    ofs       << "-------- Computing E^1-term & E^2-term  --------" << std::endl;
     
     // Compute all differentials and homology consecutively.
     for( auto& basis_it : cluster_spectral_sequence.basis_complex )
@@ -62,15 +97,17 @@ void compute_css( SessionConfig conf, int argc, char** argv )
         {
             auto l = l_basis_it.first;
             atomic_uint current_rank(0);
-//            uint32_t max_possible_rank(0);
+            uint32_t max_possible_rank(0);
 
             //
             // Construct the first stage of d_1
             //
             std::cout << "Constructing the differential d^1_{" << p << "," << l << "}.";
+            ofs       << "Constructing the differential d^1_{" << p << "," << l << "}.";
             measure_duration = Clock();
             cluster_spectral_sequence.gen_d1_stage_1(p,l);
             std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+            ofs       << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
             
             //
             // Forget the old d0
@@ -81,9 +118,11 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             // Generate the new d0
             //
             std::cout << "Constructing the differential d^0_{" << p << "," << l << "}.";
+            ofs       << "Constructing the differential d^0_{" << p << "," << l << "}.";
             measure_duration = Clock();
             cluster_spectral_sequence.gen_d0(p,l);
             std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+            ofs       << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
             
             //
             // Compute the induced homology of d0.
@@ -99,41 +138,43 @@ void compute_css( SessionConfig conf, int argc, char** argv )
                 return ret;
             } );
 
-//            // Monitoring thread.
-//            max_possible_rank = std::min( cluster_spectral_sequence.diff_complex.get_current_differential().size1(), cluster_spectral_sequence.diff_complex.get_current_differential().size2() );
-//            if( (uint32_t)homology_E0[p-1].get_kern(l) > 0 )
-//            {
-//                max_possible_rank = std::min( max_possible_rank, (uint32_t)homology_E0[p-1].get_kern(l) );
-//            }
-//            auto monitor_thread = std::async( std::launch::async, [&]()
-//            {
-//                while( state != 1 )
-//                {
-//                    std::cout << "Diagonalization " << current_rank << "/" << max_possible_rank << "\r";
-//                    std::cout.flush();
-//                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-//                }
-//            } );
+            // Monitoring thread.
+            max_possible_rank = std::min( cluster_spectral_sequence.diff_complex.get_current_differential().size1(), cluster_spectral_sequence.diff_complex.get_current_differential().size2() );
+            if( (uint32_t)homology_E0[p-1].get_kern(l) > 0 )
+            {
+                max_possible_rank = std::min( max_possible_rank, (uint32_t)homology_E0[p-1].get_kern(l) );
+            }
+            auto monitor_thread = std::async( std::launch::async, [&]()
+            {
+                while( state != 1 )
+                {
+                    std::cout << "Diagonalization " << current_rank << "/" << max_possible_rank << "\r";
+                    std::cout.flush();
+                    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                }
+            } );
 
             // Wait for threads to terminate.
             auto partial_homology = partial_homology_thread.get();
-//            monitor_thread.get();
+            monitor_thread.get();
 
             //
             // Save results.
             //
             homology_E0[p].set_kern( l, partial_homology.get_kern(l) );
             homology_E0[p-1].set_tors( l, partial_homology.get_tors(l-1) ); // Observe that the computed torsion is located in position l-1.
-            //homology_E1[p-1].set_tors( l, partial_homology.get_tors(l-1) );
             
             //
             // Print status message.
             //
-            //std::cout << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
             std::cout << "    dim(E^1_{" << (int32_t)(p-1) << "," << (int32_t)(l) << "}) = " << std::setw(4) << (int32_t)(homology_E0[p-1].get_kern(l) - homology_E0[p-1].get_tors(l))
                       << "; dim(im d^0_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << std::setw(4) << (int32_t)(homology_E0[p-1].get_tors(l))
-                      << "; dim(ker d^0_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << std::setw(4) << (int32_t)(homology_E0[p].get_kern(l)) << std::endl;
-            std::cout.flush();
+                      << "; dim(ker d^0_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << std::setw(4) << (int32_t)(homology_E0[p].get_kern(l))
+                      << "; Duration: " << measure_duration.duration() << " seconds." << std::endl;
+            ofs       << "    dim(E^1_{" << (int32_t)(p-1) << "," << (int32_t)(l) << "}) = " << std::setw(4) << (int32_t)(homology_E0[p-1].get_kern(l) - homology_E0[p-1].get_tors(l))
+                      << "; dim(im d^0_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << std::setw(4) << (int32_t)(homology_E0[p-1].get_tors(l))
+                      << "; dim(ker d^0_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << std::setw(4) << (int32_t)(homology_E0[p].get_kern(l))
+                      << "; Duration: " << measure_duration.duration() << " seconds." << std::endl;   
             
             //
             // Save diagonal for the next d1
@@ -175,25 +216,25 @@ void compute_css( SessionConfig conf, int argc, char** argv )
                 return ret;
             } );
 
-//            // Monitoring thread.
-//            max_possible_rank = std::min( cluster_spectral_sequence.diff_complex.get_current_differential().sec_size1(), cluster_spectral_sequence.diff_complex.get_current_differential().sec_size2() );
-//            if( (uint32_t)homology_E1[p-1].get_kern(l) > 0 )
-//            {
-//                max_possible_rank = std::min( max_possible_rank, (uint32_t)homology_E1[p-1].get_kern(l) );
-//            }
-//            monitor_thread = std::async( std::launch::async, [&]()
-//            {
-//                while( state != 1 )
-//                {
-//                    std::cout << "Diagonalization " << current_rank << "/" << max_possible_rank << "\r";
-//                    std::cout.flush();
-//                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-//                }
-//            } );
+            // Monitoring thread.
+            max_possible_rank = std::min( cluster_spectral_sequence.diff_complex.get_current_differential().sec_size1(), cluster_spectral_sequence.diff_complex.get_current_differential().sec_size2() );
+            if( (uint32_t)homology_E1[p-1].get_kern(l) > 0 )
+            {
+                max_possible_rank = std::min( max_possible_rank, (uint32_t)homology_E1[p-1].get_kern(l) );
+            }
+            monitor_thread = std::async( std::launch::async, [&]()
+            {
+                while( state != 1 )
+                {
+                    std::cout << "Diagonalization " << current_rank << "/" << max_possible_rank << "\r";
+                    std::cout.flush();
+                    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                }
+            } );
 
             // Wait for threads to terminate.
             partial_homology = partial_homology_thread.get();
-            //monitor_thread.get();
+            monitor_thread.get();
             
             //
             // Save results.
@@ -204,10 +245,14 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             //
             // Print status message.
             //
-            //std::cout << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
             std::cout << "    dim(E^2_{" << (int32_t)(p-1) << "," << (int32_t)(l-1) << "}) = " << std::setw(4) << (int32_t)(homology_E1[p-1].get_kern(l-1) - homology_E1[p-1].get_tors(l-1) - homology_E0[p-1].get_tors(l-1)) 
                       << "; dim(im d^1_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << std::setw(4) << (int32_t)(homology_E1[p-1].get_tors(l-1))
-                      << "; dim(ker d^1_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << std::setw(4) << (int32_t)(homology_E1[p].get_kern(l)) << std::endl;
+                      << "; dim(ker d^1_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << std::setw(4) << (int32_t)(homology_E1[p].get_kern(l))
+                      << "; Duration: " << measure_duration.duration() << " seconds." << std::endl;
+            ofs       << "    dim(E^2_{" << (int32_t)(p-1) << "," << (int32_t)(l-1) << "}) = " << std::setw(4) << (int32_t)(homology_E1[p-1].get_kern(l-1) - homology_E1[p-1].get_tors(l-1) - homology_E0[p-1].get_tors(l-1)) 
+                      << "; dim(im d^1_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << std::setw(4) << (int32_t)(homology_E1[p-1].get_tors(l-1))
+                      << "; dim(ker d^1_{" << (int32_t)(p) << "," << (int32_t)(l) << "}) = " << std::setw(4) << (int32_t)(homology_E1[p].get_kern(l))
+                      << "; Duration: " << measure_duration.duration() << " seconds." << std::endl;
             
             //
             // Forget d1
@@ -229,14 +274,13 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     std::cout << std::endl;
     std::cout << "------------  Results   ------------" << std::endl;
     std::cout << std::endl;
-    ofs << std::endl;
-    ofs << "------------  Results   ------------" << std::endl;
-    ofs << std::endl;
+    ofs       << std::endl;
+    ofs       << "------------  Results   ------------" << std::endl;
+    ofs       << std::endl;
     
     // Print Dimensions of the E^0-page
     std::cout << "Dimensions of the E^0 page" << std::endl;
-    std::cout.flush();
-    ofs << "Dimensions of the E^0 page" << std::endl;
+    ofs       << "Dimensions of the E^0 page" << std::endl;
     for( auto& basis_it : cluster_spectral_sequence.basis_complex )
     {
         auto p = basis_it.first;
@@ -249,24 +293,29 @@ void compute_css( SessionConfig conf, int argc, char** argv )
         
         for( int32_t l = 0; l < l_bases.begin()->first ; ++l )
         {
-            std::cout << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << std::setw(4) << "0" << ";    ";
+            std::stringstream stream;
+            stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
+            std::cout << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
+            ofs       << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
         }
         for( auto& l_basis_it : l_bases )
         {
             auto l = l_basis_it.first;
             auto cur_basis = l_basis_it.second;
-            std::cout << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << std::setw(4) << cur_basis.size() << ";    ";
-            ofs << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << std::setw(4) << cur_basis.size() << ";    ";
+            std::stringstream stream;
+            stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
+            std::cout << std::setw(9) << stream.str() << std::setw(6) << cur_basis.size() << ";    ";
+            ofs       << std::setw(9) << stream.str() << std::setw(6) << cur_basis.size() << ";    ";
         }
         std::cout << std::endl;
-        ofs << std::endl;
+        ofs       << std::endl;
     }
     
     // Print Dimensions of the E^1-page
     std::cout << std::endl;
     std::cout << "Dimensions of the E^1 page" << std::endl;
-    ofs << std::endl;
-    ofs << "Dimensions of the E^1 page" << std::endl;
+    ofs       << std::endl;
+    ofs       << "Dimensions of the E^1 page" << std::endl;
     for( auto& basis_it : cluster_spectral_sequence.basis_complex )
     {
         auto p = basis_it.first;
@@ -279,24 +328,28 @@ void compute_css( SessionConfig conf, int argc, char** argv )
         
         for( int32_t l = 0; l < l_bases.begin()->first ; ++l )
         {
-            std::cout << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << std::setw(4) << "0" << ";    ";
+            std::stringstream stream;
+            stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
+            std::cout << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
+            ofs       << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
         }
         for( auto& l_basis_it : l_bases )
         {
             auto l = l_basis_it.first;
-            std::cout << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << std::setw(4) << (int32_t)(homology_E0[p].get_kern(l) - homology_E0[p].get_tors(l)) << ";    ";
-            ofs << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << std::setw(4) << (int32_t)(homology_E0[p].get_kern(l) - homology_E0[p].get_tors(l)) << ";    ";
+            std::stringstream stream;
+            stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
+            std::cout << std::setw(9) << stream.str() << std::setw(6) << (int32_t)(homology_E0[p].get_kern(l) - homology_E0[p].get_tors(l)) << ";    ";
+            ofs       << std::setw(9) << stream.str() << std::setw(6) << (int32_t)(homology_E0[p].get_kern(l) - homology_E0[p].get_tors(l)) << ";    ";
         }
         std::cout << std::endl;
-        ofs << std::endl;
+        ofs       << std::endl;
     }
     
     // Print Dimensions of the E^2-page
     std::cout << std::endl;
     std::cout << "Dimensions of the E^2 page" << std::endl;
-    std::cout.flush();
-    ofs << std::endl;
-    ofs << "Dimensions of the E^2 page" << std::endl;
+    ofs       << std::endl;
+    ofs       << "Dimensions of the E^2 page" << std::endl;
     for( auto& basis_it : cluster_spectral_sequence.basis_complex )
     {
         auto p = basis_it.first;
@@ -309,14 +362,21 @@ void compute_css( SessionConfig conf, int argc, char** argv )
         
         for( int32_t l = 0; l < l_bases.begin()->first ; ++l )
         {
-            std::cout << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << std::setw(4) << "0" << ";    ";
+            std::stringstream stream;
+            stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
+            std::cout << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
+            ofs       << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
         }
         for( auto& l_basis_it : l_bases )
         {
             auto l = l_basis_it.first;
-            std::cout << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") = " << std::setw(4) << (int32_t)(homology_E1[p].get_kern(l) - homology_E1[p].get_tors(l) - homology_E0[p].get_tors(l)) << ";    ";
+            std::stringstream stream;
+            stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
+            std::cout << std::setw(9) << stream.str() << std::setw(6) << (int32_t)(homology_E1[p].get_kern(l) - homology_E1[p].get_tors(l) - homology_E0[p].get_tors(l)) << ";    ";
+            ofs       << std::setw(9) << stream.str() << std::setw(6) << (int32_t)(homology_E1[p].get_kern(l) - homology_E1[p].get_tors(l) - homology_E0[p].get_tors(l)) << ";    ";
         }
         std::cout << std::endl;
+        ofs       << std::endl;
     }
     
     ofs.close();
