@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <stdlib.h>
 #include <unordered_set>
 
 #ifdef COMPILE_WITH_MAGICK

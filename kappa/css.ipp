@@ -331,11 +331,11 @@ void ClusterSpectralSequence< MatrixComplex >::gen_d1_apply_operations( MatrixTy
         
         if( row.at( 0, diag_col ) != CoefficientType(0) )
         {
-            CoefficientType lambda( -differential.main_at(diag_row, diag_col) / row(0, diag_col) );     
+            CoefficientType lambda( - row(0, diag_col) / differential.main_at(diag_row, diag_col) );
             for( size_t j = diag_col; j < num_cols; ++j )
             {
                 CoefficientType& a = row( 0, j );
-                a = lambda * a + differential.main_at( diag_row, j );
+                a += lambda * differential.main_at( diag_row, j );
             }
         }
     }

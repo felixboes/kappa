@@ -13,11 +13,11 @@ MatrixField<CoefficientT>::MatrixField( size_t number_rows, size_t number_cols )
 template< class CoefficientT >
 void MatrixField<CoefficientT>::row_operation( size_t row_1, size_t row_2, size_t col )
 {
-    CoefficientT lambda( -at(row_1,col) / at(row_2, col) );
+    CoefficientT lambda( -at(row_2, col)/at(row_1,col)  );
     for( size_t j = col; j < num_cols; ++j )
     {
         CoefficientT & a = this->operator()( row_2, j );
-        a = lambda * a + at( row_1, j );
+        a += lambda * at( row_1, j );
     }
 }
 
@@ -199,33 +199,33 @@ void MatrixFieldCSS<CoefficientT>::row_operation( size_t row_1, size_t row_2, si
 template< class CoefficientT >
 void MatrixFieldCSS<CoefficientT>::row_operation_main_and_secondary( size_t row_1, size_t row_2, size_t col )
 {
-    const CoefficientT lambda( -main_at(row_1,col) / main_at(row_2, col) );
+    const CoefficientT lambda( -main_at(row_2, col)/main_at(row_1,col) );
     
     // Process main matrix
     for( size_t j = col; j < num_cols; ++j )
     {
         CoefficientT & a = main_op( row_2, j );
-        a = lambda * a + main_at( row_1, j );
+        a += lambda * main_at( row_1, j );
     }
     
     // Process secondary matrix
     for( size_t j = 0; j < sec_num_cols; ++j )
     {
         CoefficientT & a = sec_op( row_2, j );
-        a = lambda * a + sec_at( row_1, j );
+        a += lambda * sec_at( row_1, j );
     }
 }
 
 template< class CoefficientT >
 void MatrixFieldCSS<CoefficientT>::row_operation_secondary( size_t row_1, size_t row_2, size_t col )
 {
-    CoefficientT lambda( -sec_at(row_1,col) / sec_at(row_2, col) );
+    CoefficientT lambda( -sec_at(row_2, col) / sec_at(row_1,col) );
     
     // Process secondary matrix
     for( size_t j = col; j < sec_num_cols; ++j )
     {
         CoefficientT & a = sec_op( row_2, j );
-        a = lambda * a + sec_at( row_1, j );
+        a += lambda * sec_at( row_1, j );
     }
 }
  

@@ -41,7 +41,6 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     std::cout.flush();
     ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
     ofs << std::endl;
-
     std::cout << "-------- Computing E^1-term --------" << std::endl;
     ofs << "-------- Computing E^1-term --------" << std::endl;
     
@@ -85,8 +84,7 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             measure_duration = Clock();
             cluster_spectral_sequence.gen_d0(p,l);
             std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
-
-
+            
             //
             // Compute the induced homology of d0.
             //
