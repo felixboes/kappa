@@ -417,6 +417,10 @@ int main(int argc, char** argv)
         std::cout << conf.desc << std::endl;
         return 1;
     }
+    if( conf.num_threads < 2 )
+    {
+        conf.num_threads = 2;
+    }
     
     if ( conf.setup_configuration() == false )
     {
