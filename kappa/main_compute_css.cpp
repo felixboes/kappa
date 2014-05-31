@@ -53,7 +53,7 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             continue;
         }
         
-        for( int32_t l = 0; l < l_bases.begin()->first ; ++l )
+        for( int32_t l = 1; l < l_bases.begin()->first ; ++l )
         {
             std::stringstream stream;
             stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
@@ -63,6 +63,10 @@ void compute_css( SessionConfig conf, int argc, char** argv )
         for( auto& l_basis_it : l_bases )
         {
             auto l = l_basis_it.first;
+            if( l == 0 )
+            {
+                continue;
+            }
             auto cur_basis = l_basis_it.second;
             std::stringstream stream;
             stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
@@ -291,7 +295,7 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             continue;
         }
         
-        for( int32_t l = 0; l < l_bases.begin()->first ; ++l )
+        for( int32_t l = 1; l < l_bases.begin()->first ; ++l )
         {
             std::stringstream stream;
             stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
@@ -301,6 +305,10 @@ void compute_css( SessionConfig conf, int argc, char** argv )
         for( auto& l_basis_it : l_bases )
         {
             auto l = l_basis_it.first;
+            if( l == 0 )
+            {
+                continue;
+            }
             auto cur_basis = l_basis_it.second;
             std::stringstream stream;
             stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
@@ -326,7 +334,7 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             continue;
         }
         
-        for( int32_t l = 0; l < l_bases.begin()->first ; ++l )
+        for( int32_t l = 1; l < l_bases.begin()->first ; ++l )
         {
             std::stringstream stream;
             stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
@@ -336,6 +344,10 @@ void compute_css( SessionConfig conf, int argc, char** argv )
         for( auto& l_basis_it : l_bases )
         {
             auto l = l_basis_it.first;
+            if( l == 0 )
+            {
+                continue;
+            }
             std::stringstream stream;
             stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
             std::cout << std::setw(9) << stream.str() << std::setw(6) << (int32_t)(homology_E0[p].get_kern(l) - homology_E0[p].get_tors(l)) << ";    ";
@@ -360,7 +372,7 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             continue;
         }
         
-        for( int32_t l = 0; l < l_bases.begin()->first ; ++l )
+        for( int32_t l = 1; l < l_bases.begin()->first ; ++l )
         {
             std::stringstream stream;
             stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
@@ -370,6 +382,10 @@ void compute_css( SessionConfig conf, int argc, char** argv )
         for( auto& l_basis_it : l_bases )
         {
             auto l = l_basis_it.first;
+            if( l == 0 )
+            {
+                continue;
+            }
             std::stringstream stream;
             stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
             std::cout << std::setw(9) << stream.str() << std::setw(6) << (int32_t)(homology_E1[p].get_kern(l) - homology_E1[p].get_tors(l) - homology_E0[p].get_tors(l)) << ";    ";
