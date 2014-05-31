@@ -21,13 +21,14 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     {
         filename += std::string("_") + std::string(argv[i]);
     }
-    
     ofs.open( filename );
     
     std::cout << "-------- Constructing bases --------" << std::endl;
     ofs       << "-------- Constructing bases --------" << std::endl;
     
+    //
     // Compute all bases.
+    //
     Clock measure_duration;
     std::cout << "Constructing bases";
     ofs       << "Constructing bases";
@@ -36,11 +37,13 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     typename ClusterSpectralSequenceT::CSSHomologyType homology_E0;
     typename ClusterSpectralSequenceT::CSSHomologyType homology_E1;
     std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
-    std::cout << std::endl;
+              << std::endl;
     ofs       << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
-    ofs       << std::endl;
+              << std::endl;
     
+    //
     // Print Dimensions of the E^0-page
+    //
     std::cout << "Dimensions of the E^0 page" << std::endl;
     ofs       << "Dimensions of the E^0 page" << std::endl;
     for( auto& basis_it : cluster_spectral_sequence.basis_complex )
@@ -73,8 +76,10 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             std::cout << std::setw(9) << stream.str() << std::setw(6) << cur_basis.size() << ";    ";
             ofs       << std::setw(9) << stream.str() << std::setw(6) << cur_basis.size() << ";    ";
         }
-        std::cout << std::endl;
-        ofs       << std::endl;
+        std::cout << std::endl
+                  << std::endl;
+        ofs       << std::endl
+                  << std::endl;
     }
     
     //
@@ -275,12 +280,12 @@ void compute_css( SessionConfig conf, int argc, char** argv )
 
     
     // Print status message.
-    std::cout << std::endl;
-    std::cout << "------------  Results   ------------" << std::endl;
-    std::cout << std::endl;
-    ofs       << std::endl;
-    ofs       << "------------  Results   ------------" << std::endl;
-    ofs       << std::endl;
+    std::cout << std::endl
+              << "------------  Results   ------------" << std::endl
+              << std::endl;
+    ofs       << std::endl
+              << "------------  Results   ------------" << std::endl
+              << std::endl;
     
     // Print Dimensions of the E^0-page
     std::cout << "Dimensions of the E^0 page" << std::endl;
@@ -320,10 +325,10 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     }
     
     // Print Dimensions of the E^1-page
-    std::cout << std::endl;
-    std::cout << "Dimensions of the E^1 page" << std::endl;
-    ofs       << std::endl;
-    ofs       << "Dimensions of the E^1 page" << std::endl;
+    std::cout << std::endl
+              << "Dimensions of the E^1 page" << std::endl;
+    ofs       << std::endl
+              << "Dimensions of the E^1 page" << std::endl;
     for( auto& basis_it : cluster_spectral_sequence.basis_complex )
     {
         auto p = basis_it.first;
@@ -358,10 +363,10 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     }
     
     // Print Dimensions of the E^2-page
-    std::cout << std::endl;
-    std::cout << "Dimensions of the E^2 page" << std::endl;
-    ofs       << std::endl;
-    ofs       << "Dimensions of the E^2 page" << std::endl;
+    std::cout << std::endl
+              << "Dimensions of the E^2 page" << std::endl;
+    ofs       << std::endl
+              << "Dimensions of the E^2 page" << std::endl;
     for( auto& basis_it : cluster_spectral_sequence.basis_complex )
     {
         auto p = basis_it.first;
