@@ -116,7 +116,7 @@ public:
     typedef typename MatrixComplex::HomologyType HomologyType;
     typedef std::map< int32_t, HomologyType > CSSHomologyType;
     
-    ClusterSpectralSequence( uint32_t genus, uint32_t num_punctures, SignConvention sgn );
+    ClusterSpectralSequence( uint32_t genus, uint32_t num_punctures, SignConvention sgn, uint32_t number_threads );
     /** Recursive function initializing the basis_complex.
         In the call of gen_bases with the parameters s, p and tuple, we assume that the first s transpositions
         containing symbols 1, ..., p are fixed and append all possible transpositions at position s+1, applying
@@ -128,9 +128,14 @@ public:
     **/
     void gen_bases( uint32_t s, uint32_t p, Tuple& tuple );
     void gen_d0( int32_t p, int32_t l );
+    void gen_d0_boundary(const Tuple & tuple,
+                         const int32_t p,
+                         const int32_t l,
+                         typename MatrixComplex::MatrixType & differential);
+    
+    void gen_d1_stage_1( int32_t p, int32_t l );
     MatrixType gen_d1_row( int32_t, int32_t l, const Tuple& basis_element );
     void gen_d1_apply_operations( MatrixType& row );
-    void gen_d1_stage_1( int32_t p, int32_t l );
     void prepare_d1_diag();
     void erase_d0();
     void erase_d1();
@@ -145,12 +150,33 @@ public:
     uint32_t g;     ///< genus
     uint32_t m;     ///< number of punctures
     uint32_t h;     ///< h = 2*g+m
+    uint32_t num_threads;  ///< number of threads used to construct the differential
     
     SignConvention sign_conv;                    ///< The sign convention.
     MatrixComplex diff_complex;                  ///< Due to RAM limitations, we are working with at most two matrices at a time. Therefore we do not model the whole spectral sequence.
     std::map< int32_t, CSSBasis > basis_complex; ///< basis_complex[n] is the n-th CSSBasis.
     
 };
+
+typedef std::vector<Tuple> CSSWork;
+
+template< class MatrixComplex >
+void css_work_0(ClusterSpectralSequence<MatrixComplex> & css,
+              CSSWork & work,
+              const int32_t p,
+              const int32_t l,
+              typename MatrixComplex::MatrixType & differential
+              );
+
+template< class MatrixComplex >
+void css_work_1(ClusterSpectralSequence<MatrixComplex> & css,
+              CSSWork & work,
+              const int32_t p,
+              const int32_t l,
+              typename MatrixComplex::MatrixType & differential,
+              const size_t num_cols,
+              const std::vector< size_t >& offset
+              );
 
 typedef ClusterSpectralSequence<ChainComplexQCSS> ClusterSpectralSequenceQ;
 typedef ClusterSpectralSequence<ChainComplexZmCSS> ClusterSpectralSequenceZm;

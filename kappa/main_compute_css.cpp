@@ -32,7 +32,7 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     std::cout << "Constructing bases";
     ofs       << "Constructing bases";
     
-    ClusterSpectralSequenceT cluster_spectral_sequence( conf.genus, conf.num_punctures, conf.sgn_conv );
+    ClusterSpectralSequenceT cluster_spectral_sequence( conf.genus, conf.num_punctures, conf.sgn_conv, conf.num_threads );
     typename ClusterSpectralSequenceT::CSSHomologyType homology_E0;
     typename ClusterSpectralSequenceT::CSSHomologyType homology_E1;
     std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;

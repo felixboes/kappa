@@ -155,6 +155,11 @@ public:
     std::map< int32_t, MonoBasis > basis_complex;        ///< basis_complex[n] is the n-th MonoBasis, i.e. the basis of the n-th module of this MonoComplex. 
 };
 
+typedef std::vector<Tuple> MonocomplexWork;
+
+template< class MatrixComplex >
+void monocomplex_work(MonoComplex<MatrixComplex> & monocomplex, MonocomplexWork & work, uint32_t p, typename MatrixComplex::MatrixType & differential);
+
 /**
  * @brief Formula for the sign appearing in d_hor.
  */

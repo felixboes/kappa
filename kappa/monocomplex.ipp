@@ -229,10 +229,8 @@ void MonoComplex<MatrixComplex>::compute_boundary(Tuple & tuple, uint32_t p, typ
     }
 }
 
-typedef std::vector<Tuple> Work;
-
 template< class MatrixComplex >
-void work(MonoComplex<MatrixComplex> & monocomplex, Work & work, uint32_t p, typename MatrixComplex::MatrixType & differential)
+void monocomplex_work(MonoComplex<MatrixComplex> & monocomplex, MonocomplexWork & work, uint32_t p, typename MatrixComplex::MatrixType & differential)
 {
     for ( auto it : work)
     {
@@ -268,7 +266,7 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     
     // For each tuple t in the basis, we compute all basis elements that
     // occur in kappa(t).
-    std::vector<Work> elements_per_threads (num_threads);
+    std::vector<MonocomplexWork> elements_per_threads (num_threads);
     uint32_t num_elements_per_thread = basis_complex[p].size() / num_threads;
     if (basis_complex[p].size() % num_threads != 0)
     {
@@ -288,7 +286,7 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     std::vector<std::thread> workers(num_threads);
     for (uint32_t t = 0; t < num_threads; ++t)
     {
-        workers[t] = std::thread(work<MatrixComplex>, std::ref(*this), std::ref(elements_per_threads[t]), p, std::ref(differential));
+        workers[t] = std::thread(monocomplex_work<MatrixComplex>, std::ref(*this), std::ref(elements_per_threads[t]), p, std::ref(differential));
     }
     for (uint32_t t = 0; t < num_threads; ++t)
     {
