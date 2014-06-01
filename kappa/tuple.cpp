@@ -62,6 +62,12 @@ std::ostream& operator<< (std::ostream& stream, const Permutation& permutation)
     return stream;
 }
 
+Tuple :: Tuple() :
+    p(0),
+    rep()
+{
+}
+
 Tuple :: Tuple(size_t h) :
     p(0),
     rep( h, Transposition(0, 0) )
@@ -116,19 +122,15 @@ bool Tuple :: operator!=(const Tuple& t) const
     // Operations == and != are performed by first comparing sizes, and if they match, the elements are compared sequentially
     // using algorithm equal, which stops at the first mismatch.
     // Source: http://www.cplusplus.com/reference/vector/vector/operators/
-    return this->rep != t.rep;
+    return (this->rep != t.rep);
 }
 
 Tuple :: operator bool() const
 {
-    for( auto const &it : rep )
+    if (rep.size() == 0)
     {
-        if( it.first == 0 || it.first > p || it.second == 0 || it.second > p)
-        {
-            return false;
-        }
+        return false;
     }
-    
     return true;
 }
 
@@ -239,7 +241,7 @@ bool Tuple :: f(uint32_t i)
     {
         if( b == d ) // (ab)(ab) = id and (a*)(a*) = 0
         {
-            rep.assign( norm(), Transposition(0,0) );
+            rep = std::vector<Transposition>();
             return false;
         }
         else if( a == b ) // (a*)(ad) = (ad*) -> (d*)(ad)
@@ -460,7 +462,7 @@ Tuple Tuple :: d_hor_naive( uint8_t i ) const
 {
     if( i == 0 || i >= p )
     {
-        return Tuple(this->norm());
+        return Tuple();
     }
     Tuple boundary = *this;
     Permutation sigma = long_cycle();            // sigma = sigma_0
@@ -494,7 +496,7 @@ Tuple Tuple :: d_hor_naive( uint8_t i ) const
         // D_i(sigma_l) is degenerate iff sigma_l(i) = i
         if( sigma[i] == i )
         {
-            return Tuple( boundary.norm() );
+            return Tuple();
         }
         
         for( uint8_t j = 1; j <=p; ++j )

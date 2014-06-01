@@ -100,10 +100,12 @@ public:
     
     typedef std::vector<int32_t> ConnectedComponents;
 
+    Tuple();
+
     /**
      *  Construct a Tuple of norm h which has to be filled.
      */
-    Tuple(size_t h = 1);
+    Tuple(size_t h);
     
     Tuple(uint32_t symbols, size_t h);
 
@@ -128,8 +130,7 @@ public:
     bool operator!=(const Tuple& t) const;
     
     /**
-     *  @return Returns true iff all Transpositions use the symbols 1,..., p only.
-     *  It is used in del2. @sa Tuple::del2.
+     *  @return Returns true iff the tuple is not marked as degenerate.
      */
     operator bool() const;
 
