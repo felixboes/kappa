@@ -18,14 +18,18 @@ MonoComplex< MatrixComplex > :: MonoComplex( uint32_t _g, uint32_t _m, SignConve
     {
         return;
     }
+    // Generate all tuples with h transpositions containing the symbols 1, ..., p,
+    // each at least once, with the correct number of cycles.
     Tuple tuple(h);
     tuple[1] = Transposition(2, 1);
     tuple.p = 2;
-    
     gen_bases(1, 2, 1, tuple);  // We start with the transposition ... (2 1).
-    if (radial) // For radial cells, there are also cells containing 0 as non-fixed point.
+    // In the radial case, we also generate all tuples as above, but also containing
+    // the symbol 0.
+    if (radial)
     {
         Tuple radial_tuple(h);
+        radial_tuple.p = 1;
         radial_tuple[1] = Transposition(1, 0);
         gen_bases(1, 1, 0, radial_tuple);
     }
@@ -79,10 +83,32 @@ void MonoComplex< MatrixComplex > :: show_differential_naive( int32_t p ) const
     }
 }
 
-
+template< class MatrixComplex >
+size_t MonoComplex< MatrixComplex > :: min_symbol() const
+{
+    // In the radial case, the minimum symbol is 0,
+    // in the parallel case, it is 1.
+    return (not radial);
+}
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, uint32_t min_symbol, Tuple& tuple)
+size_t MonoComplex< MatrixComplex > :: min_boundary() const
+{
+    // In the radial case, the minimum symbol with possibly non-zero boundary is 0,
+    // in the parallel case, it is 1.
+    return (not radial);
+}
+
+template< class MatrixComplex >
+size_t MonoComplex< MatrixComplex > :: max_boundary(size_t p) const
+{
+    // In the radial case, the maximum symbol with possibly non-zero boundary is p,
+    // in the parallel case, it is p-1.
+    return (p - (not radial));
+}
+
+template< class MatrixComplex >
+void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, uint32_t start_symbol, Tuple& tuple)
 {
     /* Up to now we have determined all monotonic tuples of l transpositions containing the 
        symbols 1, ..., p, each at least once. We now add an (l+1)-th transposition and continue
@@ -96,10 +122,10 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, uint32_t 
            enumerate monotonic tuples, the height of the (l+1)-th transposition needs to be p.
            We try out all possibilities for the second symbol in the (l+1)-th transposition. */
         tuple.p = p;
-        for(uint32_t i = min_symbol; i < p; ++i)
+        for(uint32_t i = start_symbol; i < p; ++i)
         {
             tuple[l+1] = Transposition(p, i); 
-            gen_bases(l+1, p, min_symbol, tuple);
+            gen_bases(l+1, p, start_symbol, tuple);
         }
 
         /* p -> p+1
@@ -108,15 +134,15 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, uint32_t 
         /* Case 1: The new row in the parallel slit domain is inserted at the top, i.e. 
                    the transpositions 1, ..., l remain the same and we only insert the symbol 
                    p+1 in the (l+1)-th transposition, together with any symbol of 1, ..., p. */
-        for (uint32_t i = min_symbol; i <= p; ++i)
+        for (uint32_t i = start_symbol; i <= p; ++i)
         {
             tuple[l+1] = Transposition(p+1, i);
-            gen_bases(l+1, p+1, min_symbol, tuple);
+            gen_bases(l+1, p+1, start_symbol, tuple);
         }
 
         /* Case 2: The new row in the parallel slit domain is not inserted at the top but at a position
                    i = 1, ..., p. Thus all indices i+1, ..., p are shifted up by one. */
-        for(uint32_t i = min_symbol; i <= p; ++i)
+        for(uint32_t i = start_symbol; i <= p; ++i)
         {
             Tuple tmp = tuple;
             for( uint32_t j = l; j >= 1; --j )
@@ -136,7 +162,7 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, uint32_t 
             }
 
             tmp[l+1] = Transposition(p+1, i);
-            gen_bases(l+1, p+1, min_symbol, tmp);
+            gen_bases(l+1, p+1, start_symbol, tmp);
         }
 
         /* p -> p+2
@@ -146,7 +172,7 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, uint32_t 
            occur in the transpositions 1, ..., l, both cases can be expressed by choosing a symbol
            i = 1, ..., p+1 and by shifting up all indices >= i by one. */ 
         tuple.p = p+2;
-        for( uint32_t i = min_symbol; i <= p + 1; ++i)
+        for( uint32_t i = start_symbol; i <= p + 1; ++i)
         {
             Tuple tmp = tuple;
             for( uint32_t j = l; j >= 1; j-- )
@@ -166,14 +192,17 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, uint32_t 
             }
 
             tmp[l+1] = Transposition(p+2, i);
-            gen_bases(l+1, p+2, min_symbol, tmp);
+            gen_bases(l+1, p+2, start_symbol, tmp);
         }
     }
     else // Check whether the created h-tuple is really a generator, i.e. if it has the correct 
          // number of cycles. If this is the case, we add tuple to the basis elements of the 
          // p-th basis and store the index of tuple in this basis as the id of tuple.
     {
-        if(tuple.num_cycles() == m+1)
+        uint32_t number_cycles = tuple.num_cycles(min_symbol());
+
+        if((   (not radial and number_cycles == m + 1)
+            or (    radial and number_cycles == m)))
         {
             tuple.id = basis_complex[p].add_basis_element( tuple );
         }
@@ -234,7 +263,6 @@ void MonoComplex<MatrixComplex>::compute_boundary(Tuple & tuple, uint32_t p, typ
                 break;
             }
         }
-
         // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
         if( norm_preserved )   // Compute all horizontal boundaries.
         {
@@ -244,7 +272,7 @@ void MonoComplex<MatrixComplex>::compute_boundary(Tuple & tuple, uint32_t p, typ
                 or_sign.operator =(std::move(current_basis.orientation_sign()));
             }
 
-            for( uint32_t i = 1; i < p; i++ )
+            for( uint32_t i = min_boundary(); i <= max_boundary(p); i++ )
             {
                 if( (boundary = current_basis.d_hor(i)) )
                 {
@@ -397,7 +425,7 @@ void MonoComplex< MatrixComplex > :: pi_del_phi_naive(const Tuple& it, std::vect
     // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
     if( norm_preserved )   // Compute all horizontal boundaries.
     {
-        for( uint32_t i = 1; i < p; i++ )
+        for( uint32_t i = min_boundary(); i <= max_boundary(p); i++ )
         {
             if( (boundary = current_basis.d_hor_naive(i)) && boundary.monotone() ) // then it contributes to the differential with the computed parity
             {

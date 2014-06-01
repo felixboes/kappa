@@ -113,7 +113,7 @@ bool Tuple :: operator==(const Tuple& t) const
     // Operations == and != are performed by first comparing sizes, and if they match, the elements are compared sequentially
     // using algorithm equal, which stops at the first mismatch.
     // Source: http://www.cplusplus.com/reference/vector/vector/operators/
-    return this->rep == t.rep;
+    return (this->rep == t.rep);
 }
 
 bool Tuple :: operator!=(const Tuple& t) const
@@ -154,13 +154,13 @@ std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
     return stream;
 }
 
-uint32_t Tuple :: num_cycles()
+uint32_t Tuple :: num_cycles(size_t min_symbol)
 {
     // Since the t_i are transpositions, one can instead count the number of cycles of (p p-1 ... 1) t_1 ... t_h.
     uint32_t num_cycles = 0;
     Permutation sigma_inv = long_cycle_inv();
 
-    // multiply with t_1, ..., t_h
+     // multiply with t_1, ..., t_h
     for( int32_t i = 1; i <= norm(); i++ )
     {
         uint8_t k = at(i).first;
@@ -170,7 +170,7 @@ uint32_t Tuple :: num_cycles()
 
     // count the cycles
     std::vector<bool> visited( p+1, false );    // visited[0] is not used
-    for( uint8_t i = 1; i <= p; ) // We iterate through all cycles and mark the used symbols.
+    for( uint8_t i = min_symbol; i <= p; ) // We iterate through all cycles and mark the used symbols.
     {
         // consider the next cycle
         num_cycles += 1;
@@ -193,6 +193,7 @@ uint32_t Tuple :: num_cycles()
 
 Tuple::ConnectedComponents Tuple::connected_components() const
 {
+    // TODO Adapt for radial case
     // Compare http://www.boost.org/doc/libs/1_49_0/libs/graph/example/connected_components.cpp
     typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS> Graph;
 
@@ -377,7 +378,7 @@ Tuple Tuple :: d_hor( uint8_t k ) const
         //Write (k, sigma_{q-1}(k)) = (k,l)
         auto l = sigma[k];
         
-        // Compute tau':
+         // Compute tau':
         // Most of the time the transpositions are disjoint hence (a,b)(k,l) = (k,l)(a,b) and
         // the left transposition will be killed by D_k
         if( k != a && k != b && l != a && l != b )
@@ -692,28 +693,28 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
 Permutation Tuple::long_cycle() const
 {
     Permutation sigma(p+1, 0);
-    for(uint8_t k = 1; k < p; ++k)
+    for(uint8_t k = 0; k < p; ++k)
     {
         sigma[k] = k+1;
     }
-    sigma[p] = 1;
+    sigma[p] = 0;
     return sigma;
 }
 
 Permutation Tuple::long_cycle_inv() const
 {
     Permutation sigma(p+1, 0);
-    for(uint8_t k = 2; k <= p; ++k)
+    for(uint8_t k = 1; k <= p; ++k)
     {
         sigma[k] = k-1;
     }
-    sigma[1] = p;
+    sigma[0] = p;
     return sigma;
 }
 
 size_t HashTuple :: operator ()( const Tuple &tuple ) const
 {
-    size_t hashvalue=0;
+    size_t hashvalue = 0;
     size_t offset = 2;
     for( const auto& cit : tuple.rep )
     {

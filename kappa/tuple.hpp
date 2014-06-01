@@ -141,8 +141,11 @@ public:
     
     /**
      *  Tells the number of cycles of the permutation \f$ \tau_h \cdot \ldots \cdot \tau_1 \cdot (1,2,\ldots,p) \f$.
+     * \param[in] min_symbol Minimum symbol that may be used in this tuple. The default value
+     * is 1 since this is the case for parallel cells. Radial cells may also use the
+     * symbol 0.
      */
-    uint32_t num_cycles();
+    uint32_t num_cycles(size_t min_symbol = 1);
 
     ConnectedComponents connected_components() const; ///< @returns the number connected compontents of the corresponding graph, where \f$ \tau_j \f$ is seen an edge.
     int32_t num_cluster() const;
@@ -163,12 +166,14 @@ public:
 private:
     Transposition& at(size_t q);                     ///< Access the q-th Transposition.
     Transposition const & at(size_t q) const;
-    std::vector< Transposition > rep;                ///< Representation of a tuple of transpositions.
     Permutation long_cycle() const;                  ///< Returns the cycle 1 -> 2 -> ... -> p-1 -> p -> 1.
     Permutation long_cycle_inv() const;              ///< Returns the cycle 1 -> p -> p-2 -> ... -> 2 -> 1.
     Permutation sigma_h() const;
     std::map< uint8_t, Permutation > cycle_decomposition ( const Permutation & sigma ) const;
     
+    //    DATA MEMBERS
+    std::vector< Transposition > rep;                ///< Representation of a tuple of transpositions \tau_1, ..., \tau_1.
+
     friend class boost::serialization::access;
     template <class Archive> void serialize(Archive &ar, const unsigned int) ///< Implements the serialization of Tuple.
     {
