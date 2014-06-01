@@ -12,6 +12,13 @@ void print_usage(int, char** argv)
 template< class MonoComplexT >
 void compute_radial( SessionConfig conf, int argc, char** argv )
 {
+
+    if (conf.num_punctures == 0)
+    {
+        std::cout << "All homology is 0 since m = 0." << std::endl;
+        return;
+    }
+
     std::ofstream ofs;
     std::string filename = argv[0];
 
@@ -38,7 +45,7 @@ void compute_radial( SessionConfig conf, int argc, char** argv )
     std::cout.flush();
     ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
     ofs << std::endl;
-/*
+
     std::cout << "-------- Computing Homology --------" << std::endl;
     ofs << "-------- Computing Homology --------" << std::endl;
 
@@ -131,7 +138,7 @@ void compute_radial( SessionConfig conf, int argc, char** argv )
     // Print results.
     std::cout << homology << std::endl;
     ofs << homology << std::endl;
-*/
+
     ofs.close();
 }
 
