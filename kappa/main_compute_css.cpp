@@ -36,9 +36,9 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     ClusterSpectralSequenceT cluster_spectral_sequence( conf.genus, conf.num_punctures, conf.sgn_conv, conf.num_threads );
     typename ClusterSpectralSequenceT::CSSHomologyType homology_E0;
     typename ClusterSpectralSequenceT::CSSHomologyType homology_E1;
-    std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+    std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl
               << std::endl;
-    ofs       << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+    ofs       << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl
               << std::endl;
     
     //
@@ -76,17 +76,17 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             std::cout << std::setw(9) << stream.str() << std::setw(6) << cur_basis.size() << ";    ";
             ofs       << std::setw(9) << stream.str() << std::setw(6) << cur_basis.size() << ";    ";
         }
-        std::cout << std::endl
-                  << std::endl;
-        ofs       << std::endl
-                  << std::endl;
+        std::cout << std::endl;
+        ofs       << std::endl;
     }
     
     //
     // Compute E^1 and E^2 terms.
     //
-    std::cout << "-------- Computing E^1-term & E^2-term --------" << std::endl;
-    ofs       << "-------- Computing E^1-term & E^2-term  --------" << std::endl;
+    std::cout << std::endl
+              << "-------- Computing E^1-term & E^2-term --------" << std::endl;
+    ofs       << std::endl
+              << "-------- Computing E^1-term & E^2-term  --------" << std::endl;
     
     // Compute all differentials and homology consecutively.
     for( auto& basis_it : cluster_spectral_sequence.basis_complex )
@@ -227,9 +227,9 @@ void compute_css( SessionConfig conf, int argc, char** argv )
 
             // Monitoring thread.
             max_possible_rank = std::min( cluster_spectral_sequence.diff_complex.get_current_differential().sec_size1(), cluster_spectral_sequence.diff_complex.get_current_differential().sec_size2() );
-            if( (uint32_t)homology_E1[p-1].get_kern(l) > 0 )
+            if( (uint32_t)homology_E0[p-1].get_kern(l-1) > 0 )
             {
-                max_possible_rank = std::min( max_possible_rank, (uint32_t)homology_E1[p-1].get_kern(l) );
+                max_possible_rank = std::min( max_possible_rank, (uint32_t)(homology_E0[p-1].get_kern(l-1) - homology_E0[p-1].get_tors(l-1) ) );
             }
             monitor_thread = std::async( std::launch::async, [&]()
             {

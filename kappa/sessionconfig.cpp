@@ -86,12 +86,31 @@ bool SessionConfig::setup_configuration()
         
         if( rational == false )
         {
-            Zm::set_modulus(prime);
-            if(prime == 2)
+            bool is_prime = true;
+            for( uint32_t i = 2; i < prime; ++i )
             {
-                sgn_conv = no_signs;
+                if( prime % i == 0 )
+                {
+                    is_prime = false;
+                    break;
+                }
+            }
+            
+            if( is_prime )
+            {
+                Zm::set_modulus(prime);
+                if(prime == 2)
+                {
+                    sgn_conv = no_signs;
+                }
+            }
+            else
+            {
+                std::cout << "Die Zahl p ist nicht prim." << std::endl;
+                return false;
             }
         }
+        
         return true;
     }
     else
