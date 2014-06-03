@@ -43,7 +43,7 @@ public:
     typedef DiagonalizerT DiagonalizerType; ///< We use this typedef to grant access this type from other classes.
     typedef HomologyT HomologyType;         ///< We use this typedef to grant access this type from other classes.
     
-    ChainComplex(bool matrices_are_transposed = false) : transp(matrices_are_transposed) {} ///< Constructs an empty chain complex.
+    ChainComplex(bool matrices_are_transposed = false); ///< Constructs an empty chain complex.
 
     // Methods for the usage of current_differential.
 
@@ -68,7 +68,7 @@ public:
     /**
      *  Access the coefficient of the current differential at the position (row, col).
     **/
-    CoefficientT &operator() ( uint32_t row, uint32_t col );
+    CoefficientT &operator() ( const uint32_t row, const uint32_t col );
     
     /**
      * @return number of rows resp. columns of the current differential
@@ -79,12 +79,7 @@ public:
     /**
      *  Compute the kernel at the \f$n\f$-th spot and the torsion at the \f$(n-1)\f$-th spot.
     **/
-    HomologyT compute_current_kernel_and_torsion( int32_t n, uint32_t number_threads = 1 );
-    
-    /**
-     *  Compute the kernel at the \f$n\f$-th spot and the torsion at the \f$(n-1)\f$-th spot.
-    **/
-    HomologyT compute_current_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads = 1 );
+    HomologyT compute_current_kernel_and_torsion( const int32_t n );
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     
@@ -93,22 +88,22 @@ public:
     /**
      *  Access the \f$n\f$-th differential.
     **/
-    MatrixT &operator[] ( int32_t n );
+    MatrixT &operator[] ( const int32_t n );
     
     /**
      *  Access the \f$n\f$-th differential.
     **/
-    const MatrixT &at ( const int32_t& n ) const;
+    const MatrixT &at ( const int32_t n ) const;
     
     /**
      *  @returns 0 iff there is no differential stored and 1 else.
     **/
-    size_t count( const int32_t& n ) const;
+    size_t count( const int32_t n ) const;
     
     /**
      *  Erases the n-th differential of the complex.
     **/
-    void erase( const int32_t& n );
+    void erase( const int32_t n );
     
     /**
      *  Erases all differentials of the complex.
@@ -118,22 +113,17 @@ public:
     /**
      *  Access the coefficient of the \f$n\f$-th differential at the position (row, col).
     **/
-    CoefficientT &operator() ( int32_t n, uint32_t row, uint32_t col );
+    CoefficientT &operator() ( const int32_t n, const uint32_t row, const uint32_t col );
     
     /**
      *  Compute the homology at the \f$n\f$-th spot.
     **/
-    HomologyT homology( int32_t n, uint32_t number_threads = 1 );
-    
-    /**
-     *  Compute the homology at the \f$n\f$-th spot.
-    **/
-    HomologyT homology( int32_t n, atomic_uint & current_rank, uint32_t number_threads = 0 );
+    HomologyT homology( const int32_t n );
     
     /**
      *  Compute the kernel at the \f$n\f$-th spot and the torsion at the \f$(n-1)\f$-th spot.
     **/
-    HomologyT compute_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads=0 );
+    HomologyT compute_kernel_and_torsion( const int32_t n );
     
     /**
      *  Compute all the homology.
@@ -143,7 +133,7 @@ public:
     /**
      *  Checks if the \f$n\f$-th differential exists.
     **/
-    bool exists_differential( const int32_t& n ) const;
+    bool exists_differential( const int32_t n ) const;
 
 
 private:

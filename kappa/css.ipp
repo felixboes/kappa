@@ -77,6 +77,7 @@ ClusterSpectralSequence< MatrixComplex > :: ClusterSpectralSequence(uint32_t _g,
     Tuple tuple(h);
     tuple[1] = Transposition(2, 1);
     tuple.p = 2;
+    diff_complex.get_diagonalizer().num_threads = number_threads;
     
     gen_bases(1, 2, tuple);  // We start with the transposition ... (2 1).
 }

@@ -3,6 +3,13 @@
 // Methods for the usage of current_differential.
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::ChainComplex (bool matrices_are_transposed) : transp(matrices_are_transposed)
+{
+    diago.transp = transp;
+}
+
+
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
 MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::get_current_differential()
 {
     return current_differential;
@@ -45,24 +52,17 @@ size_t ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::num_rows
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator() ( uint32_t row, uint32_t col )
+CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator() ( const uint32_t row, const uint32_t col )
 {
     return current_differential(row, col);
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_current_kernel_and_torsion( int32_t n, uint32_t number_threads )
-{
-    atomic_uint current_rank(0);
-    return compute_kernel_and_torsion(n, current_rank, number_threads);
-}
-
-template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_current_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads )
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_current_kernel_and_torsion( const int32_t n )
 {
     HomologyT homol;
     // Diagonalize.
-    diago( current_differential, current_rank, number_threads, transp );
+    diago( current_differential );
     homol.set_kern( n, diago.kern() );
     homol.set_tors( n-1, diago.tors() );
     
@@ -74,19 +74,19 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
 // Methods for the use of the map of differentials.
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-const MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::at (const int32_t& n ) const
+const MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::at (const int32_t n ) const
 {
     return differential.at(n);
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-size_t ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::count (const int32_t& n ) const
+size_t ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::count (const int32_t n ) const
 {
     return differential.count(n);
 }
 
 template < class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::erase (const int32_t &n)
+void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::erase (const int32_t n)
 {
     if( differential.count(n) != 0 )
     {
@@ -111,27 +111,20 @@ void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::erase_all 
 }
 
  template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator() ( int32_t n, uint32_t row, uint32_t col )
+CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator() ( const int32_t n, const uint32_t row, const uint32_t col )
 {
     return differential[n](row, col);
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-bool ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::exists_differential( const int32_t& n ) const
+bool ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::exists_differential( const int32_t n ) const
 {
     // The n-th module exists iff there exists a matrix leaving it.
     return differential.count(n) > 0;
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homology( int32_t n, uint32_t number_threads )
-{
-    atomic_uint current_rank;
-    return homology(n, current_rank, number_threads);
-}
-
-template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads )
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_kernel_and_torsion( const int32_t n )
 {
     HomologyT homol;
     // Case by case anaylsis:
@@ -168,7 +161,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
     else
     {
         // Diagonalize.
-        diago( differential[n], current_rank, number_threads, transp );
+        diago( differential[n] );
         homol.set_kern( n, diago.kern() );
         homol.set_tors( n-1, diago.tors() );
     }
@@ -176,7 +169,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homology( int32_t n, atomic_uint & current_rank, uint32_t number_threads )
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homology( const int32_t n )
 {
     HomologyT homol;
     // Case by case anaylsis:
@@ -209,7 +202,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
     else
     {
         // Diagonalize.
-        diago( differential[n], current_rank, number_threads, transp );
+        diago( differential[n] );
         homol.set_kern( n, diago.kern() );
     }
     // diff_{n+1} is 0
@@ -231,7 +224,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
             std::cerr << "Error: Column-Rows exception at position " << n << std::endl;
         }
         // Diagonalize.
-        diago( differential[n+1], current_rank, number_threads, transp );
+        diago( differential[n+1] );
         homol.set_tors( n, diago.tors() );
     }
 
@@ -261,7 +254,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
         else
         {
             // diagonalize
-            diago(diff, 0, transp);
+            diago( diff );
             homol.set_kern( n, diago.kern() );
             homol.set_tors( n-1, diago.tors() );
         }

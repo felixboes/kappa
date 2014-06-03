@@ -105,7 +105,7 @@ void compute_css( SessionConfig conf, int argc, char** argv )
         for( auto& l_basis_it : l_bases )
         {
             auto l = l_basis_it.first;
-            atomic_uint current_rank(0);
+            atomic_uint& current_rank = cluster_spectral_sequence.diff_complex.get_diagonalizer().current_rank;
             uint32_t max_possible_rank(0);
 
             //
@@ -142,7 +142,7 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             // Diagonalzing thread.
             auto partial_homology_thread = std::async( std::launch::async, [&]()
             {
-                auto ret = cluster_spectral_sequence.diff_complex.compute_current_kernel_and_torsion( l, current_rank, conf.num_threads );
+                auto ret = cluster_spectral_sequence.diff_complex.compute_current_kernel_and_torsion( l );
                 state = 1;
                 return ret;
             } );
@@ -220,7 +220,7 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             cluster_spectral_sequence.prepare_d1_diag();
             partial_homology_thread = std::async( std::launch::async, [&]()
             {
-                auto ret = cluster_spectral_sequence.diff_complex.compute_current_kernel_and_torsion( l, current_rank, conf.num_threads );
+                auto ret = cluster_spectral_sequence.diff_complex.compute_current_kernel_and_torsion( l );
                 state = 1;
                 return ret;
             } );

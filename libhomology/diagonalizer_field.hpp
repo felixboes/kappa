@@ -41,32 +41,27 @@ public:
     /**
      *  Constructor.
     **/
-    DiagonalizerField() {}
+    DiagonalizerField() : transp(false), def(0), rnk(0), num_threads(2), current_rank(0) {}
 
     /**
      *  Diagonalizes a given matrix.
      *  If the number of threads is given and greater then 1, we use the multithreaded version.
      *  @warning The list of rows we want to ommit has to be sorted.
     **/
-    void operator() ( MatrixType&           matrix,
-                      uint32_t              number_threads = 0,
-                      bool                  matrix_is_transposed = false);
+    void operator() ( MatrixType& matrix);
 
     /**
      *   Diagonalizes a given matrix and gives access to the progress by writing the current rank to current_rank.
      *   If the number of threads is given and greater then 1, we use the multithreaded version.
     **/
-    void operator() ( MatrixType&           matrix,
-                      atomic_uint&          current_rank,
-                      uint32_t              number_threads = 0,
-                      bool                  matrix_is_transposed = false);
+    void operator() ( MatrixType& matrix, atomic_uint& current_rank);
 
     /**  @return defect of the matrix */
-    uint32_t dfct();
+    uint32_t dfct() const;
     /**  @return defect of the matrix */
     HomologyField::KernT kern();
     /**  @return rank of the matrix */
-    uint32_t rank();
+    uint32_t rank() const;
     /**  @return rank of the matrix */
     HomologyField::TorsT tors();
 
@@ -80,18 +75,15 @@ public:
     /**
      *  @return rank of matrix and gives access to the progress by writing the current rank to current_rank.
      *  The matrix is diagonalized via Gauss to compute the number of linearly independant columns or rows.
-     */
-    uint32_t diag_field(MatrixType& matrix, atomic_uint & current_rank);
-
-    /**
-     *  @return rank of matrix and gives access to the progress by writing the current rank to current_rank.
-     *  The matrix is diagonalized via Gauss to compute the number of linearly independant columns or rows.
      *  This version is parallelized and uses number_threads many threads.
      */
-    uint32_t diag_field_parallelized(MatrixType& matrix, atomic_uint & current_rank, uint32_t number_threads);
+    uint32_t diag_field_parallelized(MatrixType& matrix );
 
+    bool transp;    ///< True iff the transposed matrices are stored.
     uint32_t def;   ///< The defect of the matrix.
     uint32_t rnk;   ///< The rank of the matrix.
+    uint32_t num_threads;
+    atomic_uint current_rank;
     
     std::list< size_t > ommit_rows;
     
