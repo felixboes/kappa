@@ -53,9 +53,9 @@ void update_differential(MatrixBool &           differential,
 }
 
 int32_t sign(const int32_t          parity,
-            const int8_t           i,
-            const int8_t           or_sign,
-            const SignConvention & sign_conv )
+             const int8_t           i,
+             const int8_t           or_sign,
+             const SignConvention & sign_conv )
 {
     if ( sign_conv == no_signs)
     {

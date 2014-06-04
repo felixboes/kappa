@@ -137,7 +137,6 @@ public:
     
     void show_basis( const int32_t p ) const;     ///< print a basis to std::out
     void show_differential( const int32_t p ) const;  ///< print a differential to std::out
-    void show_differential_naive( const int32_t p ) const;    ///< print a differential to std::out (if the differential was generated the naive way)
 //private:
 
     size_t min_symbol() const; ///< minimum symbol that may be used for a cell of this MonoComplex
@@ -151,7 +150,6 @@ public:
 
     SignConvention sign_conv;  ///< The sign convention.
     MatrixComplex matrix_complex;                         ///< underlying matrix complex of this MonoComplex
-    MatrixComplex matrix_complex_naive;                   ///< underlying matrix complex of this MonoComplex (genereted the naive way)
     std::map< int32_t, MonoBasis > basis_complex;        ///< basis_complex[n] is the n-th MonoBasis, i.e. the basis of the n-th module of this MonoComplex. 
 };
 

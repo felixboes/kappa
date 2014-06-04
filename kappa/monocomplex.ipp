@@ -74,21 +74,6 @@ void MonoComplex< MatrixComplex > :: show_differential( const int32_t p ) const
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: show_differential_naive( const int32_t p ) const
-{
-    if( matrix_complex_naive.count(p) )
-    {
-        std::cout << "This it the " << p << "-th differential (naive)." << std::endl;
-        std::cout << matrix_complex_naive.at(p);
-        std::cout << std::endl;
-    }
-    else
-    {
-        std::cout << "The " << p << "-th differential (naive) is empty." << std::endl;
-    }
-}
-
-template< class MatrixComplex >
 size_t MonoComplex< MatrixComplex > :: min_symbol() const
 {
     // In the radial case, the minimum symbol is 0,
