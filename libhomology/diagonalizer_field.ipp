@@ -1,7 +1,7 @@
 #include "diagonalizer_field.hpp"
 
 template< class MatrixType >
-uint32_t DiagonalizerField< MatrixType >::dfct()
+uint32_t DiagonalizerField< MatrixType >::dfct() const
 {
     return def;
 }
@@ -13,7 +13,7 @@ HomologyField::KernT DiagonalizerField< MatrixType >::kern()
 }
 
 template< class MatrixType >
-uint32_t DiagonalizerField< MatrixType >::rank()
+uint32_t DiagonalizerField< MatrixType >::rank() const
 {
     return rnk;
 }
@@ -29,11 +29,10 @@ HomologyField::TorsT DiagonalizerField< MatrixType >::tors()
  *  This done by computing the number of lineary independent columns or rows.
  */
 template< class MatrixType >
-uint32_t DiagonalizerField< MatrixType >::diag_field(MatrixType &matrix, atomic_uint& current_rank)
+uint32_t DiagonalizerField< MatrixType >::diag_field( MatrixType &matrix )
 {
     size_t num_rows = matrix.size1();
     size_t num_cols = matrix.size2();
-    current_rank = 0; // Stores the dimension of the subspace spanned by the first 0 \le j < col columns. The dimension is at most of size row.
 
     /// @TODO: Is #rows <= #cols?
     // if( num_rows <= num_cols )
@@ -91,20 +90,12 @@ uint32_t DiagonalizerField< MatrixType >::diag_field(MatrixType &matrix, atomic_
 }
 
 template< class MatrixType >
-void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, uint32_t number_threads )
+void DiagonalizerField< MatrixType >::operator() ( MatrixType& matrix )
 {
-    // call operator() ( MatrixType &m, atomic_uint &, uint32_t ).
-    atomic_uint current_rank;
-    this->operator ()(matrix, current_rank, number_threads);
-}
-
-template< class MatrixType >
-void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t num_working_threads, uint32_t num_remaining_threads )
-{
-    // We use the non-parallel version.
-    if( num_working_threads == 1 && num_remaining_threads == 0)
+    current_rank = 0;
+    if( num_working_threads == 1 && num_remaining_threads == 0 )
     {
-        rnk = diag_field(matrix, current_rank);
+        rnk = diag_field( matrix );
     }
     else
     {
@@ -114,9 +105,16 @@ void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, atomic_ui
             --num_working_threads;
             ++num_remaining_threads;
         }
-        rnk = diag_field_parallelized( matrix, current_rank, num_working_threads, num_remaining_threads );
+        rnk = diag_field_parallelized( matrix );
     }
-    def = matrix.size1() - rnk;
+    if( transp == false )
+    {
+        def = matrix.size2() - ommit_rows.size() - rnk;
+    }
+    else
+    {
+        def = matrix.size1() - ommit_rows.size() - rnk;
+    }
 }
 
 
@@ -124,7 +122,13 @@ void DiagonalizerField< MatrixType >::operator() ( MatrixType &matrix, atomic_ui
 
 
 template < class MatrixType >
-DiagonalizerField< MatrixType >::JobQueue::JobQueue(MatrixType & matrix_init, uint32_t number_of_working_threads, uint32_t number_of_remaining_threads, atomic_uint & current_rank )
+DiagonalizerField< MatrixType >::JobQueue::JobQueue(
+    MatrixType&                         matrix_init,
+    typename MatrixType::DiagonalType&  diag,
+    const std::list< size_t >&          ommit_rows,
+    const uint32_t                      number_of_working_threads,
+    const uint32_t                      number_of_remaining_threads,
+    atomic_uint&                        current_rank )
 :
     matrix(matrix_init),
     rows_to_work_at(),
@@ -134,15 +138,22 @@ DiagonalizerField< MatrixType >::JobQueue::JobQueue(MatrixType & matrix_init, ui
     num_working_threads(number_of_working_threads),
     num_remaining_threads(number_of_remaining_threads),
     row_1(0),
-    col(0)
+    col(0),
+    diagonal(diag)
 {
-    if (matrix.size2() == 0) // Then no diagonalizing is necessary.
+    if (matrix.size1() == 0 || matrix.size2() == 0) // Then no diagonalizing is necessary.
     {
         return;
     }
     // Sort the entries of the first column by whether they are zero or not.
-    for( size_t row = 0; row < matrix.size1(); ++row )
+    auto ommit_it = ommit_rows.begin();
+    for( size_t row = 0 ; row < matrix.size1(); ++row )
     {
+        if( ommit_it != ommit_rows.end() && row == *ommit_it )
+        {
+            ++ommit_it;
+            continue;
+        }
         if ( matrix(row, col) == typename MatrixType::CoefficientType(0))
         {
             remaining_rows.push_back(row);
@@ -159,6 +170,7 @@ DiagonalizerField< MatrixType >::JobQueue::JobQueue(MatrixType & matrix_init, ui
     if (rows_to_work_at.size() != 0)
     {
         row_1 = rows_to_work_at.back();
+        diagonal.emplace_back( row_1, col );
         rows_to_work_at.pop_back();
         // This row contributes to the rank.
         ++current_rank;
@@ -253,6 +265,7 @@ bool DiagonalizerField< MatrixType >::JobQueue::update_rank_and_work(atomic_uint
         if (rows_to_work_at.size() != 0)
         {
             row_1 = rows_to_work_at.back();
+            diagonal.push_back( MatrixEntryType(row_1, col) );
             rows_to_work_at.pop_back();
             ++current_rank;
         }
@@ -309,7 +322,7 @@ void DiagonalizerField< MatrixType >::JobQueue::recompute_chunk_sizes()
 
 
 template< class MatrixType >
-DiagonalizerField< MatrixType >::Worker::Worker(uint32_t identification, JobQueue &sl)
+DiagonalizerField< MatrixType >::Worker::Worker( const uint32_t identification, JobQueue &sl )
 :
     id(identification),
     jobs(sl),
@@ -397,13 +410,9 @@ void DiagonalizerField< MatrixType >::Worker::collect_remaining_work(MatrixType 
 }
 
 template< class MatrixType >
-uint32_t DiagonalizerField< MatrixType >::diag_field_parallelized(
-    MatrixType &   matrix,
-    atomic_uint &  current_rank,
-    uint32_t       num_working_threads,
-    uint32_t       num_remaining_threads)
+uint32_t DiagonalizerField< MatrixType >::diag_field_parallelized( MatrixType & matrix )
 {
-    JobQueue jobs(matrix, num_working_threads, num_remaining_threads, current_rank);
+    JobQueue jobs(matrix, matrix.diagonal, ommit_rows, num_working_threads, num_remaining_threads, current_rank);
     std::vector<Worker> workers;
     std::vector<Thread> threads;
 
@@ -411,7 +420,7 @@ uint32_t DiagonalizerField< MatrixType >::diag_field_parallelized(
     for( size_t i = 0; i < num_working_threads; ++i )
     {
         workers.emplace_back( i, jobs );
-        threads.emplace_back( [i, &matrix, &workers]{workers[i].work(matrix);} );
+        threads.emplace_back( [i, &workers, &matrix]{workers[i].work(matrix);} );
     }
 
     // Initialize num_remaining_threads further threads to check for row operations of the next column
@@ -419,7 +428,8 @@ uint32_t DiagonalizerField< MatrixType >::diag_field_parallelized(
     for ( size_t i = 0; i < num_remaining_threads; ++i)
     {
         workers.emplace_back(i, jobs);
-        threads.emplace_back([i, num_working_threads, &matrix, &workers]{workers[num_working_threads + i].collect_remaining_work(matrix);});
+        size_t thread_id = num_working_threads + i;
+        threads.emplace_back([thread_id, &workers, &matrix]{workers[thread_id].collect_remaining_work(matrix);});
     }
     // Start threads.
     do

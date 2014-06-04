@@ -78,6 +78,7 @@ public:
 
 private:
     std::vector<uint8_t> data; ///< stores the Permutation
+    operator size_t() = delete;
 };
 
 /**
@@ -162,7 +163,7 @@ public:
     std::map< uint8_t, int8_t > orientation_sign() const;
 
     uint32_t p;  ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
-    uint32_t id; ///< The index of this Tuple in the basis of the MonoComplex.
+    size_t id; ///< The index of this Tuple in the basis of the MonoComplex.
 private:
     Transposition& at(size_t q);                     ///< Access the q-th Transposition.
     Transposition const & at(size_t q) const;

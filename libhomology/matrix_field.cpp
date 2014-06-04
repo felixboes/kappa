@@ -23,6 +23,24 @@ void MatrixBool::row_operation( size_t row_1, size_t row_2, size_t )
         data[i][j].flip();
  }
 
+ void MatrixBool::resize (size_t size1, size_t size2, bool)
+ {
+     for (size_t i = 0; i < data.size(); ++i)
+     {
+         data[i].reset();
+     }
+
+     data.resize(size1);
+     for (size_t i = 0; i < size1; ++i)
+     {
+         data[i].resize(size2);
+     }
+     num_rows = size1;
+     num_cols = size2;
+     
+     diagonal.clear();
+ }
+ 
  bool MatrixBool::at(size_t i, size_t j) const
 {
     return data[i][j];
@@ -50,3 +68,22 @@ void MatrixBool::clear()
     }
 }
 
+std::ostream& operator<< ( std::ostream& stream, const MatrixBool & matrix)
+{
+    for( size_t i = 0; i < matrix.num_rows; ++i )
+    {
+        for( size_t j = 0; j < matrix.num_cols; )
+        {
+            stream << matrix.at(i,j);
+            if( ++j < matrix.num_cols )
+            {
+                stream << ",";
+            }
+            else
+            {
+                stream << std::endl;
+            }
+        }
+    }
+    return stream;
+}

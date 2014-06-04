@@ -6,10 +6,15 @@
  *
  */
 template< class MatrixComplex >
-MonoComplex< MatrixComplex > :: MonoComplex( uint32_t _g, uint32_t _m, SignConvention sgn, uint32_t number_threads, bool radial_ )
-    : g(_g), m(_m), num_threads(number_threads), radial(radial_), sign_conv(sgn)
+MonoComplex< MatrixComplex > :: MonoComplex(
+        const uint32_t _g,
+        const uint32_t _m,
+        SignConvention sgn,
+        const uint32_t number_working_threads,
+        const uint32_t number_remaining_threads,
+        const bool _radial)
+    : g(_g), m(_m), h(2*_g + _m), num_threads(number_working_threads + number_remaining_threads), radial(_radial), sign_conv(sgn), matrix_complex(true)
 {
-    h = 2 * g + m;
     if (radial) // For radial cells, we have h = 2g + m - 1.
     {
         --h;
@@ -36,7 +41,7 @@ MonoComplex< MatrixComplex > :: MonoComplex( uint32_t _g, uint32_t _m, SignConve
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: show_basis( int32_t p ) const
+void MonoComplex< MatrixComplex > :: show_basis( const int32_t p ) const
 {
     if( basis_complex.count(p) )
     {
@@ -54,7 +59,7 @@ void MonoComplex< MatrixComplex > :: show_basis( int32_t p ) const
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: show_differential( int32_t p ) const
+void MonoComplex< MatrixComplex > :: show_differential( const int32_t p ) const
 {
     if( matrix_complex.count(p) )
     {
@@ -69,7 +74,7 @@ void MonoComplex< MatrixComplex > :: show_differential( int32_t p ) const
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: show_differential_naive( int32_t p ) const
+void MonoComplex< MatrixComplex > :: show_differential_naive( const int32_t p ) const
 {
     if( matrix_complex_naive.count(p) )
     {
@@ -88,7 +93,7 @@ size_t MonoComplex< MatrixComplex > :: min_symbol() const
 {
     // In the radial case, the minimum symbol is 0,
     // in the parallel case, it is 1.
-    return (not radial);
+    return (radial == true? 0 : 1);
 }
 
 template< class MatrixComplex >
@@ -96,19 +101,19 @@ size_t MonoComplex< MatrixComplex > :: min_boundary() const
 {
     // In the radial case, the minimum symbol with possibly non-zero boundary is 0,
     // in the parallel case, it is 1.
-    return (not radial);
+    return (radial == true? 0 : 1);
 }
 
 template< class MatrixComplex >
-size_t MonoComplex< MatrixComplex > :: max_boundary(size_t p) const
+size_t MonoComplex< MatrixComplex > :: max_boundary( const size_t p ) const
 {
     // In the radial case, the maximum symbol with possibly non-zero boundary is p,
     // in the parallel case, it is p-1.
-    return (p - (not radial));
+    return ( p - (radial == true? 0 : 1) );
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, uint32_t start_symbol, Tuple& tuple)
+void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t l, const uint32_t p, const uint32_t start_symbol, Tuple& tuple )
 {
     /* Up to now we have determined all monotonic tuples of l transpositions containing the 
        symbols 1, ..., p, each at least once. We now add an (l+1)-th transposition and continue
@@ -117,6 +122,7 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, uint32_t 
     {
 	/* From an l-tuple containing p symbols we can build up an (l+1)-tuple 
         with p, p+1 or p+2 symbols. */
+
         /* p -> p
            In this case we use the same number of symbols. Since we only
            enumerate monotonic tuples, the height of the (l+1)-th transposition needs to be p.
@@ -211,28 +217,19 @@ void MonoComplex< MatrixComplex > :: gen_bases(uint32_t l, uint32_t p, uint32_t 
 
 
 template <class MatrixType>
-void update_differential(MatrixType &     differential,
-                         Tuple &          tuple,
-                         Tuple &          boundary,
-                         int32_t          parity,
-                         int8_t           i,
-                         int8_t           or_sign,
-                         SignConvention & sign_conv)
+void update_differential(MatrixType &           differential,
+                         const size_t           row,
+                         const size_t           column,
+                         const int32_t          parity,
+                         const int8_t           i,
+                         const int8_t           or_sign,
+                         const SignConvention & sign_conv)
 {
-    int8_t sign_in_differential = sign(parity, i, or_sign, sign_conv);
-
-    if (sign_in_differential == 1)
-    {
-        differential(tuple.id, boundary.id) += 1;
-    }
-    else if (sign_in_differential == -1)
-    {
-        differential(tuple.id, boundary.id) += -1;
-    }
+    differential(row, column) += typename MatrixType::CoefficientType( sign(parity, i, or_sign, sign_conv) );
 }
 
 template< class MatrixComplex >
-void MonoComplex<MatrixComplex>::compute_boundary(Tuple & tuple, uint32_t p, typename MatrixComplex::MatrixType & differential)
+void MonoComplex<MatrixComplex>::compute_boundary( Tuple & tuple, const uint32_t p, typename MatrixComplex::MatrixType & differential )
 {
     int32_t parity = 0;
     Tuple boundary;
@@ -263,6 +260,7 @@ void MonoComplex<MatrixComplex>::compute_boundary(Tuple & tuple, uint32_t p, typ
                 break;
             }
         }
+
         // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
         if( norm_preserved )   // Compute all horizontal boundaries.
         {
@@ -277,7 +275,7 @@ void MonoComplex<MatrixComplex>::compute_boundary(Tuple & tuple, uint32_t p, typ
                 if( (boundary = current_basis.d_hor(i)) )
                 {
                     boundary.id = basis_complex[p-1].id_of(boundary);
-                    update_differential<MatrixType>(differential, tuple, boundary,
+                    update_differential<MatrixType>(differential, tuple.id, boundary.id,
                                             parity, i, or_sign[i], sign_conv);
                 }
             }
@@ -285,10 +283,12 @@ void MonoComplex<MatrixComplex>::compute_boundary(Tuple & tuple, uint32_t p, typ
     }
 }
 
-typedef std::vector<Tuple> Work;
-
 template< class MatrixComplex >
-void work(MonoComplex<MatrixComplex> & monocomplex, Work & work, uint32_t p, typename MatrixComplex::MatrixType & differential)
+void monocomplex_work(
+        MonoComplex<MatrixComplex> &            monocomplex,
+        MonocomplexWork &                       work,
+        const uint32_t                          p,
+        typename MatrixComplex::MatrixType &    differential)
 {
     for ( auto it : work)
     {
@@ -298,7 +298,7 @@ void work(MonoComplex<MatrixComplex> & monocomplex, Work & work, uint32_t p, typ
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
+void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
 {
     /**
      *  Instead of implementing the differential recursively, we use a direct formula to enumerate
@@ -319,11 +319,12 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
 
     // Allocate enough space for the differential.
     // Todo: Test this.
-    matrix_complex.get_current_differential().resize( basis_complex[p].size(), basis_complex[p-1].size(), true );
     MatrixType & differential = matrix_complex.get_current_differential();
+    differential.resize( basis_complex[p].size(), basis_complex[p-1].size(), true );
+    
     // For each tuple t in the basis, we compute all basis elements that
     // occur in kappa(t).
-    std::vector<Work> elements_per_threads (num_threads);
+    std::vector<MonocomplexWork> elements_per_threads (num_threads);
     uint32_t num_elements_per_thread = basis_complex[p].size() / num_threads;
     if (basis_complex[p].size() % num_threads != 0)
     {
@@ -343,7 +344,7 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     std::vector<std::thread> workers(num_threads);
     for (uint32_t t = 0; t < num_threads; ++t)
     {
-        workers[t] = std::thread(work<MatrixComplex>, std::ref(*this), std::ref(elements_per_threads[t]), p, std::ref(differential));
+        workers[t] = std::thread(monocomplex_work<MatrixComplex>, std::ref(*this), std::ref(elements_per_threads[t]), p, std::ref(differential));
     }
     for (uint32_t t = 0; t < num_threads; ++t)
     {
@@ -351,98 +352,9 @@ void MonoComplex< MatrixComplex > :: gen_differential(int32_t p)
     }
 }
 
-
-template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: gen_differential_naive(int32_t p)
-{    
-    // Allocate enough space for the differential.
-    // Todo: Test this.    
-    matrix_complex_naive[p] = MatrixType ( basis_complex[p-1].size(), basis_complex[p].size() );
-    
-    std::cout << "The map pi o del o kappa_" << p << " (naive) is now computed..." << std::endl;
-    // For each tuple t in the basis, we compute all basis elements that 
-    // occur in kappa(t). 
-    for( auto& it : basis_complex[p].basis )
-    {
-		//// here we recursively determine all contributing sequences s_h, ..., s_1.        
-
-        std::vector<int32_t> s(h+1, 1);
-		int pos = h;
-		pi_del_phi_naive(it, s);
-		
-        while (pos > 0)
-		{
-			while( s[h] < h )
-			{
-				++s[h];
-				pi_del_phi_naive(it, s);
-			}
-			while ( (pos > 0) && (s[pos] == pos) )
-			{
-				s[pos] = 1;
-				--pos;
-			}
-			if (pos == 0)
-            {
-				break;
-            }
-            
-			++s[pos];
-			pi_del_phi_naive(it, s);
-			pos = h;
-		}
-	}
-}
-
 template< class MatrixComplex >
 void MonoComplex< MatrixComplex >::erase_differential()
 {
     matrix_complex.erase();
-}
-
-// for one sequence s_p, ..., s_1, this calculates the multiple application of phi, of and of the d_i.
-template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: pi_del_phi_naive(const Tuple& it, std::vector<int32_t> & s)
-{
-    Tuple current_basis = it;
-	Tuple boundary;
-	bool norm_preserved = true;
-    // parity of the exponent of the sign of the current summand of the differential
-    int32_t parity = ((h*(h+1))/2) % 2;
-    
-    uint32_t& p = current_basis.p;
-    MatrixType& differential = matrix_complex_naive[p];
-    
-	for (int32_t q = 1; q <= h; ++q)
-	{
-		parity += s[q] % 2;
-		if (current_basis.phi(q, s[q]) == false)
-		{
-			norm_preserved = false;
-			break;
-		}
-	}
-    // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
-    if( norm_preserved )   // Compute all horizontal boundaries.
-    {
-        for( uint32_t i = min_boundary(); i <= max_boundary(p); i++ )
-        {
-            if( (boundary = current_basis.d_hor_naive(i)) && boundary.monotone() ) // then it contributes to the differential with the computed parity
-            {
-                boundary.id = basis_complex[p-1].id_of(boundary);
-//                std::cout << it << "->" << boundary << std::endl;
-//                std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << (parity + i) % 2 << std::endl;
-//                std::cout << std::endl;
-                if ((parity + i) % 2 == 0)
-                {
-                    differential(boundary.id, it.id) += 1;
-                }
-                else
-                {
-                    differential(boundary.id, it.id) += -1;
-                }
-            }
-        }
-    }
 }
 

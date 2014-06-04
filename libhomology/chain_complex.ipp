@@ -1,8 +1,9 @@
 #include "chain_complex.hpp"
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::ChainComplex()
+ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::ChainComplex (bool matrices_are_transposed) : transp(matrices_are_transposed)
 {
+    diago.transp = transp;
 }
 
 // Methods for the usage of current_differential.
@@ -17,6 +18,18 @@ template< class CoefficientT, class MatrixT, class DiagonalizerT, class Homology
 const MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::get_current_differential() const
 {
     return current_differential;
+}
+
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+DiagonalizerT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::get_diagonalizer()
+{
+    return diago;
+}
+
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+const DiagonalizerT& ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::get_diagonalizer() const
+{
+    return diago;
 }
 
 template < class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
@@ -38,25 +51,17 @@ size_t ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::num_rows
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator() ( uint32_t row, uint32_t col )
+CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator() ( const uint32_t row, const uint32_t col )
 {
     return current_differential(row, col);
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_current_kernel_and_torsion( int32_t n, uint32_t number_threads, uint32_t num_remaining_threads )
-{
-    atomic_uint current_rank(0);
-    return compute_kernel_and_torsion(n, current_rank, number_threads, num_remaining_threads);
-}
-
-template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_current_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads, uint32_t num_remaining_threads )
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_current_kernel_and_torsion( const int32_t n )
 {
     HomologyT homol;
     // Diagonalize.
-    DiagonalizerT diago;
-    diago( current_differential, current_rank, number_threads, num_remaining_threads );
+    diago( current_differential );
     homol.set_kern( n, diago.kern() );
     homol.set_tors( n-1, diago.tors() );
     
@@ -68,19 +73,19 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
 // Methods for the use of the map of differentials.
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-const MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::at (const int32_t& n ) const
+const MatrixT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::at (const int32_t n ) const
 {
     return differential.at(n);
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-size_t ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::count (const int32_t& n ) const
+size_t ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::count (const int32_t n ) const
 {
     return differential.count(n);
 }
 
 template < class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::erase (const int32_t &n)
+void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::erase (const int32_t n)
 {
     if( differential.count(n) != 0 )
     {
@@ -105,27 +110,20 @@ void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::erase_all 
 }
 
  template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator() ( int32_t n, uint32_t row, uint32_t col )
+CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator() ( const int32_t n, const uint32_t row, const uint32_t col )
 {
     return differential[n](row, col);
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-bool ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::exists_differential( const int32_t& n ) const
+bool ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::exists_differential( const int32_t n ) const
 {
     // The n-th module exists iff there exists a matrix leaving it.
     return differential.count(n) > 0;
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homology( int32_t n, uint32_t number_threads )
-{
-    atomic_uint current_rank;
-    return homology(n, current_rank, number_threads);
-}
-
-template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_kernel_and_torsion( int32_t n, atomic_uint & current_rank, uint32_t number_threads, uint32_t num_remaining_threads )
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compute_kernel_and_torsion( const int32_t n )
 {
     HomologyT homol;
     // Case by case anaylsis:
@@ -139,7 +137,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
         // The dimension of the n-th module is known by the (n+1)-th differential.
         if( differential.count(n+1) )
         {
-            homol.set_kern( n, differential[n+1].size1() );
+            homol.set_kern( n, (transp == false ? differential[n+1].size1() : differential[n+1].size2()) );
         }
         else // The dimension of the n-th module is unkown.
         {
@@ -150,10 +148,10 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
         }
     }
    // diff_n has no rows.
-    else if ( differential[n].size1() == 0 )
+    else if ( ( transp == false ? differential[n].size1() : differential[n].size2() ) == 0 )
     {
        // The dimension equals the number of columns.
-        homol.set_kern( n, differential[n].size2() );
+        homol.set_kern( n, (transp == false ? differential[n].size2() : differential[n].size1()) );
         // There is no torsion one dimension below.
         typedef typename HomologyT::TorsT TT;
         TT t = TT();
@@ -162,8 +160,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
     else
     {
         // Diagonalize.
-        DiagonalizerT diago;
-        diago( differential[n], current_rank, number_threads, num_remaining_threads );
+        diago( differential[n] );
         homol.set_kern( n, diago.kern() );
         homol.set_tors( n-1, diago.tors() );
     }
@@ -171,7 +168,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::compu
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homology( int32_t n, atomic_uint & current_rank, uint32_t number_threads )
+HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homology( const int32_t n )
 {
     HomologyT homol;
     // Case by case anaylsis:
@@ -185,7 +182,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
         // The dimension of the n-th module is known by the (n+1)-th differential.
         if( differential.count(n+1) )
         {
-            homol.set_kern( n, differential[n+1].size1() );
+            homol.set_kern( n, (transp == false ? differential[n+1].size1() : differential[n+1].size2()) );
         }
         else // The dimension of the n-th module is unkown.
        {
@@ -196,20 +193,19 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
         }
     }
     // diff_n has no rows.
-    else if ( differential[n].size1() == 0 )
+    else if ( (transp == false ? differential[n].size1() : differential[n].size2()) == 0 )
     {
         // The dimension equals the number of columns.
-        homol.set_kern( n, differential[n].size2() );
+        homol.set_kern( n, (transp == false ? differential[n].size2() : differential[n].size1()) );
     }
     else
     {
         // Diagonalize.
-        DiagonalizerT diago;
-        diago( differential[n], current_rank, number_threads );
+        diago( differential[n] );
         homol.set_kern( n, diago.kern() );
     }
     // diff_{n+1} is 0
-    if( differential.count(n+1) == 0 || differential[n+1].size1() == 0 )
+    if( differential.count(n+1) == 0 || (transp == false ? differential[n+1].size1() : differential[n+1].size2()) == 0 )
     {
         // There is no torsion.
         typedef typename HomologyT::TorsT TT;
@@ -220,16 +216,15 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
     {
         // Assert that the matrices have the right number of colums and rows.
         if( !(
-                differential.count(n) == 0 || differential[n].size1() == 0 || // Zero matrix
-                differential[n].size2() == differential[n+1].size1()
+                differential.count(n) == 0 || (transp == false ? differential[n].size1() : differential[n].size2()) == 0 || // Zero matrix
+                (transp == false ? differential[n].size2() : differential[n].size1()) == (transp == false ? differential[n+1].size1() : differential[n+1].size2())
                 ) )
         {
             std::cerr << "Error: Column-Rows exception at position " << n << std::endl;
         }
         // Diagonalize.
-        DiagonalizerT diago;
-        diago( differential[n+1], current_rank, number_threads );
-       homol.set_tors( n, diago.tors() );
+        diago( differential[n+1] );
+        homol.set_tors( n, diago.tors() );
     }
 
     return homol;
@@ -248,9 +243,9 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
         int32_t n = it.first;
         MatrixT diff = it.second;
         // if diff_n is 0, everything is kernel and nothing is torsion
-        if( diff.size1() == 0 )
+        if( (transp == false ? diff.size1() : diff.size2()) == 0 )
         {
-            homol.set_kern( n, diff.size2() );
+            homol.set_kern( n, (transp == false ? diff.size2() : diff.size1()) );
             typedef typename HomologyT::TorsT TT;
             TT t = TT();
             homol.set_tors( n-1, t );
@@ -258,8 +253,7 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
         else
         {
             // diagonalize
-            DiagonalizerT diago;
-            diago(diff);
+            diago( diff );
             homol.set_kern( n, diago.kern() );
             homol.set_tors( n-1, diago.tors() );
         }

@@ -18,14 +18,14 @@ template <class MatrixClass>
 class DiagonalizerDummy
 {
 public:
-    DiagonalizerDummy() {}
+    DiagonalizerDummy() : transp(false) {}
     void operator() ( MatrixClass & ) {}
-    void operator() ( MatrixClass &, uint32_t, uint32_t  ) {}
-    void operator() ( MatrixClass &, atomic_uint &, uint32_t, uint32_t ) {}
     uint32_t dfct() {return 0;}
     HomologyDummy::KernT kern() {return HomologyDummy::KernT();}
     uint32_t rank() {return 0;}
     HomologyDummy::TorsT tors() {return HomologyDummy::TorsT();}
+    
+    bool transp;
 };
 
 #endif // DIAGONALIZER_DUMMY_HPP

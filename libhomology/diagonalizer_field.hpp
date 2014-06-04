@@ -33,32 +33,30 @@ class DiagonalizerField
 {
 public:
     typedef MatrixT MatrixType;    ///< We use this typedef to grant access the matrix type from other classes.
+    typedef typename MatrixType::MatrixEntryType MatrixEntryType;
+    typedef typename MatrixType::DiagonalType DiagonalType;
+
     class Worker;
 
     /**
      *  Constructor.
-     */
-    DiagonalizerField() {}
+    **/
+    DiagonalizerField() : transp(false), def(0), rnk(0), num_working_threads(2), num_remaining_threads(0), current_rank(0) {}
 
     /**
-    *   Diagonalizes a given matrix.
-    *   If the number of threads is given and greater then 1, we use the multithreaded version.
+     *  Diagonalizes a given matrix and gives access to the progress by writing the current rank to current_rank.
+     *  If the number of working threads is greater than 1 and the number of remaining threads is greater than zero,
+     *  we use the multithreaded version.
+     *  @warning The list of rows we want to ommit has to be sorted.
     **/
-    void operator() ( MatrixType &matrix, uint32_t number_threads=0 );
-
-    /**
-    *   Diagonalizes a given matrix and gives access to the progress by writing the current rank to current_rank.
-    *   If the number of working threads is greater than 1 and the number of remaining threads is greater than zero,
-    *   we use the multithreaded version.
-    **/
-    void operator() ( MatrixType &matrix, atomic_uint & current_rank, uint32_t num_working_threads = 1, uint32_t num_remaining_threads = 0 );
+    void operator() ( MatrixType& matrix );
 
     /**  @return defect of the matrix */
-    uint32_t dfct();
+    uint32_t dfct() const;
     /**  @return defect of the matrix */
     HomologyField::KernT kern();
     /**  @return rank of the matrix */
-    uint32_t rank();
+    uint32_t rank() const;
     /**  @return rank of the matrix */
     HomologyField::TorsT tors();
 
@@ -67,13 +65,7 @@ public:
      *  @return rank of matrix
      *  The matrix is diagonalized via Gauss to compute the number of linearly independant columns or rows.
      */
-    uint32_t diag_field(MatrixType& matrix);
-
-    /**
-     *  @return rank of matrix and gives access to the progress by writing the current rank to current_rank.
-     *  The matrix is diagonalized via Gauss to compute the number of linearly independant columns or rows.
-     */
-    uint32_t diag_field(MatrixType& matrix, atomic_uint & current_rank);
+    uint32_t diag_field( MatrixType& matrix );
 
     /**
      *  @return rank of matrix and gives access to the progress by writing the current rank to current_rank.
@@ -81,11 +73,17 @@ public:
      *  This version is parallelized and uses num_working_threads + num_remaining_threads many threads.
      *  For an explanation of the parallelization, see \c Worker.
      */
-    uint32_t diag_field_parallelized(MatrixType& matrix, atomic_uint & current_rank, uint32_t num_working_threads, uint32_t num_remaining_threads);
+    uint32_t diag_field_parallelized( MatrixType& matrix );
 
+    bool transp;    ///< True iff the transposed matrices are stored.
     uint32_t def;   ///< The defect of the matrix.
     uint32_t rnk;   ///< The rank of the matrix.
-
+    uint32_t num_working_threads;
+    uint32_t num_remaining_threads;
+    atomic_uint current_rank;
+    
+    std::list< size_t > ommit_rows;
+    
     // Classes for paralellization:
     // Todo: give a detailed explanation.
 
@@ -107,7 +105,13 @@ public:
     {
     public:
         //! Collect initial work.
-        JobQueue(MatrixType & matrix_init, uint32_t number_of_working_threads, uint32_t number_of_remaining_threads, atomic_uint & current_rank );
+        JobQueue(
+            MatrixType&                         matrix_init,
+            typename MatrixType::DiagonalType&  diag,
+            const std::list< size_t >&          ommit_these_rows,
+            const uint32_t                      number_of_working_threads,
+            const uint32_t                      number_of_remaining_threads,
+            atomic_uint&                        current_rank );
 
 #ifdef BROKEN_VECTOR_IMPLEMENTATION
         JobQueue(JobQueue const & other);
@@ -186,6 +190,8 @@ public:
          * Current column.
          */
         size_t                    col;
+    private:
+        DiagonalType& diagonal;
     };
 
     /**
@@ -214,7 +220,7 @@ public:
     class Worker
     {
     public:
-        Worker( uint32_t identification, JobQueue & sl );
+        Worker( const uint32_t identification, JobQueue & sl );
 
 #ifdef BROKEN_VECTOR_IMPLEMENTATION
         Worker( Worker const & other);

@@ -1,12 +1,14 @@
 #ifndef CSS_H
 #define CSS_H
 
+#include <algorithm>
 #include <chrono>
 #include <stdint.h>
 #include <functional>
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <stdlib.h>
 #include <unordered_set>
 
 #ifdef COMPILE_WITH_MAGICK
@@ -16,6 +18,7 @@
 #include <libhomology/homology.hpp>
 
 #include "factorial.hpp"
+#include "monocomplex.hpp"
 #include "serialization.hpp"
 #include "sessionconfig.hpp"
 #include "tuple.hpp"
@@ -57,7 +60,7 @@ struct CSSBasis
     /// @warning The serialization library from boost does not yet support unorderd maps (we use boost in the version 1.49). Therefore we must provide a workaround.
     /// boost::serialization method that we use to save a CSSBasis to file.
     template<class Archive>
-    void save(Archive & ar, const unsigned int version) const
+    void save(Archive & ar, const unsigned int) const
     {
         // In order to load an unorderd_set we need to know the exact number of elemets that are stored.
         size_t num_cluster_sizes = basis.size(); // this is the number of cluster sizes that occur.
@@ -75,7 +78,7 @@ struct CSSBasis
     
     /// boost::serialization method that we use to load a CSSBasis from file.
     template<class Archive>
-    void load(Archive & ar, const unsigned int version)
+    void load(Archive & ar, const unsigned int)
     {
         size_t num_cluster_sizes;
         
@@ -110,11 +113,11 @@ class ClusterSpectralSequence
 public:
     typedef typename MatrixComplex::CoefficientType CoefficientType;
     typedef typename MatrixComplex::MatrixType MatrixType;
+    typedef typename MatrixComplex::DiagonalizerType DiagonalizerType;
     typedef typename MatrixComplex::HomologyType HomologyType;
     typedef std::map< int32_t, HomologyType > CSSHomologyType;
-    typedef std::map< int32_t, MatrixComplex > CSSPage;   ///< The \f$E^1\f$-term of the cluster spectral sequence. Every p defines a chain complex \f$E_{p,\ast}\f$.
     
-    ClusterSpectralSequence( uint32_t genus, uint32_t num_punctures, SignConvention sgn );
+    ClusterSpectralSequence( const uint32_t genus, const uint32_t num_punctures, SignConvention sgn, const uint32_t number_working_threads, const uint32_t number_remaining_threads );
     /** Recursive function initializing the basis_complex.
         In the call of gen_bases with the parameters s, p and tuple, we assume that the first s transpositions
         containing symbols 1, ..., p are fixed and append all possible transpositions at position s+1, applying
@@ -125,12 +128,20 @@ public:
         of clusters.
     **/
     void gen_bases( uint32_t s, uint32_t p, Tuple& tuple );
-    void gen_differentials ( int32_t p );          ///< generate all p-th differentials
-    void erase_differentials( int32_t p );          ///< erases all l-th parts of the p-th differential.
+    void gen_d0( int32_t p, int32_t l );
+    void gen_d0_boundary(const Tuple & tuple,
+                         const int32_t p,
+                         const int32_t l,
+                         typename MatrixComplex::MatrixType & differential);
     
-    void show_basis( int32_t p ) const;          ///< print a basis to std::out
-    // todo: add show_diff (p)
-    void show_differential( int32_t p, int32_t l ) const;  ///< print a differential to std::out
+    void gen_d1_stage_1( int32_t p, int32_t l );
+    MatrixType gen_d1_row( int32_t, int32_t l, const Tuple& basis_element );
+    void gen_d1_apply_operations( MatrixType& row );
+    void prepare_d1_diag();
+    void erase_d0();
+    void erase_d1();
+    
+    void show_basis( int32_t p ) const;         ///< print a basis to std::out
 #ifdef COMPILE_WITH_MAGICK
     void draw_differential( int32_t p );        ///< Draws a given differential unsing the c++ version of the Imagemagick library.
 #endif
@@ -140,14 +151,36 @@ public:
     uint32_t g;     ///< genus
     uint32_t m;     ///< number of punctures
     uint32_t h;     ///< h = 2*g+m
+    uint32_t num_threads;  ///< number of threads used to construct the differential
     
     SignConvention sign_conv;                    ///< The sign convention.
-    CSSPage css_page;                            ///< differentials of this ClusterSpectralSequence, sorted by cluster sizes and viewed as chain complexes.
-    std::map< int32_t, CSSBasis > basis_complex; ///< basis_complex[n] is the n-th MonoBasis, i.e. the basis of the n-th module of this MonoComplex.   
+    MatrixComplex diff_complex;                  ///< Due to RAM limitations, we are working with at most two matrices at a time. Therefore we do not model the whole spectral sequence.
+    std::map< int32_t, CSSBasis > basis_complex; ///< basis_complex[n] is the n-th CSSBasis.
+    
 };
 
-typedef ClusterSpectralSequence<ChainComplexQ> ClusterSpectralSequenceQ;
-typedef ClusterSpectralSequence<ChainComplexZm> ClusterSpectralSequenceZm;
+typedef std::vector<Tuple> CSSWork;
+
+template< class MatrixComplex >
+void css_work_0(ClusterSpectralSequence<MatrixComplex> & css,
+              CSSWork & work,
+              const int32_t p,
+              const int32_t l,
+              typename MatrixComplex::MatrixType & differential
+              );
+
+template< class MatrixComplex >
+void css_work_1(ClusterSpectralSequence<MatrixComplex> & css,
+              CSSWork & work,
+              const int32_t p,
+              const int32_t l,
+              typename MatrixComplex::MatrixType & differential,
+              const size_t num_cols,
+              const std::vector< size_t >& offset
+              );
+
+typedef ClusterSpectralSequence<ChainComplexQCSS> ClusterSpectralSequenceQ;
+typedef ClusterSpectralSequence<ChainComplexZmCSS> ClusterSpectralSequenceZm;
 typedef ClusterSpectralSequence<ChainComplexZStorageOnly> ClusterSpectralSequenceZStorageOnly;
 
 #include "css.ipp"
