@@ -17,12 +17,6 @@
 #include "matrix_field.hpp"
 #include "matrix_z_dont_diagonalize.hpp"
 
-// In order to use chain complexes with rational and Zm coefficients in other projects,
-// we have to use instanciate the templates explicitly.
-template class ChainComplex<Q, MatrixQ, DiagonalizerField<MatrixQ>, HomologyField>;
-template class ChainComplex<Zm, MatrixZm, DiagonalizerField<MatrixZm>, HomologyField>;
-template class ChainComplex<int32_t, MatrixZDontDiagonalize, DiagonalizerDummy<MatrixZDontDiagonalize>, HomologyDummy>;
-
 typedef ChainComplex<Q, MatrixQ, DiagonalizerField<MatrixQ>, HomologyField> ChainComplexQ;
 typedef ChainComplex<Zm, MatrixZm, DiagonalizerField<MatrixZm>, HomologyField> ChainComplexZm;
 typedef ChainComplex<int32_t, MatrixZDontDiagonalize, DiagonalizerDummy<MatrixZDontDiagonalize>, HomologyDummy> ChainComplexZStorageOnly;

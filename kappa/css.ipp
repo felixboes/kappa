@@ -1,6 +1,6 @@
 #include "css.hpp"
 
-int32_t CSSBasis :: add_basis_element (Tuple& t)
+int32_t CSSBasis :: add_basis_element ( Tuple& t )
 {
     uint32_t num_clusters = t.num_cluster();
     LBasisType& l_basis = basis[num_clusters];
@@ -10,7 +10,7 @@ int32_t CSSBasis :: add_basis_element (Tuple& t)
     return t.id;
 }
 
-int32_t CSSBasis :: size( int32_t l ) const
+int32_t CSSBasis :: size( const int32_t l ) const
 {
     return (basis.count(l) != 0 ? basis.at(l).size() : 0 );
 }
@@ -25,7 +25,7 @@ int32_t CSSBasis :: total_size() const
     return size;
 }
 
-int32_t CSSBasis :: id_of(Tuple &t) const
+int32_t CSSBasis :: id_of( Tuple& t ) const
 {
     for( auto& l_basis_it : basis )
     {
@@ -39,7 +39,7 @@ int32_t CSSBasis :: id_of(Tuple &t) const
     return -1;
 }
 
-int32_t CSSBasis :: total_id_of(Tuple &t) const
+int32_t CSSBasis :: total_id_of( Tuple& t ) const
 {
     int64_t basis_offset(0);
     
@@ -72,11 +72,11 @@ std::ostream& operator<< ( std::ostream& os, const CSSBasis& cb )
 
 template< class MatrixComplex >
 ClusterSpectralSequence< MatrixComplex > :: ClusterSpectralSequence(
-        const uint32_t genus,
-        const uint32_t num_punctures,
-        SignConvention sgn,
-        const uint32_t number_working_threads,
-        const uint32_t number_remaining_threads)
+        const uint32_t          genus,
+        const uint32_t          num_punctures,
+        const SignConvention    sgn,
+        const uint32_t          number_working_threads,
+        const uint32_t          number_remaining_threads)
     : g(genus), m(num_punctures), h(2*genus + num_punctures), num_threads(number_working_threads + number_remaining_threads), sign_conv(sgn), diff_complex(true)
 {
     Tuple tuple(h);
@@ -91,7 +91,7 @@ ClusterSpectralSequence< MatrixComplex > :: ClusterSpectralSequence(
 }
 
 template< class MatrixComplex >
-void ClusterSpectralSequence< MatrixComplex > :: show_basis( int32_t p ) const
+void ClusterSpectralSequence< MatrixComplex > :: show_basis( const int32_t p ) const
 {
     if( basis_complex.count(p) )
     {
@@ -105,7 +105,7 @@ void ClusterSpectralSequence< MatrixComplex > :: show_basis( int32_t p ) const
 }
 
 template< class MatrixComplex >
-void ClusterSpectralSequence< MatrixComplex > :: gen_bases(uint32_t s, uint32_t p, Tuple& tuple)
+void ClusterSpectralSequence< MatrixComplex > :: gen_bases( const uint32_t s, const uint32_t p, Tuple& tuple )
 {
     /* Up to now we have determined all monotonic tuples of s transpositions containing the 
        symbols 1, ..., p, each at least once. We now add an (s+1)-th transposition and continue
@@ -197,7 +197,7 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_bases(uint32_t s, uint32_t 
 }
 
 template< class MatrixComplex >
-void ClusterSpectralSequence< MatrixComplex > :: gen_d0( int32_t p, int32_t l )
+void ClusterSpectralSequence< MatrixComplex > :: gen_d0( const int32_t p, const int32_t l )
 {
     MatrixType& differential = diff_complex.get_current_differential();
     differential.define_operations(MatrixType::main_and_secondary);
@@ -312,7 +312,7 @@ void ClusterSpectralSequence< MatrixComplex >::gen_d0_boundary(const Tuple & tup
 }
 
 template< class MatrixComplex >
-typename ClusterSpectralSequence< MatrixComplex >::MatrixType ClusterSpectralSequence< MatrixComplex >::gen_d1_row( int32_t p, int32_t l, const Tuple& basis_element)
+typename ClusterSpectralSequence< MatrixComplex >::MatrixType ClusterSpectralSequence< MatrixComplex >::gen_d1_row( const int32_t p, const int32_t l, const Tuple& basis_element)
 {
     MatrixType single_row( 1, basis_complex[p-1].basis[l-1].size() ); // This will be a single row before applying row operations
     single_row.define_operations(MatrixType::OperationType::main_and_secondary);
@@ -424,7 +424,7 @@ void css_work_1(ClusterSpectralSequence<MatrixComplex> & css,
 }
 
 template< class MatrixComplex >
-void ClusterSpectralSequence< MatrixComplex >::gen_d1_stage_1(int32_t p, int32_t l)
+void ClusterSpectralSequence< MatrixComplex >::gen_d1_stage_1( const int32_t p, const int32_t l )
 {
     MatrixType& differential = diff_complex.get_current_differential();
     const size_t num_rows = basis_complex[p].basis[l].size();
@@ -508,142 +508,3 @@ void ClusterSpectralSequence< MatrixComplex >::erase_d1()
     MatrixType& differential = diff_complex.get_current_differential();
     differential.sec_resize(0,0,true);
 }
-
-#ifdef COMPILE_WITH_MAGICK
-template< class MatrixComplex >
-void ClusterSpectralSequence< MatrixComplex >::draw_differential( int32_t p )
-{
-    if( basis_complex[p-1].total_size() == 0 || basis_complex[p].total_size() == 0 )
-    {
-        return;
-    }
-
-    Magick::Image picture(  Magick::Geometry( basis_complex[p-1].total_size(), basis_complex[p].total_size() ), Magick::Color("white") );
-    try{
-        // Define color and thickness of a point.
-        picture.strokeColor("red");
-        picture.fillColor("red");
-        
-        MatrixType column( basis_complex[p-1].total_size(), 1 );
-        for( auto l_bases_it : basis_complex[p].basis )
-        {
-            auto& l = l_bases_it.first;
-            
-            // For each tuple t in the basis, we compute all basis elements that 
-            // occur in kappa(t). 
-            int32_t parity = 0;
-            for( auto it : basis_complex[p].basis[l] )
-            {
-                // Initialize column with zeros.
-                column.clear();
-                int64_t j = basis_complex[p].total_id_of(it);
-                
-                Tuple boundary;
-                uint32_t s_q;
-                
-                for( uint32_t k = 0; k < factorial(h); k++ )
-                // in each iteration we enumerate one sequence of indices according to the above formula        
-                {
-                    Tuple current_basis = it;
-                    bool norm_preserved = true;
-                    
-                    // parity of the exponent of the sign of the current summand of the differential
-                    if( sign_conv != no_signs ) 
-                    {
-                        parity = ((h*(h+1))/2) % 2;
-                    }
-                    
-                    // Calculate phi_{(s_h, ..., s_1)}( Sigma )
-                    for( uint32_t q = 1; q <= h; q++ )
-                    {
-                        s_q = 1 + ( ( k / factorial(q-1)) % q );   
-                        if( sign_conv != no_signs )
-                        {
-                            parity += s_q;
-                        }
-                        if( current_basis.phi(q, s_q) == false )
-                        {
-                            norm_preserved = false;
-                            break;
-                        }
-                    }
-                    
-                    // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
-                    if( norm_preserved )   // Compute all horizontal boundaries.
-                    {
-                        std::map< uint8_t, int8_t > or_sign;
-                        if( sign_conv == all_signs )
-                        {
-                            or_sign.operator =(std::move(current_basis.orientation_sign()));
-                        }
-        
-                        for( int32_t i = 1; i < p; i++ )
-                        {
-                            if( (boundary = current_basis.d_hor(i)) )
-                            {
-                                if( boundary.monotone() == true ) // then it contributes to the differential with the computed parity
-                                {
-                                    boundary.id = basis_complex[p-1].total_id_of(boundary);
-                                    
-                                    if( sign_conv == all_signs )
-                                    {
-                                        int32_t actual_parity = (parity + i) % 2;
-                                        if ( or_sign[i] == -1 )
-                                        {
-                                            actual_parity = (actual_parity + 1) % 2;
-                                        }
-                                        //std::cout << it << " " << i << ": The d^hor_i boundary of " << current_basis << ". This is " << boundary << std::endl;
-                                        //std::cout << it.id << "->" << boundary.id << " in " << "M_{" << basis_complex[p-1].size() << "," << basis_complex[p].size() << "} parity=" << actual_parity << std::endl;
-                                        //std::cout << std::endl;
-                                        if ( actual_parity == 0 )
-                                        {
-                                            column(boundary.id, 0) += 1;
-                                        }
-                                        else
-                                        {
-                                            column(boundary.id, 0) += -1;
-                                        }
-                                    }
-                                    else if( sign_conv == no_orientation_sign )
-                                    {
-                                        if ( (parity + i) % 2 == 0 )
-                                        {
-                                            column(boundary.id, 0) += 1;
-                                        }
-                                        else
-                                        {
-                                            column(boundary.id, 0) += -1;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        column(boundary.id, 0) += 1;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                // Draw Column
-                for( size_t i = 0; i < column.size1(); ++i )
-                {
-                    if( column(i,0) != ClusterSpectralSequence::CoefficientType(0) )
-                    {
-                        picture.draw( Magick::DrawableCircle(i, j, i+1, j ) );
-                    }
-                }
-                
-            }
-        }
-        
-        std::string filename = "Differential_";
-        filename += std::to_string(g) + std::string("_") + std::to_string(m) + std::string("_-_") + std::to_string(p) + std::string(".png");
-        picture.write( filename );
-    }
-    catch( Magick::Exception &error_ )
-    {
-        std::cout << "Caught exception: " << error_.what() << std::endl;
-    }
-}
-#endif

@@ -316,19 +316,12 @@ private:
 
 std::ostream& operator<< ( std::ostream& stream, const MatrixBool & matrix);
 
-#include "matrix_field.ipp"
-
-// Force instancations
-template class MatrixField<Q>;
-template class MatrixField<Zm>;
 typedef MatrixField<Q> MatrixQ;     ///< This defines Matrices with \f$\mathbb Q\f$ coefficients.
 typedef MatrixField<Zm> MatrixZm;   ///< This defines Matrices with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
 
-template class MatrixFieldCSS<Q>;
-template class MatrixFieldCSS<Zm>;
 typedef MatrixFieldCSS<Q> MatrixCSSQ;     ///< This defines Matrices with \f$\mathbb Q\f$ coefficients.
 typedef MatrixFieldCSS<Zm> MatrixCSSZm;   ///< This defines Matrices with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
 
-
+#include "matrix_field.ipp"
 
 #endif // MATRIX_FIELD_HPP

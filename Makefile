@@ -47,12 +47,6 @@ ifneq ($(MAKECMDGOALS),clean)
 -include $(CXXDEP) $(CDEP)
 endif
 
-ifeq ($(MAKECMDGOALS),draw_differentials)
-LIBS     := $(LIBS) `Magick++-config --cppflags --cxxflags --ldflags --libs`
-CXXFLAGS := $(CXXFLAGS) -DCOMPILE_WITH_MAGICK
-endif
-
-
 $(TARGETS): %: $(BUILDDIR)/kappa/main_%.o $(STDOBJ)
 	$(CXX) $(CXXFLAGS) $(LIBS) $(INCL) -o $@ $(STDOBJ) $(BUILDDIR)/kappa/main_$@.o
 

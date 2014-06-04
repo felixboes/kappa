@@ -10,11 +10,6 @@
 #include <map>
 #include <stdlib.h>
 #include <unordered_set>
-
-#ifdef COMPILE_WITH_MAGICK
-#include <Magick++.h>
-#endif
-
 #include <libhomology/homology.hpp>
 
 #include "factorial.hpp"
@@ -36,13 +31,13 @@ struct CSSBasis
     typedef std::map< int32_t , LBasisType > BasisType;
     
     /// Add a basis element.
-    int32_t add_basis_element (Tuple& t);
+    int32_t add_basis_element ( Tuple& t );
     
     /// output stream
     friend std::ostream& operator<< (std::ostream& stream, const CSSBasis& cssb);
     
     /// Returns the number of basis elements that have cluster size l.
-    int32_t size( int32_t l ) const;
+    int32_t size( const int32_t l ) const;
     
     /// Returns the number of basis elements.
     int32_t total_size() const;
@@ -117,7 +112,12 @@ public:
     typedef typename MatrixComplex::HomologyType HomologyType;
     typedef std::map< int32_t, HomologyType > CSSHomologyType;
     
-    ClusterSpectralSequence( const uint32_t genus, const uint32_t num_punctures, SignConvention sgn, const uint32_t number_working_threads, const uint32_t number_remaining_threads );
+    ClusterSpectralSequence(
+            const uint32_t          genus,
+            const uint32_t          num_punctures,
+            const SignConvention    sgn,
+            const uint32_t          number_working_threads,
+            const uint32_t          number_remaining_threads );
     /** Recursive function initializing the basis_complex.
         In the call of gen_bases with the parameters s, p and tuple, we assume that the first s transpositions
         containing symbols 1, ..., p are fixed and append all possible transpositions at position s+1, applying
@@ -127,25 +127,21 @@ public:
         the case, we add it to the basis in degree p. Thereby, basis elements are sorted according to the number
         of clusters.
     **/
-    void gen_bases( uint32_t s, uint32_t p, Tuple& tuple );
+    void gen_bases( const uint32_t s, const uint32_t p, Tuple& tuple );
     void gen_d0( int32_t p, int32_t l );
     void gen_d0_boundary(const Tuple & tuple,
                          const int32_t p,
                          const int32_t l,
                          typename MatrixComplex::MatrixType & differential);
     
-    void gen_d1_stage_1( int32_t p, int32_t l );
-    MatrixType gen_d1_row( int32_t, int32_t l, const Tuple& basis_element );
+    void gen_d1_stage_1( const int32_t p, const int32_t l );
+    MatrixType gen_d1_row( const int32_t, const int32_t l, const Tuple& basis_element );
     void gen_d1_apply_operations( MatrixType& row );
     void prepare_d1_diag();
     void erase_d0();
     void erase_d1();
     
-    void show_basis( int32_t p ) const;         ///< print a basis to std::out
-#ifdef COMPILE_WITH_MAGICK
-    void draw_differential( int32_t p );        ///< Draws a given differential unsing the c++ version of the Imagemagick library.
-#endif
-    //std::string show_bases() const;
+    void show_basis( const int32_t p ) const;         ///< print a basis to std::out
 //private:
 
     uint32_t g;     ///< genus
