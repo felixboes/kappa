@@ -52,6 +52,18 @@ void update_differential(MatrixBool &           differential,
     differential.add_entry(row, column);
 }
 
+template<>
+void update_differential(MatrixBoolCSS &        differential,
+                         const size_t           row,
+                         const size_t           column,
+                         const int32_t          ,
+                         const int8_t           ,
+                         const int8_t           ,
+                         const SignConvention & )
+{
+    differential.add_entry(row, column);
+}
+
 int32_t sign(const int32_t          parity,
              const int8_t           i,
              const int8_t           or_sign,

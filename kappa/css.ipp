@@ -446,18 +446,21 @@ void ClusterSpectralSequence< MatrixComplex >::gen_d1_stage_1( const int32_t p, 
     
     size_t pos_diff = 0;
     auto diag_entry = diagonal_copy.cbegin();
-    for( size_t pos_row = 0; pos_row < num_cols; ++pos_row, ++pos_diff )
+    if( diag_entry != diagonal_copy.cend() )
     {
-        // skip entries in the diagonal
-        while( pos_diff < num_cols_diff && pos_diff == diag_entry->second )
+        for( size_t pos_row = 0; pos_row < num_cols; ++pos_row, ++pos_diff )
         {
-            ++pos_diff;
-            ++diag_entry;
-            ++offset;
+            // skip entries in the diagonal
+            while( pos_diff < num_cols_diff && pos_diff == diag_entry->second )
+            {
+                ++pos_diff;
+                ++diag_entry;
+                ++offset;
+            }
+            
+            // set pos_diff to the next position.
+            column_offset[pos_row] = offset;
         }
-        
-        // set pos_diff to the next position.
-        column_offset[pos_row] = offset;
     }
     
     std::vector<CSSWork> elements_per_threads (num_threads);

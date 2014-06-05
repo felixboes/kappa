@@ -23,7 +23,7 @@ enum SignConvention
 struct SessionConfig
 {
     SessionConfig() : genus(0), num_punctures(0), rational(0), prime(2), num_threads(1), num_remaining_threads(0), start_p(0), end_p(std::numeric_limits<uint32_t>::max()), sgn_conv(all_signs), valid(false) {}
-    SessionConfig( int argc, char** argv );
+    SessionConfig( const int argc, char** argv );
     
     /// Sometimes we have to work a litte, before we can use a configurration. Here we check parameters and setup Z_p coefficients.
     bool setup_configuration();
@@ -32,7 +32,7 @@ struct SessionConfig
     bool option_set( const std::string opt ) const;
     
     /// @returns wether the given configuration is valid or not.
-    inline operator bool() {return valid;}
+    operator bool() const {return valid;}
     
     boost::program_options::options_description desc;
     boost::program_options::variables_map vm;

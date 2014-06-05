@@ -177,6 +177,7 @@ void css_work_1(ClusterSpectralSequence<MatrixComplex> & css,
 
 typedef ClusterSpectralSequence<ChainComplexQCSS> ClusterSpectralSequenceQ;
 typedef ClusterSpectralSequence<ChainComplexZmCSS> ClusterSpectralSequenceZm;
+typedef ClusterSpectralSequence<ChainComplexBoolCSS> ClusterSpectralSequenceBool;
 typedef ClusterSpectralSequence<ChainComplexZStorageOnly> ClusterSpectralSequenceZStorageOnly;
 
 #include "css.ipp"

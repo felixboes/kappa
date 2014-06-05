@@ -1,6 +1,6 @@
 #include "sessionconfig.hpp"
 
-SessionConfig::SessionConfig( int argc, char **argv ) : 
+SessionConfig::SessionConfig( const int argc, char **argv ) : 
     desc("Command line options"),
     genus(0),
     num_punctures(0),

@@ -38,7 +38,7 @@ public:
      * Constructs a permutation of the given size with the given
      * initialization value in each entry.
      */
-    Permutation(uint8_t size, uint8_t init);
+    Permutation(const uint8_t size, const uint8_t init);
 
     /**
      * Copy constructor copying the data vector from other.
@@ -53,8 +53,8 @@ public:
     /**
      * Returns the element the symbol i is mapped to by this Permutation.
      */
-    uint8_t & operator[](uint8_t i);
-    uint8_t const & at(uint8_t i) const;
+    uint8_t & operator[](const uint8_t i);
+    uint8_t const & at(const uint8_t i) const;
 
     /**
      * Returns the number of elements of this permutation.
@@ -64,12 +64,12 @@ public:
     /**
      * Returns true iff the symbol i is contained in this Permutation.
      */
-    bool is_contained(uint8_t i) const;
+    bool is_contained(const uint8_t i) const;
 
     /**
      * Returns true iff the symbol i is a fix point of this Permutation.
      */
-    bool is_fix_point(uint8_t i) const;
+    bool is_fix_point(const uint8_t i) const;
 
     /** 
      *  output stream
@@ -106,14 +106,14 @@ public:
     /**
      *  Construct a Tuple of norm h which has to be filled.
      */
-    Tuple(size_t h);
+    Tuple(const size_t h);
     
-    Tuple(uint32_t symbols, size_t h);
+    Tuple(const uint32_t symbols, const size_t h);
 
     /**
      *  Access the \f$ i \f$-th Transposition of the Tuple.
      */
-    Transposition& operator[](size_t n);
+    Transposition& operator[](const size_t n);
 
     /**
      *  @return Returns the norm (i.e. the number of transpositions).
@@ -146,27 +146,27 @@ public:
      * is 1 since this is the case for parallel cells. Radial cells may also use the
      * symbol 0.
      */
-    uint32_t num_cycles(size_t min_symbol = 1);
+    uint32_t num_cycles(const size_t min_symbol = 1);
 
     ConnectedComponents connected_components() const; ///< @returns the number connected compontents of the corresponding graph, where \f$ \tau_j \f$ is seen an edge.
     int32_t num_cluster() const;
     
     bool monotone();                        ///< Returns true iff the tuple is monotone.
-    bool f(uint32_t i);                     ///< Applies the function \f$ f_i \f$ fuer \f$ 1 \le i < h \f$ and returns true iff the norm is preserved thereby.
-    bool phi( uint32_t q, uint32_t i);      ///< Applies the function \f$ \Phi^q_i \f$ and returns true iff the norm is preserved thereby..
+    bool f(const uint32_t i);                     ///< Applies the function \f$ f_i \f$ fuer \f$ 1 \le i < h \f$ and returns true iff the norm is preserved thereby.
+    bool phi( const uint32_t q, const uint32_t i);      ///< Applies the function \f$ \Phi^q_i \f$ and returns true iff the norm is preserved thereby..
     /** Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} and the projection on the monotonous cells.
      *  Returns an empty tuple if the boundary is degenerate, the boundary tuple otherwise.
      *  \note The parameter i has to fulfill 0 < i < p.
      */
-    Tuple d_hor( uint8_t i ) const;
-    Tuple d_hor_naive( uint8_t i ) const;   ///< Different implementation of the i-th horizontal boundary.
+    Tuple d_hor( const uint8_t i ) const;
+    Tuple d_hor_naive( const uint8_t i ) const;   ///< Different implementation of the i-th horizontal boundary.
     std::map< uint8_t, int8_t > orientation_sign() const;
 
     uint32_t p;  ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
     size_t id; ///< The index of this Tuple in the basis of the MonoComplex.
 private:
-    Transposition& at(size_t q);                     ///< Access the q-th Transposition.
-    Transposition const & at(size_t q) const;
+    Transposition& at(const size_t q);                     ///< Access the q-th Transposition.
+    Transposition const & at(const size_t q) const;
     Permutation long_cycle() const;                  ///< Returns the cycle 1 -> 2 -> ... -> p-1 -> p -> 1.
     Permutation long_cycle_inv() const;              ///< Returns the cycle 1 -> p -> p-2 -> ... -> 2 -> 1.
     Permutation sigma_h() const;

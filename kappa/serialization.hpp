@@ -23,7 +23,7 @@
  *  Save a given class T to filename.bz2.
  */
 template <class T>
-void save_to_file_bz2( T& t, std::string filename, bool print_duration = true )
+void save_to_file_bz2( T& t, std::string filename, const bool print_duration = true )
 {
     if( print_duration == true )
     {
@@ -58,7 +58,7 @@ void save_to_file_bz2( T& t, std::string filename, bool print_duration = true )
  */
 #ifndef WE_USE_AN_OLD_COMPILER_THAT_DOES_NOT_SUPPORT_ALL_CPP_ELEVEN_FEATURES_OR_OPTIMIZATION
 template <class T>
-T load_from_file_bz2( std::string filename, bool print_duration = true)
+T load_from_file_bz2( std::string filename, const bool print_duration = true)
 #else
 template <class T>
 void load_from_file_bz2( T& t, std::string filename, bool print_duration = true)

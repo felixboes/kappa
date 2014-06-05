@@ -6,7 +6,7 @@ Permutation::Permutation()
     // intentionally do nothing
 }
 
-Permutation::Permutation(uint8_t size, uint8_t init)
+Permutation::Permutation(const uint8_t size, const uint8_t init)
     : data(size, init)
 {
     // intentionally do nothing
@@ -24,12 +24,12 @@ std::vector<uint8_t> Permutation::operator()() const
     return data;
 }
 
-uint8_t & Permutation::operator[](uint8_t i)
+uint8_t & Permutation::operator[](const uint8_t i)
 {
     return data[i];
 }
 
-uint8_t const & Permutation::at(uint8_t i) const
+uint8_t const & Permutation::at(const uint8_t i) const
 {
     return data.at(i);
 }
@@ -39,12 +39,12 @@ uint8_t Permutation::size() const
     return data.size();
 }
 
-bool Permutation::is_contained(uint8_t i) const
+bool Permutation::is_contained(const uint8_t i) const
 {
     return (data[i] != 0);
 }
 
-bool Permutation::is_fix_point(uint8_t i) const
+bool Permutation::is_fix_point(const uint8_t i) const
 {
     return (data[i] == i);
 }
@@ -68,29 +68,29 @@ Tuple :: Tuple() :
 {
 }
 
-Tuple :: Tuple(size_t h) :
+Tuple :: Tuple(const size_t h) :
     p(0),
     rep( h, Transposition(0, 0) )
 {
 }
 
-Tuple :: Tuple(uint32_t symbols, size_t h) :
+Tuple :: Tuple(const uint32_t symbols, const size_t h) :
     p(symbols),
     rep( h, Transposition(0, 0) )
 {
 }
 
-Transposition& Tuple :: at(size_t n)
+Transposition& Tuple :: at(const size_t n)
 {
     return rep[n-1];
 }
 
-Transposition const & Tuple :: at(size_t n) const
+Transposition const & Tuple :: at(const size_t n) const
 {
     return rep[n-1];
 }
 
-Transposition& Tuple :: operator[](size_t n)
+Transposition& Tuple :: operator[](const size_t n)
 {
     return at(n);
 }
@@ -154,7 +154,7 @@ std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
     return stream;
 }
 
-uint32_t Tuple :: num_cycles(size_t min_symbol)
+uint32_t Tuple :: num_cycles(const size_t min_symbol)
 {
     // Since the t_i are transpositions, one can instead count the number of cycles of (p p-1 ... 1) t_1 ... t_h.
     uint32_t num_cycles = 0;
@@ -230,7 +230,7 @@ bool Tuple :: monotone()
     return true;
 }
 
-bool Tuple :: f(uint32_t i)
+bool Tuple :: f(const uint32_t i)
 {
     // Denote g_{i+1} | g_i by (ab)(cd).
     uint8_t a = at(i+1).first;
@@ -331,7 +331,7 @@ bool Tuple :: f(uint32_t i)
     return false;
 }
                  
-bool Tuple :: phi( uint32_t q, uint32_t i )
+bool Tuple :: phi( const uint32_t q, const uint32_t i )
 {
     if( i == 0 || i > q )
     {
@@ -341,27 +341,15 @@ bool Tuple :: phi( uint32_t q, uint32_t i )
 
     for( uint32_t j = q-1; j >= i; j-- ) // The loop terminates due to i > 0.
     {
-        #ifdef KAPPA_DEBUG_TUPEL
-        std::cerr << "    f_" << j << "( " << *this << " ) = ";
-        #endif
         if( f(j) == false ) // The norm of the product falls.
         {
-            #ifdef KAPPA_DEBUG_TUPEL
-            std::cerr << *this << std::endl;
-            #endif
             return false;
         }
-        #ifdef KAPPA_DEBUG_TUPEL
-        else
-        {
-            std::cerr << *this << std::endl;
-        }
-        #endif
     }
     return true;
 }
 
-Tuple Tuple :: d_hor( uint8_t k ) const
+Tuple Tuple :: d_hor( const uint8_t k ) const
 {
     Tuple boundary = *this;
     
@@ -459,7 +447,7 @@ Tuple Tuple :: d_hor( uint8_t k ) const
     return boundary;
 }
 
-Tuple Tuple :: d_hor_naive( uint8_t i ) const
+Tuple Tuple :: d_hor_naive( const uint8_t i ) const
 {
     if( i == 0 || i >= p )
     {

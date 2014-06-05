@@ -1,6 +1,6 @@
 #include "factorial.hpp"
 
-uint64_t factorial( uint32_t k )
+uint64_t factorial( const uint32_t k )
 {
     switch( k )
     {
