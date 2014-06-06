@@ -46,10 +46,10 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     //
     std::cout << "Dimensions of the E^0 page" << std::endl;
     ofs       << "Dimensions of the E^0 page" << std::endl;
-    for( auto& basis_it : cluster_spectral_sequence.basis_complex )
+    for( const auto& basis_it : cluster_spectral_sequence.basis_complex )
     {
-        auto p = basis_it.first;
-        auto l_bases = basis_it.second.basis;
+        const auto& p = basis_it.first;
+        const auto& l_bases = basis_it.second.basis;
 
         if ( p < conf.start_p || p > conf.end_p + 1 )
         {
@@ -63,14 +63,14 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             std::cout << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
             ofs       << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
         }
-        for( auto& l_basis_it : l_bases )
+        for( const auto& l_basis_it : l_bases )
         {
-            auto l = l_basis_it.first;
+            const auto& l = l_basis_it.first;
             if( l == 0 )
             {
                 continue;
             }
-            auto cur_basis = l_basis_it.second;
+            const auto& cur_basis = l_basis_it.second;
             std::stringstream stream;
             stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
             std::cout << std::setw(9) << stream.str() << std::setw(6) << cur_basis.size() << ";    ";
@@ -89,10 +89,10 @@ void compute_css( SessionConfig conf, int argc, char** argv )
               << "-------- Computing E^1-term & E^2-term  --------" << std::endl;
     
     // Compute all differentials and homology consecutively.
-    for( auto& basis_it : cluster_spectral_sequence.basis_complex )
+    for( const auto& basis_it : cluster_spectral_sequence.basis_complex )
     {
-        auto p = basis_it.first;
-        auto l_bases = basis_it.second.basis;
+        const auto& p = basis_it.first;
+        const auto& l_bases = basis_it.second.basis;
 
         if ( p < conf.start_p || p > conf.end_p + 1 )
         {
@@ -102,9 +102,9 @@ void compute_css( SessionConfig conf, int argc, char** argv )
         cluster_spectral_sequence.erase_d0();
         cluster_spectral_sequence.erase_d1();
         typename ClusterSpectralSequenceT::MatrixType::DiagonalType diagonal;
-        for( auto& l_basis_it : l_bases )
+        for( const auto& l_basis_it : l_bases )
         {
-            auto l = l_basis_it.first;
+            const auto& l = l_basis_it.first;
             atomic_uint& current_rank = cluster_spectral_sequence.diff_complex.get_diagonalizer().current_rank;
             uint32_t max_possible_rank(0);
             
@@ -290,10 +290,10 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     // Print Dimensions of the E^0-page
     std::cout << "Dimensions of the E^0 page" << std::endl;
     ofs       << "Dimensions of the E^0 page" << std::endl;
-    for( auto& basis_it : cluster_spectral_sequence.basis_complex )
+    for( const auto& basis_it : cluster_spectral_sequence.basis_complex )
     {
-        auto p = basis_it.first;
-        auto l_bases = basis_it.second.basis;
+        const auto& p = basis_it.first;
+        const auto&l_bases = basis_it.second.basis;
 
         if ( p < conf.start_p || p > conf.end_p + 1 )
         {
@@ -307,14 +307,14 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             std::cout << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
             ofs       << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
         }
-        for( auto& l_basis_it : l_bases )
+        for( const auto& l_basis_it : l_bases )
         {
-            auto l = l_basis_it.first;
+            const auto& l = l_basis_it.first;
             if( l == 0 )
             {
                 continue;
             }
-            auto cur_basis = l_basis_it.second;
+            const auto& cur_basis = l_basis_it.second;
             std::stringstream stream;
             stream << "(" << (int32_t)(p) << "," << (int32_t)(l) << ") =";
             std::cout << std::setw(9) << stream.str() << std::setw(6) << cur_basis.size() << ";    ";
@@ -329,10 +329,10 @@ void compute_css( SessionConfig conf, int argc, char** argv )
               << "Dimensions of the E^1 page" << std::endl;
     ofs       << std::endl
               << "Dimensions of the E^1 page" << std::endl;
-    for( auto& basis_it : cluster_spectral_sequence.basis_complex )
+    for( const auto& basis_it : cluster_spectral_sequence.basis_complex )
     {
-        auto p = basis_it.first;
-        auto l_bases = basis_it.second.basis;
+        const auto& p = basis_it.first;
+        const auto& l_bases = basis_it.second.basis;
 
         if ( p < conf.start_p || p > conf.end_p + 1 )
         {
@@ -346,9 +346,9 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             std::cout << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
             ofs       << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
         }
-        for( auto& l_basis_it : l_bases )
+        for( const auto& l_basis_it : l_bases )
         {
-            auto l = l_basis_it.first;
+            const auto& l = l_basis_it.first;
             if( l == 0 )
             {
                 continue;
@@ -367,10 +367,10 @@ void compute_css( SessionConfig conf, int argc, char** argv )
               << "Dimensions of the E^2 page" << std::endl;
     ofs       << std::endl
               << "Dimensions of the E^2 page" << std::endl;
-    for( auto& basis_it : cluster_spectral_sequence.basis_complex )
+    for( const auto& basis_it : cluster_spectral_sequence.basis_complex )
     {
-        auto p = basis_it.first;
-        auto l_bases = basis_it.second.basis;
+        const auto& p = basis_it.first;
+        const auto& l_bases = basis_it.second.basis;
 
         if ( p < conf.start_p || p > conf.end_p + 1 )
         {
@@ -384,9 +384,9 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             std::cout << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
             ofs       << std::setw(9) << stream.str() << std::setw(6) << "0" << ";    ";
         }
-        for( auto& l_basis_it : l_bases )
+        for( const auto& l_basis_it : l_bases )
         {
-            auto l = l_basis_it.first;
+            const auto& l = l_basis_it.first;
             if( l == 0 )
             {
                 continue;
