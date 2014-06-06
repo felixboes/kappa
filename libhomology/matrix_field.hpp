@@ -322,7 +322,8 @@ class MatrixBoolCSS
 {
 public:
     typedef bool CoefficientType;
-    typedef std::vector< boost::dynamic_bitset<> > MatrixStorageType;    ///< This realizes the implementation of the data.
+    typedef boost::dynamic_bitset<> MatrixRowType;
+    typedef std::vector< MatrixRowType > MatrixStorageType;    ///< This realizes the implementation of the data.
     typedef std::pair< size_t, size_t > MatrixEntryType;
     typedef std::list< MatrixEntryType > DiagonalType;
     typedef MatrixBoolCSS ThisType;
@@ -388,6 +389,14 @@ public:
     void main_add_entry( const size_t i, const size_t j );
     void sec_add_entry( const size_t i, const size_t j );
     
+    void main_set( const size_t i, const size_t j, const bool val );
+    void sec_set( const size_t i, const size_t j, const bool val );
+    
+    MatrixRowType& main_row( const size_t i );
+    const MatrixRowType& main_row_at( const size_t i ) const;
+    
+    MatrixRowType& sec_row( const size_t i );
+    const MatrixRowType& sec_row_at( const size_t i ) const;
     /**
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
      *  In order to do so call resize(0,0);

@@ -220,6 +220,36 @@ void MatrixBoolCSS::sec_add_entry(const size_t i, const size_t j)
     sec_data[i][j].flip();
 }
 
+void MatrixBoolCSS::main_set( const size_t i, const size_t j, const bool val )
+{
+    data[i].set(j,val);
+}
+
+void MatrixBoolCSS::sec_set( const size_t i, const size_t j, const bool val )
+{
+    sec_data[i].set(j,val);
+}
+
+MatrixBoolCSS::MatrixRowType& MatrixBoolCSS::main_row( const size_t i )
+{
+    return data[i];
+}
+
+const MatrixBoolCSS::MatrixRowType& MatrixBoolCSS::main_row_at( const size_t i ) const
+{
+    return data.at(i);
+}
+
+MatrixBoolCSS::MatrixRowType& MatrixBoolCSS::sec_row( const size_t i )
+{
+    return sec_data[i];
+}
+
+const MatrixBoolCSS::MatrixRowType& MatrixBoolCSS::sec_row_at( const size_t i ) const
+{
+    return sec_data.at(i);
+}
+
 void MatrixBoolCSS::resize(size_t size1, size_t size2, bool)
 {
     for(size_t i = 0; i < data.size(); ++i)
@@ -234,8 +264,6 @@ void MatrixBoolCSS::resize(size_t size1, size_t size2, bool)
     }
     num_rows = size1;
     num_cols = size2;
-    
-    diagonal.clear();
 }
 
 void MatrixBoolCSS::sec_resize (const size_t size1, const size_t size2, const bool)
@@ -252,8 +280,6 @@ void MatrixBoolCSS::sec_resize (const size_t size1, const size_t size2, const bo
     }
     sec_num_rows = size1;
     sec_num_cols = size2;
-    
-    diagonal.clear();
 }
 
 size_t MatrixBoolCSS::size1() const

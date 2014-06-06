@@ -107,7 +107,7 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             auto l = l_basis_it.first;
             atomic_uint& current_rank = cluster_spectral_sequence.diff_complex.get_diagonalizer().current_rank;
             uint32_t max_possible_rank(0);
-
+            
             //
             // Construct the first stage of d_1
             //
@@ -438,10 +438,10 @@ int main(int argc, char** argv)
     {
         compute_css< ClusterSpectralSequenceQ >( conf, argc, argv );
     }
-//    else if (conf.prime == 2)
-//    {
-//        compute_css< ClusterSpectralSequenceBool > ( conf, argc, argv);
-//    }
+    else if (conf.prime == 2)
+    {
+        compute_css< ClusterSpectralSequenceBool > ( conf, argc, argv);
+    }
     else
     {
         compute_css< ClusterSpectralSequenceZm >( conf, argc, argv );

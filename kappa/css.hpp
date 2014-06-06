@@ -175,6 +175,20 @@ void css_work_1(ClusterSpectralSequence<MatrixComplex> & css,
               const std::vector< size_t >& offset
               );
 
+// Template specializations for bool-matrices.
+template<>
+void ClusterSpectralSequence< ChainComplexBoolCSS >::gen_d1_apply_operations( MatrixType& row );
+
+template<>
+void css_work_1(ClusterSpectralSequence< ChainComplexBoolCSS >& css,
+              CSSWork & work,
+              const int32_t p,
+              const int32_t l,
+              ChainComplexBoolCSS::MatrixType& differential,
+              const size_t num_cols,
+              const std::vector< size_t >& offset
+              );
+
 typedef ClusterSpectralSequence<ChainComplexQCSS> ClusterSpectralSequenceQ;
 typedef ClusterSpectralSequence<ChainComplexZmCSS> ClusterSpectralSequenceZm;
 typedef ClusterSpectralSequence<ChainComplexBoolCSS> ClusterSpectralSequenceBool;
