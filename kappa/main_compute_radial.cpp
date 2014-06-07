@@ -57,7 +57,7 @@ void compute_radial( SessionConfig conf, int argc, char** argv )
         {
             continue;
         }
-        atomic_uint current_rank(0);
+        atomic_uint& current_rank = monocomplex.matrix_complex.get_diagonalizer().current_rank;
         uint32_t max_possible_rank(0);
 
         // Generate a single differential.
