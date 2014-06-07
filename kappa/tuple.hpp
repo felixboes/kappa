@@ -84,8 +84,8 @@ private:
 /**
  *  A Tuple of Transpositions \f$ ( \tau_h \mid \ldots \mid \tau_1 ) \f$.
  *
- *  Convention: We want an easy-to-check condition, to test if a Tuple is in a bad state.
- *  We require that good Tuples use only the symbols \f$ 1 \f$ to \f$ p \f$.
+ *  Convention: We want an easy-to-check condition to test if a Tuple is in a bad state.
+ *  We require that bad Tuples don't contain any transposition.
 **/
 class Tuple
 {
@@ -146,7 +146,16 @@ public:
      * is 1 since this is the case for parallel cells. Radial cells may also use the
      * symbol 0.
      */
-    uint32_t num_cycles(const size_t min_symbol = 1);
+    uint32_t num_cycles(const size_t min_symbol = 1) const;
+
+    /*!
+     * \brief Determines whether this Tuple has the correct number of cycles.
+     * \param m number of punctures
+     * \param radial true iff this Tuple represents a radial cell
+     * \return In the parallel case: true iff the number of cycles equals m + 1;
+     *         in the radial case: true iff the number of cycles equals m.
+     */
+    bool has_correct_num_cycles(size_t m, bool radial = false) const;
 
     ConnectedComponents connected_components() const; ///< @returns the number connected compontents of the corresponding graph, where \f$ \tau_j \f$ is seen an edge.
     int32_t num_cluster() const;

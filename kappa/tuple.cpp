@@ -154,7 +154,16 @@ std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
     return stream;
 }
 
-uint32_t Tuple :: num_cycles(const size_t min_symbol)
+bool Tuple :: has_correct_num_cycles(size_t m, bool radial) const
+{
+    size_t min_symbol = ((radial == true) ? 0 : 1);
+    uint32_t number_cycles = num_cycles(min_symbol);
+    return((   (not radial and number_cycles == m + 1)
+            or (    radial and number_cycles == m    )));
+
+}
+
+uint32_t Tuple :: num_cycles(const size_t min_symbol) const
 {
     // Since the t_i are transpositions, one can instead count the number of cycles of (p p-1 ... 1) t_1 ... t_h.
     uint32_t num_cycles = 0;

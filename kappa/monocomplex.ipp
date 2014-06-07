@@ -74,14 +74,6 @@ void MonoComplex< MatrixComplex > :: show_differential( const int32_t p ) const
 }
 
 template< class MatrixComplex >
-size_t MonoComplex< MatrixComplex > :: min_symbol() const
-{
-    // In the radial case, the minimum symbol is 0,
-    // in the parallel case, it is 1.
-    return (radial == true? 0 : 1);
-}
-
-template< class MatrixComplex >
 size_t MonoComplex< MatrixComplex > :: min_boundary() const
 {
     // In the radial case, the minimum symbol with possibly non-zero boundary is 0,
@@ -190,10 +182,7 @@ void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t l, const uint32_t
          // number of cycles. If this is the case, we add tuple to the basis elements of the 
          // p-th basis and store the index of tuple in this basis as the id of tuple.
     {
-        uint32_t number_cycles = tuple.num_cycles(min_symbol());
-
-        if((   (not radial and number_cycles == m + 1)
-            or (    radial and number_cycles == m)))
+        if (tuple.has_correct_num_cycles(m, radial))
         {
             tuple.id = basis_complex[p].add_basis_element( tuple );
         }
