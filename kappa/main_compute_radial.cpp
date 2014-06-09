@@ -38,7 +38,7 @@ void compute_radial( SessionConfig conf, int argc, char** argv )
     std::cout.flush();
     ofs << "Constructing bases";
 
-    MonoComplexT monocomplex( conf.genus, conf.num_punctures, conf.sgn_conv, conf.num_threads, conf.num_remaining_threads, true);
+    MonoComplexT monocomplex( conf.genus, conf.num_punctures, conf.sgn_conv, conf.num_threads, conf.num_remaining_threads );
     typename MonoComplexT::HomologyType homology;
     std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
     std::cout << std::endl;
@@ -165,6 +165,8 @@ int main(int argc, char** argv)
         std::cout << "The configuration could not been setup." << std::endl;
         return 2;
     }
+
+    Tuple::radial_case();
 
     // We may start with the computations.
     if(conf.rational == true)

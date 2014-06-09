@@ -129,8 +129,9 @@ public:
     typedef typename MatrixComplex::CoefficientType CoefficientType;
     typedef typename MatrixComplex::MatrixType MatrixType;
     typedef typename MatrixComplex::HomologyType HomologyType;
+    typedef typename MatrixComplex::DiagonalizerType DiagonalizerType;
 
-    MonoComplex( const uint32_t genus, const uint32_t num_punctures, SignConvention sgn, const uint32_t number_working_threads, const uint32_t number_remaining_threads, const bool _radial = false);
+    MonoComplex( const uint32_t genus, const uint32_t num_punctures, SignConvention sgn, const uint32_t number_working_threads, const uint32_t number_remaining_threads);
     /** Recursive function initializing the basis_complex.
         In the call of gen_bases with the parameters l, p and tuple, we assume that the first l transpositions
         containing symbols start_symbol, ..., p are fixed and append all possible transpositions at position l+1, applying 	the function recursively in an appropriate way.
@@ -150,13 +151,10 @@ public:
     void show_differential( const int32_t p ) const;  ///< print a differential to std::out
 //private:
 
-    size_t min_boundary() const; ///< minimum symbol for which the horizontal boundary may be non-zero
-    size_t max_boundary( const size_t p ) const; ///< maximum symbol for which the horizontal boundary may be non-zero
     uint32_t g;                ///< genus
     uint32_t m;                ///< number of punctures
     uint32_t h;                ///< h = 2*g+m for the parallel case; and h = 2*g+m-1 for the radial case.
     uint32_t num_threads;      ///< number of threads used to construct the differential
-    bool     radial;           ///< true iff this tuple stores a radial cell
 
     SignConvention sign_conv;  ///< The sign convention.
     MatrixComplex matrix_complex;                         ///< underlying matrix complex of this MonoComplex

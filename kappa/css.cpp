@@ -2,7 +2,7 @@
 
 int32_t CSSBasis :: add_basis_element ( Tuple& t )
 {
-    uint32_t num_clusters = t.num_cluster();
+    uint32_t num_clusters = t.num_clusters();
     LBasisType& l_basis = basis[num_clusters];
     t.id = l_basis.size();
     l_basis.insert(t);

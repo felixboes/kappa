@@ -127,7 +127,7 @@ public:
         the case, we add it to the basis in degree p. Thereby, basis elements are sorted according to the number
         of clusters.
     **/
-    void gen_bases( const uint32_t s, const uint32_t p, Tuple& tuple );
+    void gen_bases( const uint32_t l, const uint32_t p, const uint32_t start_symbol, Tuple& tuple);
     void gen_d0( int32_t p, int32_t l );
     void gen_d0_boundary(const Tuple & tuple,
                          const int32_t p,

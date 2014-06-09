@@ -9,15 +9,36 @@ ClusterSpectralSequence< MatrixComplex > :: ClusterSpectralSequence(
         const uint32_t          number_remaining_threads)
     : g(genus), m(num_punctures), h(2*genus + num_punctures), num_threads(number_working_threads + number_remaining_threads), sign_conv(sgn), diff_complex(true)
 {
-    Tuple tuple(h);
-    tuple[1] = Transposition(2, 1);
-    tuple.p = 2;
-    
+    // Configure diagoanlizer
     DiagonalizerType& diago = diff_complex.get_diagonalizer();
     diago.num_working_threads = number_working_threads;
     diago.num_remaining_threads = number_remaining_threads;
+
+    // Get parameter right.
+    if ( Tuple::get_radial() ) // For radial cells, we have h = 2g + m - 1.
+    {
+        --h;
+    }
+    if ( h == 0 )
+    {
+        return;
+    }
     
-    gen_bases(1, 2, tuple);  // We start with the transposition ... (2 1).
+    // Generate all tuples with h transpositions containing the symbols 1, ..., p,
+    // each at least once, with the correct number of cycles.
+    Tuple tuple(h);
+    tuple[1] = Transposition(2, 1);
+    tuple.p = 2;
+    gen_bases(1, 2, 1, tuple);  // We start with the transposition ... (2 1).
+    // In the radial case, we also generate all tuples as above, but also containing
+    // the symbol 0.
+    if ( Tuple::get_radial() )
+    {
+        Tuple radial_tuple(h);
+        radial_tuple.p = 1;
+        radial_tuple[1] = Transposition(1, 0);
+        gen_bases(1, 1, 0, radial_tuple);
+    }
 }
 
 template< class MatrixComplex >
@@ -35,12 +56,12 @@ void ClusterSpectralSequence< MatrixComplex > :: show_basis( const int32_t p ) c
 }
 
 template< class MatrixComplex >
-void ClusterSpectralSequence< MatrixComplex > :: gen_bases( const uint32_t s, const uint32_t p, Tuple& tuple )
+void ClusterSpectralSequence< MatrixComplex > :: gen_bases( const uint32_t s, const uint32_t p, const uint32_t start_symbol, Tuple& tuple )
 {
     /* Up to now we have determined all monotonic tuples of s transpositions containing the 
        symbols 1, ..., p, each at least once. We now add an (s+1)-th transposition and continue
        recursively.*/
-    if(s < h) // There are h-s transpositionss+1eft to be determined.
+    if(s < h) // There are h-s transpositions left to be determined.
     {
 	/* From an s-tuple containing p symbols we can build up an (s+1)-tuple 
         with p, p+1 or p+2 symbols. */
@@ -50,10 +71,10 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_bases( const uint32_t s, co
            enumerate monotonic tuples, the height of the (s+1)-th transposition needs to be p.
            We try out all possibilities for the second symbol in the (s+1)-th transposition. */
         tuple.p = p;
-        for(uint32_t i = p-1; i > 0; i--)
+        for(uint32_t i = start_symbol; i < p; ++i)
         {
             tuple[s+1] = Transposition(p, i); 
-            gen_bases(s+1, p, tuple);
+            gen_bases(s+1, p, start_symbol, tuple);
         }
 
         /* p -> p+1
@@ -62,18 +83,18 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_bases( const uint32_t s, co
         /* Case 1: The new row in the parallel slit domain is inserted at the top, i.e. 
                    the transpositions 1, ..., s remain the same and we only insert the symbol 
                    p+1 in the (s+1)-th transposition, together with any symbol of 1, ..., p. */
-        for(uint32_t i = p; i > 0; i--)
+        for (uint32_t i = start_symbol; i <= p; ++i)
         {
             tuple[s+1] = Transposition(p+1, i);
-            gen_bases(s+1, p+1, tuple);
+            gen_bases(s+1, p+1, start_symbol, tuple);
         }
 
         /* Case 2: The new row in the parallel slit domain is not inserted at the top but at a position
                    i = 1, ..., p. Thus all indices i+1, ..., p are shifted up by one. */
-        for( uint32_t i = p; i > 0; i-- )
+        for(uint32_t i = start_symbol; i <= p; ++i)
         {
             Tuple tmp = tuple;
-            for( uint32_t j = s; j > 0; j-- )
+            for( uint32_t j = s; j >= 1; --j )
             {
                 if( tmp[j].first >= i )
                 {
@@ -83,10 +104,14 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_bases( const uint32_t s, co
                         tmp[j].second++;
                     }
                 }
+                else
+                {
+                    break;
+                }
             }
 
             tmp[s+1] = Transposition(p+1, i);
-            gen_bases(s+1, p+1, tmp);
+            gen_bases(s+1, p+1, start_symbol, tmp);
         }
 
         /* p -> p+2
@@ -96,10 +121,10 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_bases( const uint32_t s, co
            occur in the transpositions 1, ..., s, both cases can be expressed by choosing a symbol
            i = 1, ..., p+1 and by shifting up all indices >= i by one. */ 
         tuple.p = p+2;
-        for( uint32_t i = p+1; i > 0; i-- )
+        for( uint32_t i = start_symbol; i <= p + 1; ++i)
         {
             Tuple tmp = tuple;
-            for( uint32_t j = s; j > 0; j-- )
+            for( uint32_t j = s; j >= 1; j-- )
             {
                 if( tmp[j].first >= i )
                 {
@@ -109,17 +134,21 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_bases( const uint32_t s, co
                         tmp[j].second++;
                     }
                 }
+                else
+                {
+                    break;
+                }
             }
 
             tmp[s+1] = Transposition(p+2, i);
-            gen_bases(s+1, p+2, tmp);
+            gen_bases(s+1, p+2, start_symbol, tmp);
         }
     }
     else // Check whether the created h-tuple is really a generator, i.e. if it has the correct 
          // number of cycles. If this is the case, we add tuple to the basis elements of the 
          // p-th basis and store the index of tuple in this basis as the id of tuple.
     {
-        if(tuple.num_cycles() == m+1)
+        if (tuple.has_correct_num_cycles(m))
         {
             tuple.id = basis_complex[p].add_basis_element( tuple );
         }
@@ -226,11 +255,11 @@ void ClusterSpectralSequence< MatrixComplex >::gen_d0_boundary(const Tuple & tup
                 or_sign.operator=(std::move(current_basis.orientation_sign()));
             }
 
-            for( int32_t i = 1; i < p; i++ )
+            for( uint32_t i = Tuple::get_min_boundary_offset(); i <= p - Tuple::get_max_boundary_offset(); i++ )
             {
                 if( (boundary = current_basis.d_hor(i)) )
                 {
-                    if( boundary.monotone() == true && boundary.num_cluster() == l ) // then it contributes to the differential with the computed parity
+                    if( boundary.monotone() == true && boundary.num_clusters() == l ) // then it contributes to the differential with the computed parity
                     {
                         boundary.id = basis_complex[p-1].id_of(boundary);
                         update_differential(differential, tuple.id, boundary.id, parity, i, or_sign[i], sign_conv);
@@ -292,11 +321,11 @@ typename ClusterSpectralSequence< MatrixComplex >::MatrixType ClusterSpectralSeq
                 or_sign.operator=(std::move(current_basis.orientation_sign()));
             }
 
-            for( int32_t i = 1; i < p; i++ )
+            for( uint32_t i = Tuple::get_min_boundary_offset(); i <= p - Tuple::get_max_boundary_offset(); i++ )
             {
                 if( (boundary = current_basis.d_hor(i)) )
                 {
-                    if( boundary.monotone() == true && boundary.num_cluster() == l - 1) // then it contributes to the differential with the computed parity
+                    if( boundary.monotone() == true && boundary.num_clusters() == l - 1) // then it contributes to the differential with the computed parity
                     {
                         boundary.id = basis_complex[p-1].id_of(boundary);
                         update_differential(single_row, 0, boundary.id, parity, i, or_sign[i], sign_conv);

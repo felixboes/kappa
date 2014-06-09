@@ -146,7 +146,7 @@ public:
      * is 1 since this is the case for parallel cells. Radial cells may also use the
      * symbol 0.
      */
-    uint32_t num_cycles(const size_t min_symbol = 1) const;
+    uint32_t num_cycles() const;
 
     /*!
      * \brief Determines whether this Tuple has the correct number of cycles.
@@ -155,10 +155,10 @@ public:
      * \return In the parallel case: true iff the number of cycles equals m + 1;
      *         in the radial case: true iff the number of cycles equals m.
      */
-    bool has_correct_num_cycles(size_t m, bool radial = false) const;
+    bool has_correct_num_cycles(size_t m) const;
 
     ConnectedComponents connected_components() const; ///< @returns the number connected compontents of the corresponding graph, where \f$ \tau_j \f$ is seen an edge.
-    int32_t num_cluster() const;
+    int32_t num_clusters() const;
     
     bool monotone();                        ///< Returns true iff the tuple is monotone.
     bool f(const uint32_t i);                     ///< Applies the function \f$ f_i \f$ fuer \f$ 1 \le i < h \f$ and returns true iff the norm is preserved thereby.
@@ -172,6 +172,13 @@ public:
 
     uint32_t p;  ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
     size_t id; ///< The index of this Tuple in the basis of the MonoComplex.
+    
+    static void radial_case();
+    static void parallel_case();
+    static bool get_radial();
+    static uint32_t get_min_symbol();
+    static uint32_t get_min_boundary_offset();
+    static uint32_t get_max_boundary_offset();
 private:
     Transposition& at(const size_t q);                     ///< Access the q-th Transposition.
     Transposition const & at(const size_t q) const;
@@ -182,6 +189,10 @@ private:
     
     //    DATA MEMBERS
     std::vector< Transposition > rep;                ///< Representation of a tuple of transpositions \tau_1, ..., \tau_1.
+    static bool radial;
+    static uint32_t min_symbol;
+    static uint32_t min_boundary_offset;
+    static uint32_t max_boundary_offset;
 
     friend class boost::serialization::access;
     template <class Archive> void serialize(Archive &ar, const unsigned int) ///< Implements the serialization of Tuple.

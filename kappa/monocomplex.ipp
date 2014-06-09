@@ -11,11 +11,14 @@ MonoComplex< MatrixComplex > :: MonoComplex(
         const uint32_t _m,
         SignConvention sgn,
         const uint32_t number_working_threads,
-        const uint32_t number_remaining_threads,
-        const bool _radial)
-    : g(_g), m(_m), h(2*_g + _m), num_threads(number_working_threads + number_remaining_threads), radial(_radial), sign_conv(sgn), matrix_complex(true)
+        const uint32_t number_remaining_threads)
+    : g(_g), m(_m), h(2*_g + _m), num_threads(number_working_threads + number_remaining_threads), sign_conv(sgn), matrix_complex(true)
 {
-    if (radial) // For radial cells, we have h = 2g + m - 1.
+    DiagonalizerType& diago = matrix_complex.get_diagonalizer();
+    diago.num_working_threads = number_working_threads;
+    diago.num_remaining_threads = number_remaining_threads;
+    
+    if ( Tuple::get_radial() ) // For radial cells, we have h = 2g + m - 1.
     {
         --h;
     }
@@ -31,7 +34,7 @@ MonoComplex< MatrixComplex > :: MonoComplex(
     gen_bases(1, 2, 1, tuple);  // We start with the transposition ... (2 1).
     // In the radial case, we also generate all tuples as above, but also containing
     // the symbol 0.
-    if (radial)
+    if ( Tuple::get_radial() )
     {
         Tuple radial_tuple(h);
         radial_tuple.p = 1;
@@ -71,22 +74,6 @@ void MonoComplex< MatrixComplex > :: show_differential( const int32_t p ) const
     {
         std::cout << "The " << p << "-th differential is empty." << std::endl;
     }
-}
-
-template< class MatrixComplex >
-size_t MonoComplex< MatrixComplex > :: min_boundary() const
-{
-    // In the radial case, the minimum symbol with possibly non-zero boundary is 0,
-    // in the parallel case, it is 1.
-    return (radial == true? 0 : 1);
-}
-
-template< class MatrixComplex >
-size_t MonoComplex< MatrixComplex > :: max_boundary( const size_t p ) const
-{
-    // In the radial case, the maximum symbol with possibly non-zero boundary is p,
-    // in the parallel case, it is p-1.
-    return ( p - (radial == true? 0 : 1) );
 }
 
 template< class MatrixComplex >
@@ -182,7 +169,7 @@ void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t l, const uint32_t
          // number of cycles. If this is the case, we add tuple to the basis elements of the 
          // p-th basis and store the index of tuple in this basis as the id of tuple.
     {
-        if (tuple.has_correct_num_cycles(m, radial))
+        if (tuple.has_correct_num_cycles(m))
         {
             tuple.id = basis_complex[p].add_basis_element( tuple );
         }
@@ -244,7 +231,7 @@ void MonoComplex<MatrixComplex>::compute_boundary( Tuple & tuple, const uint32_t
                 or_sign.operator =(std::move(current_basis.orientation_sign()));
             }
 
-            for( uint32_t i = min_boundary(); i <= max_boundary(p); i++ )
+            for( uint32_t i = Tuple::get_min_boundary_offset(); i <= p - Tuple::get_max_boundary_offset(); i++ )
             {
                 if( (boundary = current_basis.d_hor(i)) )
                 {

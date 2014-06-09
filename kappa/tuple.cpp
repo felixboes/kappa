@@ -62,6 +62,12 @@ std::ostream& operator<< (std::ostream& stream, const Permutation& permutation)
     return stream;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool Tuple::radial = false;
+uint32_t Tuple::min_symbol = 1;
+uint32_t Tuple::min_boundary_offset = 1;
+uint32_t Tuple::max_boundary_offset = 1;
+
 Tuple :: Tuple() :
     p(0),
     rep()
@@ -78,6 +84,42 @@ Tuple :: Tuple(const uint32_t symbols, const size_t h) :
     p(symbols),
     rep( h, Transposition(0, 0) )
 {
+}
+
+void Tuple::parallel_case()
+{
+    radial = false;
+    min_symbol = 1;
+    min_boundary_offset = 1;
+    max_boundary_offset = 1;
+}
+
+void Tuple::radial_case()
+{
+    radial = true;
+    min_symbol = 0;
+    min_boundary_offset = 0;
+    max_boundary_offset = 0;
+}
+
+bool Tuple::get_radial()
+{
+    return radial;
+}
+
+uint32_t Tuple::get_min_symbol()
+{
+    return min_symbol;
+}
+
+uint32_t Tuple::get_min_boundary_offset()
+{
+    return min_boundary_offset;
+}
+
+uint32_t Tuple::get_max_boundary_offset()
+{
+    return max_boundary_offset;
 }
 
 Transposition& Tuple :: at(const size_t n)
@@ -134,36 +176,13 @@ Tuple :: operator bool() const
     return true;
 }
 
-std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
+bool Tuple :: has_correct_num_cycles(size_t m) const
 {
-    for( auto it = tuple.rep.crbegin(); it != tuple.rep.crend(); ++it )
-    {
-        stream << "(" << (uint32_t)it->first << ",";
-        if( it->first != it->second )
-        {
-            stream << (uint32_t)it->second << ")";
-        }
-        else
-        {
-            stream << "*)";
-        }
-    }
-    
-    std::cout << " Basis number (if any): " << tuple.id;
-    
-    return stream;
+    // min_symbol = 1 iff radial = false iff num_components = m + 'exactly one boundary component of the surface'
+    return num_cycles() == m + min_symbol;
 }
 
-bool Tuple :: has_correct_num_cycles(size_t m, bool radial) const
-{
-    size_t min_symbol = ((radial == true) ? 0 : 1);
-    uint32_t number_cycles = num_cycles(min_symbol);
-    return((   (not radial and number_cycles == m + 1)
-            or (    radial and number_cycles == m    )));
-
-}
-
-uint32_t Tuple :: num_cycles(const size_t min_symbol) const
+uint32_t Tuple :: num_cycles() const
 {
     // Since the t_i are transpositions, one can instead count the number of cycles of (p p-1 ... 1) t_1 ... t_h.
     uint32_t num_cycles = 0;
@@ -215,15 +234,27 @@ Tuple::ConnectedComponents Tuple::connected_components() const
 
     // Let boost compute the connected compontents.
     ConnectedComponents components(p+1);
-    int32_t num = boost::connected_components(G, &components[0]);
-    components[0] = num - 1;
+    boost::connected_components(G, &components[0]);
 
     return components;
 }
 
-int32_t Tuple::num_cluster() const
+int32_t Tuple::num_clusters() const
 {
-    return connected_components()[0];
+    typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS> Graph;
+
+    // Build graph.
+    Graph G;
+    for( auto edge : rep )
+    {
+        boost::add_edge(edge.first, edge.second, G);
+    }
+
+    // Let boost compute the connected compontents.
+    ConnectedComponents components(p+1);
+    // returns the number of components.
+    // Here 0 is a valid vertex, so we must shrink the number of components if radial = false.
+    return boost::connected_components(G, &components[0]) - min_symbol;
 }
 
 bool Tuple :: monotone()
@@ -651,3 +682,22 @@ size_t HashTuple :: operator ()( const Tuple &tuple ) const
     return hashvalue;
 }
 
+std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
+{
+    for( auto it = tuple.rep.crbegin(); it != tuple.rep.crend(); ++it )
+    {
+        stream << "(" << (uint32_t)it->first << ",";
+        if( it->first != it->second )
+        {
+            stream << (uint32_t)it->second << ")";
+        }
+        else
+        {
+            stream << "*)";
+        }
+    }
+    
+    std::cout << " Basis number (if any): " << tuple.id;
+    
+    return stream;
+}
