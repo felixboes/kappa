@@ -168,7 +168,6 @@ public:
      *  \note The parameter i has to fulfill 0 < i < p.
      */
     Tuple d_hor( const uint8_t i ) const;
-    Tuple d_hor_naive( const uint8_t i ) const;   ///< Different implementation of the i-th horizontal boundary.
     std::map< uint8_t, int8_t > orientation_sign() const;
 
     uint32_t p;  ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
