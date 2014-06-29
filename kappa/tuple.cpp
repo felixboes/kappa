@@ -56,7 +56,7 @@ std::ostream& operator<< (std::ostream& stream, const Permutation& permutation)
     {
         if (permutation.is_contained(i))
         {
-            stream << (size_t) i << " maps to " << permutation.at(i) << std::endl;
+            stream << (size_t) i << " maps to " << (size_t) permutation.at(i) << std::endl;
         }
     }
     return stream;
@@ -514,43 +514,30 @@ Permutation Tuple::sigma_h() const
 
 /**
  * Determines the decompositions of sigma into cycles including fix points.
- * \return A map consisting of all cycles of pi with their smallest element as key (except for
- * the liniel, for which the key is p)
+ * \return A map consisting of all cycles of pi with their smallest element as key
  */
 std::map< uint8_t, Permutation > Tuple::cycle_decomposition ( const Permutation & pi ) const
 {
     std::map<uint8_t, Permutation> cycle_decomp;
     std::vector<bool> visited(p+1, false);
-    for( uint8_t i = 1; i <= p; ) // We iterate through all cycles and mark the used symbols.
+    for( uint8_t i = 0; i <= p; ) // We iterate through all cycles and mark the used symbols.
     {
         // determine the cycle of i.
         Permutation cycle(p+1);
         
         uint8_t prev;     // previous symbol
         uint8_t cur = i; // current symbol
-        bool liniel_found = false;
-        
+
         do // mark all symbols in this cycle
         {
             visited[cur] = true;
             prev = cur;
             cur = pi.at(prev);
             cycle[prev] = cur;
-            if ( prev == p )
-            {
-                liniel_found = true;
-            }
         }while( cur != i );
         // note that since the for-loop runs ascendingly, the smallest element of the cycle
         // is i
-        if ( liniel_found == true )
-        {
-            cycle_decomp[p] = cycle;
-        }
-        else
-        {
-            cycle_decomp[i] = cycle;
-        }
+        cycle_decomp[i] = cycle;
         // find the next unvisited cycle
         for( ++i; i <= p && visited[i]; ++i )
         {
@@ -566,24 +553,10 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
     std::map< uint8_t, Permutation > cycle_decomp = cycle_decomposition(sigma);
 
     std::map< uint8_t, int8_t > sign;
-    // set the sign to 1 for all elements of the cycle of p
-    for ( size_t i = 1; i < cycle_decomp.at(p).size(); ++i)
-    {
-        if (cycle_decomp.at(p).is_contained(i)) // then i belongs to this cycle
-        {
-            sign[i] = 1;
-        }
-    }
     
     uint8_t i = 1; // counter of cycles
     for ( auto it_1 = cycle_decomp.begin(); it_1 != cycle_decomp.end(); ++it_1 )
     {
-        // The liniel is treated seperately and is stored in cycle_decomp[p]
-        if( it_1->first == p )
-        {
-            continue;
-        }
-    
         Permutation cycle = it_1->second;
         uint8_t min_symbol = it_1->first;
         // if the cycle is a fixpoint (a), we set sign(a) = 0 for the sake of completeness.
@@ -616,10 +589,9 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
         
         // note that initially (for k = i) it_2.first = a_{k,1} < b and we found our position k iff the first time b < a_{k+1,1}
         // in the other case we have again a_{k+1,1} < b. Induction.
-        // Moreover the case 'b > a_{m,1}' is also included as the liniel is stored at cycle_decomp[p] and b < p.
-        for ( auto it_2 = it_1; it_2 != cycle_decomp.end(); ++it_2 )
+        for ( auto it_2 = (std::next(it_1)); it_2 != cycle_decomp.end(); ++it_2 )
         {
-            uint8_t next_min_symbol = (std::next(it_2))->first;
+            uint8_t next_min_symbol = it_2->first;
             if ( second_min_symbol < next_min_symbol )
             {
                 if ( ((k - i) % 2) == 0 )
@@ -634,9 +606,21 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
             }
             ++k;
         }
+        // If b > a_{m, 1}, we still need to determine the sign of min_symbol.
+        if (k == cycle_decomp.size())
+        {
+            if ( ((k - i) % 2) == 0 )
+            {
+                sign[min_symbol] = 1;
+            }
+            else
+            {
+                sign[min_symbol] = -1;
+            }
+        }
         
         // for all other symbols of the cycle, we set the sign to 1
-        for (size_t c = 1; c < cycle.size(); ++c)
+        for (size_t c = 0; c < cycle.size(); ++c)
         {
             if (cycle.is_contained(c) and c != min_symbol)
             {

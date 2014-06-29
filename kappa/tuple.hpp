@@ -38,7 +38,7 @@ public:
      * Constructs a permutation of the given size with the given
      * initialization value in each entry.
      */
-    Permutation(const uint8_t size, const uint8_t init);
+    Permutation(const uint8_t size);
 
     /**
      * Copy constructor copying the data vector from other.
