@@ -6,8 +6,8 @@ Permutation::Permutation()
     // intentionally do nothing
 }
 
-Permutation::Permutation(const uint8_t size, const uint8_t init)
-    : data(size, init)
+Permutation::Permutation(const uint8_t size)
+    : data(size, size)
 {
     // intentionally do nothing
 }
@@ -41,7 +41,7 @@ uint8_t Permutation::size() const
 
 bool Permutation::is_contained(const uint8_t i) const
 {
-    return (data[i] != 0);
+    return (data[i] != data.size());
 }
 
 bool Permutation::is_fix_point(const uint8_t i) const
@@ -503,7 +503,7 @@ Permutation Tuple::sigma_h() const
     }
     
     // compute sigma
-    Permutation sigma(p+1, 0);
+    Permutation sigma(p+1);
     for( uint8_t i = 0; i <= p; ++i )
     {
         sigma[sigma_inv[i]] = i;
@@ -524,7 +524,7 @@ std::map< uint8_t, Permutation > Tuple::cycle_decomposition ( const Permutation 
     for( uint8_t i = 1; i <= p; ) // We iterate through all cycles and mark the used symbols.
     {
         // determine the cycle of i.
-        Permutation cycle(p+1, 0);
+        Permutation cycle(p+1);
         
         uint8_t prev;     // previous symbol
         uint8_t cur = i; // current symbol
@@ -569,7 +569,7 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
     // set the sign to 1 for all elements of the cycle of p
     for ( size_t i = 1; i < cycle_decomp.at(p).size(); ++i)
     {
-        if (cycle_decomp.at(p)[i] != 0) // then i belongs to this cycle
+        if (cycle_decomp.at(p).is_contained(i)) // then i belongs to this cycle
         {
             sign[i] = 1;
         }
@@ -597,7 +597,7 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
         // determine the second min symbol of the cycle
         for (size_t m = 1; m < cycle.size(); ++m)
         {
-            if (cycle[m] != 0 && m != min_symbol)
+            if (cycle.is_contained(m) && m != min_symbol)
             {
                 second_min_symbol = m;
                 break;
@@ -638,7 +638,7 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
         // for all other symbols of the cycle, we set the sign to 1
         for (size_t c = 1; c < cycle.size(); ++c)
         {
-            if (cycle[c] != 0 and c != min_symbol)
+            if (cycle.is_contained(c) and c != min_symbol)
             {
                 sign[c] = 1;
             }
@@ -650,7 +650,7 @@ std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
 
 Permutation Tuple::long_cycle() const
 {
-    Permutation sigma(p+1, 0);
+    Permutation sigma(p+1);
     for(uint8_t k = 0; k < p; ++k)
     {
         sigma[k] = k+1;
@@ -661,7 +661,7 @@ Permutation Tuple::long_cycle() const
 
 Permutation Tuple::long_cycle_inv() const
 {
-    Permutation sigma(p+1, 0);
+    Permutation sigma(p+1);
     for(uint8_t k = 1; k <= p; ++k)
     {
         sigma[k] = k-1;
