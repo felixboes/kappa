@@ -282,9 +282,11 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     // Print status message.
     std::cout << std::endl
               << "------------  Results   ------------" << std::endl
+              << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
               << std::endl;
     ofs       << std::endl
               << "------------  Results   ------------" << std::endl
+              << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
               << std::endl;
     
     // Print Dimensions of the E^0-page
