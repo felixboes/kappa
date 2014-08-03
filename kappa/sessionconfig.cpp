@@ -6,6 +6,7 @@ SessionConfig::SessionConfig( const int argc, char **argv ) :
     num_punctures(0),
     rational(false),
     prime(2),
+    parallel(false),
     num_threads(1),
     num_remaining_threads(0),
     start_p(0),
@@ -22,6 +23,7 @@ SessionConfig::SessionConfig( const int argc, char **argv ) :
             ("pun,m", boost::program_options::value(&num_punctures), "the number of punctures of the Riemannian surfaces")
             ("rat,r", "uses rational numbers as coefficients")
             ("fin,n", boost::program_options::value(&prime), "uses the finite field F_n with n a prime number")
+	    ("parallel", boost::program_options::value(&parallel), "uses radial or parallel slit configurations")
             ("num_working_threads,t", boost::program_options::value(&num_threads), "the number of threads used for work in matrix computations")
             ("num_remaining_threads", boost::program_options::value(&num_remaining_threads), "the number of additional threads used in diagonalization")
             ("first_diff", boost::program_options::value(&start_p), "start with the differential first_diff")

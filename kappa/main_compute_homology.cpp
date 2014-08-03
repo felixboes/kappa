@@ -159,6 +159,8 @@ int main(int argc, char** argv)
         return 2;
     }
 
+    Tuple::parallel_case();
+
     // We may start with the computations.
     if(conf.rational == true)
     {
