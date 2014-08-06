@@ -20,11 +20,11 @@ typedef std::pair< uint8_t, uint8_t > Transposition;
 /**
  * @brief Class representing a permutation
  *
- * We assume that the permutation acts on the symbols 1, ..., p.
- * The permutation is stored in the vector data, where for each symbol i in 0, ... p,
- * 0 maps to the symbol data[i]. Thereby, 0 is NOT really part of the permutation!
- * Thus the 0th index of the vector is not used, and we can use data[i] = 0 to
- * represent that the symbol i does not belong to the permutation.
+ * The permutation is stored in a vector of a given size, say s,
+ * whereby the permutation acts on a subset of the numbers 0, ..., s-1.
+ * For each symbol 0 <= i < s, its entry in the vector tells its image under the permutation.
+ * Per default, each value i maps to s, marking that i does not actually belong to the permutation.
+ * 
  */
 class Permutation
 {
@@ -35,8 +35,7 @@ public:
     Permutation();
 
     /**
-     * Constructs a permutation of the given size with the given
-     * initialization value in each entry.
+     * Constructs a permutation of the given size and initializes each entry with the default value size.
      */
     Permutation(const uint8_t size);
 
