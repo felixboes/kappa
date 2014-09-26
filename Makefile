@@ -9,7 +9,7 @@ BUILDDIR      := build
 EXT           := cpp
 SRCDIRS       := kappa libhomology
 EXCLUDE       := test_
-.DEFAULT_GOAL := compute_homology
+.DEFAULT_GOAL := compute_css
 
 ifndef CXX
 CXX           := g++
@@ -62,9 +62,9 @@ $(CXXDEP): $(BUILDDIR)/%.dep: %.$(EXT) $(TAGS)
 
 .PHONY: doc
 doc:
-	$(DOXYGEN) doxygen/Doxyfile $(DOXYGENFLAGS)
-	make --directory=doxygen/latex/ pdf
-	@find doxygen/latex/ -regex ".*/refman\(_2on1\)?\.\(dvi\|ps\|pdf\)" -exec mv {} doxygen/ \;
+	$(DOXYGEN) ./Doxyfile $(DOXYGENFLAGS)
+	make --directory=./doc/latex/ pdf
+	@find ./doc/latex/ -regex ".*/refman\(_2on1\)?\.\(dvi\|ps\|pdf\)" -exec mv {} doc/ \;
 
 .PHONY: clean
 clean:
