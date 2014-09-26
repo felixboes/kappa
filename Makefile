@@ -69,4 +69,4 @@ doc:
 .PHONY: clean
 clean:
 	rm -rf $(TARGETS) $(BUILDDIR)
-	rm -rf doxygen/html/ doxygen/latex/ doxygen/*.pdf
+	rm -rf doc/html/ doc/latex/ doc/*.pdf

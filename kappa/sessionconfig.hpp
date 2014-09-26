@@ -8,12 +8,17 @@
 
 #include <libhomology/homology.hpp>
 
-    
+/**
+ *  \brief The sign convention in the Ehrenfried complex.
+ *  Here, all_signs corresponds to the orientation coefficients,
+ *  no_orientation_signs corresponds to the constant coefficient system and
+ *  no_signs is allowed to be used iff the coeffiencts are a \f$ \mathbb F_2 \f$-algebra.
+ */ 
 enum SignConvention
 {
-    all_signs,
-    no_orientation_sign,
-    no_signs
+    all_signs,              ///< use the orientation coefficients
+    no_orientation_sign,    ///< use the constant coefficients system
+    no_signs                ///< use the constant coefficients system and assume that we use a \f$ \mathbb F_2\f$ algebra
 };
 
 /**
@@ -22,7 +27,20 @@ enum SignConvention
  */
 struct SessionConfig
 {
-    SessionConfig() : genus(0), num_punctures(0), rational(0), prime(2), parallel(false), num_threads(1), num_remaining_threads(0), start_p(0), end_p(std::numeric_limits<uint32_t>::max()), sgn_conv(all_signs), valid(false) {}
+    SessionConfig() :
+        genus(0),
+        num_punctures(0),
+        rational(0),
+        prime(2),
+        parallel(false),
+        num_threads(1),
+        num_remaining_threads(0),
+        start_p(0),
+        end_p(std::numeric_limits<uint32_t>::max()),
+        sgn_conv(all_signs),
+        valid(false)
+    {}
+    
     SessionConfig( const int argc, char** argv );
     
     /// Sometimes we have to work a litte, before we can use a configurration. Here we check parameters and setup Z_p coefficients.
