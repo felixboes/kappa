@@ -441,7 +441,7 @@ int main(int argc, char** argv)
     }
     else
     {
-	Tuple::parallel_case();
+        Tuple::parallel_case();
     }
     
     // We may start with the computations.
@@ -451,7 +451,7 @@ int main(int argc, char** argv)
     }
     else if (conf.prime == 2)
     {
-        compute_css< ClusterSpectralSequenceBool > ( conf, argc, argv);
+        compute_css< ClusterSpectralSequenceBool > ( conf, argc, argv );
     }
     else
     {

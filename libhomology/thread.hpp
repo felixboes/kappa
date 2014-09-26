@@ -3,7 +3,6 @@
 
 #include <functional>
 
-
 /*! \class Thread
  *  \brief Basic Thread class allowing Lambda executions in concurrency
  *

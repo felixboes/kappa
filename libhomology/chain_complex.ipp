@@ -1,7 +1,8 @@
 #include "chain_complex.hpp"
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::ChainComplex (bool matrices_are_transposed) : transp(matrices_are_transposed)
+ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::ChainComplex (bool matrices_are_transposed) :
+    transp(matrices_are_transposed)
 {
     diago.transp = transp;
 }
@@ -215,10 +216,12 @@ HomologyT ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::homol
     else
     {
         // Assert that the matrices have the right number of colums and rows.
-        if( !(
-                differential.count(n) == 0 || (transp == false ? differential[n].size1() : differential[n].size2()) == 0 || // Zero matrix
-                (transp == false ? differential[n].size2() : differential[n].size1()) == (transp == false ? differential[n+1].size1() : differential[n+1].size2())
-                ) )
+        if(
+            !(
+                    differential.count(n) == 0 || (transp == false ? differential[n].size1() : differential[n].size2()) == 0 || // Zero matrix
+                    (transp == false ? differential[n].size2() : differential[n].size1()) == (transp == false ? differential[n+1].size1() : differential[n+1].size2())
+                )
+            )
         {
             std::cerr << "Error: Column-Rows exception at position " << n << std::endl;
         }

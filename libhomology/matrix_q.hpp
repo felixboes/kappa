@@ -7,10 +7,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 
-/**
- *  The coefficient ring \f$ \mathbb{Q} \f$.
- */
-typedef mpq_class Q;
+#include "field_coefficients.hpp"
 
 typedef boost::numeric::ublas::matrix< Q > MatrixQ;
 typedef boost::numeric::ublas::identity_matrix< Q > MatrixQIdentity;

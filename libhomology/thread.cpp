@@ -2,7 +2,6 @@
 #include <libhomology/condition.hpp>
 #include "thread.hpp"
 
-
 static void thread_function(
     Condition &               start,
     Condition &               done,

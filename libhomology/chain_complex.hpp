@@ -71,9 +71,12 @@ public:
     CoefficientT &operator() ( const uint32_t row, const uint32_t col );
     
     /**
-     * @return number of rows resp. columns of the current differential
+     * @return number of rows of the current differential
     **/
     size_t num_rows() const;
+    /**
+     * @return number of columns of the current differential
+    **/
     size_t num_cols() const;
     
     /**
@@ -144,10 +147,11 @@ private:
 
     DiagonalizerType diago; ///< The diagonalizer that is used to perform homology computations.
 
+    // Serialization method.
     friend class boost::serialization::access;
     
-    template <class Archive>
-    void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization.
+    template < class Archive >
+    void serialize( Archive &ar, const unsigned int ) ///< Implements the serialization.
     {
         ar & current_differential;
         ar & differential;

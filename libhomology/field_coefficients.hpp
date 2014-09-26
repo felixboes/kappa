@@ -18,12 +18,12 @@
 #include "parallelization.hpp"
 
 /**
- *  The coefficient ring \f$ \mathbb{Q} \f$.
+ *  The coefficient ring \f$ \mathbb Q \f$.
  */
 typedef mpq_class Q;
 
 /**
- *  The coefficient ring \f$ \mathbb{Z} / m \mathbb{Z} \f$.
+ *  The coefficient ring \f$ \mathbb Z / m \mathbb Z \f$.
  */
 class Zm{
 public:
@@ -61,13 +61,11 @@ private:
     operator int() const;       ///< In order to cast a Zm coefficient \f$c\f$ to an integer we pick a representative \f$ 0 \le c < base\f$.
     operator unsigned() const;  ///< In order to cast a Zm coefficient \f$c\f$ to an unsigned integer we pick a representative \f$ 0 \le c < base\f$.
     
-    /**
-     *  In order to save Zm coefficients we have to grad boost::serialization::access access.
-     */
+    // In order to save Zm coefficients we have to grad boost::serialization::access access.
     friend class boost::serialization::access;
     
-    template <class Archive>
-    void serialize(Archive &ar, const unsigned int version) ///< Implements the serialization of a coefficient.
+    template < class Archive >
+    void serialize( Archive &ar, const unsigned int ) ///< Implements the serialization of a coefficient.
     {
         ar & n;
     }

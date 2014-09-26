@@ -6,7 +6,7 @@
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 
 /**
- *  The coefficient ring \f$ \mathbb{Z} \f$.
+ *  The coefficient ring \f$ \mathbb Z \f$.
  *  Use these matrices only for saving generated differentials.
  *  Do not diagonalize these matrices as the coefficients will probalby overflow.
  *  In order to avoid overflows use matrices with 'gmp' coefficients.
