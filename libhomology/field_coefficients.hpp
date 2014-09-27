@@ -15,8 +15,6 @@
 
 #include <boost/serialization/access.hpp>
 
-#include "parallelization.hpp"
-
 /**
  *  The coefficient ring \f$ \mathbb Q \f$.
  */

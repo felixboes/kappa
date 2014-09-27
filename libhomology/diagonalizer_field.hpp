@@ -78,11 +78,11 @@ public:
     bool transp;    ///< True iff the transposed matrices are stored.
     uint32_t def;   ///< The defect of the matrix.
     uint32_t rnk;   ///< The rank of the matrix.
-    uint32_t num_working_threads;
-    uint32_t num_remaining_threads;
-    atomic_uint current_rank;
+    uint32_t num_working_threads;       ///< The number of threads used in the process (diagoanlizing and collecting work).
+    uint32_t num_remaining_threads;     ///< The number of threads collecting tasks.
+    atomic_uint current_rank;           ///< The current state of the rank in the computation.
     
-    std::list< size_t > ommit_rows;
+    std::list< size_t > ommit_rows;     ///< Rows we do not have to consider anymore.
     
     // Classes for paralellization:
     // Todo: give a detailed explanation.

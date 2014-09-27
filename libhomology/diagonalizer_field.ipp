@@ -141,7 +141,7 @@ DiagonalizerField< MatrixType >::JobQueue::JobQueue(
     col(0),
     diagonal(diag)
 {
-    if (matrix.size1() == 0 || matrix.size2() == 0) // Then no diagonalizing is necessary.
+    if ( matrix.size1() == 0 || matrix.size2() == 0 ) // Then no diagonalizing is necessary.
     {
         return;
     }
@@ -154,7 +154,7 @@ DiagonalizerField< MatrixType >::JobQueue::JobQueue(
             ++ommit_it;
             continue;
         }
-        if ( matrix(row, col) == typename MatrixType::CoefficientType(0))
+        if ( matrix(row, col) == typename MatrixType::CoefficientType(0) )
         {
             remaining_rows.push_back(row);
         }
@@ -243,8 +243,8 @@ void DiagonalizerField< MatrixType >::JobQueue:: add_up_rows
         std::vector<size_t> & new_rows_to_work_at = worker.get_new_rows_to_work_at();
         std::vector<size_t> & new_remaining_rows  = worker.get_new_remaining_rows();
         // Append the vectors of this worker to the united array.
-        rows_to_work_at.insert(rows_to_work_at.end(), new_rows_to_work_at.begin(), new_rows_to_work_at.end());
-        remaining_rows.insert (remaining_rows.end(),  new_remaining_rows.begin(),  new_remaining_rows.end());
+        rows_to_work_at.insert( rows_to_work_at.end(), new_rows_to_work_at.begin(), new_rows_to_work_at.end() );
+        remaining_rows.insert ( remaining_rows.end(),  new_remaining_rows.begin(),  new_remaining_rows.end() );
         // Clear the vectors of this worker.
         new_rows_to_work_at.clear();
         new_remaining_rows.clear();
@@ -255,14 +255,14 @@ void DiagonalizerField< MatrixType >::JobQueue:: add_up_rows
 }
 
 template < class MatrixType >
-bool DiagonalizerField< MatrixType >::JobQueue::update_rank_and_work(atomic_uint & current_rank, std::vector<Worker> & workers)
+bool DiagonalizerField< MatrixType >::JobQueue::update_rank_and_work( atomic_uint & current_rank, std::vector< Worker > & workers )
 {
     ++col;
 
-    if (col < matrix.size2() && current_rank < matrix.size1())
+    if ( col < matrix.size2() && current_rank < matrix.size1() )
     {
-        add_up_rows(workers, rows_to_work_at, remaining_rows);
-        if (rows_to_work_at.size() != 0)
+        add_up_rows( workers, rows_to_work_at, remaining_rows );
+        if ( rows_to_work_at.size() != 0 )
         {
             row_1 = rows_to_work_at.back();
             diagonal.push_back( MatrixEntryType(row_1, col) );
@@ -287,8 +287,8 @@ void DiagonalizerField< MatrixType >::JobQueue::get_work_chunk(
     size_t &        begin,
     size_t &        end) const
 {
-    begin = std::min( thread_id      * work_chunk_size, rows_to_work_at.size());
-    end   = std::min((thread_id + 1) * work_chunk_size, rows_to_work_at.size());
+    begin = std::min(  thread_id      * work_chunk_size, rows_to_work_at.size() );
+    end   = std::min( (thread_id + 1) * work_chunk_size, rows_to_work_at.size() );
 }
 
 template < class MatrixType >
@@ -297,21 +297,21 @@ void DiagonalizerField< MatrixType >::JobQueue::get_remaining_chunk(
     size_t &        begin,
     size_t &        end) const
 {
-    begin = std::min( thread_id      * remaining_chunk_size, remaining_rows.size());
-    end   = std::min((thread_id + 1) * remaining_chunk_size, remaining_rows.size());
+    begin = std::min(  thread_id      * remaining_chunk_size, remaining_rows.size() );
+    end   = std::min( (thread_id + 1) * remaining_chunk_size, remaining_rows.size() );
 }
 
 template < class MatrixType >
 void DiagonalizerField< MatrixType >::JobQueue::recompute_chunk_sizes()
 {
     work_chunk_size = rows_to_work_at.size() / (num_working_threads);
-    if (rows_to_work_at.size() % (num_working_threads) != 0)
+    if ( rows_to_work_at.size() % (num_working_threads) != 0 )
     {
         ++work_chunk_size;
     }
 
     remaining_chunk_size = remaining_rows.size() / (num_remaining_threads);
-    if (remaining_rows.size() % num_remaining_threads != 0)
+    if ( remaining_rows.size() % num_remaining_threads != 0 )
     {
         ++remaining_chunk_size;
     }
@@ -347,7 +347,7 @@ void DiagonalizerField< MatrixType >::Worker::operator=(Worker const & other)
 #endif
 
 template< class MatrixType >
-void DiagonalizerField< MatrixType >::Worker::work(MatrixType& matrix)
+void DiagonalizerField< MatrixType >::Worker::work( MatrixType& matrix )
 {
     size_t begin = 0, end = 0;
     size_t new_col = jobs.col + 1;
@@ -361,7 +361,7 @@ void DiagonalizerField< MatrixType >::Worker::work(MatrixType& matrix)
         for ( jobs.get_work_chunk(id, begin, end); begin < end; ++begin )
         {
             size_t row_2 = jobs.rows_to_work_at[begin];
-            if (matrix(row_2, new_col) == typename MatrixType::CoefficientType(0))
+            if ( matrix(row_2, new_col) == typename MatrixType::CoefficientType(0) )
             {
                 new_remaining_rows.push_back(row_2);
             }
@@ -386,18 +386,18 @@ std::vector<size_t> & DiagonalizerField< MatrixType >::Worker::get_new_remaining
 }
 
 template< class MatrixType >
-void DiagonalizerField< MatrixType >::Worker::collect_remaining_work(MatrixType & matrix)
+void DiagonalizerField< MatrixType >::Worker::collect_remaining_work( MatrixType & matrix )
 {
     std::vector<size_t> & remaining_rows = jobs.remaining_rows;
     size_t begin = 0;
     size_t end = 0;
     size_t new_col = jobs.col + 1;
-    if (new_col < matrix.size2())
+    if ( new_col < matrix.size2() )
     {
-        for (jobs.get_remaining_chunk(id, begin, end); begin < end; ++begin)
+        for ( jobs.get_remaining_chunk(id, begin, end); begin < end; ++begin )
         {
             size_t row = remaining_rows[begin];
-            if (matrix(row, new_col) == typename MatrixType::CoefficientType(0))
+            if ( matrix(row, new_col) == typename MatrixType::CoefficientType(0) )
             {
                 new_remaining_rows.push_back(row);
             }
@@ -429,7 +429,7 @@ uint32_t DiagonalizerField< MatrixType >::diag_field_parallelized( MatrixType & 
     {
         workers.emplace_back(i, jobs);
         size_t thread_id = num_working_threads + i;
-        threads.emplace_back([thread_id, &workers, &matrix]{workers[thread_id].collect_remaining_work(matrix);});
+        threads.emplace_back( [thread_id, &workers, &matrix]{workers[thread_id].collect_remaining_work(matrix);} );
     }
     // Start threads.
     do
@@ -443,6 +443,6 @@ uint32_t DiagonalizerField< MatrixType >::diag_field_parallelized( MatrixType & 
         {
             it.wait();
         };
-    }while (jobs.update_rank_and_work(current_rank, std::ref(workers)));
+    } while ( jobs.update_rank_and_work( current_rank, std::ref(workers) ) );
     return current_rank;
 }

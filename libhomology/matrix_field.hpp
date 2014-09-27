@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "field_coefficients.hpp"
-#include "parallelization.hpp"
 
 /**
  *  This template class defines a matrix type subject to the field coeffiecients 'CoefficientT'.
@@ -26,11 +25,15 @@ class MatrixField
 {
 public:
     typedef CoefficientT CoefficientType;
-    typedef std::vector<CoefficientT> MatrixStorageType;    ///< This realizes the implementation of the data.
+    typedef std::vector< CoefficientT > MatrixStorageType;  ///< This realizes the implementation of the data.
     typedef std::pair< size_t, size_t > MatrixEntryType;
     typedef std::list< MatrixEntryType > DiagonalType;
     
-    MatrixField();  ///< Creates a \f$ 0 \times 0\f$ matrix.
+    /**
+     *  Creates a \f$ 0 \times 0\f$ matrix.
+     */
+    MatrixField();
+    
     /**
      *  Creates a matrix with num_rows rows and num_cols columns.
      *  The entries are determined by the standard constructor of CoefficientT.
@@ -65,27 +68,33 @@ public:
      */ 
     void resize ( const size_t size1, const size_t size2, const bool );
     
-    size_t size1() const;   ///< @returns the number of rows.
-    size_t size2() const;   ///< @returns the number of columns.
-    
-    void clear();   ///< Fills every entry with CoefficientT(0);
-    
-     /**
-     *  grant std::ostream access in order to print coefficients to ostreams like 'std::cout << Zm(44) << std::endl;'
+    /**
+     *  @returns the number of rows.
      */
+    size_t size1() const;
+    
+    /**
+     *  @returns the number of columns.
+     */
+    size_t size2() const;
+    
+    /**
+     *  Fills every entry with CoefficientT(0).
+     */
+    void clear();
+    
+    // grant std::ostream access in order to print matrices to ostreams.
     template< class T >
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixField<T> & matrix );
 
-    DiagonalType diagonal;
+    DiagonalType diagonal;  ///< Stores the diagonal of the diagonalized matrix.
 
 private:
     MatrixStorageType data; ///< This realizes the data.
     size_t num_rows;    ///< The number of rows.
     size_t num_cols;    ///< The number of columns.
     
-    /**
-     *  In order to save Zm coefficients we have to grad boost::serialization::access access.
-     */ 
+    // In order to save matrices we have to grad boost::serialization::access access.
     friend class boost::serialization::access;
 
     template <class Archive>
@@ -130,7 +139,11 @@ public:
         secondary
     };
     
-    MatrixFieldCSS();  ///< Creates a \f$ 0 \times 0\f$ matrix.
+    /**
+     *  Creates a \f$ 0 \times 0\f$ matrix.
+     */
+    MatrixFieldCSS();
+    
     /**
      *  Creates a matrix with num_rows rows and num_cols columns.
      *  The entries are determined by the standard constructor of CoefficientT.
@@ -140,7 +153,15 @@ public:
      */
     MatrixFieldCSS( const MatrixFieldCSSInitialization ini, const size_t num_rows1, const size_t num_cols1, const size_t num_rows2 = 0, const size_t num_cols2 = 0 );
     
-    MatrixFieldCSS( const size_t num_rows1, const size_t num_cols1 ); ///< Equivalent to MatrixFieldCSS( only_main, num_rows1, num_cols1, 0, 0 );
+    /**
+     *  Equivalent to MatrixFieldCSS( only_main, num_rows1, num_cols1, 0, 0 );
+     */ 
+    MatrixFieldCSS( const size_t num_rows1, const size_t num_cols1 );
+    
+    /**
+     *  Define the set of operations row_operation, operator(), ... .
+     */
+    void define_operations( const OperationType );
     
     /**
      *  This performs a row operation in the Gauss algorithm.
@@ -151,7 +172,6 @@ public:
     void row_operation( const size_t row_1, const size_t row_2, const size_t col );
     void row_operation_main_and_secondary( const size_t row_1, const size_t row_2, const size_t col );
     void row_operation_secondary( const size_t row_1, const size_t row_2, const size_t col );
-    void define_operations( const OperationType );
     
     /**
      *  In order to access elements of the matrix you want to use this function.
@@ -182,23 +202,35 @@ public:
      */ 
     void sec_resize ( const size_t size1, const size_t size2, const bool);
     
-    size_t size1() const;   ///< @returns the number of rows.
-    size_t size2() const;   ///< @returns the number of columns.
+    /**
+     *  @returns the number of rows.
+     */
+    size_t size1() const;
     size_t main_size1() const;
-    size_t main_size2() const;
     size_t sec_size1() const;
+    
+    /**
+     *  @returns the number of columns.
+     */
+    size_t size2() const;
+    size_t main_size2() const;
     size_t sec_size2() const;
     
-    void clear();   ///< Fills every entry with CoefficientT(0);
-    void sec_clear();   ///< Fills every entry of the secondary matrix with CoefficientT(0);
-    
-     /**
-     *  grant std::ostream access in order to print matrix to ostreams.
+    /**
+     *  Fills every entry with CoefficientT(0).
      */
+    void clear();
+    
+    /**
+     *  Fills every entry of the secondary matrix with CoefficientT(0);
+     */
+    void sec_clear();
+    
+   // grant std::ostream access in order to print matrices to ostreams.
     template< class T >
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<T> & matrix );
 
-    DiagonalType diagonal;
+    DiagonalType diagonal;  ///< Stores the diagonal of the diagonalized matrix.
     
 private:    
     MatrixStorageType data; ///< This realizes the data.
@@ -215,9 +247,7 @@ private:
     size_t (ThisType::* size1_funct)() const;
     size_t (ThisType::* size2_funct)() const;
     
-    /**
-     *  In order to save we have to grad boost::serialization::access access.
-     */ 
+    // In order to save matrices we have to grad boost::serialization::access access.
     friend class boost::serialization::access;
 
     template <class Archive>
@@ -247,7 +277,11 @@ public:
     typedef std::pair< size_t, size_t > MatrixEntryType;
     typedef std::list< MatrixEntryType > DiagonalType;
 
-    MatrixBool();  ///< Creates a \f$ 0 \times 0\f$ matrix.
+    /**
+     *  Creates a \f$ 0 \times 0\f$ matrix.
+     */
+    MatrixBool();
+    
     /**
      *  Creates a matrix with num_rows rows and num_cols columns with entries 0.
      *  In order to get a zero matrix you may use clear();
@@ -285,26 +319,32 @@ public:
      */
     void resize ( const size_t size1, const size_t size2, const bool );
 
-    size_t size1() const;   ///< @returns the number of rows.
-    size_t size2() const;   ///< @returns the number of columns.
-
-    void clear();   ///< Fills every entry with 0;
-
-     /**
-     *  grant std::ostream access in order to print coefficients to ostreams like 'std::cout << Zm(44) << std::endl;'
+    /**
+     *  @returns the number of rows.
      */
+    size_t size1() const;
+    
+    /**
+     *  @returns the number of columns.
+     */
+    size_t size2() const;
+
+    /**
+     *  Fills every entry with 0.
+     */
+    void clear();
+
+    // grant std::ostream access in order to print matrices to ostreams.matrix_field.hpp
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixBool & matrix);
 
-    DiagonalType diagonal;
+    DiagonalType diagonal;  ///< Stores the diagonal of the diagonalized matrix.
 
 private:
     MatrixStorageType data; ///< This realizes the data.
     size_t num_rows;    ///< The number of rows.
     size_t num_cols;    ///< The number of columns.
 
-    /**
-     *  In order to save coefficients we have to grad boost::serialization::access access.
-     */
+    // In order to save matrices we have to grad boost::serialization::access access.
     friend class boost::serialization::access;
 
     template <class Archive>
@@ -341,7 +381,10 @@ public:
     };
     
     
-    MatrixBoolCSS();  ///< Creates a \f$ 0 \times 0\f$ matrix.
+    /**
+     *  Creates a \f$ 0 \times 0\f$ matrix.
+     */
+    MatrixBoolCSS();
     
     /**
      *  Creates a matrix with num_rows rows and num_cols columns.
@@ -352,8 +395,16 @@ public:
      */
     MatrixBoolCSS( const MatrixBoolCSSInitialization ini, const size_t num_rows1, const size_t num_cols1, const size_t num_rows2 = 0, const size_t num_cols2 = 0 );
     
-    MatrixBoolCSS( const size_t number_rows, const size_t number_cols ); ///< Equivalent to MatrixBoolCSS( only_main, num_rows1, num_cols1, 0, 0 );
+    /**
+     *  Equivalent to MatrixBoolCSS( only_main, num_rows1, num_cols1, 0, 0 ).
+     */
+    MatrixBoolCSS( const size_t number_rows, const size_t number_cols );
 
+    /**
+     *  Define the set of operations row_operation, operator(), ... .
+     */
+    void define_operations( const OperationType );
+    
     /**
      *  This performs a row operation in the Gauss algorithm.
      *  The entry in (row_1, col) is the given entry that is used to erase the entry in (row_2, col).
@@ -361,7 +412,6 @@ public:
     void row_operation( const size_t row_1, const size_t row_2, const size_t col );
     void row_operation_main_and_secondary( const size_t row_1, const size_t row_2, const size_t col );
     void row_operation_secondary( const size_t row_1, const size_t row_2, const size_t col );
-    void define_operations( const OperationType );
 
     /**
      *  In order to access elements of the matrix you want to use this function.
@@ -389,12 +439,25 @@ public:
     void main_add_entry( const size_t i, const size_t j );
     void sec_add_entry( const size_t i, const size_t j );
     
+    /**
+     *  Set 0 or 1 in the main matrix at the spot (i,j).
+     */ 
     void main_set( const size_t i, const size_t j, const bool val );
+    
+    /**
+     *  Set 0 or 1 in the secondary matrix at the spot (i,j).
+     */ 
     void sec_set( const size_t i, const size_t j, const bool val );
     
+    /**
+     *  @returns the i-th row of the main matrix.
+     */ 
     MatrixRowType& main_row( const size_t i );
     const MatrixRowType& main_row_at( const size_t i ) const;
     
+    /**
+     *  @returns the i-th row of the secondary matrix.
+     */ 
     MatrixRowType& sec_row( const size_t i );
     const MatrixRowType& sec_row_at( const size_t i ) const;
     /**
@@ -409,22 +472,34 @@ public:
      */ 
     void sec_resize ( const size_t size1, const size_t size2, const bool);
     
-    size_t size1() const;   ///< @returns the number of rows.
-    size_t size2() const;   ///< @returns the number of columns.
+    /**
+     *  @returns the number of rows.
+     */
+    size_t size1() const;
     size_t main_size1() const;
-    size_t main_size2() const;
     size_t sec_size1() const;
+    
+    /**
+     *  @returns the number of columns.
+     */
+    size_t size2() const;
+    size_t main_size2() const;
     size_t sec_size2() const;
     
-    void clear();       ///< Fills every entry 0;
-    void sec_clear();   ///< Fills every entry of the secondary matrix with 0;
+    /**
+     *  Fills every entry 0.
+     */
+    void clear();
     
-     /**
-      * grant std::ostream access in order to print matrix to ostreams.
-     **/
+    /**
+     *  Fills every entry of the secondary matrix with 0.
+     */
+    void sec_clear();
+    
+    // grant std::ostream access in order to print matrices to ostreams.matrix_field.hpp
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixBoolCSS & matrix );
 
-    DiagonalType diagonal;
+    DiagonalType diagonal;  ///< Stores the diagonal of the diagonalized matrix.
 
 private:
     MatrixStorageType data; ///< This realizes the data.
@@ -442,9 +517,7 @@ private:
     size_t (ThisType::* size1_funct)() const;
     size_t (ThisType::* size2_funct)() const;
     
-    /**
-     *  In order to save we have to grad boost::serialization::access access.
-     */ 
+    // In order to save matrices we have to grad boost::serialization::access access.
     friend class boost::serialization::access;
 
     template <class Archive>
