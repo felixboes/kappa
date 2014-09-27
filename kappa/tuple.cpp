@@ -39,6 +39,37 @@ uint8_t Permutation::size() const
     return data.size();
 }
 
+std::map< uint8_t, Permutation > Permutation::cycle_decomposition () const
+{
+    const uint8_t p = this->size();
+    std::map< uint8_t, Permutation > cycle_decomp;
+    std::vector< bool > visited( p+1, false );
+    for( uint8_t i = 0; i <= p; ) // We iterate through all cycles and mark the used symbols.
+    {
+        // determine the cycle of i.
+        Permutation cycle(p+1);
+        
+        uint8_t prev;     // previous symbol
+        uint8_t cur = i; // current symbol
+
+        do // mark all symbols in this cycle
+        {
+            visited[cur] = true;
+            prev = cur;
+            cur = this->at(prev);
+            cycle[prev] = cur;
+        }while( cur != i );
+        // note that since the for-loop runs ascendingly, the smallest element of the cycle
+        // is i
+        cycle_decomp[i] = cycle;
+        // find the next unvisited cycle
+        for( ++i; i <= p && visited[i]; ++i )
+        {
+        }
+    }
+    return cycle_decomp;
+}
+
 bool Permutation::is_contained(const uint8_t i) const
 {
     return (data[i] != data.size());
@@ -512,45 +543,11 @@ Permutation Tuple::sigma_h() const
     return sigma;
 }
 
-/**
- * Determines the decompositions of sigma into cycles including fix points.
- * \return A map consisting of all cycles of pi with their smallest element as key
- */
-std::map< uint8_t, Permutation > Tuple::cycle_decomposition ( const Permutation & pi ) const
-{
-    std::map<uint8_t, Permutation> cycle_decomp;
-    std::vector<bool> visited(p+1, false);
-    for( uint8_t i = 0; i <= p; ) // We iterate through all cycles and mark the used symbols.
-    {
-        // determine the cycle of i.
-        Permutation cycle(p+1);
-        
-        uint8_t prev;     // previous symbol
-        uint8_t cur = i; // current symbol
-
-        do // mark all symbols in this cycle
-        {
-            visited[cur] = true;
-            prev = cur;
-            cur = pi.at(prev);
-            cycle[prev] = cur;
-        }while( cur != i );
-        // note that since the for-loop runs ascendingly, the smallest element of the cycle
-        // is i
-        cycle_decomp[i] = cycle;
-        // find the next unvisited cycle
-        for( ++i; i <= p && visited[i]; ++i )
-        {
-        }
-    }
-    return cycle_decomp;
-}
-
 std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
 {
     Permutation sigma = sigma_h();
 
-    std::map< uint8_t, Permutation > cycle_decomp = cycle_decomposition(sigma);
+    std::map< uint8_t, Permutation > cycle_decomp = sigma.cycle_decomposition();
 
     std::map< uint8_t, int8_t > sign;
     
