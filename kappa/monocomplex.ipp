@@ -12,7 +12,12 @@ MonoComplex< MatrixComplex > :: MonoComplex(
         SignConvention sgn,
         const uint32_t number_working_threads,
         const uint32_t number_remaining_threads)
-    : g(_g), m(_m), h(2*_g + _m), num_threads(number_working_threads + number_remaining_threads), sign_conv(sgn), matrix_complex(true)
+    : g(_g),
+      m(_m),
+      h(2*_g + _m),
+      num_threads(number_working_threads + number_remaining_threads),
+      sign_conv(sgn),
+      matrix_complex(true)
 {
     DiagonalizerType& diago = matrix_complex.get_diagonalizer();
     diago.num_working_threads = number_working_threads;
@@ -221,14 +226,14 @@ void MonoComplex<MatrixComplex>::compute_boundary( Tuple & tuple, const uint32_t
                 break;
             }
         }
-
+        
         // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
         if( norm_preserved )   // Compute all horizontal boundaries.
         {
             std::map< uint8_t, int8_t > or_sign;
             if( sign_conv == all_signs )
             {
-                or_sign.operator =(std::move(current_basis.orientation_sign()));
+                or_sign.operator =( std::move(current_basis.orientation_sign()) );
             }
 
             for( uint32_t i = Tuple::get_min_boundary_offset(); i <= p - Tuple::get_max_boundary_offset(); i++ )
@@ -253,8 +258,7 @@ void monocomplex_work(
 {
     for ( auto it : work)
     {
-        Tuple & tuple = it;
-        monocomplex.compute_boundary(tuple, p, differential);
+        monocomplex.compute_boundary( it, p, differential );
     }
 }
 
@@ -283,10 +287,16 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
     MatrixType & differential = matrix_complex.get_current_differential();
     differential.resize( basis_complex[p].size(), basis_complex[p-1].size(), true );
     
+    if( basis_complex[p].size() == 0 || basis_complex[p-1].size() == 0 )
+    {
+        return;
+    }
+    
     // For each tuple t in the basis, we compute all basis elements that
     // occur in kappa(t).
     std::vector<MonocomplexWork> elements_per_threads (num_threads);
     uint32_t num_elements_per_thread = basis_complex[p].size() / num_threads;
+    
     if (basis_complex[p].size() % num_threads != 0)
     {
         ++num_elements_per_thread;

@@ -7,7 +7,12 @@ ClusterSpectralSequence< MatrixComplex > :: ClusterSpectralSequence(
         const SignConvention    sgn,
         const uint32_t          number_working_threads,
         const uint32_t          number_remaining_threads)
-    : g(genus), m(num_punctures), h(2*genus + num_punctures), num_threads(number_working_threads + number_remaining_threads), sign_conv(sgn), diff_complex(true)
+    : g(genus),
+      m(num_punctures),
+      h(2*genus + num_punctures),
+      num_threads(number_working_threads + number_remaining_threads),
+      sign_conv(sgn),
+      diff_complex(true)
 {
     // Configure diagoanlizer
     DiagonalizerType& diago = diff_complex.get_diagonalizer();

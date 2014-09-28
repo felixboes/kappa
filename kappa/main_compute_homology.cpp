@@ -137,6 +137,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
 
 int main(int argc, char** argv)
 {
+    std::cout.setf(std::ios::unitbuf);
     // Parse configuration from command line arguments.
     SessionConfig conf(argc, argv);
     if( conf.option_set("help") )
@@ -159,7 +160,14 @@ int main(int argc, char** argv)
         return 2;
     }
 
-    Tuple::parallel_case();
+    if (conf.parallel == true)
+    {
+        Tuple::parallel_case();
+    }
+    else
+    {
+        Tuple::radial_case();
+    }
 
     // We may start with the computations.
     if(conf.rational == true)

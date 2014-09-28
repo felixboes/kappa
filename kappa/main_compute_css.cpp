@@ -435,13 +435,13 @@ int main(int argc, char** argv)
         return 2;
     }
     
-    if (conf. parallel== true)
+    if (conf.parallel == true)
     {
-        Tuple::radial_case();
+        Tuple::parallel_case();
     }
     else
     {
-        Tuple::parallel_case();
+        Tuple::radial_case();
     }
     
     // We may start with the computations.

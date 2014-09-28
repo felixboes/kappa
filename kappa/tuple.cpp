@@ -41,7 +41,7 @@ uint8_t Permutation::size() const
 
 std::map< uint8_t, Permutation > Permutation::cycle_decomposition () const
 {
-    const uint8_t p = this->size();
+    const uint8_t p = this->size() - 1;
     std::map< uint8_t, Permutation > cycle_decomp;
     std::vector< bool > visited( p+1, false );
     for( uint8_t i = 0; i <= p; ) // We iterate through all cycles and mark the used symbols.
@@ -546,9 +546,7 @@ Permutation Tuple::sigma_h() const
 std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
 {
     Permutation sigma = sigma_h();
-
-    std::map< uint8_t, Permutation > cycle_decomp = sigma.cycle_decomposition();
-
+    std::map< uint8_t, Permutation > cycle_decomp = sigma.cycle_decomposition();    
     std::map< uint8_t, int8_t > sign;
     
     uint8_t i = 1; // counter of cycles
