@@ -67,21 +67,6 @@ void MonoComplex< MatrixComplex > :: show_basis( const int32_t p ) const
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: show_differential( const int32_t p ) const
-{
-    if( matrix_complex.count(p) )
-    {
-        std::cout << "This it the " << p << "-th differential:" << std::endl;
-        std::cout << matrix_complex.at(p);
-        std::cout << std::endl;
-    }
-    else
-    {
-        std::cout << "The " << p << "-th differential is empty." << std::endl;
-    }
-}
-
-template< class MatrixComplex >
 void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t l, const uint32_t p, const uint32_t start_symbol, Tuple& tuple )
 {
     /* Up to now we have determined all monotonic tuples of l transpositions containing the 
@@ -324,7 +309,19 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex >::erase_differential()
+typename MonoComplex< MatrixComplex >::MatrixType & MonoComplex< MatrixComplex > :: get_current_differential()
+{
+    return matrix_complex.get_current_differential();
+}
+
+template< class MatrixComplex >
+const typename MonoComplex< MatrixComplex >::MatrixType & MonoComplex< MatrixComplex > :: get_current_differential() const
+{
+    return matrix_complex.get_current_differential();
+}
+
+template< class MatrixComplex >
+void MonoComplex< MatrixComplex >::erase_current_differential()
 {
     matrix_complex.erase();
 }

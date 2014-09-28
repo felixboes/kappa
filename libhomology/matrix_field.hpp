@@ -9,6 +9,7 @@
 // Moreover this header offers matrices with Q and Zm coefficients, namely MatrixQ and MatrixZm.
 
 #include <boost/dynamic_bitset.hpp>
+#include <iomanip>
 #include <iostream>
 #include <list>
 #include <vector>
@@ -82,6 +83,39 @@ public:
      *  Fills every entry with CoefficientT(0).
      */
     void clear();
+    
+    /**
+     *  @brief Prints base change to the standard output.
+     *  
+     *  One could believe that the base change can be read of the matrix, if we know the alpha's used in the diagonalization process.
+     *  This is not true as the next example shows.
+     *  \f[
+     *      \begin{pmatrix}
+     *          0 & 0 & 1 \\
+     *          0 & 1 & 0 \\
+     *          0 & 1 & 1
+     *      \end{pmatrix}
+     *  \f]
+     *  Here we use the last row to kill the entry in the middle.
+     *  Then we use the second line to kill the entry in the top right corner.
+     *  The base change has the following form.
+     *  \f[
+     *      \begin{pmatrix}
+     *          1 &-1 & 1 \\
+     *          0 & 1 &-1 \\
+     *          0 & 0 & 1
+     *      \end{pmatrix}
+     *  \f]  
+     *
+     *  @todo what is the most efficient way to perform matrix vector operations?
+     *  Do we have to compute the base change and then apply the action, or is it enought to know the alphas?
+     */
+    void print_base_change() const;
+    
+    /**
+     *  Prints tringular form of the diagonalized matrix.
+     */
+    void print_triangular_shape() const;
     
     // grant std::ostream access in order to print matrices to ostreams.
     template< class T >

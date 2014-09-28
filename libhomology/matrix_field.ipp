@@ -14,11 +14,17 @@ template< class CoefficientT >
 void MatrixField<CoefficientT>::row_operation( const size_t row_1, const size_t row_2, const size_t col )
 {
     CoefficientT lambda( -at(row_2, col)/at(row_1,col)  );
-    for( size_t j = col; j < num_cols; ++j )
+    
+    // Save lambda
+    this->operator()( row_2, col ) = lambda;
+    
+    // Apply row operation on the remaining part
+    for( size_t j = col+1; j < num_cols; ++j )
     {
         CoefficientT & a = this->operator()( row_2, j );
         a += lambda * at( row_1, j );
     }
+    
 }
 
 template< class CoefficientT >
@@ -64,13 +70,49 @@ void MatrixField<CoefficientT>::clear()
 }
 
 template< class CoefficientT >
+void MatrixField< CoefficientT > :: print_base_change() const
+{
+    if( diagonal.size == 0 )
+    {
+        std::cout << "The matrix seems to be not diagonalized: The diagonal of the matrix is empty." << std::endl;
+        return;      
+    }
+    
+    std::cout << "Todo: Be clever." << std::endl;
+}
+
+template< class CoefficientT >
+void MatrixField< CoefficientT > :: print_triangular_shape() const
+{
+    if( diagonal.size == 0 )
+    {
+        std::cout << "The matrix seems to be not diagonalized: The diagonal of the matrix is empty." << std::endl;
+        return;      
+    }
+    
+    std::cout << "Todo: Be clever." << std::endl;
+}
+
+template< class CoefficientT >
 std::ostream& operator<< ( std::ostream& stream, const MatrixField<CoefficientT> & matrix )
 {
+    // print diagonal if any.
+    if( matrix.diagonal.size() > 0 )
+    {
+        std::cout << "Diagonal: ";
+        for( const auto & diag_entry : matrix.diagonal )
+        {
+            std::cout << "(" << std::setw(2) << diag_entry.first << "," << std::setw(2) << diag_entry.second << ") ";
+        }
+        std::cout << std::endl;
+    }
+    
+    // print matrix.
     for( size_t i = 0; i < matrix.num_rows; ++i )
     {
         for( size_t j = 0; j < matrix.num_cols; )
         {
-            stream << matrix.at(i,j);
+            stream << std::setw(3) << matrix.at(i,j);
             if( ++j < matrix.num_cols )
             {
                 stream << ",";

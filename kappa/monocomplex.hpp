@@ -140,15 +140,36 @@ public:
         the case, we add it to the basis in degree p.
     **/
     void gen_bases( const uint32_t l, const uint32_t p, const uint32_t start_symbol, Tuple& tuple);
-    void compute_boundary( Tuple & tuple, const uint32_t p, MatrixType & differential);
-    /** Generates the p-th differential.
-     * @warning We assume the p-th differential to exist and to be filled with zeroes before the call.
-     */
-    void gen_differential( const int32_t p );   ///< Generate the \f$p\f$-th differential.
-    void erase_differential();                  ///< erases the current differential.
     
-    void show_basis( const int32_t p ) const;     ///< print a basis to std::out
-    void show_differential( const int32_t p ) const;  ///< print a differential to std::out
+    /**
+     *  computes the boundary of a given Tuple and saves the result in the differential.
+     */ 
+    void compute_boundary( Tuple & tuple, const uint32_t p, MatrixType & differential);
+    
+    /**
+     *  Generates the p-th differential.
+     */
+    void gen_differential( const int32_t p );
+    
+    /**
+     *  @returns a reference to the current differential.
+     */
+    MatrixType &        get_current_differential();
+    
+    /**
+     *  @returns a reference to the current differential.
+     */
+    const MatrixType &  get_current_differential() const;
+    
+    /**
+     *  erases the current differential.
+     */
+    void erase_current_differential();
+    
+    /**
+     *  print a basis to std::out.
+     */
+    void show_basis( const int32_t p ) const;
 //private:
 
     uint32_t g;                ///< genus

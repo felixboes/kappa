@@ -17,6 +17,7 @@
 
 #include "homology_field.hpp"
 #include "matrix_field.hpp"
+#include "parallelization.hpp"
 #include "thread.hpp"
 
 /**

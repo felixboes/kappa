@@ -26,12 +26,12 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     // Print status message.
     std::cout << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
-              << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model." << std::endl
+              << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
               << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
               << std::endl;
     ofs       << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
-              << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model." << std::endl
+              << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
               << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
               << std::endl;
     
@@ -294,12 +294,12 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     // Print status message.
     std::cout << std::endl
               << "------------  Results   ------------" << std::endl
-              << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model." << std::endl
+              << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
               << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
               << std::endl;
     ofs       << std::endl
               << "------------  Results   ------------" << std::endl
-              << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model." << std::endl
+              << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
               << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
               << std::endl;
     

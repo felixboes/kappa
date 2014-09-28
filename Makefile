@@ -63,8 +63,8 @@ $(CXXDEP): $(BUILDDIR)/%.dep: %.$(EXT) $(TAGS)
 .PHONY: doc
 doc:
 	$(DOXYGEN) ./Doxyfile $(DOXYGENFLAGS)
-	make --directory=./doc/latex/ pdf
-	@find ./doc/latex/ -regex ".*/refman\(_2on1\)?\.\(dvi\|ps\|pdf\)" -exec mv {} doc/ \;
+	#make --directory=./doc/latex/ pdf
+	#@find ./doc/latex/ -regex ".*/refman\(_2on1\)?\.\(dvi\|ps\|pdf\)" -exec mv {} doc/ \;
 
 .PHONY: clean
 clean:
