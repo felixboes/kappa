@@ -122,6 +122,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         
         std::cout << "Matrix: " << std::endl
                   << monocomplex.get_current_differential() << std::endl;
+        monocomplex.get_current_differential().print_base_changes_in_short_form();
     }
 
     homology.erase_tors( conf.start_p - 1 );
@@ -183,7 +184,7 @@ int main(int argc, char** argv)
     }
     else if (conf.prime == 2)
     {
-        compute_homology< MonoComplexBool > ( conf, argc, argv);
+        //compute_homology< MonoComplexBool > ( conf, argc, argv);
     }
     else
     {

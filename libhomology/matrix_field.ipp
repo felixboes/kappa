@@ -70,21 +70,44 @@ void MatrixField<CoefficientT>::clear()
 }
 
 template< class CoefficientT >
-void MatrixField< CoefficientT > :: print_base_change() const
+void MatrixField< CoefficientT > :: print_base_changes_in_short_form() const
 {
-    if( diagonal.size == 0 )
+    if( diagonal.size() == 0 )
     {
         std::cout << "The matrix seems to be not diagonalized: The diagonal of the matrix is empty." << std::endl;
         return;      
     }
     
-    std::cout << "Todo: Be clever." << std::endl;
+    const size_t num_rows = size1();
+    for( size_t i = 0; i < num_rows; ++i )
+    {
+        auto diag_entry = diagonal.cbegin();
+        // print elements befor the diagonal entry.
+        while( diag_entry != diagonal.cend() && diag_entry->first != i )
+        {
+            std::cout << std::setw(3) << this->at( i, diag_entry->second );
+            ++diag_entry;
+        }
+        // print diagonal entry.
+        if( diag_entry != diagonal.cend() )
+        {
+            std::cout << std::setw(3) << this->at( diag_entry->first, diag_entry->second );
+            ++diag_entry;
+        }
+        // print elements after diagonal entry.
+        while( diag_entry != diagonal.cend() )
+        {
+            std::cout << std::setw(3) << 0;
+            ++diag_entry;
+        }
+        std::cout << std::endl;
+    }
 }
 
 template< class CoefficientT >
 void MatrixField< CoefficientT > :: print_triangular_shape() const
 {
-    if( diagonal.size == 0 )
+    if( diagonal.size() == 0 )
     {
         std::cout << "The matrix seems to be not diagonalized: The diagonal of the matrix is empty." << std::endl;
         return;      

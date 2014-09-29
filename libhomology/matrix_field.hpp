@@ -110,7 +110,7 @@ public:
      *  @todo what is the most efficient way to perform matrix vector operations?
      *  Do we have to compute the base change and then apply the action, or is it enought to know the alphas?
      */
-    void print_base_change() const;
+    void print_base_changes_in_short_form() const;
     
     /**
      *  Prints tringular form of the diagonalized matrix.
