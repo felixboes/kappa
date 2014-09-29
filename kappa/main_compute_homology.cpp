@@ -65,8 +65,9 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         std::cout.flush();
         ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         
-        std::cout << "Matrix: " << std::endl
-                  << monocomplex.get_current_differential() << std::endl;
+        //Print matrix.
+        //std::cout << "Matrix: " << std::endl
+        //          << monocomplex.get_current_differential() << std::endl;
 
         max_possible_rank = std::min( monocomplex.matrix_complex.num_rows(), monocomplex.matrix_complex.num_cols() );
         if( (uint32_t)homology.get_kern(p-1) > 0 )
@@ -119,10 +120,11 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             << "; dim(ker D_" << (int32_t)(p) << ") = " << (int32_t)(homology.get_kern(p)) << std::endl;
         ofs << std::endl;
         
-        
-        std::cout << "Matrix: " << std::endl
-                  << monocomplex.get_current_differential() << std::endl;
-        monocomplex.get_current_differential().print_base_changes_in_short_form();
+        //Print diagonalized matrix.
+        //std::cout << "Matrix: " << std::endl
+        //          << monocomplex.get_current_differential() << std::endl;
+        //monocomplex.get_current_differential().print_base_changes_in_short_form();
+        //monocomplex.get_current_differential().print_triangular_shape();
     }
 
     homology.erase_tors( conf.start_p - 1 );
@@ -184,7 +186,7 @@ int main(int argc, char** argv)
     }
     else if (conf.prime == 2)
     {
-        //compute_homology< MonoComplexBool > ( conf, argc, argv);
+        compute_homology< MonoComplexBool > ( conf, argc, argv);
     }
     else
     {

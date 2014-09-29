@@ -78,7 +78,6 @@ void MatrixField< CoefficientT > :: print_base_changes_in_short_form() const
         return;      
     }
     
-    const size_t num_rows = size1();
     for( size_t i = 0; i < num_rows; ++i )
     {
         auto diag_entry = diagonal.cbegin();
@@ -113,7 +112,44 @@ void MatrixField< CoefficientT > :: print_triangular_shape() const
         return;      
     }
     
-    std::cout << "Todo: Be clever." << std::endl;
+    // prepare fast access to the rows storing a diagonal entry.
+    std::vector< bool >   diagonal_entry_occures (num_rows, false);
+    std::vector< size_t > diagonal_entry_col_row (num_rows, 0);
+    
+    for( const auto& diag_entry : diagonal )
+    {
+        diagonal_entry_occures[diag_entry.first] = true;
+        diagonal_entry_col_row[diag_entry.first] = diag_entry.second;
+    }
+    
+    // print trinagular shape.
+    for( size_t i = 0; i < num_rows; ++i )
+    {
+        // row with diagonal entry.
+        if( diagonal_entry_occures[i] == true )
+        {
+            size_t j = 0;
+            // zeros befor diagonal entry.
+            while( j < num_cols && j < diagonal_entry_col_row[i] )
+            {
+                std::cout << std::setw(3) << "0";
+                ++j;
+            }
+            while( j < num_cols ) // diagonal entry and elements to the right.
+            {
+                std::cout << std::setw(3) << this->at(i,j);
+                ++j;
+            }
+        }
+        else // row of zeros.
+        {
+            for( size_t j = 0; j < num_cols; ++j )
+            {
+                std::cout << std::setw(3) << "0";
+            }
+        }
+        std::cout << std::endl;
+    }
 }
 
 template< class CoefficientT >
