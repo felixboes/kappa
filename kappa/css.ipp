@@ -165,7 +165,7 @@ void ClusterSpectralSequence< MatrixComplex > :: gen_d0( const int32_t p, const 
 {
     MatrixType& differential = diff_complex.get_current_differential();
     differential.define_operations(MatrixType::main_and_secondary);
-    differential.resize( basis_complex[p].basis[l].size(), basis_complex[p-1].basis[l].size(), true );
+    differential.resize( basis_complex[p].basis[l].size(), basis_complex[p-1].basis[l].size() );
     differential.diagonal.clear();
     
     if( basis_complex[p].basis[l].size() == 0 || basis_complex[p-1].basis[l].size() == 0 )
@@ -394,7 +394,7 @@ void ClusterSpectralSequence< MatrixComplex >::gen_d1_stage_1( const int32_t p, 
     const size_t num_rows = basis_complex[p].basis[l].size();
     const size_t num_cols = basis_complex[p-1].basis[l-1].size() - differential.diagonal.size();
     const size_t num_cols_diff = basis_complex[p-1].basis[l-1].size();
-    differential.sec_resize(num_rows, num_cols, true );
+    differential.sec_resize(num_rows, num_cols );
     
     if( num_rows == 0 || num_cols == 0 )
     {
@@ -462,7 +462,7 @@ template< class MatrixComplex >
 void ClusterSpectralSequence< MatrixComplex >::erase_d0()
 {
     MatrixType& differential = diff_complex.get_current_differential();
-    differential.resize(0,0,true);
+    differential.resize(0,0);
     differential.diagonal.clear();
 }
 
@@ -470,5 +470,5 @@ template< class MatrixComplex >
 void ClusterSpectralSequence< MatrixComplex >::erase_d1()
 {
     MatrixType& differential = diff_complex.get_current_differential();
-    differential.sec_resize(0,0,true);
+    differential.sec_resize(0,0);
 }

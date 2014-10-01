@@ -39,10 +39,10 @@ public:
      *  Creates a matrix with num_rows rows and num_cols columns.
      *  The entries are determined by the standard constructor of CoefficientT.
      *  @warning If the standard constructor of CoefficientT does not create a coefficient with value zero (e.g. usind standard int types)
-     *  the result differ from your imagination.
+     *  the result differ from your expectation.
      *  In order to get a zero matrix you may use clear();
      */
-    MatrixField( const size_t number_rows, const size_t number_cols );  ///< 
+    MatrixField( const size_t number_rows, const size_t number_cols ); 
     
     /**
      *  This performs a row operation in the Gauss algorithm.
@@ -67,7 +67,7 @@ public:
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
      *  In order to do so call resize(0,0);
      */ 
-    void resize ( const size_t size1, const size_t size2, const bool );
+    void resize ( const size_t size1, const size_t size2, const bool = true );
     
     /**
      *  @returns the number of rows.
@@ -228,13 +228,13 @@ public:
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
      *  In order to do so call resize(0,0);
      */ 
-    void resize ( const size_t size1, const size_t size2, const bool );
+    void resize ( const size_t size1, const size_t size2, const bool = true );
     
     /**
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
      *  In order to do so call sec_resize(0,0);
      */ 
-    void sec_resize ( const size_t size1, const size_t size2, const bool);
+    void sec_resize ( const size_t size1, const size_t size2, const bool = true );
     
     /**
      *  @returns the number of rows.
@@ -351,7 +351,7 @@ public:
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
      *  In order to do so call resize(0,0);
      */
-    void resize ( const size_t size1, const size_t size2, const bool );
+    void resize ( const size_t size1, const size_t size2, const bool = false );
 
     /**
      *  @returns the number of rows.
@@ -498,13 +498,13 @@ public:
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
      *  In order to do so call resize(0,0);
      */ 
-    void resize ( const size_t size1, const size_t size2, const bool );
+    void resize ( const size_t size1, const size_t size2, const bool = false );
     
     /**
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a matrix.
      *  In order to do so call sec_resize(0,0);
      */ 
-    void sec_resize ( const size_t size1, const size_t size2, const bool);
+    void sec_resize ( const size_t size1, const size_t size2, const bool = false );
     
     /**
      *  @returns the number of rows.

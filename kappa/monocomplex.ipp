@@ -270,7 +270,7 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
     // Allocate enough space for the differential.
     // Todo: Test this.
     MatrixType & differential = matrix_complex.get_current_differential();
-    differential.resize( basis_complex[p].size(), basis_complex[p-1].size(), true );
+    differential.resize( basis_complex[p].size(), basis_complex[p-1].size() );
     
     if( basis_complex[p].size() == 0 || basis_complex[p-1].size() == 0 )
     {

@@ -23,7 +23,7 @@ void MatrixBool::row_operation( size_t row_1, size_t row_2, size_t )
         data[i][j].flip();
  }
 
- void MatrixBool::resize (size_t size1, size_t size2, bool)
+ void MatrixBool::resize (size_t size1, size_t size2, bool )
  {
      for (size_t i = 0; i < data.size(); ++i)
      {
@@ -60,11 +60,7 @@ void MatrixBool::clear()
 {
     for( auto & it : data )
     {
-        boost::dynamic_bitset<> & row = it;
-        for ( size_t j = 0; j < num_cols; ++j)
-        {
-            row[j] = 0;
-        }
+        it.clear();
     }
 }
 
@@ -316,11 +312,7 @@ void MatrixBoolCSS::clear()
 {
     for( auto & it : data )
     {
-        boost::dynamic_bitset<> & row = it;
-        for ( size_t j = 0; j < num_cols; ++j)
-        {
-            row[j] = 0;
-        }
+        it.clear();
     }
 }
 

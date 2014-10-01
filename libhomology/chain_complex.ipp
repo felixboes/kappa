@@ -36,7 +36,7 @@ const DiagonalizerT& ChainComplex< CoefficientT, MatrixT, DiagonalizerT, Homolog
 template < class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
 void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::erase ()
 {
-    current_differential.resize(0, 0, false);
+    current_differential.resize(0, 0);
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
@@ -95,7 +95,7 @@ void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::erase (con
         //
         // void resize (size_type size1, size_type size2, bool preserve = true)
         // Reallocates a matrix to hold size1 rows of size2 elements. The existing elements of the matrix are preseved when specified.
-        differential[n].resize(0,0,false);
+        differential[n].resize(0,0);
         differential.erase(n);
     }
 }
@@ -105,7 +105,7 @@ void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::erase_all 
 {
     for( auto& diff_it: differential )
     {
-        diff_it.second.resize(0,0,false);
+        diff_it.second.resize(0,0);
     }
     differential.clear();
 }
