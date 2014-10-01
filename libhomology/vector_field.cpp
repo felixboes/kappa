@@ -21,11 +21,13 @@ void VectorBool::add_entry( const size_t i )
 VectorBool& VectorBool::operator+=( const VectorBool& argument )
 {
     data ^= argument.data;
+    return *this;
 }
 
 VectorBool& VectorBool::operator-=( const VectorBool& argument )
 {
     data ^= argument.data;
+    return *this;
 }
 
 VectorBool& VectorBool::operator*=( const bool& argument )
@@ -34,6 +36,7 @@ VectorBool& VectorBool::operator*=( const bool& argument )
     {
         clear();
     }
+    return *this;
 }
 
 void VectorBool::resize ( const size_t dimension, const bool )
@@ -64,6 +67,6 @@ std::ostream& operator<< ( std::ostream& stream, const VectorBool & vector )
     {
         stream << std::setw(3) << vector.at(i) << ",";
     }
-    stream << std::setw(3) << vector.at(vector.dim-1) << std::endl;
+    stream << std::setw(3) << vector.at(vector.dim-1);
     return stream;
 }

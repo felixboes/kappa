@@ -81,6 +81,51 @@ std::ostream& operator<< ( std::ostream& stream, const VectorField<CoefficientT>
     {
         stream << std::setw(3) << vector.at(i) << ",";
     }
-    stream << std::setw(3) << vector.at(vector.dim - 1) << std::endl;
+    stream << std::setw(3) << vector.at(vector.dim - 1);
     return stream;
+}
+
+template< class MatrixT, class VectorT >
+void apply_base_changes( const MatrixT& m, VectorT& v )
+{
+    size_t dim = v.size();
+    const auto& diagonal = m.diagonal;
+    
+    if( dim != m.size1() )
+    {
+        std::cout << "Error: The number of rows of the matrix is not equals the dimension of the vector." << std::endl;
+        return;
+    }
+    if( diagonal.size() == 0 )
+    {
+        std::cout << "Error: The matrix seems to be not diagonalized. The diagonal of the matrix is empty." << std::endl;
+        return;
+    }
+
+    // prepare fast access to the rows storing a diagonal entry.
+    std::vector< bool >   diagonal_entry_occures_in_row (dim, false);
+    std::vector< size_t > diagonal_entry_col_row (dim, 0);
+    
+    for( const auto& diag_entry : diagonal )
+    {
+        diagonal_entry_occures_in_row[diag_entry.first] = true;
+        diagonal_entry_col_row[diag_entry.first] = diag_entry.second;
+    }
+    
+    for( const auto& diag_entry : diagonal )
+    {
+        // compute new entry at spot diag_entry.first.
+        const auto vector_entry = v.at( diag_entry.first );
+        for( size_t i = 0; i < dim; ++i )
+        {
+            // An entry does not encode a row operation if it is right of a diagonal element.
+            if( diagonal_entry_occures_in_row[i] == true && diagonal_entry_col_row[i] <= diag_entry.second )
+            {
+            }
+            else
+            {
+                v(i) += m.at( i, diag_entry.second ) * vector_entry;
+            }
+        }
+    }
 }

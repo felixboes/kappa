@@ -1,5 +1,6 @@
 #include <thread>
-#include <libhomology/condition.hpp>
+
+#include "condition.hpp"
 #include "thread.hpp"
 
 static void thread_function(

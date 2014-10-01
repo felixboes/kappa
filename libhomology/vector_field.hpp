@@ -205,8 +205,8 @@ std::ostream& operator<< ( std::ostream& stream, const VectorBool & vector);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//template< VectorT >
-//VectorT operator+( const VectorT& v_1, const VectorT& v_2 );
+template< class MatrixT, class VectorT >
+void apply_base_changes( const MatrixT& m, VectorT& v );
 
 typedef VectorField<Q> VectorQ;     ///< This defines Vectors with \f$\mathbb Q\f$ coefficients.
 typedef VectorField<Zm> VectorZm;   ///< This defines Vectors with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
