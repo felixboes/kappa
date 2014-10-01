@@ -114,7 +114,7 @@ void apply_base_changes( const MatrixT& m, VectorT& v )
     
     for( const auto& diag_entry : diagonal )
     {
-        // compute new entry at spot diag_entry.first.
+        // compute new entries.
         const auto vector_entry = v.at( diag_entry.first );
         for( size_t i = 0; i < dim; ++i )
         {

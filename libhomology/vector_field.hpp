@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "field_coefficients.hpp"
+#include "matrix_field.hpp"
 
 /**
  *  This template class defines a vector type subject to the field coeffiecients 'CoefficientT'.
@@ -207,6 +208,9 @@ std::ostream& operator<< ( std::ostream& stream, const VectorBool & vector);
 
 template< class MatrixT, class VectorT >
 void apply_base_changes( const MatrixT& m, VectorT& v );
+
+template<>
+void apply_base_changes( const MatrixBool& m, VectorBool& v );
 
 typedef VectorField<Q> VectorQ;     ///< This defines Vectors with \f$\mathbb Q\f$ coefficients.
 typedef VectorField<Zm> VectorZm;   ///< This defines Vectors with \f$\mathbb Z/ m\mathbb Zf$ coefficients.

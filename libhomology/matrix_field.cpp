@@ -64,6 +64,87 @@ void MatrixBool::clear()
     }
 }
 
+void MatrixBool :: print_base_changes_in_short_form() const
+{
+    if( diagonal.size() == 0 )
+    {
+        std::cout << "The matrix seems to be not diagonalized: The diagonal of the matrix is empty." << std::endl;
+        return;      
+    }
+    
+    for( size_t i = 0; i < num_rows; ++i )
+    {
+        auto diag_entry = diagonal.cbegin();
+        // print elements befor the diagonal entry.
+        while( diag_entry != diagonal.cend() && diag_entry->first != i )
+        {
+            std::cout << std::setw(3) << (int32_t)this->at( i, diag_entry->second );
+            ++diag_entry;
+        }
+        // print diagonal entry.
+        if( diag_entry != diagonal.cend() )
+        {
+            std::cout << std::setw(3) << (int32_t)this->at( diag_entry->first, diag_entry->second );
+            ++diag_entry;
+        }
+        // print elements after diagonal entry.
+        while( diag_entry != diagonal.cend() )
+        {
+            std::cout << std::setw(3) << 0;
+            ++diag_entry;
+        }
+        std::cout << std::endl;
+    }
+}
+
+void MatrixBool :: print_triangular_shape() const
+{
+    if( diagonal.size() == 0 )
+    {
+        std::cout << "The matrix seems to be not diagonalized: The diagonal of the matrix is empty." << std::endl;
+        return;      
+    }
+    
+    // prepare fast access to the rows storing a diagonal entry.
+    std::vector< bool >   diagonal_entry_occures_in_row (num_rows, false);
+    std::vector< size_t > diagonal_entry_col_row (num_rows, 0);
+    
+    for( const auto& diag_entry : diagonal )
+    {
+        diagonal_entry_occures_in_row[diag_entry.first] = true;
+        diagonal_entry_col_row[diag_entry.first] = diag_entry.second;
+    }
+    
+    // print trinagular shape.
+    for( size_t i = 0; i < num_rows; ++i )
+    {
+        // row with diagonal entry.
+        if( diagonal_entry_occures_in_row[i] == true )
+        {
+            size_t j = 0;
+            // zeros befor diagonal entry.
+            while( j < num_cols && j < diagonal_entry_col_row[i] )
+            {
+                std::cout << std::setw(3) << "0";
+                ++j;
+            }
+            while( j < num_cols ) // diagonal entry and elements to the right.
+            {
+                std::cout << std::setw(3) << (int32_t)this->at(i,j);
+                ++j;
+            }
+        }
+        else // row of zeros.
+        {
+            for( size_t j = 0; j < num_cols; ++j )
+            {
+                std::cout << std::setw(3) << "0";
+            }
+        }
+        std::cout << std::endl;
+    }
+}
+
 std::ostream& operator<< ( std::ostream& stream, const MatrixBool & matrix)
 {
     for( size_t i = 0; i < matrix.num_rows; ++i )

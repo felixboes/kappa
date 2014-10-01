@@ -113,12 +113,12 @@ void MatrixField< CoefficientT > :: print_triangular_shape() const
     }
     
     // prepare fast access to the rows storing a diagonal entry.
-    std::vector< bool >   diagonal_entry_occures (num_rows, false);
+    std::vector< bool >   diagonal_entry_occures_in_row (num_rows, false);
     std::vector< size_t > diagonal_entry_col_row (num_rows, 0);
     
     for( const auto& diag_entry : diagonal )
     {
-        diagonal_entry_occures[diag_entry.first] = true;
+        diagonal_entry_occures_in_row[diag_entry.first] = true;
         diagonal_entry_col_row[diag_entry.first] = diag_entry.second;
     }
     
@@ -126,7 +126,7 @@ void MatrixField< CoefficientT > :: print_triangular_shape() const
     for( size_t i = 0; i < num_rows; ++i )
     {
         // row with diagonal entry.
-        if( diagonal_entry_occures[i] == true )
+        if( diagonal_entry_occures_in_row[i] == true )
         {
             size_t j = 0;
             // zeros befor diagonal entry.
