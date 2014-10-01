@@ -17,16 +17,46 @@ CoefficientT & VectorField<CoefficientT>::operator()( const size_t i )
 }
 
 template< class CoefficientT >
+const CoefficientT & VectorField<CoefficientT>::at( const size_t i ) const
+{
+    return data.at(i);
+}
+
+template< class CoefficientT >
+VectorField< CoefficientT >& VectorField< CoefficientT >::operator+=( const VectorField< CoefficientT >& argument )
+{ 
+    for( size_t i = 0; i < dim; ++i )
+    {
+        data[i] += argument.data[i];
+    }
+    return *this;
+}
+
+template< class CoefficientT >
+VectorField< CoefficientT >& VectorField< CoefficientT >::operator-=( const VectorField< CoefficientT >& argument )
+{
+    for( size_t i = 0; i < dim; ++i )
+    {
+        data[i] -= argument.data[i];
+    }
+    return *this;
+}
+
+template< class CoefficientT >
+VectorField< CoefficientT >& VectorField< CoefficientT >::operator*=( const CoefficientT& argument )
+{
+    for( size_t i = 0; i < dim; ++i )
+    {
+        data[i] *= argument;
+    }
+    return *this;
+}
+
+template< class CoefficientT >
 void VectorField<CoefficientT>::resize( const size_t dimension, const bool )
 {
     data.assign( dimension, CoefficientT(0) );
     dim = dimension;
-}
- 
-template< class CoefficientT >
-const CoefficientT & VectorField<CoefficientT>::at( const size_t i ) const
-{
-    return data.at(i);
 }
 
 template< class CoefficientT >

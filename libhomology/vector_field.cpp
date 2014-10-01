@@ -18,9 +18,27 @@ void VectorBool::add_entry( const size_t i )
     data[i].flip();
 }
 
+VectorBool& VectorBool::operator+=( const VectorBool& argument )
+{
+    data ^= argument.data;
+}
+
+VectorBool& VectorBool::operator-=( const VectorBool& argument )
+{
+    data ^= argument.data;
+}
+
+VectorBool& VectorBool::operator*=( const bool& argument )
+{
+    if( argument == false )
+    {
+        clear();
+    }
+}
+
 void VectorBool::resize ( const size_t dimension, const bool )
 {
-    data.clear();   // this function removes all entries from the bitset. The result is a bitset of size 0.
+    data.reset();
     data.resize(dimension);
     dim = dimension;
 }
@@ -37,8 +55,7 @@ size_t VectorBool::size() const
 
 void VectorBool::clear()
 {
-    data.clear();   // this function removes all entries from the bitset. The result is a bitset of size 0.
-    data.resize(dim);
+    data.reset();
 }
 
 std::ostream& operator<< ( std::ostream& stream, const VectorBool & vector )

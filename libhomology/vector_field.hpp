@@ -26,6 +26,7 @@ class VectorField
 {
 public:
     typedef CoefficientT CoefficientType;
+    typedef VectorField< CoefficientType > ThisType;
     typedef std::vector< CoefficientT > VectorStorageType;  ///< This realizes the implementation of the data.
     
     /**
@@ -54,7 +55,22 @@ public:
      *  You may want to take a look at the at()-methods of the standard containers like std::vector.
      */
     const CoefficientT& at( const size_t i ) const;
-
+    
+    /**
+     *  adds a given vector to this vector.
+     */
+    ThisType& operator+=( const ThisType& argument );
+    
+    /**
+     *  substracts a given vector from this vector.
+     */
+    ThisType& operator-=( const ThisType& argument );
+    
+    /**
+     *  multiply this vector with a given scalar.
+     */
+    ThisType& operator*=( const CoefficientType& argument );
+    
     /**
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a vector.
      *  In order to do so call resize(0);
@@ -103,6 +119,7 @@ class VectorBool
 {
 public:
     typedef bool CoefficientType;
+    typedef VectorBool ThisType;
     typedef boost::dynamic_bitset<> VectorStorageType;    ///< This realizes the implementation of the data.
 
     /**
@@ -137,6 +154,21 @@ public:
     void add_entry( const size_t i );
 
     /**
+     *  adds a given vector to this vector.
+     */
+    ThisType& operator+=( const ThisType& argument );
+    
+    /**
+     *  substracts a given vector from this vector.
+     */
+    ThisType& operator-=( const ThisType& argument );
+    
+    /**
+     *  multiply this vector with a given scalar.
+     */
+    ThisType& operator*=( const CoefficientType& argument );
+    
+    /**
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a vector.
      *  In order to do so call resize(0);
      */
@@ -170,6 +202,11 @@ private:
 };
 
 std::ostream& operator<< ( std::ostream& stream, const VectorBool & vector);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//template< VectorT >
+//VectorT operator+( const VectorT& v_1, const VectorT& v_2 );
 
 typedef VectorField<Q> VectorQ;     ///< This defines Vectors with \f$\mathbb Q\f$ coefficients.
 typedef VectorField<Zm> VectorZm;   ///< This defines Vectors with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
