@@ -9,6 +9,7 @@
 
 #include "chain_complex.hpp"
 #include "clock.hpp"
+#include "condition.hpp"
 #include "field_coefficients.hpp"
 #include "diagonalizer_dummy.hpp"
 #include "diagonalizer_field.hpp"
@@ -16,6 +17,9 @@
 #include "homology_field.hpp"
 #include "matrix_field.hpp"
 #include "matrix_z_dont_diagonalize.hpp"
+#include "parallelization.hpp"
+#include "thread.hpp"
+#include "vector_field.hpp"
 
 typedef ChainComplex<Q, MatrixQ, DiagonalizerField<MatrixQ>, HomologyField> ChainComplexQ;
 typedef ChainComplex<Zm, MatrixZm, DiagonalizerField<MatrixZm>, HomologyField> ChainComplexZm;
