@@ -397,6 +397,26 @@ public:
      *  Prints tringular form of the diagonalized matrix.
      */
     void print_base_changes_in_short_form() const;
+    
+    /**
+     *  Saves the matrix including the diagonal at the given path.
+     */
+    void cache_matrix( std::string filename );
+    
+    /**
+     *  Saves the base change including the diagonal at the given path.
+     */
+    void cache_base_change( std::string filename );
+    
+    /**
+     *  Saves the tringular shape including the diagonal at the given path.
+     */
+    void cache_triangular_shape( std::string filename );
+    
+    /**
+     *  Saves the diagonal at the given path.
+     */
+    void cache_diagonal( std::string filename );
 
     // grant std::ostream access in order to print matrices to ostreams.matrix_field.hpp
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixBool & matrix);
