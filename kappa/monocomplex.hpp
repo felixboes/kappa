@@ -12,7 +12,6 @@
 #include <libhomology/homology.hpp>
 
 #include "factorial.hpp"
-#include "serialization.hpp"
 #include "sessionconfig.hpp"
 #include "tuple.hpp"
 

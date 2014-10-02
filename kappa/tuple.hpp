@@ -10,7 +10,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
 
-#include "serialization.hpp"
+#include <libhomology/homology.hpp>
 
 /**
  *  A Transposition is represented by a pair of uint8_t.
