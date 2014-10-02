@@ -19,13 +19,14 @@ SessionConfig::SessionConfig( const int argc, char **argv ) :
     
     desc.add_options()
             ("help,h", "produce help message")
-            ("gen,g", boost::program_options::value(&genus), "the genus of the Riemannian surfaces")
-            ("pun,m", boost::program_options::value(&num_punctures), "the number of punctures of the Riemannian surfaces")
+            ("gen,g", boost::program_options::value(&genus), "the genus of the Riemann surfaces")
+            ("pun,m", boost::program_options::value(&num_punctures), "the number of punctures of the Riemann surfaces")
             ("rat,q", "uses rational numbers as coefficients")
             ("fin,s", boost::program_options::value(&prime), "uses the finite field F_s with s a prime number")
-            ("parallel", boost::program_options::value(&parallel), "uses radial or parallel slit configurations")
+            ("parallel", "uses radial or parallel slit configurations")
             ("num_working_threads,t", boost::program_options::value(&num_threads), "the number of threads used for work in matrix computations")
             ("num_remaining_threads", boost::program_options::value(&num_remaining_threads), "the number of additional threads used in diagonalization")
+            ("cache", "cache the diagonalized matrices")
             ("first_diff", boost::program_options::value(&start_p), "start with the differential first_diff")
             ("last_diff", boost::program_options::value(&end_p), "end with the differential last_diff")
             ("first_basis", boost::program_options::value(&first_basis), "start with the basis first_basis")
@@ -51,20 +52,24 @@ SessionConfig::SessionConfig( const int argc, char **argv ) :
     }
 
     // Configure Session
+    if( vm.count("help") == true )
+    {
+        print_help = true;
+    }
     if( vm.count("fin") == false )
     {
         rational = true;
     }
-    
     if( vm.count("last_diff") == false )
     {
         end_p = 4*genus+2*num_punctures; // this is 2h.
     }
-    
     if( vm.count("last_basis") == false )
     {
         last_basis = 4*genus+2*num_punctures; // this is 2h.
     }
+    parallel = vm.count("parallel");
+    create_cache = vm.count("cache");
     
     valid = true;
 }

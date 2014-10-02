@@ -6,7 +6,7 @@
 
 #include <boost/program_options.hpp>
 
-#include <libhomology/homology.hpp>
+#include "libhomology/homology.hpp"
 
 /**
  *  \brief The sign convention in the Ehrenfried complex.
@@ -38,7 +38,9 @@ struct SessionConfig
         start_p(0),
         end_p(std::numeric_limits<uint32_t>::max()),
         sgn_conv(all_signs),
-        valid(false)
+        create_cache(true),
+        valid(false),
+        print_help(false)
     {}
     
     SessionConfig( const int argc, char** argv );
@@ -55,20 +57,21 @@ struct SessionConfig
     boost::program_options::options_description desc;
     boost::program_options::variables_map vm;
     
-    uint32_t genus;
-    uint32_t num_punctures;
-    bool rational;
-    uint32_t prime;
-    bool parallel;
-    uint32_t num_threads;
-    uint32_t num_remaining_threads;
-    int32_t start_p;
-    int32_t end_p;
-    int32_t first_basis;
-    int32_t last_basis;
-    SignConvention sgn_conv;
-    bool valid;
-    bool print_help;
+    uint32_t genus;     ///< The genus of the surface.
+    uint32_t num_punctures; ///< The number of punctures of the surface.
+    bool rational;      ///< True iff we work over the field \f$ \mathbb Q\f$.
+    uint32_t prime;     ///< The prime \f$ s \f$ if we work over $\mathbb Z / s \mathbb Z$.
+    bool parallel;      ///< True iff we use the parallel model.
+    uint32_t num_threads;   ///< The number of total threads in use.
+    uint32_t num_remaining_threads; ///< The number of threads that collect work in the diagonalizing process.
+    int32_t start_p;        ///< The homological degree we want to start at.
+    int32_t end_p;          ///< The homological degree we want to end with.
+    int32_t first_basis;    ///< The first basis we want to consider.
+    int32_t last_basis;     ///< The last basis we want to consider.
+    SignConvention sgn_conv;    ///< The sign convention we use.
+    bool create_cache;      ///< Stores diagonalized matrices iff this is true.
+    bool valid;             ///< Is set to true if a given configuration is valid.
+    bool print_help;        ///< Prints the help to screen iff this is true.
 };
 
 #endif // SESSIONCONFIG_HPP
