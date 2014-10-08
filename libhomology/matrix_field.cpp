@@ -10,6 +10,7 @@ template <>
 MatrixField<Q> load_from_file_bz2( std::string filename, const bool print_duration )
 {
     std::cout << "Todo: Implement serialization." << std::endl;
+    return MatrixField<Q>();
 }
 
 MatrixBool::MatrixBool() : diagonal(), data(), num_rows(0), num_cols(0)

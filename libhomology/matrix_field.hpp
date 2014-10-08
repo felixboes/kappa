@@ -147,7 +147,15 @@ private:
     MatrixStorageType data; ///< This realizes the data.
     size_t num_rows;    ///< The number of rows.
     size_t num_cols;    ///< The number of columns.
-   
+    
+    // In order to save matrices we have to grad boost::serialization::access access.
+    friend class boost::serialization::access;
+
+    template <class Archive>
+    void serialize( Archive &ar, const unsigned int ) ///< Implements the serialization.
+    {
+        ar & diagonal & data & num_rows & num_cols;
+    }
 };
 
 template< class CoefficientT >
