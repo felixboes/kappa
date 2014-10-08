@@ -1,5 +1,17 @@
 #include "matrix_field.hpp"
 
+template<>
+void save_to_file_bz2( const MatrixField<Q>& matrix, std::string filename, const bool print_duration )
+{
+    std::cout << "Todo: Implement serialization." << std::endl;
+}
+
+template <>
+MatrixField<Q> load_from_file_bz2( std::string filename, const bool print_duration )
+{
+    std::cout << "Todo: Implement serialization." << std::endl;
+}
+
 MatrixBool::MatrixBool() : diagonal(), data(), num_rows(0), num_cols(0)
 {
 }
@@ -143,6 +155,35 @@ void MatrixBool :: print_triangular_shape() const
         }
         std::cout << std::endl;
     }
+}
+
+void MatrixBool :: cache_matrix( std::string ) const
+{
+    std::cout << "Error: MatrixBool cannot be cached since boost::dynamic_bitset is not supported by boost::serialization." << std::endl
+              << "       We refere to https://svn.boost.org/trac/boost/ticket/3328" << std::endl;
+    return;
+}
+
+void MatrixBool :: cache_base_change( std::string ) const
+{
+    std::cout << "Error: MatrixBool cannot be cached since boost::dynamic_bitset is not supported by boost::serialization." << std::endl
+              << "       We refere to https://svn.boost.org/trac/boost/ticket/3328" << std::endl;
+    return;
+}
+
+void MatrixBool :: cache_triangular_shape( std::string ) const
+{
+    std::cout << "Error: MatrixBool cannot be cached since boost::dynamic_bitset is not supported by boost::serialization." << std::endl
+              << "       We refere to https://svn.boost.org/trac/boost/ticket/3328" << std::endl;
+    return;
+}
+
+void MatrixBool :: cache_diagonal( std::string filename ) const
+{
+    // Observe that
+    //     save_to_file_bz2 ( diagonal, filename );
+    // wont compile because of 'Argument-dependent name lookup'
+    save_to_file_bz2( this->diagonal, filename ) ;
 }
 
 std::ostream& operator<< ( std::ostream& stream, const MatrixBool & matrix)

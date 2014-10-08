@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "field_coefficients.hpp"
+#include "serialization.hpp"
 
 /**
  *  This template class defines a matrix type subject to the field coeffiecients 'CoefficientT'.
@@ -26,6 +27,7 @@ class MatrixField
 {
 public:
     typedef CoefficientT CoefficientType;
+    typedef MatrixField< CoefficientType > ThisType;
     typedef std::vector< CoefficientT > MatrixStorageType;  ///< This realizes the implementation of the data.
     typedef std::pair< size_t, size_t > MatrixEntryType;
     typedef std::list< MatrixEntryType > DiagonalType;
@@ -115,6 +117,26 @@ public:
      */
     void print_triangular_shape() const;
     
+    /**
+     *  Saves the matrix including the diagonal at the given path.
+     */
+    void cache_matrix( std::string filename ) const;
+    
+    /**
+     *  Saves the base change including the diagonal at the given path.
+     */
+    void cache_base_change( std::string filename ) const;
+    
+    /**
+     *  Saves the tringular shape including the diagonal at the given path.
+     */
+    void cache_triangular_shape( std::string filename ) const;
+    
+    /**
+     *  Saves the diagonal at the given path.
+     */
+    void cache_diagonal( std::string filename ) const;
+    
     // grant std::ostream access in order to print matrices to ostreams.
     template< class T >
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixField<T> & matrix );
@@ -125,19 +147,19 @@ private:
     MatrixStorageType data; ///< This realizes the data.
     size_t num_rows;    ///< The number of rows.
     size_t num_cols;    ///< The number of columns.
-    
-    // In order to save matrices we have to grad boost::serialization::access access.
-    friend class boost::serialization::access;
-
-    template <class Archive>
-    void serialize(Archive &ar, const unsigned int ) ///< Implements the serialization.
-    {
-        ar & num_rows & num_cols & data;
-    }
+   
 };
 
 template< class CoefficientT >
 std::ostream& operator<< ( std::ostream& stream, const MatrixField<CoefficientT> & matrix );
+
+// Template specialization, since Q does not inherit boost::serialization methods.
+template<>
+void save_to_file_bz2< MatrixField<Q> >( const MatrixField<Q>& matrix, std::string filename, const bool print_duration );
+
+// Template specialization, since Q does not inherit boost::serialization methods.
+template <>
+MatrixField<Q> load_from_file_bz2( std::string filename, const bool print_duration );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -296,15 +318,19 @@ std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<Coefficien
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @brief Class for a matrix with boolean coefficients
- * A MatrixBool has the same structure as the MatrixField,
- * but for a better performance, here each row of the matrix is a dynamic_bitsets,
- * and for thread safety, the total matrix is a vector of its rows.
+ *  @brief Class for a matrix with boolean coefficients
+ *  A MatrixBool has the same structure as the MatrixField,
+ *  but for a better performance, here each row of the matrix is a dynamic_bitsets,
+ *  and for thread safety, the total matrix is a vector of its rows.
+ *
+ *  @bug MatrixBool cannot be cached since boost::dynamic_bitset is not supported by boost::serialization.
+ *  We refere to https://svn.boost.org/trac/boost/ticket/3328".
  */
 class MatrixBool
 {
 public:
     typedef bool CoefficientType;
+    typedef MatrixBool ThisType;
     typedef std::vector< boost::dynamic_bitset<> > MatrixStorageType;    ///< This realizes the implementation of the data.
     typedef std::pair< size_t, size_t > MatrixEntryType;
     typedef std::list< MatrixEntryType > DiagonalType;
@@ -392,7 +418,6 @@ public:
      */
     void print_triangular_shape() const;
     
-    
     /**
      *  Prints tringular form of the diagonalized matrix.
      */
@@ -400,23 +425,29 @@ public:
     
     /**
      *  Saves the matrix including the diagonal at the given path.
+     *  @bug MatrixBool cannot be cached since boost::dynamic_bitset is not supported by boost::serialization.
+     *  We refere to https://svn.boost.org/trac/boost/ticket/3328".
      */
-    void cache_matrix( std::string filename );
+    void cache_matrix( std::string filename ) const;
     
     /**
      *  Saves the base change including the diagonal at the given path.
+     *  @bug MatrixBool cannot be cached since boost::dynamic_bitset is not supported by boost::serialization.
+     *  We refere to https://svn.boost.org/trac/boost/ticket/3328".
      */
-    void cache_base_change( std::string filename );
+    void cache_base_change( std::string filename ) const;
     
     /**
      *  Saves the tringular shape including the diagonal at the given path.
+     *  @bug MatrixBool cannot be cached since boost::dynamic_bitset is not supported by boost::serialization.
+     *  We refere to https://svn.boost.org/trac/boost/ticket/3328".
      */
-    void cache_triangular_shape( std::string filename );
+    void cache_triangular_shape( std::string filename ) const;
     
     /**
      *  Saves the diagonal at the given path.
      */
-    void cache_diagonal( std::string filename );
+    void cache_diagonal( std::string filename ) const;
 
     // grant std::ostream access in order to print matrices to ostreams.matrix_field.hpp
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixBool & matrix);
@@ -432,9 +463,9 @@ private:
     friend class boost::serialization::access;
 
     template <class Archive>
-    void serialize(Archive &ar, const unsigned int ) ///< Implements the serialization.
+    void serialize( Archive &ar, const unsigned int ) ///< Implements the serialization.
     {
-        ar & num_rows & num_cols & data;
+        ar & diagonal & data & num_rows & num_cols;
     }
 };
 

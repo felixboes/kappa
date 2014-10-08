@@ -45,6 +45,13 @@ int main()
     v += v_2;
     std::cout << v << std::endl;
     
+    std::cout << gmp_version << std::endl;
+
+    save_to_file_bz2(m, "test_matrix");
+    m.cache_matrix("test_matrix");
+    std::cout << m << std::endl;
+    std::cout << load_from_file_bz2< MatrixField<Q> > ("test_matrix") << std::endl;
+    
     // 0,  1,  1
     // 1, -1,  0
     // 0,  1, -1

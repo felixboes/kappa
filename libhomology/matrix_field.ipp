@@ -153,6 +153,91 @@ void MatrixField< CoefficientT > :: print_triangular_shape() const
 }
 
 template< class CoefficientT >
+void MatrixField< CoefficientT > :: cache_matrix( std::string filename ) const
+{
+    save_to_file_bz2( *this, filename, true );
+}
+
+template< class CoefficientT >
+void MatrixField< CoefficientT > :: cache_base_change( std::string filename ) const
+{
+    if( num_rows == 0 || diagonal.size() == 0 )
+    {
+        std::cout << "Error: The matrix has either no rows or an empty diagonal." << std::endl;
+        return;
+    }
+    
+    ThisType base_changes( num_rows, diagonal.size() );
+    for( size_t i = 0; i < num_rows; ++i )
+    {
+        auto diag_entry = diagonal.cbegin();
+        // store elements befor the diagonal entry.
+        while( diag_entry != diagonal.cend() && diag_entry->first != i )
+        {
+            base_changes(i, diag_entry->second) = this->at( i, diag_entry->second );
+            ++diag_entry;
+        }
+        // store diagonal entry.
+        if( diag_entry != diagonal.cend() )
+        {
+            base_changes(diag_entry->first, diag_entry->second) =  this->at( diag_entry->first, diag_entry->second );
+            ++diag_entry;
+        }
+        // ignore elements after diagonal entry.
+    }
+    
+    save_to_file_bz2( base_changes, filename );
+}
+
+template< class CoefficientT >
+void MatrixField< CoefficientT > :: cache_triangular_shape( std::string filename ) const
+{
+    if( num_rows == 0 || diagonal.size() == 0 )
+    {
+        std::cout << "Error: The matrix has either no rows or an empty diagonal." << std::endl;
+        return;
+    }
+    
+    // prepare fast access to the rows storing a diagonal entry.
+    std::vector< bool >   diagonal_entry_occures_in_row (num_rows, false);
+    std::vector< size_t > diagonal_entry_col_row (num_rows, 0);
+    
+    for( const auto& diag_entry : diagonal )
+    {
+        diagonal_entry_occures_in_row[diag_entry.first] = true;
+        diagonal_entry_col_row[diag_entry.first] = diag_entry.second;
+    }
+    
+    ThisType triangular_form( num_rows, diagonal.size() );
+    for( size_t i = 0; i < num_rows; ++i )
+    {
+        // row with diagonal entry.
+        if( diagonal_entry_occures_in_row[i] == true )
+        {
+            // zeros before diagonal entry.
+            size_t j = std::min(num_cols, diagonal_entry_col_row[i]);;
+            while( j < num_cols ) // diagonal entry and elements to the right.
+            {
+                triangular_form(i,j) = this->at(i,j);
+                ++j;
+            }
+        }
+        // else: row of zeros.
+        
+        save_to_file_bz2( triangular_form, filename );
+    }
+}
+
+template< class CoefficientT >
+void MatrixField< CoefficientT > :: cache_diagonal( std::string filename ) const
+{
+    // Observe that
+    //     save_to_file_bz2 ( diagonal, filename );
+    // wont compile because of 'Argument-dependent name lookup'
+    save_to_file_bz2 ( this->diagonal, filename ) ;
+}
+
+template< class CoefficientT >
 std::ostream& operator<< ( std::ostream& stream, const MatrixField<CoefficientT> & matrix )
 {
     // print diagonal if any.

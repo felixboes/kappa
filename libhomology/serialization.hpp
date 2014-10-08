@@ -12,18 +12,20 @@
 #include <boost/iostreams/filter/bzip2.hpp>
 #include <boost/iostreams/filtering_streambuf.hpp>
 #include <boost/serialization/access.hpp>
+#include <boost/serialization/list.hpp>
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/vector.hpp>
 
 #include "clock.hpp"
 
 /// @warning: unorders_set is not yet supported by boost::serialization.
+/// @warning: boost::dynamic_bitsets are not supported by boost::serialization.
 
 /**
  *  Save a given class T to filename.bz2.
  */
 template <class T>
-void save_to_file_bz2( T& t, std::string filename, const bool print_duration = true )
+void save_to_file_bz2( const T& t, std::string filename, const bool print_duration = true )
 {
     if( print_duration == true )
     {
