@@ -10,6 +10,7 @@ void save_to_file_bz2( const MatrixField<Q>& matrix, std::string filename, const
     }
     Clock measure_duration;
 
+    // Open bz2 stream.
     std::string bz2_command_string = "bzip2 -c -z -7 > " + filename + ".bz2";
     const char* bz2_command = bz2_command_string.c_str();
     FILE* bz2_pipe;
@@ -19,8 +20,18 @@ void save_to_file_bz2( const MatrixField<Q>& matrix, std::string filename, const
         std::cout << "Error: Could not open '" << filename << "'." << std::endl;
         return;
     }
+   
+    // Store number of rows and number of columns.
+    fprintf( bz2_pipe, "%zu %zu\n", matrix.num_rows, matrix.num_cols );
     
-    fprintf( bz2_pipe, "%i %i\n", matrix.num_rows, matrix.num_rows );
+    // Store number of diagonal entries as well as all entries.
+    fprintf( bz2_pipe, "%zu\n", matrix.diagonal.size() );
+    for( const auto& entry : matrix.diagonal )
+    {
+        fprintf( bz2_pipe, "%zu %zu\n", entry.first, entry.second );
+    }
+    
+    // Store matrix entries.
     for( size_t t = 0; t < matrix.num_rows * matrix.num_cols; ++t )
     {
         const auto& entry = matrix.data[t];
@@ -55,6 +66,7 @@ MatrixField<Q> load_from_file_bz2( std::string filename, const bool print_durati
     }
     Clock measure_duration;
 
+    // Open bz2 stream.
     std::string bz2_command_string = "bzip2 -c -d < " + filename + ".bz2";
     const char* bz2_command = bz2_command_string.c_str();
     FILE* bz2_pipe;
@@ -65,6 +77,7 @@ MatrixField<Q> load_from_file_bz2( std::string filename, const bool print_durati
         return MatrixField<Q>();
     }
     
+    // Load number of rows and columns.
     size_t num_rows = 0;
     size_t num_cols = 0;
     if( fscanf( bz2_pipe, "%i %i\n", &num_rows, &num_cols ) == 0 )
@@ -72,8 +85,29 @@ MatrixField<Q> load_from_file_bz2( std::string filename, const bool print_durati
         std::cout << "Error: Could not read number of columns or rows. Closing file." << std::endl;
         return MatrixField<Q>();
     }
-    
     MatrixField<Q> m ( num_rows, num_cols );
+    
+    // Load number of diagonal entries as well as all entries.
+    size_t diagonal_size = 0;
+    size_t i = 0;
+    size_t j = 0;
+    auto& diag = m.diagonal;
+    if( fscanf( bz2_pipe, "%zu\n", &diagonal_size ) == 0 )
+    {
+        std::cout << "Error: Could not read number of diagonal entries. Closing file." << std::endl;
+        return MatrixField<Q>();
+    }
+    for( size_t t = 0; t < diagonal_size; ++t )
+    {
+        if( fscanf( bz2_pipe, "%zu %zu\n", &i, &j ) == 0 )
+        {
+            std::cout << "Error: Could not read diagonal entries. Closing file." << std::endl;
+            return MatrixField<Q>();
+        }
+        diag.emplace_back(i,j);
+    }
+    
+    // Load matrix entries.
     for( size_t t = 0; t < num_rows * num_cols; ++t )
     {
         auto& entry = m.data[t];
