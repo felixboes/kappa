@@ -80,7 +80,7 @@ MatrixField<Q> load_from_file_bz2( std::string filename, const bool print_durati
     // Load number of rows and columns.
     size_t num_rows = 0;
     size_t num_cols = 0;
-    if( fscanf( bz2_pipe, "%i %i\n", &num_rows, &num_cols ) == 0 )
+    if( fscanf( bz2_pipe, "%zu %zu\n", &num_rows, &num_cols ) == 0 )
     {
         std::cout << "Error: Could not read number of columns or rows. Closing file." << std::endl;
         return MatrixField<Q>();
