@@ -92,7 +92,7 @@ gmp documentation
 */
 int main( int argc, char** argv )
 {
-    if( argc == 1 || argv[1] == "c" )
+    if( argc == 1 || std::string(argv[1]) == std::string("c") )
     {
         std::string bz2_command_string = std::string("bzip2 -c -z -7 > test.bz2");
         const char* bz2_command = bz2_command_string.c_str();
@@ -107,6 +107,12 @@ int main( int argc, char** argv )
         mpq_class t=200;
         t /= 7;
         
+        std::cout << t << std::endl;
+        
+        mpz_out_raw( bz2_pipe, t.get_num().get_mpz_t() );
+        mpz_out_raw( bz2_pipe, t.get_den().get_mpz_t() );
+        
+        t*= mpq_class("234892734987324/8589439837");
         std::cout << t << std::endl;
         
         mpz_out_raw( bz2_pipe, t.get_num().get_mpz_t() );
@@ -133,6 +139,7 @@ int main( int argc, char** argv )
         {
             std::cout << in << std::endl;
         }
+        mpz_clear(in);
         
         pclose(bz2_pipe);
         return 0;
