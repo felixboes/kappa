@@ -104,6 +104,8 @@ int main( int argc, char** argv )
             return 1;
         }
         
+        fprintf( bz2_pipe, "%i %i\n", 40, 24 );
+        
         mpq_class t=200;
         t /= 7;
         
@@ -134,6 +136,10 @@ int main( int argc, char** argv )
         }
         
         mpz_t in;
+        int a = 0;
+        int b = 0;
+        fscanf( bz2_pipe, "%i %i\n", &a, &b );
+        std::cout << a << " " << b << std::endl;
         mpz_init(in);
         while( mpz_inp_raw( in, bz2_pipe ) != 0 )
         {

@@ -156,6 +156,9 @@ private:
     {
         ar & diagonal & data & num_rows & num_cols;
     }
+    // In order to save matrices with rational coefficients we grant save_to_file_bz2 and load_from_file_bz2 access.
+    friend void save_to_file_bz2< ThisType >( const ThisType& t, std::string , const bool );
+    friend ThisType load_from_file_bz2< ThisType >( std::string, const bool );
 };
 
 template< class CoefficientT >

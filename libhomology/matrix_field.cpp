@@ -3,14 +3,103 @@
 template<>
 void save_to_file_bz2( const MatrixField<Q>& matrix, std::string filename, const bool print_duration )
 {
-    std::cout << "Todo: Implement serialization." << std::endl;
+    if( print_duration == true )
+    {
+        std::cout << "Saving '" + filename + ".bz2'";
+        std::cout.flush();
+    }
+    Clock measure_duration;
+
+    std::string bz2_command_string = "bzip2 -c -z -7 > " + filename + ".bz2";
+    const char* bz2_command = bz2_command_string.c_str();
+    FILE* bz2_pipe;
+    
+    if( (bz2_pipe = popen(bz2_command, "w")) == nullptr )
+    {
+        std::cout << "Error: Could not open '" << filename << "'." << std::endl;
+        return;
+    }
+    
+    fprintf( bz2_pipe, "%i %i\n", matrix.num_rows, matrix.num_rows );
+    for( size_t t = 0; t < matrix.num_rows * matrix.num_cols; ++t )
+    {
+        const auto& entry = matrix.data[t];
+        if( mpz_out_raw( bz2_pipe, entry.get_num_mpz_t() ) == 0 )
+        {
+            std::cout << "Error: Could write numerator. Closing file." << std::endl;
+            pclose(bz2_pipe);
+        }
+        if ( mpz_out_raw( bz2_pipe, entry.get_den_mpz_t() ) == 0 )
+        {
+            std::cout << "Error: Could write denominator. Closing file." << std::endl;
+            pclose(bz2_pipe);
+        }
+    }
+    
+    pclose(bz2_pipe);
+    
+    if( print_duration == true )
+    {
+        std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+        std::cout.flush();
+    }
 }
 
 template <>
 MatrixField<Q> load_from_file_bz2( std::string filename, const bool print_duration )
 {
-    std::cout << "Todo: Implement serialization." << std::endl;
-    return MatrixField<Q>();
+    if( print_duration == true )
+    {
+        std::cout << "Loading '" + filename + ".bz2'";
+        std::cout.flush();
+    }
+    Clock measure_duration;
+
+    std::string bz2_command_string = "bzip2 -c -d < " + filename + ".bz2";
+    const char* bz2_command = bz2_command_string.c_str();
+    FILE* bz2_pipe;
+    
+    if( (bz2_pipe = popen(bz2_command, "r")) == nullptr )
+    {
+        std::cout << "Error: Could not open '" << filename << "'." << std::endl;
+        return MatrixField<Q>();
+    }
+    
+    size_t num_rows = 0;
+    size_t num_cols = 0;
+    if( fscanf( bz2_pipe, "%i %i\n", &num_rows, &num_cols ) == 0 )
+    {
+        std::cout << "Error: Could not read number of columns or rows. Closing file." << std::endl;
+        return MatrixField<Q>();
+    }
+    
+    MatrixField<Q> m ( num_rows, num_cols );
+    for( size_t t = 0; t < num_rows * num_cols; ++t )
+    {
+        auto& entry = m.data[t];
+        if( mpz_inp_raw( entry.get_num_mpz_t(), bz2_pipe ) == 0 )
+        {
+            std::cout << "Error: Could read numerator. Closing file." << std::endl;
+            pclose(bz2_pipe);
+            return m;
+        }
+        if( mpz_inp_raw( entry.get_den_mpz_t(), bz2_pipe ) == 0 )
+        {
+            std::cout << "Error: Could read numerator. Closing file." << std::endl;
+            pclose(bz2_pipe);
+            return m;
+        }
+    }
+    
+    pclose(bz2_pipe);
+    
+    if( print_duration == true )
+    {
+        std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+        std::cout.flush();
+    }
+      
+    return m;
 }
 
 MatrixBool::MatrixBool() : diagonal(), data(), num_rows(0), num_cols(0)
