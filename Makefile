@@ -48,10 +48,10 @@ ifneq ($(MAKECMDGOALS),clean)
 endif
 
 $(TARGETS): %: $(BUILDDIR)/kappa/main_%.o $(STDOBJ)
-	$(CXX) $(CXXFLAGS) $(LIBS) $(INCL) -o $@ $(STDOBJ) $(BUILDDIR)/kappa/main_$@.o
+	$(CXX) $(CXXFLAGS) $(INCL) -o $@ $(STDOBJ) $(BUILDDIR)/kappa/main_$@.o $(LIBS)
 
 $(CXXOBJ): $(BUILDDIR)/%.o: %.$(EXT) $(BUILDDIR)/%.dep
-	$(CXX) $(LIBS) $(CXXFLAGS) $(INCL) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INCL) -c $< -o $@
 
 $(CXXDEP): $(BUILDDIR)/%.dep: %.$(EXT) $(TAGS)
 	$(CXX) $(CXXFLAGS) $(INCL) -MM $< -MT $@ -MT $(<:.$(EXT)=.o) -o $@
