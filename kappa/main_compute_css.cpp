@@ -152,7 +152,7 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             atomic_uint state(0);       // Set state to 1 iff kernel and torsion are computed. This is done to terminate the 'monitoring thread'.
 
             // Diagonalzing thread.
-            auto partial_homology_thread = std::async( std::launch::async, [&]()
+            auto partial_homology_thread = std::async( std::launch::async, [&]() -> HomologyField
             {
                 auto ret = cluster_spectral_sequence.diff_complex.compute_current_kernel_and_torsion( l );
                 state = 1;
@@ -230,7 +230,7 @@ void compute_css( SessionConfig conf, int argc, char** argv )
             state = 0;       // Set state to 1 iff kernel and torsion are computed. This is done to terminate the 'monitoring thread'.
             // Diagonalzing thread.
             cluster_spectral_sequence.prepare_d1_diag();
-            partial_homology_thread = std::async( std::launch::async, [&]()
+            partial_homology_thread = std::async( std::launch::async, [&]() -> HomologyField
             {
                 auto ret = cluster_spectral_sequence.diff_complex.compute_current_kernel_and_torsion( l );
                 state = 1;
