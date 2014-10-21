@@ -288,7 +288,7 @@ void MatrixBool :: cache_matrix( std::string ) const
     return;
 }
 
-void MatrixBool :: cache_base_change( std::string ) const
+void MatrixBool :: cache_base_changes( std::string ) const
 {
     std::cout << "Error: MatrixBool cannot be cached since boost::dynamic_bitset is not supported by boost::serialization." << std::endl
               << "       We refere to https://svn.boost.org/trac/boost/ticket/3328" << std::endl;

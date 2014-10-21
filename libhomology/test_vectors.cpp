@@ -4,6 +4,8 @@
 
 int main()
 {
+    std::cout << "GMP Version: " << gmp_version << std::endl;
+    
     VectorQ v(3);
     v(0) = 1;
     v(1) = 0;
@@ -27,8 +29,8 @@ int main()
     DiagonalizerField<MatrixQ> diago;
     diago(m);
     std::cout << m << std::endl;
-    m.print_triangular_shape();
-    m.print_base_changes_in_short_form();
+    std::cout << m.base_changes() << std::endl;;
+    std::cout << m.triangular_shape() << std::endl;
     
     VectorQ v_prime(3);
     v_prime(0) = 0;
@@ -44,13 +46,16 @@ int main()
     
     v += v_2;
     std::cout << v << std::endl;
-    
-    std::cout << gmp_version << std::endl;
 
     m.cache_matrix("test_matrix");
-    std::cout << m << std::endl;
     std::cout << load_from_file_bz2< MatrixField<Q> > ("test_matrix") << std::endl;
     
+    save_to_file_bz2( m.base_changes(), "test_matrix" );
+    std::cout << load_from_file_bz2< MatrixField<Q> > ("test_matrix") << std::endl;
+    
+    save_to_file_bz2( m.triangular_shape(), "test_matrix" );
+    std::cout << load_from_file_bz2< MatrixField<Q> > ("test_matrix") << std::endl;
+    /*
     // 0,  1,  1
     // 1, -1,  0
     // 0,  1, -1
@@ -93,5 +98,6 @@ int main()
     
     w.resize(10);
     std::cout << w << std::endl;
+    */
     return 0;
 }

@@ -87,8 +87,8 @@ public:
     void clear();
     
     /**
-     *  @brief Prints base change to the standard output.
-     *  
+     *  @brief @returns the base changes.
+     *
      *  One could believe that the base change can be read of the matrix, if we know the alpha's used in the diagonalization process.
      *  This is not true as the next example shows.
      *  \f[
@@ -110,6 +110,16 @@ public:
      *  \f]  
      *
      */
+    ThisType base_changes() const;
+ 
+    /**
+     * @returns the triangular shape of the matrix.
+     */ 
+    ThisType triangular_shape() const;
+     
+    /**
+     *  Prints base change to the standard output.
+     */
     void print_base_changes_in_short_form() const;
     
     /**
@@ -125,7 +135,7 @@ public:
     /**
      *  Saves the base change including the diagonal at the given path.
      */
-    void cache_base_change( std::string filename ) const;
+    void cache_base_changes( std::string filename ) const;
     
     /**
      *  Saves the tringular shape including the diagonal at the given path.
@@ -446,7 +456,7 @@ public:
      *  @bug MatrixBool cannot be cached since boost::dynamic_bitset is not supported by boost::serialization.
      *  We refere to https://svn.boost.org/trac/boost/ticket/3328".
      */
-    void cache_base_change( std::string filename ) const;
+    void cache_base_changes( std::string filename ) const;
     
     /**
      *  Saves the tringular shape including the diagonal at the given path.
