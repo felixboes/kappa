@@ -69,6 +69,7 @@ uint32_t DiagonalizerField< MatrixType >::diag_field( MatrixType &matrix )
                 // This row contributes to the rank.
                 current_rank++;
                 row_1 = *it;
+                matrix.diagonal.emplace_back( row_1, col );
                 // We do not need to check this row in further iterations.
                 // After erasing, it will point to the next element in the vector.
                 it = rows_to_check.erase(it);

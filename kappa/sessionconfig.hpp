@@ -27,22 +27,7 @@ enum SignConvention
  */
 struct SessionConfig
 {
-    SessionConfig() :
-        genus(0),
-        num_punctures(0),
-        rational(0),
-        prime(2),
-        parallel(false),
-        num_threads(1),
-        num_remaining_threads(0),
-        start_p(0),
-        end_p(std::numeric_limits<uint32_t>::max()),
-        sgn_conv(all_signs),
-        create_cache(true),
-        valid(false),
-        print_help(false)
-    {}
-    
+    SessionConfig();
     SessionConfig( const int argc, char** argv );
     
     /// Sometimes we have to work a litte, before we can use a configurration. Here we check parameters and setup Z_p coefficients.

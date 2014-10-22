@@ -1,5 +1,23 @@
 #include "sessionconfig.hpp"
 
+SessionConfig::SessionConfig() :
+    genus(0),
+    num_punctures(0),
+    rational(false),
+    prime(2),
+    parallel(false),
+    num_threads(1),
+    num_remaining_threads(0),
+    start_p(0),
+    end_p(0),
+    first_basis(0),
+    last_basis(0),
+    sgn_conv(all_signs),
+    create_cache(false),
+    valid(false),
+    print_help(false)
+{}
+
 SessionConfig::SessionConfig( const int argc, char **argv ) : 
     desc("Command line options"),
     genus(0),
@@ -13,6 +31,7 @@ SessionConfig::SessionConfig( const int argc, char **argv ) :
     end_p(0),
     first_basis(0),
     last_basis(0),
+    create_cache(false),
     valid(false),
     print_help(false)
 {
