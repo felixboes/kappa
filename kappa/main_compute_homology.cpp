@@ -38,6 +38,19 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     std::cout.flush();
     ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
     ofs << std::endl;
+    
+    if( conf.create_cache == true ) // Save all bases elements
+    {
+        std::string path_prefix = 
+        std::string("./cache/bases/") + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
+        
+        for( auto& it : monocomplex.basis_complex )
+        {
+            // Store the p-th basis.
+            auto& p = it.first;
+            save_to_file_bz2<MonoBasis>(it.second, path_prefix + std::to_string(p));
+        }
+    }
 
     std::cout << "-------- Computing Homology --------" << std::endl;
     ofs << "-------- Computing Homology --------" << std::endl;
@@ -120,11 +133,24 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             << "; dim(ker D_" << (int32_t)(p) << ") = " << (int32_t)(homology.get_kern(p)) << std::endl;
         ofs << std::endl;
         
-        //Print diagonalized matrix.
-        //std::cout << "Matrix: " << std::endl
-        //          << monocomplex.get_current_differential() << std::endl;
-        //monocomplex.get_current_differential().print_base_changes_in_short_form();
-        //monocomplex.get_current_differential().print_triangular_shape();
+        if( conf.create_cache == true ) // Save base changes and triangular shape.
+        {
+            // The prefix is cache/differentials_(parallel|radial)/(coeff)_(genus)_(punctures)_(p)
+            const auto & cur_differential = monocomplex.get_current_differential();
+            std::string path_prefix =
+                "./cache/differentials_" + std::string( ( conf.parallel == true ? "parallel" : "radial") ) + std::string("/") +
+                (conf.rational == true ? std::string("q") : std::string("s") + std::to_string(conf.prime) ) + std::string("_") +
+                std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_" + std::to_string(p);
+            cur_differential.cache_diagonal( path_prefix + "_diagonal" );
+            cur_differential.cache_base_changes( path_prefix + "_base_changes" );
+            cur_differential.cache_triangular_shape( path_prefix + "_triangular" );
+    
+            //Print diagonalized matrix.
+            //std::cout << "Matrix: " << std::endl
+            //          << monocomplex.get_current_differential() << std::endl;
+            //monocomplex.get_current_differential().print_base_changes_in_short_form();
+            //monocomplex.get_current_differential().print_triangular_shape();
+        }
     }
 
     homology.erase_tors( conf.start_p - 1 );
@@ -177,6 +203,11 @@ int main(int argc, char** argv)
     else
     {
         Tuple::radial_case();
+    }
+
+    if( conf.create_cache == true )
+    {
+        create_cache_directories();
     }
 
     // We may start with the computations.

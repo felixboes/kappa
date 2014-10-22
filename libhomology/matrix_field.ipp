@@ -74,7 +74,7 @@ MatrixField< CoefficientT > MatrixField< CoefficientT > :: base_changes() const
 {
     if( num_rows == 0 || diagonal.size() == 0 )
     {
-        std::cout << "Error: The matrix has either no rows or an empty diagonal." << std::endl;
+        std::cout << "The matrix has either no rows or an empty diagonal." << std::endl;
         return ThisType();
     }
     
@@ -82,16 +82,19 @@ MatrixField< CoefficientT > MatrixField< CoefficientT > :: base_changes() const
     for( size_t i = 0; i < num_rows; ++i )
     {
         auto diag_entry = diagonal.cbegin();
+        size_t j = 0;
         // store elements befor the diagonal entry.
         while( diag_entry != diagonal.cend() && diag_entry->first != i )
         {
-            the_base_changes(i, diag_entry->second) = this->at( i, diag_entry->second );
+            the_base_changes( i, j ) = this->at( i, diag_entry->second );
+            ++j;
             ++diag_entry;
         }
         // store diagonal entry.
         if( diag_entry != diagonal.cend() )
         {
-            the_base_changes(diag_entry->first, diag_entry->second) =  this->at( diag_entry->first, diag_entry->second );
+            the_base_changes( diag_entry->first, j ) =  this->at( diag_entry->first, diag_entry->second );
+            ++j;
             ++diag_entry;
         }
         // ignore elements after diagonal entry.
@@ -104,7 +107,7 @@ MatrixField< CoefficientT > MatrixField< CoefficientT > :: triangular_shape() co
 {
     if( num_rows == 0 || diagonal.size() == 0 )
     {
-        std::cout << "Error: The matrix has either no rows or an empty diagonal." << std::endl;
+        std::cout << "The matrix has either no rows or an empty diagonal." << std::endl;
         return ThisType();
     }
     
@@ -221,46 +224,46 @@ void MatrixField< CoefficientT > :: print_triangular_shape() const
 }
 
 template< class CoefficientT >
-void MatrixField< CoefficientT > :: cache_matrix( std::string filename ) const
+void MatrixField< CoefficientT > :: cache_matrix( std::string filename, bool print_duration ) const
 {
-    save_to_file_bz2( *this, filename, true );
+    save_to_file_bz2( *this, filename, print_duration );
 }
 
 template< class CoefficientT >
-void MatrixField< CoefficientT > :: cache_base_changes( std::string filename ) const
+void MatrixField< CoefficientT > :: cache_base_changes( std::string filename, bool print_duration ) const
 {
     if( num_rows == 0 || diagonal.size() == 0 )
     {
-        std::cout << "Error: The matrix has either no rows or an empty diagonal." << std::endl;
+        std::cout << "The matrix has either no rows or an empty diagonal." << std::endl;
         return;
     }
     
     ThisType the_base_changes = base_changes();
-    save_to_file_bz2( the_base_changes, filename );
+    save_to_file_bz2( the_base_changes, filename, print_duration );
     the_base_changes.resize(0,0);
 }
 
 template< class CoefficientT >
-void MatrixField< CoefficientT > :: cache_triangular_shape( std::string filename ) const
+void MatrixField< CoefficientT > :: cache_triangular_shape( std::string filename, bool print_duration ) const
 {
     if( num_rows == 0 || diagonal.size() == 0 )
     {
-        std::cout << "Error: The matrix has either no rows or an empty diagonal." << std::endl;
+        std::cout << "The matrix has either no rows or an empty diagonal." << std::endl;
         return;
     }
     
     ThisType triangular_form = triangular_shape();
-    save_to_file_bz2( triangular_form, filename );
+    save_to_file_bz2( triangular_form, filename, print_duration );
     triangular_form.resize(0,0);
 }
 
 template< class CoefficientT >
-void MatrixField< CoefficientT > :: cache_diagonal( std::string filename ) const
+void MatrixField< CoefficientT > :: cache_diagonal( std::string filename, bool print_duration ) const
 {
     // Observe that
     //     save_to_file_bz2 ( diagonal, filename );
     // wont compile because of 'Argument-dependent name lookup'
-    save_to_file_bz2 ( this->diagonal, filename ) ;
+    save_to_file_bz2 ( this->diagonal, filename, print_duration ) ;
 }
 
 template< class CoefficientT >

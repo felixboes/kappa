@@ -6,6 +6,7 @@
 #include "blockfinder.hpp"
 #include "css.hpp"
 #include "factorial.hpp"
+#include "misc.hpp"
 #include "monocomplex.hpp"
 #include "sessionconfig.hpp"
 #include "tuple.hpp"

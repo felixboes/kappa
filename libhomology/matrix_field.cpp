@@ -281,33 +281,33 @@ void MatrixBool :: print_triangular_shape() const
     }
 }
 
-void MatrixBool :: cache_matrix( std::string ) const
+void MatrixBool :: cache_matrix( std::string, bool ) const
 {
     std::cout << "Error: MatrixBool cannot be cached since boost::dynamic_bitset is not supported by boost::serialization." << std::endl
               << "       We refere to https://svn.boost.org/trac/boost/ticket/3328" << std::endl;
     return;
 }
 
-void MatrixBool :: cache_base_changes( std::string ) const
+void MatrixBool :: cache_base_changes( std::string, bool ) const
 {
     std::cout << "Error: MatrixBool cannot be cached since boost::dynamic_bitset is not supported by boost::serialization." << std::endl
               << "       We refere to https://svn.boost.org/trac/boost/ticket/3328" << std::endl;
     return;
 }
 
-void MatrixBool :: cache_triangular_shape( std::string ) const
+void MatrixBool :: cache_triangular_shape( std::string, bool ) const
 {
     std::cout << "Error: MatrixBool cannot be cached since boost::dynamic_bitset is not supported by boost::serialization." << std::endl
               << "       We refere to https://svn.boost.org/trac/boost/ticket/3328" << std::endl;
     return;
 }
 
-void MatrixBool :: cache_diagonal( std::string filename ) const
+void MatrixBool :: cache_diagonal( std::string filename, bool print_duration ) const
 {
     // Observe that
     //     save_to_file_bz2 ( diagonal, filename );
     // wont compile because of 'Argument-dependent name lookup'
-    save_to_file_bz2( this->diagonal, filename ) ;
+    save_to_file_bz2( this->diagonal, filename, print_duration ) ;
 }
 
 std::ostream& operator<< ( std::ostream& stream, const MatrixBool & matrix)

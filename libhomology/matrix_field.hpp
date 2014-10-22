@@ -130,22 +130,22 @@ public:
     /**
      *  Saves the matrix including the diagonal at the given path.
      */
-    void cache_matrix( std::string filename ) const;
+    void cache_matrix( std::string filename, bool print_duration = true ) const;
     
     /**
      *  Saves the base change including the diagonal at the given path.
      */
-    void cache_base_changes( std::string filename ) const;
+    void cache_base_changes( std::string filename, bool print_duration = true  ) const;
     
     /**
      *  Saves the tringular shape including the diagonal at the given path.
      */
-    void cache_triangular_shape( std::string filename ) const;
+    void cache_triangular_shape( std::string filename, bool print_duration = true  ) const;
     
     /**
      *  Saves the diagonal at the given path.
      */
-    void cache_diagonal( std::string filename ) const;
+    void cache_diagonal( std::string filename, bool print_duration = true  ) const;
     
     // grant std::ostream access in order to print matrices to ostreams.
     template< class T >
@@ -449,26 +449,26 @@ public:
      *  @bug MatrixBool cannot be cached since boost::dynamic_bitset is not supported by boost::serialization.
      *  We refere to https://svn.boost.org/trac/boost/ticket/3328".
      */
-    void cache_matrix( std::string filename ) const;
+    void cache_matrix( std::string filename, bool print_duration = true ) const;
     
     /**
      *  Saves the base change including the diagonal at the given path.
      *  @bug MatrixBool cannot be cached since boost::dynamic_bitset is not supported by boost::serialization.
      *  We refere to https://svn.boost.org/trac/boost/ticket/3328".
      */
-    void cache_base_changes( std::string filename ) const;
+    void cache_base_changes( std::string filename, bool print_duration = true ) const;
     
     /**
      *  Saves the tringular shape including the diagonal at the given path.
      *  @bug MatrixBool cannot be cached since boost::dynamic_bitset is not supported by boost::serialization.
      *  We refere to https://svn.boost.org/trac/boost/ticket/3328".
      */
-    void cache_triangular_shape( std::string filename ) const;
+    void cache_triangular_shape( std::string filename, bool print_duration = true ) const;
     
     /**
      *  Saves the diagonal at the given path.
      */
-    void cache_diagonal( std::string filename ) const;
+    void cache_diagonal( std::string filename, bool print_duration = true ) const;
 
     // grant std::ostream access in order to print matrices to ostreams.matrix_field.hpp
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixBool & matrix);
