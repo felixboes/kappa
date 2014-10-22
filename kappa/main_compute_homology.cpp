@@ -42,13 +42,25 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     if( conf.create_cache == true ) // Save all bases elements
     {
         std::string path_prefix = 
-        std::string("./cache/bases/") + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
+            std::string("./cache/bases/") + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
+        std::string check_writable_prefix = 
+            std::string("./cache/list_of_files_that_should_not_be_overwritten/bases_") + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
         
-        for( auto& it : monocomplex.basis_complex )
+        for( const auto& it : monocomplex.basis_complex )
         {
-            // Store the p-th basis.
-            auto& p = it.first;
-            save_to_file_bz2<MonoBasis>(it.second, path_prefix + std::to_string(p));
+            const auto& p = it.first;
+            
+            // Check if file may be overwritten
+            if( file_exists(check_writable_prefix + std::to_string(p) ) == true )
+            {
+                std::cout << "Do not overwrite " << path_prefix + std::to_string(p) << std::endl;
+            }
+            else
+            {
+                // Store the p-th basis.
+                save_to_file_bz2<MonoBasis>(it.second, path_prefix + std::to_string(p));
+                touch( check_writable_prefix + std::to_string(p) );
+            }
         }
     }
 
@@ -140,10 +152,41 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             std::string path_prefix =
                 "./cache/differentials_" + std::string( ( conf.parallel == true ? "parallel" : "radial") ) + std::string("/") +
                 (conf.rational == true ? std::string("q") : std::string("s") + std::to_string(conf.prime) ) + std::string("_") +
-                std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_" + std::to_string(p);
-            cur_differential.cache_diagonal( path_prefix + "_diagonal" );
-            cur_differential.cache_base_changes( path_prefix + "_base_changes" );
-            cur_differential.cache_triangular_shape( path_prefix + "_triangular" );
+                std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_" + std::to_string(p) + std::string("_");
+            std::string check_writable_prefix =
+                "./cache/list_of_files_that_should_not_be_overwritten/differentials_" + std::string( ( conf.parallel == true ? "parallel" : "radial") ) + std::string("_") +
+                (conf.rational == true ? std::string("q") : std::string("s") + std::to_string(conf.prime) ) + std::string("_") +
+                std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_" + std::to_string(p) + std::string("_");
+            
+            if( file_exists(check_writable_prefix + "diagonal" ) == true )
+            {
+                std::cout << "Do not overwrite " << path_prefix << "diagonal" << std::endl;
+            }
+            else
+            {
+                cur_differential.cache_diagonal( path_prefix + "diagonal" );
+                touch( check_writable_prefix + "diagonal" );
+            }
+            
+            if( file_exists(check_writable_prefix + "base_changes" ) == true )
+            {
+                std::cout << "Do not overwrite " << path_prefix << "base_changes" << std::endl;
+            }
+            else
+            {
+                cur_differential.cache_base_changes( path_prefix + "base_changes" );
+                touch( check_writable_prefix + "base_changes" );
+            }
+            
+            if( file_exists(check_writable_prefix + "triangular" ) == true )
+            {
+                std::cout << "Do not overwrite " << path_prefix << "triangular" << std::endl;
+            }
+            else
+            {
+                cur_differential.cache_triangular_shape( path_prefix + "triangular" );
+                touch( check_writable_prefix + "triangular" );
+            }
     
             //Print diagonalized matrix.
             //std::cout << "Matrix: " << std::endl
