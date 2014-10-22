@@ -13,7 +13,7 @@ template< class MonoComplexT >
 void compute_homology( SessionConfig conf, int argc, char** argv )
 {
     std::ofstream ofs;
-    std::string filename = argv[0];
+    std::string filename = std::string("./results/") + std::string(argv[0]);
 
     for( int i = 1; i < argc; ++i )
     {
@@ -21,9 +21,36 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     }
 
     ofs.open( filename );
-
+    
+    // Derive Version
+    std::string version;
+    if( file_exists("version") )
+    {
+        
+    }
+    
+    // Drive Date
+    std::string date;
+    
+    
+    // Print status message.
+    std::cout << std::endl
+              << "Program version: " << version << std::endl
+              << "Date: " << date << std::endl
+              << "------------  Performing computations with the following parameters   ------------" << std::endl
+              << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
+              << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
+              << std::endl;
+    ofs       << std::endl
+              << "Program version: " << version << std::endl
+              << "Date: " << date << std::endl
+              << "------------  Performing computations with the following parameters   ------------" << std::endl
+              << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
+              << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
+              << std::endl;
+    
     std::cout << "-------- Constructing bases --------" << std::endl;
-    ofs << "-------- Constructing bases --------" << std::endl;
+    ofs       << "-------- Constructing bases --------" << std::endl;
 
     // Compute all bases.
     Clock measure_duration;
@@ -42,9 +69,11 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     if( conf.create_cache == true ) // Save all bases elements
     {
         std::string path_prefix = 
-            std::string("./cache/bases/") + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
+            std::string("./cache/bases_") + std::string( (conf.parallel == true ? "parallel" : "radial") ) + std::string("/") + 
+            std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
         std::string check_writable_prefix = 
-            std::string("./cache/list_of_files_that_should_not_be_overwritten/bases_") + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
+            std::string("./cache/list_of_files_that_should_not_be_overwritten/bases_") +
+            std::string( (conf.parallel == true) ? "parallel_" : "radial_" ) + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
         
         for( const auto& it : monocomplex.basis_complex )
         {
@@ -247,11 +276,8 @@ int main(int argc, char** argv)
     {
         Tuple::radial_case();
     }
-
-    if( conf.create_cache == true )
-    {
-        create_cache_directories();
-    }
+    
+    create_working_directories();
 
     // We may start with the computations.
     if(conf.rational == true)

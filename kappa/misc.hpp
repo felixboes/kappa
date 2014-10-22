@@ -30,6 +30,6 @@ bool create_directory( std::string path );
 /**
  *  create the cache directories.
  */
-void create_cache_directories();
+bool create_working_directories( bool print_status_messages = true );
 
 #endif // MISC_HPP

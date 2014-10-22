@@ -81,20 +81,41 @@ bool create_directory( std::string path )
 }
 
 
-void create_cache_directories()
+bool create_working_directories( bool print_status_messages )
 {
+    bool status = true;
     std::list<std::string> dirs = {
         "./cache/",
-        "./cache/bases/",
+        "./cache/bases_parallel/",
+        "./cache/bases_radial/",
         "./cache/differentials_parallel",
         "./cache/differentials_radial",
-        "./cache/list_of_files_that_should_not_be_overwritten"
+        "./cache/list_of_files_that_should_not_be_overwritten",
+        "./results"
     };
+    
     for( const auto& dir : dirs )
     {
         if( directory_exists( dir ) == false )
         {
-            create_directory( dir );
+            if( print_status_messages == true )
+            {
+                std::cout << "Creating directory '" << dir << "'.";
+            }
+            if( create_directory( dir ) == false )
+            {
+                if( print_status_messages == true )
+                {
+                    std::cout << " Creation failed." << std::endl;
+                }
+                status = false;
+            }
+            else
+            {
+                std::cout << std::endl;
+            }
         }
     }
+    
+    return status;
 }

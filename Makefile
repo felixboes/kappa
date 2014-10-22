@@ -47,6 +47,10 @@ ifneq ($(MAKECMDGOALS),clean)
 -include $(CXXDEP) $(CDEP)
 endif
 
+.PHONY: version
+version:
+	git show | head -n1 | sed -e 's/commit //' > version
+
 $(TARGETS): %: $(BUILDDIR)/kappa/main_%.o $(STDOBJ)
 	$(CXX) $(CXXFLAGS) $(INCL) -o $@ $(STDOBJ) $(BUILDDIR)/kappa/main_$@.o $(LIBS)
 
@@ -69,4 +73,9 @@ doc:
 .PHONY: clean
 clean:
 	rm -rf $(TARGETS) $(BUILDDIR)
+	rm -rf version
 	rm -rf doc/html/ doc/latex/ doc/*.pdf
+
+.PHONY: clean_cache
+clean_cache:
+	rm -rf cache
