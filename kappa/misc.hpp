@@ -1,6 +1,7 @@
 #ifndef MISC_HPP
 #define MISC_HPP
 
+#include <ctime>
 #include <iostream>
 #include <fstream>
 #include <string>

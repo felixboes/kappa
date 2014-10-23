@@ -23,19 +23,34 @@ bool file_exists( std::string path )
 
 bool touch( std::string path )
 {
-    // convert unix path to native path.
-    boost::filesystem::path p(path);
-    std::string native_path = p.native();
+    boost::filesystem::path p(path);     
     
-    std::ofstream ofs;
-    ofs.open(native_path);
-    if( ofs.is_open() == false )
+    if( file_exists(path) == true )
     {
-        ofs.close();
+        try
+        {
+            boost::filesystem::last_write_time( p , std::time(0) );
+            return true;
+        }
+        catch( const boost::filesystem::filesystem_error& ex )
+        {
+            std::cout << ex.what() << std::endl;
+        }
         return false;
     }
-    ofs.close();
-    return true;
+    else
+    {
+        std::ofstream ofs;
+        std::string native_path = p.native();  
+        ofs.open( native_path );
+        if( ofs.is_open() == false )
+        {
+            ofs.close();
+            return false;
+        }
+        ofs.close();
+        return true;
+    }
 }
 
 bool directory_exists( std::string path )
