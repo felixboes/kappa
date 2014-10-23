@@ -8,8 +8,10 @@ LIBS          := -lgmpxx -lgmp -lpthread \
 BUILDDIR      := build
 EXT           := cpp
 SRCDIRS       := kappa libhomology
-EXCLUDE       := test_
+EXCLUDE       := test_ version
 .DEFAULT_GOAL := compute_css
+
+EXECUTE_BEFORE_BUILD_CHEAT := $(shell echo "const char* program_version_by_git = \"$(shell git rev-parse HEAD 2>/dev/null)\";" > kappa/version.cpp)
 
 ifndef CXX
 CXX           := g++
@@ -47,12 +49,8 @@ ifneq ($(MAKECMDGOALS),clean)
 -include $(CXXDEP) $(CDEP)
 endif
 
-.PHONY: version
-version:
-	git show | head -n1 | sed -e 's/commit //' > version
-
 $(TARGETS): %: $(BUILDDIR)/kappa/main_%.o $(STDOBJ)
-	$(CXX) $(CXXFLAGS) $(INCL) -o $@ $(STDOBJ) $(BUILDDIR)/kappa/main_$@.o $(LIBS)
+	$(CXX) $(CXXFLAGS) $(INCL) -o $@ kappa/version.cpp $(STDOBJ) $(BUILDDIR)/kappa/main_$@.o $(LIBS)
 
 $(CXXOBJ): $(BUILDDIR)/%.o: %.$(EXT) $(BUILDDIR)/%.dep
 	$(CXX) $(CXXFLAGS) $(INCL) -c $< -o $@

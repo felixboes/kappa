@@ -35,7 +35,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     
     // Print status message.
     std::cout << std::endl
-              << "Program version: " << version << std::endl
+              << "Program version: " << program_version_by_git << std::endl
               << "Date: " << date << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
               << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
