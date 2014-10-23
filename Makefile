@@ -4,7 +4,8 @@ CXXFLAGS      := -O3 -std=c++11 -D_GLIBCXX_USE_NANOSLEEP -g \
                  -Wextra -Wall -Wno-long-long -pedantic-errors
 LIBS          := -lgmpxx -lgmp -lpthread \
                  -lboost_filesystem -lboost_system -lboost_iostreams \
-                 -lboost_serialization -lboost_program_options
+                 -lboost_serialization -lboost_program_options \
+                 -lboost_date_time
 BUILDDIR      := build
 EXT           := cpp
 SRCDIRS       := kappa libhomology

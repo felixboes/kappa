@@ -119,3 +119,7 @@ bool create_working_directories( bool print_status_messages )
     
     return status;
 }
+
+std::string current_date(){
+    return boost::posix_time::to_simple_string( boost::posix_time::ptime(boost::posix_time::second_clock::local_time()) );
+}

@@ -15,7 +15,7 @@ template< class ClusterSpectralSequenceT >
 void compute_css( SessionConfig conf, int argc, char** argv )
 {
     std::ofstream ofs;
-    std::string filename = argv[0];
+    std::string filename = std::string("./results/") + std::string(argv[0]);
     
     for( int i = 1; i < argc; ++i )
     {
@@ -25,11 +25,37 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     
     // Print status message.
     std::cout << std::endl
+              << "Program name and parameters: ";
+    for( int i = 0; i < argc; ++i )
+    {
+        std::cout << argv[i];
+        if( i+1 < argc )
+        {
+            std::cout << " ";
+        }
+    }         
+    std::cout << std::endl
+              << "Program version: " << program_version_by_git << std::endl
+              << "Date: " << current_date() << std::endl
+              << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
               << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
               << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
               << std::endl;
     ofs       << std::endl
+              << "Program name and parameters: ";
+    for( int i = 0; i < argc; ++i )
+    {
+        ofs << argv[i];
+        if( i+1 < argc )
+        {
+            ofs << " ";
+        }
+    }
+    ofs       << std::endl
+              << "Program version: " << program_version_by_git << std::endl
+              << "Date: " << current_date() << std::endl
+              << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
               << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
               << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
@@ -457,6 +483,8 @@ int main(int argc, char** argv)
     {
         Tuple::radial_case();
     }
+    
+    create_working_directories();
     
     // We may start with the computations.
     if(conf.rational == true)

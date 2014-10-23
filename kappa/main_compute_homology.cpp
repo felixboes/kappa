@@ -22,28 +22,39 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
 
     ofs.open( filename );
     
-    // Derive Version
-    std::string version;
-    if( file_exists("version") )
-    {
-        
-    }
-    
-    // Drive Date
-    std::string date;
-    
-    
     // Print status message.
     std::cout << std::endl
+              << "Program name and parameters: ";
+    for( int i = 0; i < argc; ++i )
+    {
+        std::cout << argv[i];
+        if( i+1 < argc )
+        {
+            std::cout << " ";
+        }
+    }         
+    std::cout << std::endl
               << "Program version: " << program_version_by_git << std::endl
-              << "Date: " << date << std::endl
+              << "Date: " << current_date() << std::endl
+              << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
               << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
               << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
               << std::endl;
     ofs       << std::endl
-              << "Program version: " << version << std::endl
-              << "Date: " << date << std::endl
+              << "Program name and parameters: ";
+    for( int i = 0; i < argc; ++i )
+    {
+        ofs << argv[i];
+        if( i+1 < argc )
+        {
+            ofs << " ";
+        }
+    }
+    ofs       << std::endl
+              << "Program version: " << program_version_by_git << std::endl
+              << "Date: " << current_date() << std::endl
+              << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
               << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
               << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
