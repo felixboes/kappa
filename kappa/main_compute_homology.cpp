@@ -129,10 +129,6 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         std::cout.flush();
         ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
-        
-        //Print matrix.
-        //std::cout << "Matrix: " << std::endl
-        //          << monocomplex.get_current_differential() << std::endl;
 
         max_possible_rank = std::min( monocomplex.num_rows(), monocomplex.num_cols() );
         if( (uint32_t)homology.get_kern(p-1) > 0 )
@@ -227,12 +223,6 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
                 cur_differential.cache_triangular_shape( path_prefix + "triangular" );
                 touch( check_writable_prefix + "triangular" );
             }
-    
-            //Print diagonalized matrix.
-            //std::cout << "Matrix: " << std::endl
-            //          << monocomplex.get_current_differential() << std::endl;
-            //monocomplex.get_current_differential().print_base_changes_in_short_form();
-            //monocomplex.get_current_differential().print_triangular_shape();
         }
     }
 
