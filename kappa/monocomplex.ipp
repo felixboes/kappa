@@ -309,6 +309,48 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
 }
 
 template< class MatrixComplex >
+typename MonoComplex< MatrixComplex >::HomologyType MonoComplex< MatrixComplex > :: diagonalize_current_differential( const int32_t p, const uint32_t max_possible_rank = 0, const bool print_duration )
+{
+    atomic_uint& current_rank = get_diagonalizer().current_rank;
+    
+    // Compute the induced homology.
+    atomic_uint state(0);   // Set state to 1 iff kernel and torsion are computed. This is done to terminate the 'monitoring thread'.
+    ThisType* this_object = this;   // The C++ standard allows us to pass the this-pointer to the lambda function. Unfortunately, this may result a compiler bug....
+    
+    // Diagonalzing thread.
+    auto partial_homology_thread = std::async( std::launch::async, [&]() -> HomologyField
+    {
+        // Always use one thread for diagonalizing at the moment!
+        HomologyType ret = this_object->compute_current_kernel_and_torsion( p );
+        state = 1;
+        return ret;
+    } );
+    
+    if( print_duration == true )
+    {
+        // Monitoring thread.
+        auto monitor_thread = std::async( std::launch::async, [&]()
+        {
+            while( state != 1 )
+            {
+                std::cout << "Diagonalization " << current_rank << "/" << max_possible_rank << "\r";
+                std::cout.flush();
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+        } );
+        
+        // Wait for threads to terminate.
+        auto partial_homology = partial_homology_thread.get();
+        monitor_thread.get();
+        return partial_homology;
+    }
+    else
+    {
+        return partial_homology_thread.get();
+    }
+}
+
+template< class MatrixComplex >
 typename MonoComplex< MatrixComplex >::MatrixType & MonoComplex< MatrixComplex > :: get_current_differential()
 {
     return matrix_complex.get_current_differential();

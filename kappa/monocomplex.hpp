@@ -129,6 +129,7 @@ public:
     typedef typename MatrixComplex::MatrixType MatrixType;
     typedef typename MatrixComplex::HomologyType HomologyType;
     typedef typename MatrixComplex::DiagonalizerType DiagonalizerType;
+    typedef MonoComplex< MatrixComplex > ThisType;
 
     MonoComplex( const uint32_t genus, const uint32_t num_punctures, SignConvention sgn, const uint32_t number_working_threads, const uint32_t number_remaining_threads);
     /** Recursive function initializing the basis_complex.
@@ -149,6 +150,11 @@ public:
      *  Generates the p-th differential.
      */
     void gen_differential( const int32_t p );
+    
+    /**
+     *  Diagoanlize current differential.
+     */
+    HomologyType diagonalize_current_differential( const int32_t p, const uint32_t max_rank, const bool print_duration = true );
     
     /**
      *  @returns a reference to the current differential.
