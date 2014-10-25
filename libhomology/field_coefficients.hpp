@@ -50,7 +50,7 @@ public:
      */
     friend std::ostream& operator<< (std::ostream& stream, const Zm& coeff);
     
-private:
+protected:
     int8_t n;   ///< This integer stores a representative of the residue class \f$ c = [n] in \mathbb{Z}/m\mathbb{Z} \f$.
     static uint8_t prim;    ///< We store the number m = p^e for all coeffients at once. Therefore we have to use set_modulus befor working with such coefficients.
     static uint8_t expo;    ///< We store the number m = p^e for all coeffients at once. Therefore we have to use set_modulus befor working with such coefficients.

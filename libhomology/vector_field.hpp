@@ -92,7 +92,7 @@ public:
     template< class T >
     friend std::ostream& operator<< ( std::ostream& stream, const VectorField<T> & matrix );
 
-private:
+protected:
     VectorStorageType data; ///< This realizes the data.
     size_t dim;    ///< The number of entries.
     
@@ -188,7 +188,7 @@ public:
     // grant std::ostream access in order to print vectors to ostreams.
     friend std::ostream& operator<< ( std::ostream& stream, const VectorBool & vector);
 
-private:
+protected:
     VectorStorageType data; ///< This realizes the data.
     size_t dim;             ///< The number of entries.
 

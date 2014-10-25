@@ -153,7 +153,7 @@ public:
 
     DiagonalType diagonal;  ///< Stores the diagonal of the diagonalized matrix.
 
-private:
+protected:
     MatrixStorageType data; ///< This realizes the data.
     size_t num_rows;    ///< The number of rows.
     size_t num_cols;    ///< The number of columns.
@@ -307,7 +307,7 @@ public:
 
     DiagonalType diagonal;  ///< Stores the diagonal of the diagonalized matrix.
     
-private:    
+protected:    
     MatrixStorageType data; ///< This realizes the data.
     MatrixStorageType sec_data; ///< This realizes the data.
     
@@ -475,7 +475,7 @@ public:
 
     DiagonalType diagonal;  ///< Stores the diagonal of the diagonalized matrix.
 
-private:
+protected:
     MatrixStorageType data; ///< This realizes the data.
     size_t num_rows;    ///< The number of rows.
     size_t num_cols;    ///< The number of columns.
@@ -637,7 +637,7 @@ public:
 
     DiagonalType diagonal;  ///< Stores the diagonal of the diagonalized matrix.
 
-private:
+protected:
     MatrixStorageType data; ///< This realizes the data.
     MatrixStorageType sec_data; ///< This realizes the data.
     

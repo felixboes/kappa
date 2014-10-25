@@ -89,7 +89,7 @@ public:
     **/
     void signal();
 
-private:
+protected:
     /*! Mutex for locking whenever condition changes **/
     std::mutex                    mtx;
     //! Condition Variable for waiting 'till condition is signalled

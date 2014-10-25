@@ -30,7 +30,7 @@ public:
     /// Access the \f$n\f$-th torsion coefficient \f$ a_n \f$.
     Coefficient &operator[] (uint32_t n);
 
-private:
+protected:
 
     /// The number \f$N\f$
     uint32_t free_part;
@@ -47,7 +47,7 @@ public:
     HomologyComplexZ();
     HomologyModuleZ &operator[] ( uint32_t n ) { return module[n]; }
 
-private:
+protected:
     std::map< uint32_t, HomologyModuleZ > module;
 };
 

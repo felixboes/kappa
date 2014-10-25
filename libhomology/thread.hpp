@@ -90,7 +90,7 @@ public:
     //! Returns when the function is exited. The thread will turn idle afterwards.
     void wait();
 
-private:
+protected:
     class Impl;
 #ifdef BROKEN_UNIQUE_PTR_IMPLEMENTATION
     std::shared_ptr<Impl>      pimpl;

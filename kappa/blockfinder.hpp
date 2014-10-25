@@ -48,7 +48,7 @@ public:
      */
     int num_non_zero_blocks() const;
 
-private:
+protected:
     BlockPartition _block_part; ///< stores a block partition of the given matrix
 };
 

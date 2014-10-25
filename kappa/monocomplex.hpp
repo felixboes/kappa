@@ -169,7 +169,7 @@ public:
      *  print a basis to std::out.
      */
     void show_basis( const int32_t p ) const;
-//private:
+//protected:
 
     uint32_t g;                ///< genus
     uint32_t m;                ///< number of punctures
@@ -178,7 +178,7 @@ public:
 
     SignConvention sign_conv;  ///< The sign convention.
     MatrixComplex matrix_complex;                         ///< underlying matrix complex of this MonoComplex
-    std::map< int32_t, MonoBasis > basis_complex;        ///< basis_complex[n] is the n-th MonoBasis, i.e. the basis of the n-th module of this MonoComplex. 
+    std::map< int32_t, MonoBasis > bases;        ///< basis_complex[n] is the n-th MonoBasis, i.e. the basis of the n-th module of this MonoComplex. 
 };
 
 typedef std::vector<Tuple> MonocomplexWork;

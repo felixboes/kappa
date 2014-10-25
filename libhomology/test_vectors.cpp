@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "homology.hpp"
+#include <kappa/kappa.hpp>
 
 int main(int argc, char** argv)
 {
@@ -47,7 +48,7 @@ int main(int argc, char** argv)
         v_2(2) = -2;
         
         v += v_2;
-        std::cout << v << std::endl;
+        std::cout << operationID(v) << std::endl;
     
         m.cache_matrix("test_matrix");
         std::cout << load_from_file_bz2< MatrixField<Q> > ("test_matrix") << std::endl;

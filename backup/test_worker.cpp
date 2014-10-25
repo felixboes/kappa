@@ -21,7 +21,7 @@ public:
 
     void ja_genug_fuer_heute() { std::lock_guard<std::mutex> lock(mtx); genug_fuer_heute = true; cond.notify_all(); }
     bool keine_arbeit_mehr() { std::lock_guard<std::mutex> lock(mtx); return genug_fuer_heute; }
-private:
+protected:
     std::list<RowOpParam> row_op_list;
     std::mutex mtx;
     std::condition_variable cond;
@@ -62,7 +62,7 @@ class Worker
 public:
     Worker( uint32_t nummer, SyncList & wl ) : id(nummer), work_list(wl) {}
     void work();
-private:
+protected:
     uint32_t id;
     SyncList& work_list;
 };

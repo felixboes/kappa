@@ -85,7 +85,7 @@ public:
      */
     friend std::ostream& operator<< (std::ostream& stream, const Permutation& permutation);
 
-private:
+protected:
     std::vector<uint8_t> data; ///< stores the Permutation
     operator size_t() = delete;
 };
@@ -239,7 +239,7 @@ public:
     uint32_t p; ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
     size_t id;  ///< The index of this Tuple in the basis of the MonoComplex.
 
-private:
+protected:
     /**
      *  Access the j-th Transposition.
      */

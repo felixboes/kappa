@@ -86,7 +86,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             std::string("./cache/list_of_files_that_should_not_be_overwritten/bases_") +
             std::string( (conf.parallel == true) ? "parallel_" : "radial_" ) + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
         
-        for( const auto& it : monocomplex.basis_complex )
+        for( const auto& it : monocomplex.bases )
         {
             const auto& p = it.first;
             
@@ -108,7 +108,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     ofs << "-------- Computing Homology --------" << std::endl;
 
     // Compute all differentials and homology consecutively.
-    for( auto& it : monocomplex.basis_complex )
+    for( auto& it : monocomplex.bases )
     {
         int32_t p = it.first;
         if ( p < conf.start_p || p > conf.end_p + 1 )
@@ -119,9 +119,9 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         uint32_t max_possible_rank(0);
 
         // Generate a single differential.
-        std::cout << "Constructing the " << p << "-th differential of size " << monocomplex.basis_complex[p].size() << " x " << monocomplex.basis_complex[p-1].size();
+        std::cout << "Constructing the " << p << "-th differential of size " << monocomplex.bases[p].size() << " x " << monocomplex.bases[p-1].size();
         std::cout.flush();
-        ofs << "Constructing the " << p << "-th differential of size " << monocomplex.basis_complex[p].size() << " x " << monocomplex.basis_complex[p-1].size();
+        ofs << "Constructing the " << p << "-th differential of size " << monocomplex.bases[p].size() << " x " << monocomplex.bases[p-1].size();
 
         measure_duration = Clock();
         monocomplex.gen_differential(p);

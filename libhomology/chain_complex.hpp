@@ -139,7 +139,7 @@ public:
     bool exists_differential( const int32_t n ) const;
 
 
-private:
+protected:
     bool transp;    ///< True iff the transposed matrices are stored.
     MatrixT current_differential; ///< Realizes the transpose of a single differential.
     

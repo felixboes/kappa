@@ -61,7 +61,7 @@ public:
     /**  @return rank of the matrix */
     HomologyField::TorsT tors();
 
-//private:
+//protected:
     /**
      *  @return rank of matrix
      *  The matrix is diagonalized via Gauss to compute the number of linearly independant columns or rows.
@@ -191,7 +191,7 @@ public:
          * Current column.
          */
         size_t                    col;
-    private:
+    protected:
         DiagonalType& diagonal;
     };
 
@@ -258,7 +258,7 @@ public:
          */
         std::vector<size_t> & get_new_remaining_rows();
 
-    private:
+    protected:
         /*!
          * \brief id of this Worker
          * \note There are two kinds of ids: One for the working workers, one for the remaining workers.

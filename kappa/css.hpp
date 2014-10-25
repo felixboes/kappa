@@ -141,7 +141,7 @@ public:
     void erase_d1();
     
     void show_basis( const int32_t p ) const;         ///< print a basis to std::out
-//private:
+//protected:
 
     uint32_t g;     ///< genus
     uint32_t m;     ///< number of punctures

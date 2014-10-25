@@ -53,7 +53,7 @@ public:
     /// output stream
     friend std::ostream& operator<< (std::ostream& stream, const HomologyField& homol);
 
-private:
+protected:
     /// stores the kernel for each possibly non-zero homology module
     std::map< int32_t, int32_t > kern;
 

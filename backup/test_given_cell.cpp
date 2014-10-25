@@ -69,7 +69,7 @@ public:
         return t;
     }
 
-private:
+protected:
     char* str;
 };
 

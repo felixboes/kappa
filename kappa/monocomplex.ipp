@@ -51,10 +51,10 @@ MonoComplex< MatrixComplex > :: MonoComplex(
 template< class MatrixComplex >
 void MonoComplex< MatrixComplex > :: show_basis( const int32_t p ) const
 {
-    if( basis_complex.count(p) )
+    if( bases.count(p) )
     {
         std::cout << "This it the " << p << "-th basis:" << std::endl;
-        const auto& basis_vector = basis_complex.at(p).basis;
+        const auto& basis_vector = bases.at(p).basis;
         for( auto it = basis_vector.cbegin(); it != basis_vector.cend(); ++it )
         {
             std::cout << it->id << ": " << *it << std::endl;
@@ -161,7 +161,7 @@ void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t l, const uint32_t
     {
         if (tuple.has_correct_num_cycles(m))
         {
-            tuple.id = basis_complex[p].add_basis_element( tuple );
+            tuple.id = bases[p].add_basis_element( tuple );
         }
     }
 }
@@ -225,7 +225,7 @@ void MonoComplex<MatrixComplex>::compute_boundary( Tuple & tuple, const uint32_t
             {
                 if( (boundary = current_basis.d_hor(i)) )
                 {
-                    boundary.id = basis_complex[p-1].id_of(boundary);
+                    boundary.id = bases[p-1].id_of(boundary);
                     update_differential<MatrixType>(differential, tuple.id, boundary.id,
                                             parity, i, or_sign[i], sign_conv);
                 }
@@ -270,9 +270,9 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
     // Allocate enough space for the differential.
     // Todo: Test this.
     MatrixType & differential = matrix_complex.get_current_differential();
-    differential.resize( basis_complex[p].size(), basis_complex[p-1].size() );
+    differential.resize( bases[p].size(), bases[p-1].size() );
     
-    if( basis_complex[p].size() == 0 || basis_complex[p-1].size() == 0 )
+    if( bases[p].size() == 0 || bases[p-1].size() == 0 )
     {
         return;
     }
@@ -280,15 +280,15 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
     // For each tuple t in the basis, we compute all basis elements that
     // occur in kappa(t).
     std::vector<MonocomplexWork> elements_per_threads (num_threads);
-    uint32_t num_elements_per_thread = basis_complex[p].size() / num_threads;
+    uint32_t num_elements_per_thread = bases[p].size() / num_threads;
     
-    if (basis_complex[p].size() % num_threads != 0)
+    if (bases[p].size() % num_threads != 0)
     {
         ++num_elements_per_thread;
     }
     uint32_t t = 0;
     uint32_t cur = 0;
-    for ( auto it : basis_complex[p].basis )
+    for ( auto it : bases[p].basis )
     {
         elements_per_threads[t].push_back(it);
         ++cur;
