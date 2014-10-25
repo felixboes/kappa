@@ -19,7 +19,7 @@ MonoComplex< MatrixComplex > :: MonoComplex(
       sign_conv(sgn),
       matrix_complex(true)
 {
-    DiagonalizerType& diago = matrix_complex.get_diagonalizer();
+    DiagonalizerType& diago = get_diagonalizer();
     diago.num_working_threads = number_working_threads;
     diago.num_remaining_threads = number_remaining_threads;
     
@@ -269,7 +269,7 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
 
     // Allocate enough space for the differential.
     // Todo: Test this.
-    MatrixType & differential = matrix_complex.get_current_differential();
+    MatrixType & differential = get_current_differential();
     differential.resize( bases[p].size(), bases[p-1].size() );
     
     if( bases[p].size() == 0 || bases[p-1].size() == 0 )
@@ -321,8 +321,37 @@ const typename MonoComplex< MatrixComplex >::MatrixType & MonoComplex< MatrixCom
 }
 
 template< class MatrixComplex >
+size_t MonoComplex< MatrixComplex > :: num_rows() const
+{
+    return matrix_complex.num_rows();
+}
+
+template< class MatrixComplex >
+size_t MonoComplex< MatrixComplex > :: num_cols() const
+{
+    return matrix_complex.num_cols();
+}
+
+template< class MatrixComplex >
+typename MonoComplex< MatrixComplex >::DiagonalizerType & MonoComplex< MatrixComplex > :: get_diagonalizer()
+{
+    return matrix_complex.get_diagonalizer();
+}
+
+template< class MatrixComplex >
+const typename MonoComplex< MatrixComplex >::DiagonalizerType & MonoComplex< MatrixComplex > :: get_diagonalizer() const
+{
+    return matrix_complex.get_diagonalizer();
+}
+
+template< class MatrixComplex >
 void MonoComplex< MatrixComplex >::erase_current_differential()
 {
     matrix_complex.erase();
 }
 
+template< class MatrixComplex >
+typename MonoComplex< MatrixComplex >::HomologyType MonoComplex< MatrixComplex > :: compute_current_kernel_and_torsion( const int32_t n )
+{
+    return matrix_complex.compute_current_kernel_and_torsion(n);
+}

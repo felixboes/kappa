@@ -153,17 +153,42 @@ public:
     /**
      *  @returns a reference to the current differential.
      */
-    MatrixType &        get_current_differential();
+    MatrixType&       get_current_differential();
     
     /**
      *  @returns a reference to the current differential.
      */
-    const MatrixType &  get_current_differential() const;
+    const MatrixType& get_current_differential() const;
+    
+    /**
+     *  @return number of rows of the current differential
+    **/
+    size_t num_rows() const;
+    
+    /**
+     *  @return number of columns of the current differential
+    **/
+    size_t num_cols() const;
+    
+    /**
+     *  Access the diagonalizer.
+    **/
+    DiagonalizerType&       get_diagonalizer();
+    
+    /**
+     *  Access the diagonalizer.
+    **/
+    const DiagonalizerType& get_diagonalizer() const;
     
     /**
      *  erases the current differential.
      */
     void erase_current_differential();
+    
+    /**
+     *  Compute the kernel at the \f$n\f$-th spot and the torsion at the \f$(n-1)\f$-th spot.
+    **/
+    HomologyType compute_current_kernel_and_torsion( const int32_t n );
     
     /**
      *  print a basis to std::out.

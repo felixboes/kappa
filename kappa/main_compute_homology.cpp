@@ -115,7 +115,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         {
             continue;
         }
-        atomic_uint& current_rank = monocomplex.matrix_complex.get_diagonalizer().current_rank;
+        atomic_uint& current_rank = monocomplex.get_diagonalizer().current_rank;
         uint32_t max_possible_rank(0);
 
         // Generate a single differential.
@@ -134,7 +134,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         //std::cout << "Matrix: " << std::endl
         //          << monocomplex.get_current_differential() << std::endl;
 
-        max_possible_rank = std::min( monocomplex.matrix_complex.num_rows(), monocomplex.matrix_complex.num_cols() );
+        max_possible_rank = std::min( monocomplex.num_rows(), monocomplex.num_cols() );
         if( (uint32_t)homology.get_kern(p-1) > 0 )
         {
             max_possible_rank = std::min( max_possible_rank, (uint32_t)homology.get_kern(p-1) );
@@ -148,7 +148,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         auto partial_homology_thread = std::async( std::launch::async, [&]() -> HomologyField
         {
             // Always use one thread for diagonalizing at the moment!
-            auto ret = monocomplex.matrix_complex.compute_current_kernel_and_torsion( p );
+            auto ret = monocomplex.compute_current_kernel_and_torsion( p );
             state = 1;
             return ret;
         } );
