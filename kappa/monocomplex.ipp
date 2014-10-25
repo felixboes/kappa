@@ -309,11 +309,11 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
 }
 
 template< class MatrixComplex >
-typename MonoComplex< MatrixComplex >::HomologyType MonoComplex< MatrixComplex > :: diagonalize_current_differential( const int32_t p, const uint32_t max_possible_rank, const bool print_duration )
+typename MonoComplex< MatrixComplex >::HomologyType MonoComplex< MatrixComplex > :: diagonalize_current_differential( const int32_t p, uint32_t max_possible_rank, const bool print_duration )
 {
     if( max_possible_rank == 0 )
     {
-        max_possible_rank = std::min( num_rows(), num_cols );
+        max_possible_rank = std::min( num_rows(), num_cols() );
     }
     atomic_uint& current_rank = get_diagonalizer().current_rank;
     

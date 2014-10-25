@@ -154,7 +154,7 @@ public:
     /**
      *  Diagoanlize current differential.
      */
-    HomologyType diagonalize_current_differential( const int32_t p, const uint32_t max_rank = 0, const bool print_duration = true );
+    HomologyType diagonalize_current_differential( const int32_t p, uint32_t max_rank = 0, const bool print_duration = true );
     
     /**
      *  @returns a reference to the current differential.
