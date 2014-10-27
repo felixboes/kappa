@@ -86,6 +86,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             std::string("./cache/list_of_files_that_should_not_be_overwritten/bases_") +
             std::string( (conf.parallel == true) ? "parallel_" : "radial_" ) + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
         
+        // Store bases.
         for( const auto& it : monocomplex.bases )
         {
             const auto& p = it.first;
@@ -100,6 +101,38 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
                 // Store the p-th basis.
                 save_to_file_bz2<MonoBasis>(it.second, path_prefix + std::to_string(p));
                 touch( check_writable_prefix + std::to_string(p) );
+            }
+        }
+        // Store empty onjects which are going to be used by OperationTester.
+        std::string path_prefix_diff =
+            "./cache/differentials_" + std::string( ( conf.parallel == true ? "parallel" : "radial") ) + std::string("/") +
+            (conf.rational == true ? std::string("q") : std::string("s") + std::to_string(conf.prime) ) + std::string("_") +
+            std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
+        std::string check_writable_prefix_diff =
+            "./cache/list_of_files_that_should_not_be_overwritten/differentials_" + std::string( ( conf.parallel == true ? "parallel" : "radial") ) + std::string("_") +
+            (conf.rational == true ? std::string("q") : std::string("s") + std::to_string(conf.prime) ) + std::string("_") +
+            std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
+        for( int32_t p = 2; p < monocomplex.bases.cbegin()->first; ++p )
+        {
+            // Check if file may be overwritten
+            if( file_exists(check_writable_prefix + std::to_string(p) ) == false )
+            {
+                save_to_file_bz2<MonoBasis>( MonoBasis() , path_prefix + std::to_string(p) );
+            }
+            if( file_exists(check_writable_prefix_diff + std::to_string(p) + std::string("_base_changes") ) == false )
+            {
+                typename MonoComplexT::MatrixType m;
+                save_to_file_bz2( m, path_prefix_diff + std::to_string(p) + std::string("_base_changes") );
+            }
+            if( file_exists(check_writable_prefix_diff + std::to_string(p) + std::string("_triangular") ) == false )
+            {
+                typename MonoComplexT::MatrixType m;
+                save_to_file_bz2( m, path_prefix_diff + std::to_string(p) + std::string("_triangular") );
+            }
+            if( file_exists(check_writable_prefix_diff + std::to_string(p) + std::string("_diagonal") ) == false )
+            {
+                typename MonoComplexT::MatrixType::DiagonalType d;
+                save_to_file_bz2( d, path_prefix_diff + std::to_string(p) + std::string("_diagonal") );
             }
         }
     }
@@ -255,10 +288,10 @@ int main(int argc, char** argv)
     {
         compute_homology< MonoComplexQ >( conf, argc, argv );
     }
-    else if (conf.prime == 2)
-    {
-        compute_homology< MonoComplexBool > ( conf, argc, argv);
-    }
+//    else if (conf.prime == 2)
+//    {
+//        compute_homology< MonoComplexBool > ( conf, argc, argv);
+//    }
     else
     {
         compute_homology< MonoComplexZm >( conf, argc, argv );

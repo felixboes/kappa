@@ -74,7 +74,6 @@ MatrixField< CoefficientT > MatrixField< CoefficientT > :: base_changes() const
 {
     if( num_rows == 0 || diagonal.size() == 0 )
     {
-        std::cout << "The matrix has either no rows or an empty diagonal." << std::endl;
         return ThisType();
     }
     
@@ -107,7 +106,6 @@ MatrixField< CoefficientT > MatrixField< CoefficientT > :: triangular_shape() co
 {
     if( num_rows == 0 || diagonal.size() == 0 )
     {
-        std::cout << "The matrix has either no rows or an empty diagonal." << std::endl;
         return ThisType();
     }
     
@@ -231,13 +229,7 @@ void MatrixField< CoefficientT > :: cache_matrix( std::string filename, bool pri
 
 template< class CoefficientT >
 void MatrixField< CoefficientT > :: cache_base_changes( std::string filename, bool print_duration ) const
-{
-    if( num_rows == 0 || diagonal.size() == 0 )
-    {
-        std::cout << "The matrix has either no rows or an empty diagonal." << std::endl;
-        return;
-    }
-    
+{    
     ThisType the_base_changes = base_changes();
     save_to_file_bz2( the_base_changes, filename, print_duration );
     the_base_changes.resize(0,0);
@@ -245,13 +237,7 @@ void MatrixField< CoefficientT > :: cache_base_changes( std::string filename, bo
 
 template< class CoefficientT >
 void MatrixField< CoefficientT > :: cache_triangular_shape( std::string filename, bool print_duration ) const
-{
-    if( num_rows == 0 || diagonal.size() == 0 )
-    {
-        std::cout << "The matrix has either no rows or an empty diagonal." << std::endl;
-        return;
-    }
-    
+{    
     ThisType triangular_form = triangular_shape();
     save_to_file_bz2( triangular_form, filename, print_duration );
     triangular_form.resize(0,0);
