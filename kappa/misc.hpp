@@ -39,6 +39,8 @@ bool create_working_directories( bool print_status_messages = true );
  */
 std::string current_date();
 
+double current_memory_usage_in_mb();
+
 // Three template functions that are used to print tuples nicely.
 template < size_t n, typename... T >
 typename std::enable_if< ( n >= sizeof...(T) ) >::type print_tuple( std::ostream&   , const std::tuple< T... >& )

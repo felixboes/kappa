@@ -33,7 +33,7 @@ int main( int , char**  )
     
     Opt.load_base_changes(true, 0,1,2);
     Opt.load_base_changes(true, 1,2,4);
-    Opt.load_base_changes(true, 1,2,4);
+    Opt.load_base_changes(true, 2,2,5);
     Opt.forget_base_changes(true, 0,1,2);
     Opt.forget_base_changes(true, 0,2,4);
     
@@ -46,6 +46,10 @@ int main( int , char**  )
     Opt.forget_diagonal(true, 0,1,2);
     
     Opt.print_cache_status();
+    std::cout << "Memory usage: " << current_memory_usage_in_mb() << "MB" << std::endl;
+    Opt.forget_base_changes(true, 2, 2, 5);
+    Opt.load_triangular(true, 2, 2, 5);
+    std::cout << "Memory usage: " << current_memory_usage_in_mb() << "MB" << std::endl;
     
     return 0;
 }
