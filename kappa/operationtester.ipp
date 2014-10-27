@@ -242,7 +242,9 @@ template< class MatrixComplex, class VectorT >
 void OperationTester< MatrixComplex, VectorT > :: print_cache_status() const
 {
     std::cout << std::endl
-              << " ---------------------- Cache Status ---------------------- " << std::endl
+              << "---------------------- Cache Status ----------------------" << std::endl
+              << "Memory Usage: " << current_memory_usage_in_mb() << " MB" << std::endl
+              << std::endl
               << "Bases (" << basis.size() << "):" << std::endl;
     for( const auto& it : basis )
     {
