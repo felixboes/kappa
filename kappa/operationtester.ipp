@@ -71,7 +71,7 @@ void OperationTester< MatrixComplex, VectorT > :: forget_basis( const MonoIndex&
 template< class MatrixComplex, class VectorT >
 void OperationTester< MatrixComplex, VectorT > :: forget_basis( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p )
 {
-    return forget_basis( MonoIndex( radial, genus, num_punctures, p ) ) ;
+    forget_basis( MonoIndex( radial, genus, num_punctures, p ) ) ;
 }
 
 template< class MatrixComplex, class VectorT >
@@ -135,7 +135,7 @@ void OperationTester< MatrixComplex, VectorT > :: forget_base_changes( const Mon
 template< class MatrixComplex, class VectorT >
 void OperationTester< MatrixComplex, VectorT > :: forget_base_changes( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p )
 {
-    return forget_base_changes( MonoIndex( radial, genus, num_punctures, p ) ) ;
+    forget_base_changes( MonoIndex( radial, genus, num_punctures, p ) ) ;
 }
 
 template< class MatrixComplex, class VectorT >
@@ -185,7 +185,7 @@ void OperationTester< MatrixComplex, VectorT > :: forget_triangular( const MonoI
 template< class MatrixComplex, class VectorT >
 void OperationTester< MatrixComplex, VectorT > :: forget_triangular( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p )
 {
-    return forget_triangular( MonoIndex( radial, genus, num_punctures, p ) ) ;
+    forget_triangular( MonoIndex( radial, genus, num_punctures, p ) ) ;
 }
 
 template< class MatrixComplex, class VectorT >
@@ -235,7 +235,7 @@ void OperationTester< MatrixComplex, VectorT > :: forget_diagonal( const MonoInd
 template< class MatrixComplex, class VectorT >
 void OperationTester< MatrixComplex, VectorT > :: forget_diagonal( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p )
 {
-    return forget_diagonal( MonoIndex( radial, genus, num_punctures, p ) ) ;
+    forget_diagonal( MonoIndex( radial, genus, num_punctures, p ) ) ;
 }
 
 template< class MatrixComplex, class VectorT >
@@ -270,3 +270,19 @@ void OperationTester< MatrixComplex, VectorT > :: print_cache_status() const
         std::cout << "    " << it.first << std::endl;
     }
 }
+
+template< class MatrixComplex, class VectorT >
+bool OperationTester< MatrixComplex, VectorT > :: vector_is_valid( const MonoIndex& idx, const VectorType& v ) const
+{
+    if( basis.count( idx ) != 0 && basis.at( idx ).size() == v.size() )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
+

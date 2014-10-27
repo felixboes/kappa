@@ -54,8 +54,8 @@ public:
     /**
      *  @returns true iff the number of entries of v is the number of basis elements.
      */
-    bool vector_is_valid( const MonoIndex& monoindex, const VectorType& v ) const;
-    bool vector_is_cycle( const MonoIndex& monoindex, const VectorType& v ) const;
+    bool vector_is_valid( const MonoIndex& idx, const VectorType& v ) const;
+    bool vector_is_cycle( const MonoIndex& idx, const VectorType& v ) const;
     
     /**
      *  @returns the index of the associated moduli space.
@@ -68,7 +68,7 @@ public:
     static VectorType product( const MonoIndex& idx_v, const VectorType& v, const MonoIndex& idx_w, const VectorType& w );
     
     
-protected:
+//protected:
     std::string coefficient_prefix;
     std::map< MonoIndex, MonoBasis > basis;
     std::map< MonoIndex, MatrixType > base_changes;
