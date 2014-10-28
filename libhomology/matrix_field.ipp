@@ -82,7 +82,7 @@ MatrixField< CoefficientT > MatrixField< CoefficientT > :: base_changes() const
     {
         auto diag_entry = diagonal.cbegin();
         size_t j = 0;
-        // store elements befor the diagonal entry.
+        // store elements before the diagonal entry.
         while( diag_entry != diagonal.cend() && diag_entry->first != i )
         {
             the_base_changes( i, j ) = this->at( i, diag_entry->second );
@@ -97,6 +97,13 @@ MatrixField< CoefficientT > MatrixField< CoefficientT > :: base_changes() const
             ++diag_entry;
         }
         // ignore elements after diagonal entry.
+    }
+    
+    size_t j = 0;
+    for( const auto& diag_entry : diagonal )
+    {
+        the_base_changes.diagonal.push_back(std::make_pair( diag_entry.first, j ) );
+        ++j;
     }
     return the_base_changes;
 }

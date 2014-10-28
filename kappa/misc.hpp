@@ -65,4 +65,15 @@ std::ostream& operator<<(std::ostream& os, const std::tuple<T...>& tup)
     return os << "]";
 }
 
+template< typename T >
+std::ostream& operator<<( std::ostream& os, const std::list< std::pair<T,T> >& list )
+{
+    os << "[ ";
+    for( const auto& it : list )
+    {
+        os << "[" << it.first << "," << it.second << "]; ";
+    }
+    return os << "]";
+}
+
 #endif // MISC_HPP

@@ -91,6 +91,11 @@ void apply_base_changes( const MatrixT& m, VectorT& v )
     size_t dim = v.size();
     const auto& diagonal = m.diagonal;
     
+    if( m.size1() == 0 || m.size2() == 0 )
+    {
+        return;
+    }
+    
     if( dim != m.size1() )
     {
         std::cout << "Error: The number of rows of the matrix is not equals the dimension of the vector." << std::endl;
@@ -129,3 +134,26 @@ void apply_base_changes( const MatrixT& m, VectorT& v )
         }
     }
 }
+
+//template< class MatrixT, class VectorT >
+//VectorT matrix_vector_product( const MatrixT& m, const VectorT& v )
+//{
+//    size_t dim = v.size();
+//    VectorT res(dim);
+    
+//    if( m.size1() == 0 || m.size2() == 0 )
+//    {
+//        return res;
+//    }
+//    else
+//    {
+        
+//    }
+//}
+
+//template< class MatrixT, class VectorT >
+//bool matrix_vector_product_vanishes( const MatrixT& m, const VectorT& v )
+//{
+    
+//}
+

@@ -5,7 +5,7 @@
 
 #include "kappa.hpp"
 
-int main( int , char**  )
+void test_member_methods()
 {
     OperationTesterQ Opt( "q" );
     typedef OperationTesterQ::MonoIndex MonoIndex;
@@ -18,6 +18,10 @@ int main( int , char**  )
     
     Opt.load_basis(idx_v);
     Opt.load_basis(true, 0, 2, 3, true);
+    Opt.load_basis(true, 0, 1, 2);
+    Opt.load_basis(true, 0, 2, 2);
+    Opt.load_basis(true, 0, 2, 3);
+    Opt.load_basis(true, 0, 2, 4);
     Opt.load_basis(true, 1, 2, 3);
     Opt.load_basis(true, 1, 2, 5);
     Opt.load_basis(true, 1, 2, 6);
@@ -27,6 +31,10 @@ int main( int , char**  )
     {
         std::cout << Opt.basis.at( MonoIndex(true, 0, 2, 3) ) << std::endl;
     }
+    std::cout << Opt.basis.at( MonoIndex(true, 0, 1, 2) ) << std::endl;
+    std::cout << Opt.basis.at( MonoIndex(true, 0, 2, 2) ) << std::endl;
+    std::cout << Opt.basis.at( MonoIndex(true, 0, 2, 3) ) << std::endl;
+    std::cout << Opt.basis.at( MonoIndex(true, 0, 2, 4) ) << std::endl;
     
     Opt.forget_basis(true, 0, 2, 3);
     std::cout << Opt.dim( true, 0, 2, 3 ) << std::endl;
@@ -47,9 +55,79 @@ int main( int , char**  )
     
     Opt.print_cache_status();
     
+    std::cout << Opt.base_changes[MonoIndex(true,2,2,5)].diagonal << std::endl;
+    
     Opt.forget_base_changes(true, 2, 2, 5);
     Opt.load_triangular(true, 2, 2, 5);
     Opt.print_cache_status();
+    
+    Opt.load_diagonal(true, 2, 2, 5);
+    std::cout << Opt.diagonal[MonoIndex(true,2,2,5)] << std::endl;
+}
+
+void test_matrix_vector_stuff()
+{
+    OperationTesterQ Opt("q");
+    OperationTesterQ::MonoIndex idx(true, 0, 1, 2);
+    VectorQ a(1);
+    a(0) = 1;
+    
+    Opt.load_basis(idx);
+    Opt.load_base_changes(idx);
+    apply_base_changes( Opt.base_changes[idx], a );
+}
+
+int main( int argc , char** argv )
+{
+    if( argc > 1 )
+    {
+        if( atoi(argv[1]) == 1)
+        {
+            test_member_methods();
+        }
+        else if ( atoi(argv[1]) == 2 )
+        {
+            test_matrix_vector_stuff();
+        }
+        else
+        {
+            goto remaining_stuff_to_do;
+        }
+        return 0;
+    }
+    remaining_stuff_to_do:
+    
+    OperationTesterQ Opt("q");
+    OperationTesterQ::MonoIndex idx(true, 0, 2, 4);
+    Opt.load_basis(idx);
+    std::cout << Opt.basis[idx] << std::endl;
+    
+    Opt.load_diagonal(idx);
+    std::cout << Opt.diagonal[idx] << std::endl;
+    
+    Opt.load_base_changes(idx);
+    std::cout << Opt.base_changes[idx] << std::endl;
+    
+    Opt.load_triangular(idx);
+    std::cout << Opt.triangular[idx] << std::endl;
+    
+    VectorQ v(2);
+    v(0) = 1;
+    
+    VectorQ w(2);
+    w(1) = 1;
+    
+    std::cout << v << std::endl;
+    std::cout << w << std::endl << std::endl;
+    
+    apply_base_changes( Opt.base_changes[idx], v );
+    apply_base_changes( Opt.base_changes[idx], w );
+    
+    std::cout << v << std::endl;
+    std::cout << w << std::endl << std::endl;
+    
+    std::cout << Opt.triangular[idx] << std::endl;
+    std::cout << Opt.diagonal[idx] << std::endl;
     
     return 0;
 }

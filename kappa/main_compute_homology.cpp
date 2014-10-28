@@ -167,7 +167,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         {
             max_possible_rank = std::min( max_possible_rank, (uint32_t)homology.get_kern(p-1) );
         }
-        auto partial_homology = monocomplex.diagonalize_current_differential( p, max_possible_rank, false );
+        auto partial_homology = monocomplex.diagonalize_current_differential( p, max_possible_rank, true );
         homology.set_kern( p, partial_homology.get_kern(p) );
         homology.set_tors( p-1, partial_homology.get_tors(p-1) );
 
