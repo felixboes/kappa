@@ -77,12 +77,13 @@ void VectorField<CoefficientT>::clear()
 template< class CoefficientT >
 std::ostream& operator<< ( std::ostream& stream, const VectorField<CoefficientT> & vector )
 {
+    stream << "[";
     for( size_t i = 0; i < vector.dim - 1; ++i )
     {
         stream << std::setw(3) << vector.at(i) << ",";
     }
     stream << std::setw(3) << vector.at(vector.dim - 1);
-    return stream;
+    return stream << "]";
 }
 
 template< class MatrixT, class VectorT >
@@ -135,25 +136,58 @@ void apply_base_changes( const MatrixT& m, VectorT& v )
     }
 }
 
-//template< class MatrixT, class VectorT >
-//VectorT matrix_vector_product( const MatrixT& m, const VectorT& v )
-//{
-//    size_t dim = v.size();
-//    VectorT res(dim);
+template< class MatrixT, class VectorT >
+VectorT matrix_vector_product( const MatrixT& m, const VectorT& v )
+{
+    size_t dim = v.size();
+    VectorT res(dim);
     
-//    if( m.size1() == 0 || m.size2() == 0 )
-//    {
-//        return res;
-//    }
-//    else
-//    {
-        
-//    }
-//}
+    if( m.size1() == 0 || m.size2() == 0 )
+    {
+        return res;
+    }
+    if( dim != m.size2() )
+    {
+        std::cout << "Error: The number of rows of the matrix is not equals the dimension of the vector." << std::endl;
+        return VectorT();
+    }
 
-//template< class MatrixT, class VectorT >
-//bool matrix_vector_product_vanishes( const MatrixT& m, const VectorT& v )
-//{
+    for( size_t i = 0; i < dim; ++i )
+    {
+        for( size_t j = 0; j < m.size2(); ++j )
+        {
+            res(i) += m.at(i,j) * v.at(j);
+        }
+    }
+    return res;
+}
+
+template< class MatrixT, class VectorT >
+bool matrix_vector_product_vanishes( const MatrixT& m, const VectorT& v )
+{
+    size_t dim = v.size();
     
-//}
+    if( m.size1() == 0 || m.size2() == 0 )
+    {
+        return true;
+    }
+    if ( dim != m.size2() )
+    {
+        std::cout << "Error: The number of rows of the matrix is not equals the dimension of the vector." << std::endl;
+        return false;
+    }
+    for( size_t i = 0; i < dim; ++i )
+    {
+        typename VectorT::CoefficientType res(0);
+        for( size_t j = 0; j < m.size2(); ++j )
+        {
+            res += m.at(i,j) * v.at(j);
+        }
+        if( res != typename VectorT::CoefficientType(0) )
+        {
+            return false;
+        }
+    }
+    return true;
+}
 

@@ -68,36 +68,6 @@ void test_member_methods()
 void test_matrix_vector_stuff()
 {
     OperationTesterQ Opt("q");
-    OperationTesterQ::MonoIndex idx(true, 0, 1, 2);
-    VectorQ a(1);
-    a(0) = 1;
-    
-    Opt.load_basis(idx);
-    Opt.load_base_changes(idx);
-    apply_base_changes( Opt.base_changes[idx], a );
-}
-
-int main( int argc , char** argv )
-{
-    if( argc > 1 )
-    {
-        if( atoi(argv[1]) == 1)
-        {
-            test_member_methods();
-        }
-        else if ( atoi(argv[1]) == 2 )
-        {
-            test_matrix_vector_stuff();
-        }
-        else
-        {
-            goto remaining_stuff_to_do;
-        }
-        return 0;
-    }
-    remaining_stuff_to_do:
-    
-    OperationTesterQ Opt("q");
     OperationTesterQ::MonoIndex idx(true, 0, 2, 4);
     Opt.load_basis(idx);
     std::cout << Opt.basis[idx] << std::endl;
@@ -128,6 +98,43 @@ int main( int argc , char** argv )
     
     std::cout << Opt.triangular[idx] << std::endl;
     std::cout << Opt.diagonal[idx] << std::endl;
+    
+    VectorQ c(2);
+    c(0) = 1;
+    c(1) = 1;
+    std::cout << "The vector " << c << " is " << (Opt.vector_is_cycle( idx, c ) == true ? "indeed " : "not " ) << "a cycle." << std::endl;
+    std::cout << matrix_vector_product( Opt.triangular[idx], c ) << std::endl;
+    
+    Opt.forget_triangular(idx);
+    
+    VectorQ d(2);
+    d(0) = 1;
+    d(1) = 2;
+    std::cout << "The vector " << c << " is " << (Opt.vector_is_cycle( idx, d ) == true ? "indeed " : "not " ) << "a cycle." << std::endl;
+    std::cout << matrix_vector_product( Opt.triangular[idx], d ) << std::endl;
+}
+
+int main( int argc , char** argv )
+{
+    if( argc > 1 )
+    {
+        if( atoi(argv[1]) == 1)
+        {
+            test_member_methods();
+        }
+        else if ( atoi(argv[1]) == 2 )
+        {
+            test_matrix_vector_stuff();
+        }
+        else
+        {
+            goto remaining_stuff_to_do;
+        }
+        return 0;
+    }
+    remaining_stuff_to_do:
+    
+    test_matrix_vector_stuff();
     
     return 0;
 }

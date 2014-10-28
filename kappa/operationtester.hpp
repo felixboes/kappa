@@ -55,7 +55,11 @@ public:
      *  @returns true iff the number of entries of v is the number of basis elements.
      */
     bool vector_is_valid( const MonoIndex& idx, const VectorType& v ) const;
-    bool vector_is_cycle( const MonoIndex& idx, const VectorType& v ) const;
+    
+    /**
+     *  @returns true iff the chain is a cycle. Tries to load matrix.
+     */
+    bool vector_is_cycle( const MonoIndex& idx, const VectorType& v );
     
     /**
      *  @returns the index of the associated moduli space.

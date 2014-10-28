@@ -19,7 +19,7 @@ bool OperationTester< MatrixComplex, VectorT >::load_basis( const MonoIndex& idx
     {
         if( basis.count( idx ) == 0 )
         {
-            basis.insert( std::make_pair( idx, load_from_file_bz2< MonoBasis >( filename ) ) );
+            basis.insert( std::make_pair( idx, load_from_file_bz2< MonoBasis >( filename, print_status_messages ) ) );
         }
         else if( print_status_messages == true )
         {
@@ -102,7 +102,7 @@ bool OperationTester< MatrixComplex, VectorT >::load_base_changes( const MonoInd
     {
         if( base_changes.count( idx ) == 0 )
         {
-            base_changes.insert( std::make_pair( idx, load_from_file_bz2< MatrixType >( filename ) ) );
+            base_changes.insert( std::make_pair( idx, load_from_file_bz2< MatrixType >( filename, print_status_messages ) ) );
         }
         else if( print_status_messages == true )
         {
@@ -152,7 +152,7 @@ bool OperationTester< MatrixComplex, VectorT >::load_triangular( const MonoIndex
     {
         if( triangular.count( idx ) == 0 )
         {
-            triangular.insert( std::make_pair( idx, load_from_file_bz2< MatrixType >( filename ) ) );
+            triangular.insert( std::make_pair( idx, load_from_file_bz2< MatrixType >( filename, print_status_messages ) ) );
         }
         else if( print_status_messages == true )
         {
@@ -202,7 +202,7 @@ bool OperationTester< MatrixComplex, VectorT >::load_diagonal( const MonoIndex& 
     {
         if( diagonal.count( idx ) == 0 )
         {
-            diagonal.insert( std::make_pair( idx, load_from_file_bz2< DiagonalType >( filename ) ) );
+            diagonal.insert( std::make_pair( idx, load_from_file_bz2< DiagonalType >( filename, print_status_messages ) ) );
         }
         else if( print_status_messages == true )
         {
@@ -286,5 +286,20 @@ bool OperationTester< MatrixComplex, VectorT > :: vector_is_valid( const MonoInd
     }
 }
 
+template< class MatrixComplex, class VectorT >
+bool OperationTester< MatrixComplex, VectorT > :: vector_is_cycle( const MonoIndex& idx, const VectorType& v )
+{
+    if( triangular.count( idx ) == 0 )
+    {
+        std::cout << "Triangular Matrix " << idx << " is not yet loaded. Trying to load.";
+        if( load_triangular( idx, false ) == false )
+        {
+            std::cout << " Failure." << std::endl;
+            return false;
+        }
+        std::cout << " Success." << std::endl;
+    }
+    return matrix_vector_product_vanishes( triangular[idx], v );
+}
 
 
