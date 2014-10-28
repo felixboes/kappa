@@ -303,16 +303,14 @@ bool OperationTester< MatrixComplex, VectorT > :: vector_is_cycle( const MonoInd
 }
 
 template< class MatrixComplex, class VectorT >
-void OperationTester< MatrixComplex, VectorT > :: vector_print_homology_class( const MonoIndex& idx, const VectorType& v )
+typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< MatrixComplex, VectorT > :: vector_homology_class( const MonoIndex& idx, const VectorType& v )
 {
     size_t dim = v.size();
-    MonoIndex idx_minus_1 = idx;
-    std::get<3>(idx_minus_1) -= 1;
     
     if( vector_is_valid(idx, v) == false )
     {
         std::cout << "Vector " << v << " is not valid." << std::endl;
-        return;
+        return VectorT();
     }
     if( base_changes.count( idx ) == 0 )
     {
@@ -320,25 +318,27 @@ void OperationTester< MatrixComplex, VectorT > :: vector_print_homology_class( c
         if( load_base_changes( idx, false ) == false )
         {
             std::cout << " Failure." << std::endl;
-            return;
+            return VectorT();
         }
         std::cout << " Success." << std::endl;
     }
     
-    if( std::get<3>(idx_minus_1) > 1 && diagonal.count( idx_minus_1 ) == 0 )
+    if( diagonal.count( idx ) == 0 )
     {
-        std::cout << "Diagonal " << idx_minus_1 << " is not yet loaded. Trying to load.";
-        if( load_diagonal( idx_minus_1, false ) == false )
+        std::cout << "Diagonal " << idx << " is not yet loaded. Trying to load.";
+        if( load_diagonal( idx, false ) == false )
         {
             std::cout << " Failure." << std::endl;
-            return;
+            return VectorT();
         }
         std::cout << " Success." << std::endl;
     }
     
-    VectorT homology_class = v;
-    apply_base_changes( base_changes[idx], homology_class );
+    // apply base changes.
+    VectorT intermediate_homology_class = v;
+    apply_base_changes( base_changes[idx], intermediate_homology_class );
     
+    // compute betti number.
     size_t betti_number = dim;
     std::vector< bool > diagonal_entry_occures_in_row ( dim, false );
     for( const auto& diag_entry : diagonal[idx] )
@@ -347,21 +347,16 @@ void OperationTester< MatrixComplex, VectorT > :: vector_print_homology_class( c
         --betti_number;
     }
     
-    
+    // project onto homology modules.
+    VectorT homology_class(betti_number);
     size_t current_dim = 0;
-    size_t i = 0;
-    std::cout << "[";
-    while( current_dim + 1 < betti_number )
+    for( size_t i = 0; i < dim; ++i )
     {
         if( diagonal_entry_occures_in_row.at(i) == false )
         {
+            homology_class(current_dim) = intermediate_homology_class(i);
             ++current_dim;
-            std::cout << v.at(i) << ",";
         }
-        ++i;
     }
-    while( i < dim && diagonal_entry_occures_in_row.at(i) == true )
-    {
-    }
-    std::cout << v.at(i) << "]" << std::endl;
+    return homology_class;
 }

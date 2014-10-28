@@ -100,20 +100,25 @@ void test_matrix_vector_stuff()
     std::cout << Opt.diagonal[idx] << std::endl;
     
     VectorQ c(2);
-    c(0) = 4;
-    c(1) = 4;
+    c(0) = 1;
+    c(1) = 1;
     std::cout << "The vector " << c << " is " << (Opt.vector_is_cycle( idx, c ) == true ? "indeed " : "not " ) << "a cycle." << std::endl;
     std::cout << matrix_vector_product( Opt.triangular[idx], c ) << std::endl;
     
     Opt.forget_triangular(idx);
     
     VectorQ d(2);
-    d(0) = 1;
-    d(1) = 2;
-    std::cout << "The vector " << c << " is " << (Opt.vector_is_cycle( idx, d ) == true ? "indeed " : "not " ) << "a cycle." << std::endl;
+    d(0) = 0;
+    d(1) = 1;
+    std::cout << "The vector " << d << " is " << (Opt.vector_is_cycle( idx, d ) == true ? "indeed " : "not " ) << "a cycle." << std::endl;
     std::cout << matrix_vector_product( Opt.triangular[idx], d ) << std::endl;
     
-    Opt.vector_print_homology_class( idx, c );
+    Opt.load_basis(true, 0,2,3);
+    Opt.load_triangular(true, 0, 2, 3);
+    std::cout << Opt.triangular[ OperationTesterQ::MonoIndex(true,0,2,3) ] << std::endl;
+    
+    std::cout << "The class of " << c << " is " << Opt.vector_homology_class( idx, c ) << "." << std::endl;
+    std::cout << "The class of " << d << " is " << Opt.vector_homology_class( idx, d ) << "." << std::endl;
 }
 
 int main( int argc , char** argv )

@@ -62,10 +62,10 @@ public:
     bool vector_is_cycle( const MonoIndex& idx, const VectorType& v );
     
     /**
-     *  Prints the given homology class of the vector v.
+     *  @returns the given homology class of the vector v.
      *  @warning We assert, that p >= 2 and v is valid cycle.
      */
-    void vector_print_homology_class( const MonoIndex& idx, const VectorType& v );
+    VectorType vector_homology_class( const MonoIndex& idx, const VectorType& v );
     
     /**
      *  @returns the index of the associated moduli space.
