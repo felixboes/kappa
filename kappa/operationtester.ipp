@@ -302,4 +302,66 @@ bool OperationTester< MatrixComplex, VectorT > :: vector_is_cycle( const MonoInd
     return matrix_vector_product_vanishes( triangular[idx], v );
 }
 
-
+template< class MatrixComplex, class VectorT >
+void OperationTester< MatrixComplex, VectorT > :: vector_print_homology_class( const MonoIndex& idx, const VectorType& v )
+{
+    size_t dim = v.size();
+    MonoIndex idx_minus_1 = idx;
+    std::get<3>(idx_minus_1) -= 1;
+    
+    if( vector_is_valid(idx, v) == false )
+    {
+        std::cout << "Vector " << v << " is not valid." << std::endl;
+        return;
+    }
+    if( base_changes.count( idx ) == 0 )
+    {
+        std::cout << "Bases change " << idx << " is not yet loaded. Trying to load.";
+        if( load_base_changes( idx, false ) == false )
+        {
+            std::cout << " Failure." << std::endl;
+            return;
+        }
+        std::cout << " Success." << std::endl;
+    }
+    
+    if( std::get<3>(idx_minus_1) > 1 && diagonal.count( idx_minus_1 ) == 0 )
+    {
+        std::cout << "Diagonal " << idx_minus_1 << " is not yet loaded. Trying to load.";
+        if( load_diagonal( idx_minus_1, false ) == false )
+        {
+            std::cout << " Failure." << std::endl;
+            return;
+        }
+        std::cout << " Success." << std::endl;
+    }
+    
+    VectorT homology_class = v;
+    apply_base_changes( base_changes[idx], homology_class );
+    
+    size_t betti_number = dim;
+    std::vector< bool > diagonal_entry_occures_in_row ( dim, false );
+    for( const auto& diag_entry : diagonal[idx] )
+    {
+        diagonal_entry_occures_in_row[diag_entry.first] = true;
+        --betti_number;
+    }
+    
+    
+    size_t current_dim = 0;
+    size_t i = 0;
+    std::cout << "[";
+    while( current_dim + 1 < betti_number )
+    {
+        if( diagonal_entry_occures_in_row.at(i) == false )
+        {
+            ++current_dim;
+            std::cout << v.at(i) << ",";
+        }
+        ++i;
+    }
+    while( i < dim && diagonal_entry_occures_in_row.at(i) == true )
+    {
+    }
+    std::cout << v.at(i) << "]" << std::endl;
+}

@@ -100,8 +100,8 @@ void test_matrix_vector_stuff()
     std::cout << Opt.diagonal[idx] << std::endl;
     
     VectorQ c(2);
-    c(0) = 1;
-    c(1) = 1;
+    c(0) = 4;
+    c(1) = 4;
     std::cout << "The vector " << c << " is " << (Opt.vector_is_cycle( idx, c ) == true ? "indeed " : "not " ) << "a cycle." << std::endl;
     std::cout << matrix_vector_product( Opt.triangular[idx], c ) << std::endl;
     
@@ -112,6 +112,8 @@ void test_matrix_vector_stuff()
     d(1) = 2;
     std::cout << "The vector " << c << " is " << (Opt.vector_is_cycle( idx, d ) == true ? "indeed " : "not " ) << "a cycle." << std::endl;
     std::cout << matrix_vector_product( Opt.triangular[idx], d ) << std::endl;
+    
+    Opt.vector_print_homology_class( idx, c );
 }
 
 int main( int argc , char** argv )
