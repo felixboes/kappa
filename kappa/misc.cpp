@@ -139,7 +139,12 @@ std::string current_date(){
     return boost::posix_time::to_simple_string( boost::posix_time::ptime(boost::posix_time::second_clock::local_time()) );
 }
 
-/* man 5 proc
+/*
+In order to define
+  double current_memory_usage_in_mb()
+recall the following man page.
+
+man 5 proc
 
 ...
 proc/[pid]/stat
@@ -254,7 +259,6 @@ proc/[pid]/stat
 ...
 
 */
-
 double current_memory_usage_in_mb()
 {
     int pid;

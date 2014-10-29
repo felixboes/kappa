@@ -22,33 +22,98 @@ public:
     
     OperationTester( std::string coeff_prefix );
 
+    /**
+     *  Tries to load a given basis.
+     *  @returns true on success.
+     */
     bool load_basis( const MonoIndex& idx, bool print_status_messages = true );
+    /**
+     *  Tries to load a given basis.
+     *  @returns true on success.
+     */
     bool load_basis( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p, bool print_status_messages = true );
     
+    /**
+     *  @returns the dimension of a given basis.
+     */ 
     size_t dim( const MonoIndex& idx ) const;
+    /**
+     *  @returns the dimension of a given basis.
+     */ 
     size_t dim( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p ) const;
     
+    /**
+     *  Free given data.
+     */
     void forget_basis( const MonoIndex& idx );
+    /**
+     *  Free given data.
+     */
     void forget_basis( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p );
     
+    /**
+     *  Tries to load a given base change.
+     *  @returns true on success.
+     */
     bool load_base_changes( const MonoIndex& idx, bool print_status_messages = true );
+    /**
+     *  Tries to load a given base change.
+     *  @returns true on success.
+     */
     bool load_base_changes( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p, bool print_status_messages = true );
     
+    /**
+     *  Free given data.
+     */
     void forget_base_changes( const MonoIndex& idx );
+    /**
+     *  Free given data.
+     */
     void forget_base_changes( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p );
     
+    /**
+     *  Tries to load a given triangular matrix.
+     *  @returns true on success.
+     */
     bool load_triangular( const MonoIndex& idx, bool print_status_messages = true );
+    /**
+     *  Tries to load a given triangular matrix.
+     *  @returns true on success.
+     */
     bool load_triangular( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p, bool print_status_messages = true );
     
+    /**
+     *  Free given data.
+     */
     void forget_triangular( const MonoIndex& idx );
+    /**
+     *  Free given data.
+     */
     void forget_triangular( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p );
     
+    /**
+     *  Tries to load a given diagonal.
+     *  @returns true on success.
+     */
     bool load_diagonal( const MonoIndex& idx, bool print_status_messages = true );
+    /**
+     *  Tries to load a given diagonal.
+     *  @returns true on success.
+     */
     bool load_diagonal( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p, bool print_status_messages = true );
     
+    /**
+     *  Free given data.
+     */
     void forget_diagonal( const MonoIndex& idx );
+    /**
+     *  Free given data.
+     */
     void forget_diagonal( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p );
     
+    /**
+     *  Prints status messages corresponding to the cached data.
+     */
     void print_cache_status() const;
     
     /**
@@ -73,7 +138,7 @@ public:
     static MonoIndex  product( const MonoIndex& idx_v, const MonoIndex& idx_w );
     
     /**
-     *  @returns the vector of the associated moduli space.
+     *  @returns the product of two vectors in he associated moduli space.
      */
     VectorType product( const MonoIndex& idx_v, const VectorType& v, const MonoIndex& idx_w, const VectorType& w );
     

@@ -400,5 +400,4 @@ typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< 
     }
     
     return vect_prod;
-    
 }

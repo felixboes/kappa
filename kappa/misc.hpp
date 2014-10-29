@@ -39,6 +39,9 @@ bool create_working_directories( bool print_status_messages = true );
  */
 std::string current_date();
 
+/**
+ *  @returns the current memory usage in mb.
+ */ 
 double current_memory_usage_in_mb();
 
 // Three template functions that are used to print tuples nicely.
@@ -65,6 +68,7 @@ std::ostream& operator<<(std::ostream& os, const std::tuple<T...>& tup)
     return os << "]";
 }
 
+// Used to print diagonals.
 template< typename T >
 std::ostream& operator<<( std::ostream& os, const std::list< std::pair<T,T> >& list )
 {

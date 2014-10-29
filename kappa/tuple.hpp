@@ -237,6 +237,9 @@ public:
      */ 
     static uint32_t get_max_boundary_offset();
     
+    /**
+     *  @returns the product of two tuples in the sense of the product of two slit domains.
+     */
     friend Tuple operator*( const Tuple& v_2, const Tuple& v_1 );
     
     uint32_t p; ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
@@ -285,6 +288,9 @@ protected:
 // output stream
 std::ostream& operator<< (std::ostream& stream, const Tuple& tuple);
 
+/**
+ *  @returns the product of two tuples in the sense of the product of two slit domains.
+ */
 Tuple operator*( const Tuple& v_2, const Tuple& v_1 );
 
 /**

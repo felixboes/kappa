@@ -676,11 +676,6 @@ std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
         }
     }
     
-    if( tuple.id != std::numeric_limits<size_t>::max() )
-    {
-        std::cout << " Basis number: " << tuple.id;
-    }
-    
     return stream;
 }
 
@@ -688,17 +683,16 @@ Tuple operator*( const Tuple& v_2, const Tuple& v_1 )
 {
     const uint32_t & p_1 = v_1.p;
     const uint32_t & p_2 = v_2.p;
-    const uint32_t p_prod = p_1 + p_2;
     
     const size_t h_1 = v_1.norm();
     const size_t h_2 = v_2.norm();
     const size_t h_prod = h_1 + h_2;
     Tuple prod;
-    prod.p = p_prod;
+    prod.p = p_1 + p_2;
     prod.id = std::numeric_limits< size_t >::max();
     
     auto& rep = prod.rep;
-    rep.reserve( h_prod*sizeof( Transposition ) );
+    rep.reserve( h_prod * sizeof( Transposition ) );
     
     for( size_t i = 0; i < h_1; ++i )
     {
