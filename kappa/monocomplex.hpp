@@ -31,7 +31,7 @@ struct MonoBasis
     uint64_t size() const;
 
     /// Returns the index of the Tuple that is stored in the MonoBasis or -1.
-    int64_t id_of( Tuple& t ) const;
+    int64_t id_of( const Tuple& t ) const;
     
     /// Stores the orderd basis.
     std::unordered_set< Tuple, HashTuple > basis;

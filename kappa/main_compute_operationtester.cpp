@@ -121,6 +121,34 @@ void test_matrix_vector_stuff()
     std::cout << "The class of " << d << " is " << Opt.vector_homology_class( idx, d ) << "." << std::endl;
 }
 
+void test_products()
+{
+    OperationTesterQ Opt("q");
+    OperationTesterQ::MonoIndex idx(true, 0, 2, 4);
+    OperationTesterQ::MonoIndex idx_prod(true, 0, 4, 8);
+    Opt.load_basis(idx);
+    Opt.load_basis(idx_prod);
+    
+    std::cout << Opt.basis[idx] << std::endl;
+    std::cout << Opt.basis[idx_prod] << std::endl;
+    
+    Tuple t_1 = *( Opt.basis[idx].basis.begin() );
+    Tuple t_2 = *( std::next( Opt.basis[idx].basis.begin() ) );
+    Tuple t_prod = t_1*t_2;
+    t_prod.id = Opt.basis[idx_prod].id_of( t_prod );
+    std::cout << t_2 << " * " << t_1 << " = " << t_prod << std::endl;
+    
+    VectorQ v_1 (2);
+    v_1(0) = 2;
+    v_1(1) = 5;
+    
+    VectorQ v_2 (2);
+    v_2(0) = 0;
+    v_2(1) = 7;
+       
+    std::cout << v_1 << " * " << v_2 << " = " << Opt.product(idx, v_1, idx, v_2) << std::endl;
+}
+
 int main( int argc , char** argv )
 {
     if( argc > 1 )
@@ -133,6 +161,10 @@ int main( int argc , char** argv )
         {
             test_matrix_vector_stuff();
         }
+        else if( atoi(argv[1]) == 3 )
+        {
+            test_products();
+        }
         else
         {
             goto remaining_stuff_to_do;
@@ -141,7 +173,7 @@ int main( int argc , char** argv )
     }
     remaining_stuff_to_do:
     
-    test_matrix_vector_stuff();
+    test_products();
     
     return 0;
 }

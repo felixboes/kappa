@@ -18,7 +18,7 @@ uint64_t MonoBasis :: size() const
     return basis.size();
 }
 
-int64_t MonoBasis :: id_of(Tuple &t) const
+int64_t MonoBasis :: id_of(const Tuple &t) const
 {
     auto it = basis.find(t);
     if( it == basis.end() )

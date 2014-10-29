@@ -75,7 +75,7 @@ public:
     /**
      *  @returns the vector of the associated moduli space.
      */
-    static VectorType product( const MonoIndex& idx_v, const VectorType& v, const MonoIndex& idx_w, const VectorType& w );
+    VectorType product( const MonoIndex& idx_v, const VectorType& v, const MonoIndex& idx_w, const VectorType& w );
     
     
 //protected:

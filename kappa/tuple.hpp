@@ -4,6 +4,7 @@
 #include <cinttypes>
 #include <functional>
 #include <iostream>
+#include <limits>
 #include <map>
 #include <vector>
 
@@ -236,6 +237,8 @@ public:
      */ 
     static uint32_t get_max_boundary_offset();
     
+    friend Tuple operator*( const Tuple& v_2, const Tuple& v_1 );
+    
     uint32_t p; ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
     size_t id;  ///< The index of this Tuple in the basis of the MonoComplex.
 
@@ -248,7 +251,7 @@ protected:
     /**
      *  Access the j-th Transposition.
      */
-    Transposition const & at(const size_t j) const;
+    const Transposition& at(const size_t j) const;
     
     /**
      *  @returns the cycle 1 -> 2 -> ... -> p-1 -> p -> 1.
@@ -281,6 +284,8 @@ protected:
 
 // output stream
 std::ostream& operator<< (std::ostream& stream, const Tuple& tuple);
+
+Tuple operator*( const Tuple& v_2, const Tuple& v_1 );
 
 /**
  *  In order to save Tuples in a hash table (e.g. in MonoBasis) we need a function object, that hashes Tuples.

@@ -75,20 +75,6 @@ void OperationTester< MatrixComplex, VectorT > :: forget_basis( bool radial, uin
 }
 
 template< class MatrixComplex, class VectorT >
-typename OperationTester< MatrixComplex, VectorT >::MonoIndex OperationTester< MatrixComplex, VectorT > :: product (
-    const MonoIndex& idx_v,
-    const MonoIndex& idx_w
-)
-{
-    if( std::get<0>(idx_v) != std::get<0>(idx_w) )
-    {
-        return MonoIndex(false, 0, 0, 0);
-    }
-    
-    return MonoIndex( std::get<0>(idx_v), std::get<1>(idx_v) + std::get<1>(idx_w), std::get<2>(idx_v) + std::get<2>(idx_w), std::get<3>(idx_v) + std::get<3>(idx_w) );
-}
-
-template< class MatrixComplex, class VectorT >
 bool OperationTester< MatrixComplex, VectorT >::load_base_changes( const MonoIndex& idx, bool print_status_messages )
 {
     std::string filename = 
@@ -359,4 +345,60 @@ typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< 
         }
     }
     return homology_class;
+}
+
+
+template< class MatrixComplex, class VectorT >
+typename OperationTester< MatrixComplex, VectorT >::MonoIndex OperationTester< MatrixComplex, VectorT > :: product (
+    const MonoIndex& idx_v,
+    const MonoIndex& idx_w
+)
+{
+    if( std::get<0>(idx_v) != std::get<0>(idx_w) )
+    {
+        return MonoIndex(false, 0, 0, 0);
+    }
+    
+    return MonoIndex( std::get<0>(idx_v), std::get<1>(idx_v) + std::get<1>(idx_w), std::get<2>(idx_v) + std::get<2>(idx_w), std::get<3>(idx_v) + std::get<3>(idx_w) );
+}
+
+template< class MatrixComplex, class VectorT >
+typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< MatrixComplex, VectorT > :: product(
+    const MonoIndex& idx_v,
+    const VectorType& v,
+    const MonoIndex& idx_w,
+    const VectorType& w )
+{
+    if( vector_is_valid(idx_v, v) == false || vector_is_valid(idx_w, w) == false )
+    {
+        std::cout << "At least one of the given vectors is not valid." << std::endl;
+        return VectorType();
+    }
+    MonoIndex idx_prod = product( idx_v, idx_w );
+    
+    if( basis.count(idx_prod) == 0 )
+    {
+        std::cout << "Basis " << idx_prod << " is not yet loaded. Trying to load.";
+        if( load_base_changes( idx_prod, false ) == false )
+        {
+            std::cout << " Failure." << std::endl;
+            return VectorType();
+        }
+        std::cout << " Success." << std::endl;
+    }
+    
+    size_t dim_prod = basis.at(idx_prod).size();
+    VectorType vect_prod(dim_prod);
+    
+    for( const auto& tuple_v : basis[idx_v].basis )
+    {
+        for( const auto& tuple_w : basis[idx_w].basis )
+        {
+            size_t j = basis[idx_prod].id_of( tuple_v * tuple_w );
+            vect_prod(j) = v.at(tuple_v.id) * w.at(tuple_w.id);
+        }
+    }
+    
+    return vect_prod;
+    
 }
