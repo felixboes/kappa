@@ -1,0 +1,10 @@
+clang
+copy on write if nec
+no function pointer
+review paper 2003
+polymake workshop 5th dec
+even more templating?
+lmalloc ...malloc reduce memory management of gmp -> twice as fast
+always: openmpi
+never: openmp
+

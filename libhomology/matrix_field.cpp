@@ -18,6 +18,7 @@ void save_to_file_bz2( const MatrixField<Q>& matrix, std::string filename, const
     if( (bz2_pipe = popen(bz2_command, "w")) == nullptr )
     {
         std::cout << "Error: Could not open '" << filename << "'." << std::endl;
+        pclose(bz2_pipe);
         return;
     }
    
@@ -29,6 +30,11 @@ void save_to_file_bz2( const MatrixField<Q>& matrix, std::string filename, const
     for( const auto& entry : matrix.diagonal )
     {
         fprintf( bz2_pipe, "%zu %zu\n", entry.first, entry.second );
+        if( ferror(bz2_pipe) != 0 )
+        {
+            std::cout << "Error: Could write diagonal entry. Closing file." << std::endl;
+            pclose(bz2_pipe);
+        }
     }
     
     // Store matrix entries.
@@ -74,6 +80,7 @@ MatrixField<Q> load_from_file_bz2( std::string filename, const bool print_durati
     if( (bz2_pipe = popen(bz2_command, "r")) == nullptr )
     {
         std::cout << "Error: Could not open '" << filename << "'." << std::endl;
+        pclose(bz2_pipe);
         return MatrixField<Q>();
     }
     
@@ -83,6 +90,7 @@ MatrixField<Q> load_from_file_bz2( std::string filename, const bool print_durati
     if( fscanf( bz2_pipe, "%zu %zu\n", &num_rows, &num_cols ) == 0 )
     {
         std::cout << "Error: Could not read number of columns or rows. Closing file." << std::endl;
+        pclose(bz2_pipe);
         return MatrixField<Q>();
     }
     MatrixField<Q> m ( num_rows, num_cols );
@@ -95,6 +103,7 @@ MatrixField<Q> load_from_file_bz2( std::string filename, const bool print_durati
     if( fscanf( bz2_pipe, "%zu\n", &diagonal_size ) == 0 )
     {
         std::cout << "Error: Could not read number of diagonal entries. Closing file." << std::endl;
+        pclose(bz2_pipe);
         return MatrixField<Q>();
     }
     for( size_t t = 0; t < diagonal_size; ++t )
@@ -102,6 +111,7 @@ MatrixField<Q> load_from_file_bz2( std::string filename, const bool print_durati
         if( fscanf( bz2_pipe, "%zu %zu\n", &i, &j ) == 0 )
         {
             std::cout << "Error: Could not read diagonal entries. Closing file." << std::endl;
+            pclose(bz2_pipe);
             return MatrixField<Q>();
         }
         diag.emplace_back(i,j);
