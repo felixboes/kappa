@@ -70,6 +70,14 @@ void MatrixField<CoefficientT>::clear()
 }
 
 template< class CoefficientT >
+void MatrixField<CoefficientT>::swap( ThisType& m )
+{
+    data.swap( m.data );
+    std::swap( num_rows, m.num_rows );
+    std::swap( num_cols, m.num_cols );
+}
+
+template< class CoefficientT >
 MatrixField< CoefficientT > MatrixField< CoefficientT > :: base_changes() const
 {
     if( num_rows == 0 || diagonal.size() == 0 )

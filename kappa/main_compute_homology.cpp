@@ -12,6 +12,7 @@ void print_usage(int, char** argv)
 template< class MonoComplexT >
 void compute_homology( SessionConfig conf, int argc, char** argv )
 {
+    // Prepare status messages.
     std::ofstream ofs;
     std::string filename = std::string("./results/") + std::string(argv[0]);
 
@@ -62,7 +63,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     
     std::cout << "-------- Constructing bases --------" << std::endl;
     ofs       << "-------- Constructing bases --------" << std::endl;
-
+    
     // Compute all bases.
     Clock measure_duration;
     std::cout << "Constructing bases";

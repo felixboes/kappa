@@ -266,9 +266,8 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
 	 *  \f]
 	 *  is bijective. This is shown in the document s_qformel.pdf.	
     **/
-
-    // Allocate enough space for the differential.
-    // Todo: Test this.
+    
+    matrix_complex.make_current_diff_old();
     MatrixType & differential = get_current_differential();
     differential.resize( bases[p].size(), bases[p-1].size() );
     
@@ -306,6 +305,8 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
     {
         workers[t].join();
     }
+    
+    matrix_complex.apply_base_changes();
 }
 
 template< class MatrixComplex >

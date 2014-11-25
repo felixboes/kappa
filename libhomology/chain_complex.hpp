@@ -53,6 +53,11 @@ public:
     MatrixT &       get_current_differential();
     const MatrixT & get_current_differential() const;
     
+    /**
+     *  Access the old differential.
+    **/
+    MatrixT &       get_old_differential();
+    const MatrixT & get_old_differential() const;
     
     /**
      *  Access the diagonalizer.
@@ -64,6 +69,21 @@ public:
      *  Erases the current differential of the complex.
     **/
     void erase();
+    
+    /**
+     *  Erases the old differential of the complex.
+    **/
+    void erase_old();
+    
+    /**
+     *  Forgets the former old differential and makes the current differential old.
+    **/
+    void make_current_diff_old();
+    
+    /**
+     *  Applies base changes to the current differential.
+    **/
+    void apply_base_changes();
     
     /**
      *  Access the coefficient of the current differential at the position (row, col).
@@ -141,7 +161,8 @@ public:
 
 protected:
     bool transp;    ///< True iff the transposed matrices are stored.
-    MatrixT current_differential; ///< Realizes the transpose of a single differential.
+    MatrixT current_differential;   ///< Realizes a single differential.
+    MatrixT old_differential;       ///< Realizes the lastly diagonalized differential.
     
     std::map< int32_t, MatrixT > differential;  ///< Realizes all differentials.
 

@@ -87,6 +87,11 @@ public:
     void clear();
     
     /**
+     *  Swaps the content of two matrices.
+     */
+    void swap( ThisType& m );
+    
+    /**
      *  @brief @returns the base changes.
      *
      *  One could believe that the base change can be read of the matrix, if we know the alpha's used in the diagonalization process.
