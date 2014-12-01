@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iostream>
 
+#include <boost/range/adaptor/reversed.hpp>
+
 #include "kappa.hpp"
 
 void print_usage(int, char** argv)
@@ -39,7 +41,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
               << "Date: " << current_date() << std::endl
               << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
-              << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
+              << "Cohomological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
               << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
               << std::endl;
     ofs       << std::endl
@@ -57,7 +59,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
               << "Date: " << current_date() << std::endl
               << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
-              << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
+              << "Cohomological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
               << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
               << std::endl;
     
@@ -142,18 +144,18 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     ofs << "-------- Computing Homology --------" << std::endl;
 
     // Compute all differentials and homology consecutively.
-    for( auto& it : monocomplex.bases )
+    for( auto& it : boost::adaptors::reverse( monocomplex.bases ) )
     {
         int32_t p = it.first;
-        if ( p < conf.start_p || p > conf.end_p + 1 )
+        if ( p < conf.start_p || p > conf.end_p + 2 )
         {
             continue;
         }
 
         // Generate a single differential.
-        std::cout << "Constructing the " << p << "-th differential of size " << monocomplex.bases[p].size() << " x " << monocomplex.bases[p-1].size();
+        std::cout << "Constructing the " << p+1 << "-th differential of size " << monocomplex.bases[p].size() << " x " << monocomplex.bases[p-1].size();
         std::cout.flush();
-        ofs << "Constructing the " << p << "-th differential of size " << monocomplex.bases[p].size() << " x " << monocomplex.bases[p-1].size();
+        ofs << "Constructing the " << p+1 << "-th differential of size " << monocomplex.bases[p].size() << " x " << monocomplex.bases[p-1].size();
 
         measure_duration = Clock();
         monocomplex.gen_differential(p);
@@ -164,25 +166,25 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         // Diagoanlize differetnial and save results.
         measure_duration = Clock();
         uint32_t max_possible_rank( std::min( monocomplex.num_rows(), monocomplex.num_cols() ) );
-        if( (uint32_t)homology.get_kern(p-1) > 0 )
+        if( (uint32_t)homology.get_kern(p) > 0 )
         {
-            max_possible_rank = std::min( max_possible_rank, (uint32_t)homology.get_kern(p-1) );
+            max_possible_rank = std::min( max_possible_rank, (uint32_t)homology.get_kern(p) );
         }
         auto partial_homology = monocomplex.diagonalize_current_differential( p, max_possible_rank, true );
-        homology.set_kern( p, partial_homology.get_kern(p) );
-        homology.set_tors( p-1, partial_homology.get_tors(p-1) );
+        homology.set_kern( p+1, partial_homology.get_kern(p) );
+        homology.set_tors( p+2, partial_homology.get_tors(p-1) );
 
         // Print status message.
         std::cout << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
-        std::cout << "    dim(H_" << (int32_t)(p-1) << ") = " << (int32_t)(homology.get_kern(p-1) - homology.get_tors(p-1))
-                  << "; dim(im D_" << (int32_t)(p) << ") = " << (int32_t)(homology.get_tors(p-1))
-                  << "; dim(ker D_" << (int32_t)(p) << ") = " << (int32_t)(homology.get_kern(p)) << std::endl;
+        std::cout << "    dim(H^" << (int32_t)(p+2) << ") = " << (int32_t)(homology.get_kern(p+2) - homology.get_tors(p+2))
+                  << "; dim(im D^" << (int32_t)(p+1) << ") = " << (int32_t)(homology.get_tors(p+2))
+                  << "; dim(ker D^" << (int32_t)(p+1) << ") = " << (int32_t)(homology.get_kern(p+1)) << std::endl;
         std::cout << std::endl;
         std::cout.flush();
         ofs << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
-        ofs << "    dim(H_" << (int32_t)(p-1) << ") = " << (int32_t)(homology.get_kern(p-1) - homology.get_tors(p-1))
-            << "; dim(im D_" << (int32_t)(p) << ") = " << (int32_t)(homology.get_tors(p-1))
-            << "; dim(ker D_" << (int32_t)(p) << ") = " << (int32_t)(homology.get_kern(p)) << std::endl;
+        ofs << "    dim(H^" << (int32_t)(p+2) << ") = " << (int32_t)(homology.get_kern(p+2) - homology.get_tors(p+2))
+            << "; dim(im D^" << (int32_t)(p+1) << ") = " << (int32_t)(homology.get_tors(p+2))
+            << "; dim(ker D^" << (int32_t)(p+1) << ") = " << (int32_t)(homology.get_kern(p+1)) << std::endl;
         ofs << std::endl;
         
         if( conf.create_cache == true ) // Save base changes and triangular shape.
@@ -229,9 +231,6 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             }
         }
     }
-
-    homology.erase_tors( conf.start_p - 1 );
-    homology.erase_kern( conf.end_p + 1 );
 
     // Print status message.
     std::cout << std::endl;

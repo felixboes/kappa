@@ -17,7 +17,7 @@ MonoComplex< MatrixComplex > :: MonoComplex(
       h(2*_g + _m),
       num_threads(number_working_threads + number_remaining_threads),
       sign_conv(sgn),
-      matrix_complex(true)
+      matrix_complex(false)
 {
     DiagonalizerType& diago = get_diagonalizer();
     diago.num_working_threads = number_working_threads;
@@ -46,6 +46,8 @@ MonoComplex< MatrixComplex > :: MonoComplex(
         radial_tuple[1] = Transposition(1, 0);
         gen_bases(1, 1, 0, radial_tuple);
     }
+    
+    bases[ bases.rbegin()->first + 1 ];
 }
 
 template< class MatrixComplex >

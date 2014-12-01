@@ -21,6 +21,8 @@
 **/
 struct MonoBasis
 {
+    MonoBasis();
+    
     /// Add a basis element.
     uint32_t add_basis_element (Tuple& t);
     

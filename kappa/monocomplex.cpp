@@ -5,6 +5,10 @@
  *   MonoBasis
  *
  */
+MonoBasis::MonoBasis() : basis()
+{
+}
+ 
 uint32_t MonoBasis :: add_basis_element (Tuple& t)
 {
     t.id = basis.size();
