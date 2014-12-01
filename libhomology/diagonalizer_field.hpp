@@ -19,6 +19,7 @@
 #include "matrix_field.hpp"
 #include "parallelization.hpp"
 #include "thread.hpp"
+#include "vector_field.hpp"
 
 /**
  *  In order to compute the homology of the chain complex
@@ -34,6 +35,7 @@ class DiagonalizerField
 {
 public:
     typedef MatrixT MatrixType;    ///< We use this typedef to grant access the matrix type from other classes.
+    typedef typename MatrixType::CoefficientType CoefficientType;
     typedef typename MatrixType::MatrixEntryType MatrixEntryType;
     typedef typename MatrixType::DiagonalType DiagonalType;
 
@@ -54,13 +56,20 @@ public:
 
     /**  @return defect of the matrix */
     uint32_t dfct() const;
+    
     /**  @return defect of the matrix */
     HomologyField::KernT kern();
+    
     /**  @return rank of the matrix */
     uint32_t rank() const;
+    
     /**  @return rank of the matrix */
     HomologyField::TorsT tors();
 
+    /**
+     *  Applies base changes. 
+    **/
+    void apply_base_changes( MatrixType& differential, const MatrixType& base_changes );
 //protected:
     /**
      *  @return rank of matrix

@@ -24,6 +24,65 @@ HomologyField::TorsT DiagonalizerField< MatrixType >::tors()
     return rnk;
 }
 
+template< class MatrixType >
+void DiagonalizerField< MatrixType > :: apply_base_changes( MatrixType& differential, const MatrixType& base_changes )
+{
+    if( base_changes.size1() == 0 ||
+        base_changes.size2() == 0 ||
+        differential.size1() == 0 ||
+        differential.size2() == 0
+      )
+    {
+        return;
+    }
+    
+    
+    if( transp == false )
+    {
+        const auto num_rows = differential.size1();
+        const auto num_cols = differential.size2();
+        if( base_changes.size2() != num_rows )
+        {
+            std::cout << "Error: The base changes have " << base_changes.size2() << " many columns but the current differential has " << differential.size1() << " many rows." << std::endl;
+            return;
+        }
+        
+        // The column operations can be read off the triangular shape.
+        VectorField< CoefficientType > base_change_single_col( num_rows );
+        
+        for( auto diag_entry : base_changes.diagonal )
+        {
+            // all entries left of diag_entry are zero.
+            // The k-th row of the differential is altered using the entries right of the diagonal entry.
+            const size_t k = diag_entry.first;
+            const size_t l = diag_entry.second;
+            const CoefficientType lambda = CoefficientType(1) / base_changes.at( k, l );
+            
+            // Prepare one of the base changes.
+            for( size_t i = l+1; i < num_rows; ++i )
+            {
+                base_change_single_col(i) = lambda * base_changes.at( k, i );
+            }
+            
+            // Apply base change.
+            for( size_t j = 0; j < num_cols; ++j )
+            {
+                CoefficientType& altered_entry = differential( l, j );
+                for( size_t i = l+1; i < num_rows; ++i )
+                {
+                    altered_entry += base_change_single_col(i) * differential.at(i,j);
+                }
+            }
+        }
+    }
+    else
+    {
+        std::cout << "Todo." << std::endl;
+        
+    }
+}
+
+
 /**
  *  Compute the dimension of the image of matrix.
  *  This done by computing the number of lineary independent columns or rows.

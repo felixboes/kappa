@@ -67,36 +67,7 @@ void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::make_curre
 template < class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
 void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::apply_base_changes()
 {
-    if( old_differential.size1() == 0 ||
-        old_differential.size2() == 0 ||
-        current_differential.size1() == 0 ||
-        current_differential.size2() == 0
-      )
-    {
-        return;
-    }
-    
-    
-    if( transp == false )
-    {
-        if( old_differential.size2() != current_differential.size1() )
-        {
-            std::cout << "Error: The old differential has " << old_differential.size2() << " many columns but the current differential has " << current_differential.size1() << " many rows." << std::endl;
-            return;
-        }
-        // Todo: Apply base changes.
-        
-    }
-    else
-    {
-        if( old_differential.size1() != current_differential.size2() )
-        {
-            std::cout << "Error: The old differential has " << old_differential.size1() << " many columns but the current differential has " << current_differential.size2() << " many rows." << std::endl;
-            return;
-        }
-        // Todo: Apply base changes.
-        
-    }
+    diago.apply_base_changes( current_differential, old_differential );
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
