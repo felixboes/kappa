@@ -57,22 +57,103 @@ void DiagonalizerField< MatrixType > :: apply_base_changes( MatrixType& differen
             const size_t k = diag_entry.first;
             const size_t l = diag_entry.second;
             const CoefficientType lambda = CoefficientType(1) / base_changes.at( k, l );
+            std::vector< Thread > threads;
             
             // Prepare one of the base changes.
-            for( size_t i = l+1; i < num_rows; ++i )
+            // Parallelized version of:
+            //   for( size_t i = l+1; i < num_rows; ++i )
+            //   {
+            //       base_change_single_col(i) = lambda * base_changes.at( k, i );
+            //   }
+            size_t chunk_size = ( num_rows - (l+1) ) / num_working_threads;
+            if( ( num_rows - (l+1) ) % num_working_threads != 0 )
             {
-                base_change_single_col(i) = lambda * base_changes.at( k, i );
+                chunk_size++;
             }
             
-            // Apply base change.
-            for( size_t j = 0; j < num_cols; ++j )
+            bool last_round = false;
+            for( size_t i = 0; last_round == false; ++i )
             {
-                CoefficientType& altered_entry = differential( l, j );
-                for( size_t i = l+1; i < num_rows; ++i )
+                const size_t offset = l+1 + i*chunk_size;
+                // recompute chunk_size if nessecary.
+                if( chunk_size*(i+1) >= num_rows - (l+1) )
                 {
-                    altered_entry += base_change_single_col(i) * differential.at(i,j);
+                    chunk_size = num_rows - (l+1) - i*chunk_size;
+                    last_round = true;
                 }
+                
+                threads.emplace_back(
+                    [&base_change_single_col, &base_changes, k, lambda, offset, chunk_size]
+                    {
+                        for( size_t j = 0; j < chunk_size; ++j )
+                        {
+                            base_change_single_col(offset + j) = lambda * base_changes.at( k, offset + j );
+                        }
+                    }
+                );
             }
+            
+            for( auto& it : threads )
+            {
+                it.execute();
+            }
+            for( auto& it : threads )
+            {
+                it.wait();
+            }
+            threads.clear();
+            
+            // Apply base change.
+            // Parallized version of:
+            //
+            // for( size_t j = 0; j < num_cols; ++j )
+            // {
+            //     CoefficientType& altered_entry = differential( l, j );
+            //     for( size_t i = l+1; i < num_rows; ++i )
+            //     {
+            //         altered_entry += base_change_single_col(i) * differential.at(i,j);
+            //     }
+            //  }
+            chunk_size = num_cols / num_working_threads;
+            if( num_cols  % num_working_threads != 0 )
+            {
+                chunk_size++;
+            }
+            
+            last_round = false;
+            for( size_t i = 0; last_round == false; ++i )
+            {
+                const size_t offset = i*chunk_size;
+                // recompute chunk_size if nessecary.
+                if( chunk_size*(i+1) >= num_cols )
+                {
+                    chunk_size = num_cols - i*chunk_size;
+                    last_round = true;
+                }
+                
+                threads.emplace_back(
+                    [&differential, &base_change_single_col, l, lambda, offset, chunk_size, num_rows]
+                    {
+                        for( size_t j = 0; j < chunk_size; ++j )
+                        {
+                            for( size_t i = l+1; i < num_rows; ++i )
+                            {
+                                differential( l, offset + j ) += base_change_single_col( i ) * differential.at( i, offset + j );
+                            }
+                        }
+                    }
+                );
+            }
+            
+            for( auto& it : threads )
+            {
+                it.execute();
+            }
+            for( auto& it : threads )
+            {
+                it.wait();
+            }
+            threads.clear();
         }
     }
     else

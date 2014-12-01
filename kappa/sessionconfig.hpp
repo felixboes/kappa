@@ -54,6 +54,7 @@ struct SessionConfig
     int32_t first_basis;    ///< The first basis we want to consider.
     int32_t last_basis;     ///< The last basis we want to consider.
     SignConvention sgn_conv;    ///< The sign convention we use.
+    bool apply_base_changes;    ///< Apply base changes.
     bool create_cache;      ///< Stores diagonalized matrices iff this is true.
     bool valid;             ///< Is set to true if a given configuration is valid.
     bool print_help;        ///< Prints the help to screen iff this is true.

@@ -307,7 +307,11 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
     {
         workers[t].join();
     }
-    
+}
+
+template< class MatrixComplex >
+void MonoComplex< MatrixComplex > :: apply_base_changes()
+{
     matrix_complex.apply_base_changes();
 }
 

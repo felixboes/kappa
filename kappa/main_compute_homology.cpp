@@ -159,9 +159,20 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
 
         measure_duration = Clock();
         monocomplex.gen_differential(p+1);
-
         std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+        if( conf.apply_base_changes == true )
+        {
+            measure_duration = Clock();
+            std::cout << "Applying base changes";
+            std::cout.flush();
+            ofs << "Applying base changes";
+            monocomplex.apply_base_changes();
+            std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+            ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
+        }
+
+        
 
         // Diagoanlize differetnial and save results.
         measure_duration = Clock();

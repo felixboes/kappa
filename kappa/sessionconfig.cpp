@@ -13,6 +13,7 @@ SessionConfig::SessionConfig() :
     first_basis(0),
     last_basis(0),
     sgn_conv(all_signs),
+    apply_base_changes(false),
     create_cache(false),
     valid(false),
     print_help(false)
@@ -31,6 +32,7 @@ SessionConfig::SessionConfig( const int argc, char **argv ) :
     end_p(0),
     first_basis(0),
     last_basis(0),
+    apply_base_changes(false),
     create_cache(false),
     valid(false),
     print_help(false)
@@ -45,6 +47,7 @@ SessionConfig::SessionConfig( const int argc, char **argv ) :
             ("parallel", "uses radial or parallel slit configurations")
             ("num_working_threads,t", boost::program_options::value(&num_threads), "the number of threads used for work in matrix computations")
             ("num_remaining_threads", boost::program_options::value(&num_remaining_threads), "the number of additional threads used in diagonalization")
+            ("apply_base_changes", "applies base changes to the matrices.")
             ("cache", "cache the diagonalized matrices")
             ("first_diff", boost::program_options::value(&start_p), "start with the differential first_diff")
             ("last_diff", boost::program_options::value(&end_p), "end with the differential last_diff")
@@ -88,6 +91,7 @@ SessionConfig::SessionConfig( const int argc, char **argv ) :
         last_basis = 4*genus+2*num_punctures; // this is 2h.
     }
     parallel = vm.count("parallel");
+    apply_base_changes = vm.count("apply_base_changes");
     create_cache = vm.count("cache");
     
     valid = true;

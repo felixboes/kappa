@@ -154,6 +154,11 @@ public:
     void gen_differential( const int32_t p );
     
     /**
+     *  Apply base changes.
+    **/
+    void apply_base_changes();
+    
+    /**
      *  Diagoanlize current differential.
      */
     HomologyType diagonalize_current_differential( const int32_t p, uint32_t max_rank = 0, const bool print_duration = true );
@@ -204,12 +209,12 @@ public:
     void show_basis( const int32_t p ) const;
 //protected:
 
-    uint32_t g;                ///< genus
-    uint32_t m;                ///< number of punctures
-    uint32_t h;                ///< h = 2*g+m for the parallel case; and h = 2*g+m-1 for the radial case.
-    uint32_t num_threads;      ///< number of threads used to construct the differential
+    uint32_t g;                 ///< genus
+    uint32_t m;                 ///< number of punctures
+    uint32_t h;                 ///< h = 2*g+m for the parallel case; and h = 2*g+m-1 for the radial case.
+    uint32_t num_threads;       ///< number of threads used to construct the differential
 
-    SignConvention sign_conv;  ///< The sign convention.
+    SignConvention sign_conv;   ///< The sign convention.
     MatrixComplex matrix_complex;                         ///< underlying matrix complex of this MonoComplex
     std::map< int32_t, MonoBasis > bases;        ///< basis_complex[n] is the n-th MonoBasis, i.e. the basis of the n-th module of this MonoComplex. 
 };
