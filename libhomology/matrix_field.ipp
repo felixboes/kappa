@@ -75,6 +75,7 @@ void MatrixField<CoefficientT>::swap( ThisType& m )
     data.swap( m.data );
     std::swap( num_rows, m.num_rows );
     std::swap( num_cols, m.num_cols );
+    std::swap( diagonal, m.diagonal );
 }
 
 template< class CoefficientT >
