@@ -46,8 +46,6 @@ MonoComplex< MatrixComplex > :: MonoComplex(
         radial_tuple[1] = Transposition(1, 0);
         gen_bases(1, 1, 0, radial_tuple);
     }
-    
-    bases[ bases.rbegin()->first + 1 ];
 }
 
 template< class MatrixComplex >
@@ -270,10 +268,12 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
     **/
     
     matrix_complex.make_current_diff_old();
-    MatrixType & differential = get_current_differential();
-    differential.resize( bases[p].size(), bases[p-1].size() );
+    MatrixType & differential = get_current_differential();  
     
-    if( bases[p].size() == 0 || bases[p-1].size() == 0 )
+    //differential.resize( bases[p].size(), bases[p-1].size() );
+    differential.resize( ( bases.count(p) != 0 ? bases.at(p).size() : 0 ), ( bases.count(p-1) != 0 ? bases.at(p-1).size() : 0 ) );
+    
+    if( differential.size1() == 0 || differential.size2() == 0 )
     {
         return;
     }
@@ -281,15 +281,15 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
     // For each tuple t in the basis, we compute all basis elements that
     // occur in kappa(t).
     std::vector<MonocomplexWork> elements_per_threads (num_threads);
-    uint32_t num_elements_per_thread = bases[p].size() / num_threads;
+    uint32_t num_elements_per_thread = bases.at(p).size() / num_threads;
     
-    if (bases[p].size() % num_threads != 0)
+    if (bases.at(p).size() % num_threads != 0)
     {
         ++num_elements_per_thread;
     }
     uint32_t t = 0;
     uint32_t cur = 0;
-    for ( auto it : bases[p].basis )
+    for ( auto it : bases.at(p).basis )
     {
         elements_per_threads[t].push_back(it);
         ++cur;
