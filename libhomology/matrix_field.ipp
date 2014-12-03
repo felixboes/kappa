@@ -151,6 +151,7 @@ MatrixField< CoefficientT > MatrixField< CoefficientT > :: triangular_shape() co
         }
         // else: row of zeros.
     }
+    triangular_form.diagonal = diagonal;
     return triangular_form;
 }
 
