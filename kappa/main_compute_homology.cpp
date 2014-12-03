@@ -193,9 +193,9 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         std::cout << std::endl;
         std::cout.flush();
         ofs << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
-        ofs << "    dim(H^" << (int32_t)(p+2) << ") = " << (int32_t)(homology.get_kern(p+2) - homology.get_tors(p+2))
-            << "; dim(im D^" << (int32_t)(p+1) << ") = " << (int32_t)(homology.get_tors(p+2))
-            << "; dim(ker D^" << (int32_t)(p+1) << ") = " << (int32_t)(homology.get_kern(p+1)) << std::endl;
+        ofs << "    dim(H^" << (int32_t)(p+1) << ") = " << (int32_t)(homology.get_kern(p+1) - homology.get_tors(p+1))
+            << "; dim(im D^" << (int32_t)(p) << ") = " << (int32_t)(homology.get_tors(p+1))
+            << "; dim(ker D^" << (int32_t)(p) << ") = " << (int32_t)(homology.get_kern(p)) << std::endl;
         ofs << std::endl;
         
         if( conf.create_cache == true ) // Save base changes and triangular shape.
