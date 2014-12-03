@@ -36,11 +36,18 @@ int main(int argc, char** argv)
         std::cout << m.triangular_shape() << std::endl;
         
         VectorQ v_prime(3);
+        v_prime(0) =  1;
+        v_prime(1) = -1;
+        v_prime(2) = -1;
+        apply_base_changes_kernel( m, v_prime );
+        std::cout << v_prime << std::endl;
+        
         v_prime(0) = 0;
         v_prime(1) = 1;
-        v_prime(2) = 1;
-        apply_base_changes( m, v_prime );
+        v_prime(2) = 0;
+        apply_base_changes_image( m, v_prime );
         std::cout << v_prime << std::endl;
+        
         
         VectorQ v_2(3);
         v_2(0) = 3;

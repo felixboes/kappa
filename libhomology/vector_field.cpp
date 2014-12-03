@@ -72,7 +72,7 @@ std::ostream& operator<< ( std::ostream& stream, const VectorBool & vector )
 }
 
 template<>
-void apply_base_changes( const MatrixBool& m, VectorBool& v )
+void apply_base_changes_kernel( const MatrixBool& m, VectorBool& v )
 {
     size_t dim = v.size();
     const auto& diagonal = m.diagonal;

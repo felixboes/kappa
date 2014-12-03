@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <iostream>
 #include <list>
+#include <set>
 #include <vector>
 
 #include "field_coefficients.hpp"
@@ -88,6 +89,15 @@ public:
      */
     void clear();
         
+    /**
+     *  @returns the homology class of the vector (with respect to differentials).
+    **/
+    ThisType homology_class(
+            const MatrixField< CoefficientType >& base_changes_kernel,
+            const MatrixField< CoefficientType >& base_changes_image,
+            const typename MatrixField< CoefficientType >::DiagonalType image_diagonal
+        ) const;
+    
     // grant std::ostream access in order to print matrices to ostreams.
     template< class T >
     friend std::ostream& operator<< ( std::ostream& stream, const VectorField<T> & matrix );
@@ -207,10 +217,16 @@ std::ostream& operator<< ( std::ostream& stream, const VectorBool & vector);
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template< class MatrixT, class VectorT >
-void apply_base_changes( const MatrixT& m, VectorT& v );
+void apply_base_changes_kernel( const MatrixT& m, VectorT& v );
 
 template<>
-void apply_base_changes( const MatrixBool& m, VectorBool& v );
+void apply_base_changes_kernel( const MatrixBool& m, VectorBool& v );
+
+template< class MatrixT, class VectorT >
+void apply_base_changes_image( const MatrixT& m, VectorT& v );
+
+template<>
+void apply_base_changes_image( const MatrixBool& m, VectorBool& v );
 
 template< class MatrixT, class VectorT >
 VectorT matrix_vector_product( const MatrixT& m, const VectorT& v );

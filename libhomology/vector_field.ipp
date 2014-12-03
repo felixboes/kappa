@@ -75,6 +75,56 @@ void VectorField<CoefficientT>::clear()
 }
 
 template< class CoefficientT >
+VectorField< CoefficientT > VectorField< CoefficientT > :: homology_class(
+        const MatrixField< CoefficientType >& base_changes_kernel,
+        const MatrixField< CoefficientType >& base_changes_image,
+        const typename MatrixField< CoefficientType >::DiagonalType image_diagonal
+    ) const
+{
+    // Apply base changes.
+    ThisType v = *this;
+    apply_base_changes_kernel( base_changes_kernel, v );
+    apply_base_changes_image ( base_changes_image, v );
+    
+    // Prepare homology class.
+    if( image_diagonal.size() > dim )
+    {
+        std::cout << "Error: The dimension of the image is to big. dim( img ) = " << image_diagonal.size() << " but dim( v ) = " << dim << "." << std::endl;
+    }
+    const size_t dim_class = dim - image_diagonal.size();
+    ThisType result( dim_class );
+    
+    // Prepare image.
+    std::set< size_t > image;
+    for( const auto& it : image_diagonal )
+    {
+        image.insert( it.second );
+    }
+    
+    // Fill vector.
+    size_t i = 0;
+    size_t offset = 0;
+    for( auto it = image.cbegin(); it != image.end(); ++it )
+    {
+        while( i < *it)
+        {
+            result( i - offset ) = v( i );
+            ++i;
+        }
+        
+        ++offset;
+        ++i;
+    }
+    while( i < dim )
+    {
+        result( i - offset ) = v( i );
+        ++i;
+    }
+    
+    return result;
+}
+
+template< class CoefficientT >
 std::ostream& operator<< ( std::ostream& stream, const VectorField<CoefficientT> & vector )
 {
     stream << "[";
@@ -87,7 +137,7 @@ std::ostream& operator<< ( std::ostream& stream, const VectorField<CoefficientT>
 }
 
 template< class MatrixT, class VectorT >
-void apply_base_changes( const MatrixT& m, VectorT& v )
+void apply_base_changes_image( const MatrixT& m, VectorT& v )
 {
     size_t dim = v.size();
     const auto& diagonal = m.diagonal;
@@ -133,6 +183,40 @@ void apply_base_changes( const MatrixT& m, VectorT& v )
                 v(i) += m.at( i, diag_entry.second ) * vector_entry;
             }
         }
+    }
+}
+
+template< class MatrixT, class VectorT >
+void apply_base_changes_kernel( const MatrixT& m, VectorT& v )
+{
+    size_t dim = v.size();
+    const auto& diagonal = m.diagonal;
+    
+    if( m.size1() == 0 || m.size2() == 0 )
+    {
+        return;
+    }
+    
+    if( dim != m.size2() )
+    {
+        std::cout << "Error: The number of columns of the matrix is not equals the dimension of the vector." << std::endl;
+        return;
+    }
+    if( diagonal.size() == 0 )
+    {
+        std::cout << "Error: The matrix seems to be not diagonalized. The diagonal of the matrix is empty." << std::endl;
+        return;
+    }
+    
+    for( const auto& diag_entry : diagonal )
+    {
+        // compute new entries.
+        typename VectorT::CoefficientType summand(0);
+        for( size_t j = diag_entry.second + 1; j < dim; ++j )
+        {
+            summand += m.at( diag_entry.first, j ) * v.at(j);
+        }
+        v(diag_entry.second) += summand / m.at(diag_entry.first, diag_entry.second);
     }
 }
 
