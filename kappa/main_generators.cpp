@@ -25,6 +25,7 @@ VectorField< CoefficientT > cohomology_class( const uint32_t g, const uint32_t m
 //    std::cout << "Image:" << std::endl << image << std::endl << std::endl;
 //    std::cout << "Kernel:" << std::endl << kernel << std::endl << std::endl;
 //    std::cout << "Diagonal:" << std::endl << diagonal << std::endl << std::endl;
+    std::cout << "The chain is " << ( matrix_vector_product_vanishes(load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false ), v) == true ? "indeed " : "NOT " ) << "a cycle." << std::endl;
     return v.homology_class( kernel, image, diagonal );
 }
 
@@ -67,6 +68,22 @@ void test_( const uint32_t g, const uint32_t m, const uint32_t homological_p, co
 }
 
 template< class CoefficientT >
+void test_( const uint32_t g, const uint32_t m, const uint32_t homological_p, const std::list<Tuple>& list )
+{
+    MonoBasis basis = load_basis( g, m, 4*g+2*m-homological_p );
+    VectorField< CoefficientT > v(basis.size());
+    
+    for( const auto& it : list )
+    {
+        add_cell<CoefficientT>(basis, v, 1, it);
+        std::cout << "Cell                  = " << it << std::endl;
+    }
+    std::cout << "Vector in given basis = " << v << std::endl;
+    std::cout << "Cohomology class      = " << cohomology_class( g, m, 4*g+2*m-homological_p, v ) << std::endl;
+    std::cout << std::endl;
+}
+
+template< class CoefficientT >
 void test_a()
 {
     Tuple a(2,1);
@@ -81,6 +98,23 @@ void test_aa()
     aa[1] = Transposition( 2, 1 );
     aa[2] = Transposition( 4, 3 );
     test_<CoefficientT>(0, 2, 0, aa);
+}
+
+template< class CoefficientT >
+void test_b()
+{
+    std::list< Tuple > list;
+    
+    Tuple cell(3,2);
+    cell[1] = Transposition( 2, 1 );
+    cell[2] = Transposition( 3, 2 );
+    list.push_back(cell);
+    
+    cell[1] = Transposition( 3, 2 );
+    cell[2] = Transposition( 3, 1 );
+    list.push_back(cell);
+    
+    test_<CoefficientT>( 0, 2, 1, list );
 }
 
 template< class CoefficientT >
@@ -118,6 +152,7 @@ int main( int argc, char** argv )
     
     std::cout << "Rational computations." << std::endl;
     test_aa<Q>();
+    test_b<Q>();
     test_c<Q>();
     test_d<Q>();
     test_cc<Q>();
@@ -125,6 +160,7 @@ int main( int argc, char** argv )
     std::cout << "Mod 2 computations." << std::endl;
     Zm::set_modulus(2);
     test_aa<Zm>();
+    test_b<Zm>();
     test_c<Zm>();
     test_d<Zm>();
     test_cc<Zm>();
