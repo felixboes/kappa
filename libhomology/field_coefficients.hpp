@@ -29,6 +29,7 @@ public:
     static void set_modulus(const uint8_t prime, const uint8_t expo = 1);    ///< Befor using Zm coefficients, you must define the modulus i.e. m = p^e.
     static void print_modulus();    ///< Print the modulus to std::cout.
     static void print_inversetable();    ///< Print the table of invertible elements to std::cout.
+    static uint8_t get_modulus();   ///< @returns the modulus.
     bool is_invertible() const; ///< @returns true iff the coefficient is invertible.
     Zm const inverse();         ///< @returns the inverse of a given coefficient. If the coefficient is not invertible the value zero is returned.
     static void clean_up();     ///< Clean up all static data e.g. the table of invertible elements.

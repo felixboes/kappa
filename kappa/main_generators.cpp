@@ -1,22 +1,35 @@
 #include "kappa.hpp"
 
-void print_cohomology_class( const uint32_t g, const uint32_t m, const int32_t p, const VectorQ v )
+template< class CoefficientT >
+std::string filename_pref( uint32_t g, uint32_t m );
+
+template<>
+std::string filename_pref<Q>( uint32_t g, uint32_t m )
 {
-    std::string filename_pref =
-            "./cache/differentials_parallel/q_" +
-            std::to_string(g) + "_" +
-            std::to_string(m) + "_";
-    MatrixQ image  = load_from_file_bz2< MatrixQ >( filename_pref + std::to_string(p-1) + "_base_changes", false );
-    MatrixQ kernel = load_from_file_bz2< MatrixQ >( filename_pref + std::to_string(p) + "_triangular", false );
-    MatrixQ::DiagonalType diagonal = load_from_file_bz2< MatrixQ::DiagonalType >( filename_pref + std::to_string(p-1) + "_diagonal", false );
-    
+    return "./cache/differentials_parallel/q_" + std::to_string(g) + "_" + std::to_string(m) + "_";
+}
+
+template<>
+std::string filename_pref<Zm>( uint32_t g, uint32_t m )
+{
+    return "./cache/differentials_parallel/s" + std::to_string( Zm::get_modulus() ) + "_" + std::to_string(g) + "_" + std::to_string(m) + "_";
+}
+
+template< class CoefficientT >
+VectorField< CoefficientT > cohomology_class( const uint32_t g, const uint32_t m, const int32_t p, const VectorField< CoefficientT > v )
+{         
+    MatrixField< CoefficientT > image  = load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p-1) + "_base_changes", false );
+    MatrixField< CoefficientT > kernel = load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
+    typedef typename MatrixField< CoefficientT >::DiagonalType DiagonalType;
+    DiagonalType diagonal = load_from_file_bz2< DiagonalType >( filename_pref<CoefficientT>(g,m) + std::to_string(p-1) + "_diagonal", false );
 //    std::cout << "Image:" << std::endl << image << std::endl << std::endl;
 //    std::cout << "Kernel:" << std::endl << kernel << std::endl << std::endl;
 //    std::cout << "Diagonal:" << std::endl << diagonal << std::endl << std::endl;
-    std::cout << "Cohomology class: " << v.homology_class( kernel, image, diagonal ) << std::endl;
+    return v.homology_class( kernel, image, diagonal );
 }
 
-void add_cell( const MonoBasis& basis, VectorQ& v, const Q& alpha, const Tuple& cell )
+template< class CoefficientT >
+void add_cell( const MonoBasis& basis, VectorField< CoefficientT >& v, const CoefficientT& alpha, const Tuple& cell )
 {
     int64_t id = basis.id_of(cell);
     
@@ -40,103 +53,81 @@ MonoBasis load_basis( const uint32_t g, const uint32_t m, const int32_t p )
     return load_from_file_bz2< MonoBasis >( filename, false );
 }
 
-void test_a()
+template< class CoefficientT >
+void test_( const uint32_t g, const uint32_t m, const uint32_t homological_p, const Tuple& cell )
 {
-    MonoBasis basis_0 = load_basis( 0, 1, 2 );
-    VectorQ v(basis_0.size());
+    MonoBasis basis = load_basis( g, m, 4*g+2*m-homological_p );
+    VectorField< CoefficientT > v(basis.size());
+    add_cell<CoefficientT>(basis, v, 1, cell);
     
-    Tuple a(2,1);
-    a[1] = Transposition( 2, 1 );
-    
-    std::cout << a << std::endl;
-    
-    add_cell(basis_0, v, 1, a);
-    
-    std::cout << v << std::endl;
-    
-    print_cohomology_class(0, 1, 2, v); 
+    std::cout << "Cell                  = " << cell << std::endl;
+    std::cout << "Vector in given basis = " << v << std::endl;
+    std::cout << "Cohomology class      = " << cohomology_class( g, m, 4*g+2*m-homological_p, v ) << std::endl;
+    std::cout << std::endl;
 }
 
+template< class CoefficientT >
+void test_a()
+{
+    Tuple a(2,1);
+    a[1] = Transposition( 2, 1 );
+    test_<CoefficientT>(0, 1, 0, a);
+}
+
+template< class CoefficientT >
 void test_aa()
 {
-    MonoBasis basis_0 = load_basis( 0, 2, 4 );
-    VectorQ v(basis_0.size());
-    
     Tuple aa(4,2);
     aa[1] = Transposition( 2, 1 );
     aa[2] = Transposition( 4, 3 );
-    
-    std::cout << aa << std::endl;
-    
-    add_cell(basis_0, v, 1, aa);
-    
-    std::cout << v << std::endl;
-    
-    print_cohomology_class(0, 2, 4, v); 
+    test_<CoefficientT>(0, 2, 0, aa);
 }
 
+template< class CoefficientT >
 void test_c()
 {
-    MonoBasis basis_0 = load_basis( 1, 0, 4 );
-    VectorQ v(basis_0.size());
-    
     Tuple c(4,2);
     c[1] = Transposition( 3, 1 );
     c[2] = Transposition( 4, 2 );
-    
-    std::cout << c << std::endl;
-    
-    add_cell(basis_0, v, 1, c);
-    
-    std::cout << v << std::endl;
-    
-    print_cohomology_class(1, 0, 4, v);    
+    test_<CoefficientT>(1, 0, 0, c);
 }
 
+template< class CoefficientT >
 void test_d()
 {
-    MonoBasis basis_1 = load_basis( 1, 0, 3 );
-    VectorQ v(basis_1.size());
-    
     Tuple d(3,2);
     d[1] = Transposition( 2, 1 );
     d[2] = Transposition( 3, 1 );
-    
-    std::cout << d << std::endl;
-    
-    add_cell(basis_1, v, 1, d);
-    
-    std::cout << v << std::endl;
-    
-    print_cohomology_class(1, 0, 3, v);
+    test_<CoefficientT>(1, 0, 1, d);
 }
 
+template< class CoefficientT >
 void test_cc()
 {
-    MonoBasis basis_2 = load_basis( 2, 0, 8 );
-    VectorQ v(basis_2.size());
-    
     Tuple cc(8,4);
     cc[1] = Transposition( 3, 1 );
     cc[2] = Transposition( 4, 2 );
     cc[3] = Transposition( 7, 5 );
     cc[4] = Transposition( 8, 6 );
-    
-    std::cout << cc << std::endl;
-    
-    add_cell(basis_2, v, 1, cc);
-    
-    std::cout << v << std::endl;
-    
-    print_cohomology_class(2, 0, 8, v);
+    test_<CoefficientT>(2, 0, 0, cc);
 }
 
 int main( int argc, char** argv )
 {
-    //test_a();
-    test_aa();
-    test_c();
-    test_d();
-    test_cc();
+    std::cout.setf(std::ios::unitbuf);
+    
+    std::cout << "Rational computations." << std::endl;
+    test_aa<Q>();
+    test_c<Q>();
+    test_d<Q>();
+    test_cc<Q>();
+    
+    std::cout << "Mod 2 computations." << std::endl;
+    Zm::set_modulus(2);
+    test_aa<Zm>();
+    test_c<Zm>();
+    test_d<Zm>();
+    test_cc<Zm>();
+    
     return 0;
 }

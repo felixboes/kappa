@@ -57,6 +57,11 @@ void Zm::set_modulus(const uint8_t p, const uint8_t k)
     }
 }
 
+uint8_t Zm::get_modulus()
+{
+    return prim;
+}
+
 void Zm::clean_up()
 {
     base = 0;
