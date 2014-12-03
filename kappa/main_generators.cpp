@@ -20,13 +20,11 @@ VectorField< CoefficientT > cohomology_class( const uint32_t g, const uint32_t m
 {         
     MatrixField< CoefficientT > image  = load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p-1) + "_base_changes", false );
     MatrixField< CoefficientT > kernel = load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
-    typedef typename MatrixField< CoefficientT >::DiagonalType DiagonalType;
-    DiagonalType diagonal = load_from_file_bz2< DiagonalType >( filename_pref<CoefficientT>(g,m) + std::to_string(p-1) + "_diagonal", false );
 //    std::cout << "Image:" << std::endl << image << std::endl << std::endl;
 //    std::cout << "Kernel:" << std::endl << kernel << std::endl << std::endl;
 //    std::cout << "Diagonal:" << std::endl << diagonal << std::endl << std::endl;
     std::cout << "The chain is " << ( matrix_vector_product_vanishes(load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false ), v) == true ? "indeed " : "NOT " ) << "a cycle." << std::endl;
-    return v.homology_class( kernel, image, diagonal );
+    return v.homology_class( kernel, image );
 }
 
 template< class CoefficientT >
@@ -136,6 +134,38 @@ void test_d()
 }
 
 template< class CoefficientT >
+void test_aad()
+{
+    Tuple aad(7,4);
+    aad[1] = Transposition( 2, 1 );
+    aad[2] = Transposition( 3, 1 );
+    aad[3] = Transposition( 5, 4 );
+    aad[4] = Transposition( 7, 6 );
+    test_<CoefficientT>(1, 2, 1, aad);
+}
+
+template< class CoefficientT >
+void test_bc()
+{
+    std::list< Tuple > list;
+    
+    Tuple cell(7,4);
+    cell[1] = Transposition( 2, 1 );
+    cell[2] = Transposition( 3, 2 );
+    cell[3] = Transposition( 6, 4 );
+    cell[4] = Transposition( 7, 5 );
+    list.push_back(cell);
+    
+    cell[1] = Transposition( 3, 2 );
+    cell[2] = Transposition( 3, 1 );
+    cell[3] = Transposition( 6, 4 );
+    cell[4] = Transposition( 7, 5 );
+    list.push_back(cell);
+    
+    test_<CoefficientT>( 1, 2, 1, list );
+}
+
+template< class CoefficientT >
 void test_cc()
 {
     Tuple cc(8,4);
@@ -144,6 +174,17 @@ void test_cc()
     cc[3] = Transposition( 7, 5 );
     cc[4] = Transposition( 8, 6 );
     test_<CoefficientT>(2, 0, 0, cc);
+}
+
+template< class CoefficientT >
+void test_cd()
+{
+    Tuple cd(7,4);
+    cd[1] = Transposition( 3, 1 );
+    cd[2] = Transposition( 4, 2 );
+    cd[3] = Transposition( 6, 5 );
+    cd[4] = Transposition( 7, 5 );
+    test_<CoefficientT>(2, 0, 1, cd);
 }
 
 int main( int argc, char** argv )
@@ -155,7 +196,10 @@ int main( int argc, char** argv )
     test_b<Q>();
     test_c<Q>();
     test_d<Q>();
+    test_aad<Q>();
+    test_bc<Q>();
     test_cc<Q>();
+    //test_cd<Q>();
     
     std::cout << "Mod 2 computations." << std::endl;
     Zm::set_modulus(2);
@@ -163,7 +207,14 @@ int main( int argc, char** argv )
     test_b<Zm>();
     test_c<Zm>();
     test_d<Zm>();
+    test_aad<Zm>();
+    test_bc<Zm>();
     test_cc<Zm>();
+    test_cd<Zm>();
+    
+    std::cout << "Mod 5 computations." << std::endl;
+    Zm::set_modulus(5);
+    test_cd<Zm>();
     
     return 0;
 }
