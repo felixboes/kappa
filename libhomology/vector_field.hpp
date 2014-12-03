@@ -94,8 +94,7 @@ public:
     **/
     ThisType homology_class(
             const MatrixField< CoefficientType >& base_changes_kernel,
-            const MatrixField< CoefficientType >& base_changes_image,
-            const typename MatrixField< CoefficientType >::DiagonalType image_diagonal
+            const MatrixField< CoefficientType >& base_changes_image
         ) const;
     
     // grant std::ostream access in order to print matrices to ostreams.

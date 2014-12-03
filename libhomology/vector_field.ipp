@@ -77,34 +77,40 @@ void VectorField<CoefficientT>::clear()
 template< class CoefficientT >
 VectorField< CoefficientT > VectorField< CoefficientT > :: homology_class(
         const MatrixField< CoefficientType >& base_changes_kernel,
-        const MatrixField< CoefficientType >& base_changes_image,
-        const typename MatrixField< CoefficientType >::DiagonalType image_diagonal
+        const MatrixField< CoefficientType >& base_changes_image
     ) const
 {
+    const auto image_diagonal = base_changes_image.diagonal;
+    const auto kernel_diagonal = base_changes_kernel.diagonal;
+    
     // Apply base changes.
     ThisType v = *this;
     apply_base_changes_kernel( base_changes_kernel, v );
     apply_base_changes_image ( base_changes_image, v );
     
     // Prepare homology class.
-    if( image_diagonal.size() > dim )
+    if( image_diagonal.size() > dim - kernel_diagonal.size() )
     {
-        std::cout << "Error: The dimension of the image is to big. dim( img ) = " << image_diagonal.size() << " but dim( v ) = " << dim << "." << std::endl;
+        std::cout << "Error: The dimension of the image is to big. dim( img ) = " << image_diagonal.size() << " but dim( ker ) = " << dim - kernel_diagonal.size() << "." << std::endl;
     }
-    const size_t dim_class = dim - image_diagonal.size();
+    const size_t dim_class = dim - kernel_diagonal.size() - image_diagonal.size();
     ThisType result( dim_class );
     
     // Prepare image.
-    std::set< size_t > image;
+    std::set< size_t > proj;
+    for( const auto& it : kernel_diagonal )
+    {
+        proj.insert( it.second );
+    }
     for( const auto& it : image_diagonal )
     {
-        image.insert( it.first );
+        proj.insert( it.first );
     }
     
     // Fill vector.
     size_t i = 0;
     size_t offset = 0;
-    for( auto it = image.cbegin(); it != image.end(); ++it )
+    for( auto it = proj.cbegin(); it != proj.end(); ++it )
     {
         while( i < *it)
         {
@@ -258,7 +264,7 @@ bool matrix_vector_product_vanishes( const MatrixT& m, const VectorT& v )
         std::cout << "Error: The number of rows of the matrix is not equals the dimension of the vector." << std::endl;
         return false;
     }
-    for( size_t i = 0; i < dim; ++i )
+    for( size_t i = 0; i < m.size1(); ++i )
     {
         typename VectorT::CoefficientType res(0);
         for( size_t j = 0; j < m.size2(); ++j )
