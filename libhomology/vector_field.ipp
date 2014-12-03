@@ -98,7 +98,7 @@ VectorField< CoefficientT > VectorField< CoefficientT > :: homology_class(
     std::set< size_t > image;
     for( const auto& it : image_diagonal )
     {
-        image.insert( it.second );
+        image.insert( it.first );
     }
     
     // Fill vector.
@@ -154,7 +154,6 @@ void apply_base_changes_image( const MatrixT& m, VectorT& v )
     }
     if( diagonal.size() == 0 )
     {
-        std::cout << "Error: The matrix seems to be not diagonalized. The diagonal of the matrix is empty." << std::endl;
         return;
     }
 
@@ -204,7 +203,6 @@ void apply_base_changes_kernel( const MatrixT& m, VectorT& v )
     }
     if( diagonal.size() == 0 )
     {
-        std::cout << "Error: The matrix seems to be not diagonalized. The diagonal of the matrix is empty." << std::endl;
         return;
     }
     
