@@ -53,30 +53,32 @@ MonoBasis load_basis( const uint32_t g, const uint32_t m, const int32_t p )
 }
 
 template< class CoefficientT >
-void test_( const uint32_t g, const uint32_t m, const uint32_t homological_p, const Tuple& cell )
+void test_( const std::string& name, const uint32_t g, const uint32_t m, const uint32_t homological_p, const Tuple& cell )
 {
     MonoBasis basis = load_basis( g, m, 4*g+2*m-homological_p );
     VectorField< CoefficientT > v(basis.size());
     add_cell<CoefficientT>(basis, v, 1, cell);
     
+    std::cout << "Name                  = " << name << std::endl;
     std::cout << "Cell                  = " << cell << std::endl;
-    std::cout << "Vector in given basis = " << v << std::endl;
+//    std::cout << "Vector in given basis = " << v << std::endl;
     std::cout << "Cohomology class      = " << cohomology_class( g, m, 4*g+2*m-homological_p, v ) << std::endl;
     std::cout << std::endl;
 }
 
 template< class CoefficientT >
-void test_( const uint32_t g, const uint32_t m, const uint32_t homological_p, const std::list<Tuple>& list )
+void test_( const std::string& name, const uint32_t g, const uint32_t m, const uint32_t homological_p, const std::list<Tuple>& list)
 {
     MonoBasis basis = load_basis( g, m, 4*g+2*m-homological_p );
     VectorField< CoefficientT > v(basis.size());
     
+    std::cout << "Name                  = " << name << std::endl;
     for( const auto& it : list )
     {
         add_cell<CoefficientT>(basis, v, 1, it);
         std::cout << "Cell                  = " << it << std::endl;
     }
-    std::cout << "Vector in given basis = " << v << std::endl;
+//    std::cout << "Vector in given basis = " << v << std::endl;
     std::cout << "Cohomology class      = " << cohomology_class( g, m, 4*g+2*m-homological_p, v ) << std::endl;
     std::cout << std::endl;
 }
@@ -86,7 +88,7 @@ void test_a()
 {
     Tuple a(2,1);
     a[1] = Transposition( 2, 1 );
-    test_<CoefficientT>(0, 1, 0, a);
+    test_<CoefficientT>("a", 0, 1, 0, a);
 }
 
 template< class CoefficientT >
@@ -95,7 +97,7 @@ void test_aa()
     Tuple aa(4,2);
     aa[1] = Transposition( 2, 1 );
     aa[2] = Transposition( 4, 3 );
-    test_<CoefficientT>(0, 2, 0, aa);
+    test_<CoefficientT>("a^2", 0, 2, 0, aa);
 }
 
 template< class CoefficientT >
@@ -112,7 +114,7 @@ void test_b()
     cell[2] = Transposition( 3, 1 );
     list.push_back(cell);
     
-    test_<CoefficientT>( 0, 2, 1, list );
+    test_<CoefficientT>( "b", 0, 2, 1, list );
 }
 
 template< class CoefficientT >
@@ -121,7 +123,7 @@ void test_c()
     Tuple c(4,2);
     c[1] = Transposition( 3, 1 );
     c[2] = Transposition( 4, 2 );
-    test_<CoefficientT>(1, 0, 0, c);
+    test_<CoefficientT>( "c", 1, 0, 0, c );
 }
 
 template< class CoefficientT >
@@ -130,7 +132,18 @@ void test_d()
     Tuple d(3,2);
     d[1] = Transposition( 2, 1 );
     d[2] = Transposition( 3, 1 );
-    test_<CoefficientT>(1, 0, 1, d);
+    test_<CoefficientT>( "d", 1, 0, 1, d );
+}
+
+template< class CoefficientT >
+void test_dd()
+{
+    Tuple dd(6,4);
+    dd[1] = Transposition( 2, 1 );
+    dd[2] = Transposition( 3, 1 );
+    dd[3] = Transposition( 5, 4 );
+    dd[4] = Transposition( 6, 4 );
+    test_<CoefficientT>( "d^2", 2, 0, 2, dd );
 }
 
 template< class CoefficientT >
@@ -141,7 +154,7 @@ void test_aad()
     aad[2] = Transposition( 3, 1 );
     aad[3] = Transposition( 5, 4 );
     aad[4] = Transposition( 7, 6 );
-    test_<CoefficientT>(1, 2, 1, aad);
+    test_<CoefficientT>( "aad", 1, 2, 1, aad );
 }
 
 template< class CoefficientT >
@@ -162,7 +175,7 @@ void test_bc()
     cell[4] = Transposition( 7, 5 );
     list.push_back(cell);
     
-    test_<CoefficientT>( 1, 2, 1, list );
+    test_<CoefficientT>( "bc", 1, 2, 1, list );
 }
 
 template< class CoefficientT >
@@ -173,7 +186,7 @@ void test_cc()
     cc[2] = Transposition( 4, 2 );
     cc[3] = Transposition( 7, 5 );
     cc[4] = Transposition( 8, 6 );
-    test_<CoefficientT>(2, 0, 0, cc);
+    test_<CoefficientT>( "c^2", 2, 0, 0, cc );
 }
 
 template< class CoefficientT >
@@ -184,8 +197,9 @@ void test_cd()
     cd[2] = Transposition( 4, 2 );
     cd[3] = Transposition( 6, 5 );
     cd[4] = Transposition( 7, 5 );
-    test_<CoefficientT>(2, 0, 1, cd);
+    test_<CoefficientT>( "cd", 2, 0, 1, cd );
 }
+
 
 int main( int argc, char** argv )
 {
@@ -201,6 +215,7 @@ int main( int argc, char** argv )
     test_b<Q>();
     test_c<Q>();
     test_d<Q>();
+    test_dd<Q>();
     test_aad<Q>();
     test_bc<Q>();
     test_cc<Q>();
@@ -213,6 +228,7 @@ int main( int argc, char** argv )
     test_b<Zm>();
     test_c<Zm>();
     test_d<Zm>();
+    test_dd<Zm>();
     test_aad<Zm>();
     test_bc<Zm>();
     test_cc<Zm>();
@@ -222,6 +238,7 @@ int main( int argc, char** argv )
     std::cout << "--------------------------------" << std::endl;
     Zm::set_modulus(5);
     test_bc<Zm>();
+    test_dd<Zm>();
     test_cd<Zm>();
     
     return 0;
