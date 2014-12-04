@@ -191,7 +191,12 @@ int main( int argc, char** argv )
 {
     std::cout.setf(std::ios::unitbuf);
     
+    std::cout << "Program version: " << program_version_by_git << std::endl
+              << "Date: " << current_date() << std::endl
+              << std::endl;
+    
     std::cout << "Rational computations." << std::endl;
+    std::cout << "--------------------------------" << std::endl;
     test_aa<Q>();
     test_b<Q>();
     test_c<Q>();
@@ -202,6 +207,7 @@ int main( int argc, char** argv )
     test_cd<Q>();
     
     std::cout << "Mod 2 computations." << std::endl;
+    std::cout << "--------------------------------" << std::endl;
     Zm::set_modulus(2);
     test_aa<Zm>();
     test_b<Zm>();
@@ -213,7 +219,9 @@ int main( int argc, char** argv )
     test_cd<Zm>();
     
     std::cout << "Mod 5 computations." << std::endl;
+    std::cout << "--------------------------------" << std::endl;
     Zm::set_modulus(5);
+    test_bc<Zm>();
     test_cd<Zm>();
     
     return 0;
