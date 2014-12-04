@@ -200,6 +200,26 @@ void test_cd()
     test_<CoefficientT>( "cd", 2, 0, 1, cd );
 }
 
+template< class CoefficientT >
+void test_z()
+{
+    std::list<Tuple> list;
+
+    Tuple cell(5,4);
+    cell[1] = Transposition( 2, 1 );
+    cell[2] = Transposition( 3, 1 );
+    cell[3] = Transposition( 4, 3 );
+    cell[4] = Transposition( 5, 3 );
+    list.push_back(cell);
+    
+    cell[1] = Transposition( 2, 1 );
+    cell[2] = Transposition( 3, 1 );
+    cell[3] = Transposition( 4, 1 );
+    cell[4] = Transposition( 5, 1 );
+    list.push_back(cell);
+    
+    test_<CoefficientT>( "z", 2, 0, 3, list );
+}
 
 int main( int argc, char** argv )
 {
@@ -220,26 +240,28 @@ int main( int argc, char** argv )
     test_bc<Q>();
     test_cc<Q>();
     test_cd<Q>();
+    test_z<Q>();
     
     std::cout << "Mod 2 computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
     Zm::set_modulus(2);
-    test_aa<Zm>();
-    test_b<Zm>();
-    test_c<Zm>();
-    test_d<Zm>();
-    test_dd<Zm>();
-    test_aad<Zm>();
-    test_bc<Zm>();
-    test_cc<Zm>();
-    test_cd<Zm>();
+//    test_aa<Zm>();
+//    test_b<Zm>();
+//    test_c<Zm>();
+//    test_d<Zm>();
+//    test_dd<Zm>();
+//    test_aad<Zm>();
+//    test_bc<Zm>();
+//    test_cc<Zm>();
+//    test_cd<Zm>();
+    test_z<Zm>();
     
-    std::cout << "Mod 5 computations." << std::endl;
-    std::cout << "--------------------------------" << std::endl;
-    Zm::set_modulus(5);
-    test_bc<Zm>();
-    test_dd<Zm>();
-    test_cd<Zm>();
+//    std::cout << "Mod 5 computations." << std::endl;
+//    std::cout << "--------------------------------" << std::endl;
+//    Zm::set_modulus(5);
+//    test_bc<Zm>();
+//    test_dd<Zm>();
+//    test_cd<Zm>();
     
     return 0;
 }
