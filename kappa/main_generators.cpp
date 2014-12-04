@@ -199,7 +199,7 @@ int main( int argc, char** argv )
     test_aad<Q>();
     test_bc<Q>();
     test_cc<Q>();
-    //test_cd<Q>();
+    test_cd<Q>();
     
     std::cout << "Mod 2 computations." << std::endl;
     Zm::set_modulus(2);

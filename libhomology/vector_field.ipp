@@ -126,7 +126,6 @@ VectorField< CoefficientT > VectorField< CoefficientT > :: homology_class(
         result( i - offset ) = v( i );
         ++i;
     }
-    
     return result;
 }
 
@@ -134,11 +133,14 @@ template< class CoefficientT >
 std::ostream& operator<< ( std::ostream& stream, const VectorField<CoefficientT> & vector )
 {
     stream << "[";
-    for( size_t i = 0; i < vector.dim - 1; ++i )
+    if( vector.dim > 0 )
     {
-        stream << std::setw(3) << vector.at(i) << ",";
+        for( size_t i = 0; i < vector.dim - 1; ++i )
+        {
+            stream << std::setw(3) << vector.at(i) << ",";
+        }
+        stream << std::setw(3) << vector.at(vector.dim - 1);
     }
-    stream << std::setw(3) << vector.at(vector.dim - 1);
     return stream << "]";
 }
 
