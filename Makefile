@@ -1,6 +1,6 @@
 LANG = en_US.UTF-8
 
-CXXFLAGS      := -O3 -std=c++11 -D_GLIBCXX_USE_NANOSLEEP -g \
+CXXFLAGS      := -O3 -std=c++11 -D_GLIBCXX_USE_NANOSLEEP \
                  -Wextra -Wall -Wno-long-long -pedantic-errors
 LIBS          := -lgmpxx -lgmp -lpthread \
                  -lboost_filesystem -lboost_system -lboost_iostreams \

@@ -1,10 +1,15 @@
-clang
-copy on write if nec
-no function pointer
-review paper 2003
-polymake workshop 5th dec
-even more templating?
-lmalloc ...malloc reduce memory management of gmp -> twice as fast
+- clang (not always better)
+
++ copy on write if nec
++ no function pointer
++ review paper 2003
++ polymake workshop 5th dec
++ even more templating?
++ tcmalloc or jmalloc reduce memory management of gmp -> twice as fast
++ gcc profiling with single threaded model befor final release.
++ ONLY sparse matrices if Gauss after 10% ... 80% matrix is still sparse.
++ allocator tests.
++ gmp selbst bauen
+
 always: openmpi
 never: openmp
-
