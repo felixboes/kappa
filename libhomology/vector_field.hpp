@@ -74,6 +74,11 @@ public:
     ThisType& operator*=( const CoefficientType& argument );
     
     /**
+     * @returns true iff the vector is zero.
+    **/
+    bool is_zero() const;
+    
+    /**
      *  As our implementation mimes ublas::matrix we use the same (awkward) method to delete a vector.
      *  In order to do so call resize(0);
      */ 
@@ -226,6 +231,12 @@ void apply_base_changes_image( const MatrixT& m, VectorT& v );
 
 template<>
 void apply_base_changes_image( const MatrixBool& m, VectorBool& v );
+
+template< class MatrixT, class VectorT >
+std::vector< VectorT > compute_base_of_kernel( const MatrixT& m );
+
+template<>
+std::vector< VectorBool > compute_base_of_kernel( const MatrixBool& m );
 
 template< class MatrixT, class VectorT >
 VectorT matrix_vector_product( const MatrixT& m, const VectorT& v );

@@ -35,6 +35,12 @@ int main(int argc, char** argv)
         std::cout << m.base_changes() << std::endl;;
         std::cout << m.triangular_shape() << std::endl;
         
+        auto base = compute_base_of_kernel< MatrixQ, VectorQ >(m);
+        for( const auto& it : base )
+        {
+            std::cout << it << std::endl;
+        }
+        
         VectorQ v_prime(3);
         v_prime(0) =  1;
         v_prime(1) = -1;

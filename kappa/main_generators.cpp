@@ -28,6 +28,27 @@ VectorField< CoefficientT > cohomology_class( const uint32_t g, const uint32_t m
 }
 
 template< class CoefficientT >
+void cohomology_generators( const uint32_t g, const uint32_t m, const int32_t p )
+{         
+    MatrixField< CoefficientT > image  = load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p-1) + "_base_changes", false );
+    MatrixField< CoefficientT > kernel = load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
+    MatrixField< CoefficientT > vanishing_test = load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
+
+    auto base = compute_base_of_kernel< MatrixField<CoefficientT>, VectorField<CoefficientT> >( kernel );
+    for( const auto& v : base )
+    {
+        auto c = v.homology_class( kernel, image );
+        if( c.is_zero() == false )
+        {
+            std::cout << "Chain = " << v << std::endl
+                      << "The chain is " << ( matrix_vector_product_vanishes(vanishing_test, v) == true ? "indeed " : "NOT " ) << "a cycle." << std::endl
+                      << "Its class it " << c << std::endl
+                      << std::endl;
+        }
+    }
+}
+
+template< class CoefficientT >
 void add_cell( const MonoBasis& basis, VectorField< CoefficientT >& v, const CoefficientT& alpha, const Tuple& cell )
 {
     int64_t id = basis.id_of(cell);
@@ -229,22 +250,22 @@ int main( int argc, char** argv )
               << "Date: " << current_date() << std::endl
               << std::endl;
     
-    std::cout << "Rational computations." << std::endl;
-    std::cout << "--------------------------------" << std::endl;
-    test_aa<Q>();
-    test_b<Q>();
-    test_c<Q>();
-    test_d<Q>();
-    test_dd<Q>();
-    test_aad<Q>();
-    test_bc<Q>();
-    test_cc<Q>();
-    test_cd<Q>();
-    test_z<Q>();
+//    std::cout << "Rational computations." << std::endl;
+//    std::cout << "--------------------------------" << std::endl;
+//    test_aa<Q>();
+//    test_b<Q>();
+//    test_c<Q>();
+//    test_d<Q>();
+//    test_dd<Q>();
+//    test_aad<Q>();
+//    test_bc<Q>();
+//    test_cc<Q>();
+//    test_cd<Q>();
+//    test_z<Q>();
     
-    std::cout << "Mod 2 computations." << std::endl;
-    std::cout << "--------------------------------" << std::endl;
-    Zm::set_modulus(2);
+//    std::cout << "Mod 2 computations." << std::endl;
+//    std::cout << "--------------------------------" << std::endl;
+//    Zm::set_modulus(2);
 //    test_aa<Zm>();
 //    test_b<Zm>();
 //    test_c<Zm>();
@@ -254,7 +275,7 @@ int main( int argc, char** argv )
 //    test_bc<Zm>();
 //    test_cc<Zm>();
 //    test_cd<Zm>();
-    test_z<Zm>();
+//    test_z<Zm>();
     
 //    std::cout << "Mod 5 computations." << std::endl;
 //    std::cout << "--------------------------------" << std::endl;
@@ -262,6 +283,12 @@ int main( int argc, char** argv )
 //    test_bc<Zm>();
 //    test_dd<Zm>();
 //    test_cd<Zm>();
+
+    cohomology_generators<Q>( 0, 2, 3);
+    cohomology_generators<Q>( 1, 0, 4);
+    cohomology_generators<Q>( 1, 0, 3);
+    cohomology_generators<Q>( 2, 0, 6);
+    //cohomology_generators<Q>( 2, 0, 5);
     
     return 0;
 }

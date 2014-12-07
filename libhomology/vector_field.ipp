@@ -53,6 +53,20 @@ VectorField< CoefficientT >& VectorField< CoefficientT >::operator*=( const Coef
 }
 
 template< class CoefficientT >
+bool VectorField< CoefficientT > :: is_zero() const
+{
+    const CoefficientT zero(0);
+    for( const auto& it : data )
+    {
+        if( it != zero )
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+template< class CoefficientT >
 void VectorField<CoefficientT>::resize( const size_t dimension, const bool )
 {
     data.assign( dimension, CoefficientT(0) );
@@ -224,6 +238,62 @@ void apply_base_changes_kernel( const MatrixT& m, VectorT& v )
         }
         v(diag_entry.second) += summand / m.at(diag_entry.first, diag_entry.second);
     }
+}
+
+template< class MatrixT, class VectorT >
+std::vector< VectorT > compute_base_of_kernel( const MatrixT& m )
+{
+    const auto& diagonal = m.diagonal;
+    const size_t num_rows = m.size1();
+    const size_t num_cols = m.size2();
+    const size_t dim_image  = diagonal.size();
+    const size_t dim_kernel = num_cols - dim_image;
+    std::vector< VectorT > base(dim_kernel, num_cols);
+    
+    if( num_rows == 0 )
+    {
+        for( size_t j = 0; j < num_cols; ++j )
+        {
+            base[j](j) = 1;
+        }
+        return base;
+    }
+    
+    auto base_it = base.begin();
+    auto diag_it = diagonal.cbegin();
+    for( size_t j = 0; j < num_cols; ++j )
+    {
+        if( diag_it != diagonal.cend() && j == diag_it->second )
+        {
+            ++diag_it;
+        }
+        else
+        {
+            // Compute basis element.
+            auto& v = (*base_it);
+            v(j) = 1;
+            
+            for( auto diag_rev = diag_it; diag_rev-- != diagonal.begin(); )
+            {
+                typename VectorT::CoefficientType lambda(0);
+                
+                const size_t& k = diag_rev->first;
+                size_t l = diag_rev->second;
+                
+                while( ++l < num_cols )
+                {
+                    lambda += m.at(k,l) * v(l);
+                }
+                
+                l = diag_rev->second;
+                v(l) -= lambda / m.at(k,l);
+            }
+            
+            ++base_it;
+        }
+    }
+    
+    return base;
 }
 
 template< class MatrixT, class VectorT >

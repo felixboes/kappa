@@ -83,7 +83,7 @@ MatrixField< CoefficientT > MatrixField< CoefficientT > :: base_changes() const
 {
     if( num_rows == 0 || diagonal.size() == 0 )
     {
-        return ThisType();
+        return ThisType(num_rows, num_cols);
     }
     
     ThisType the_base_changes( num_rows, diagonal.size() );
@@ -122,7 +122,7 @@ MatrixField< CoefficientT > MatrixField< CoefficientT > :: triangular_shape() co
 {
     if( num_rows == 0 || diagonal.size() == 0 )
     {
-        return ThisType();
+        return ThisType(num_rows, num_cols);
     }
     
     // prepare fast access to the rows storing a diagonal entry.
