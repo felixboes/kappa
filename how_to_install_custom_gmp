@@ -1,32 +1,33 @@
 1) Download gmp 6.0.0 (or whatever version you prefere) e.g.
-    wget https://gmplib.org/download/gmp/gmp-6.0.0a.tar.bz2
+     wget https://gmplib.org/download/gmp/gmp-6.0.0a.tar.bz2
 
 2) Unpack the library somewhere. If you downloaded the *.lz version you might want to install lzip first.
-    tar -xf gmp-6.0.0a.tar.bz2
-    cd gmp-6.0.0a.tar.bz2
+     tar -xf gmp-6.0.0a.tar.bz2
+     cd gmp-6.0.0a.tar.bz2
 
 3) Configure the library. You want c++ support. Inorder to use it only for the kappa project, install it into the kappa directory.
-    ./configure --enable-cxx --prefix=/path/to/kappa
+   If a package is missing (like m4 on some ubuntu versions) you have to install them (e.g. on some ubuntu versions: sudo apt-get install m4)
+     ./configure --enable-cxx --prefix=/path/to/kappa
 
 4) Build the library
-    make
+     make
 
 5) Test the library
-    make test
+     make check
 
 6) Optimize the library
-    cd tune
-    make tune
-    cd ../
+     cd tune
+     make tune
+     cd ../
 
 7) Install the library
-    make install
+     make install
 
 8) Moreover install tcmalloc (as super user).  The following lines depend on your linux distro. I have debian 7.
-    apt-get install libgoogle-perftools-dev libtcmalloc-minimal4
+     apt-get install libgoogle-perftools-dev
 
 9) compile the kappa project with advanced optimization options.
-    cd /path/to/kappa
-    make clean
-    make ADV_OPTIMIZATION=1 compute_...
+     cd /path/to/kappa
+     make clean
+     make ADV_OPTIMIZATION=1 compute_...
 
