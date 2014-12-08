@@ -286,6 +286,7 @@ int main( int argc, char** argv )
     
     std::cout << "Program version: " << program_version_by_git << std::endl
               << "Date: " << current_date() << std::endl
+              << "GMP Version: " << gmp_version << std::endl
               << std::endl;
     
 //    std::cout << "Rational computations." << std::endl;
@@ -328,7 +329,7 @@ int main( int argc, char** argv )
 //    cohomology_generators<Q>( 2, 0, 6);
 //    cohomology_generators<Q>( 2, 0, 5);
 
-    test_z_candidates<Q>();
+    //test_z_candidates<Q>();
     
     return 0;
 }

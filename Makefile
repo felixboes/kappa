@@ -2,7 +2,7 @@ LANG = en_US.UTF-8
 
 CXXFLAGS      := -O3 -std=c++11 -D_GLIBCXX_USE_NANOSLEEP \
                  -Wextra -Wall -Wno-long-long -pedantic-errors
-LIBS          := -lgmpxx -lgmp -lpthread \
+LIBS          := -lpthread \
                  -lboost_filesystem -lboost_system -lboost_iostreams \
                  -lboost_serialization -lboost_program_options \
                  -lboost_date_time
@@ -13,6 +13,14 @@ EXCLUDE       := test_ version
 .DEFAULT_GOAL := compute_css
 
 EXECUTE_BEFORE_BUILD_CHEAT := $(shell echo "const char* program_version_by_git = \"$(shell git rev-parse HEAD 2>/dev/null)\";" > kappa/version.cpp)
+
+ifdef ADV_OPTIMIZATION
+LIBS          += -ltcmalloc lib/libgmpxx.a lib/libgmp.a
+INCL          := -I. -I./include/
+else
+LIBS          += -lgmpxx -lgmp
+INCL          := -I.
+endif
 
 ifndef CXX
 CXX           := g++
@@ -34,7 +42,6 @@ ifeq ($(shell expr `doxygen --version` \>= 1.8.7),1)
 DOXYGENFLAGS  := $(DOXYGENFLAGS) -d Validate
 endif
 
-INCL      := -I.
 override BUILDDIR := $(strip $(BUILDDIR))
 CXXSRC    := $(filter-out $(foreach d,$(SRCDIRS), $(foreach e,$(EXCLUDE), $(d)/$(e)%.$(EXT))), $(foreach d,$(SRCDIRS), $(wildcard $(d)/*.$(EXT))))
 CXXOBJ    := $(patsubst %,build/%, $(CXXSRC:.$(EXT)=.o))

@@ -38,6 +38,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     }         
     std::cout << std::endl
               << "Program version: " << program_version_by_git << std::endl
+              << "GMP Version: " << gmp_version << std::endl
               << "Date: " << current_date() << std::endl
               << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
@@ -56,6 +57,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     }
     ofs       << std::endl
               << "Program version: " << program_version_by_git << std::endl
+              << "GMP Version: " << gmp_version << std::endl
               << "Date: " << current_date() << std::endl
               << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
