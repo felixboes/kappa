@@ -74,7 +74,12 @@ public:
     ThisType& operator*=( const CoefficientType& argument );
     
     /**
-     * @returns true iff the vector is zero.
+     *  @returns the number of non vanishing entries.
+    **/
+    size_t number_non_vanishing_entries() const;
+    
+    /**
+     *  @returns true iff the vector is zero.
     **/
     bool is_zero() const;
     

@@ -41,6 +41,7 @@ void cohomology_generators( const uint32_t g, const uint32_t m, const int32_t p 
         if( c.is_zero() == false )
         {
             std::cout << "Chain = " << v << std::endl
+                      << "The number of affiliated cells is " << v.number_non_vanishing_entries() << std::endl
                       << "The chain is " << ( matrix_vector_product_vanishes(vanishing_test, v) == true ? "indeed " : "NOT " ) << "a cycle." << std::endl
                       << "Its class it " << c << std::endl
                       << std::endl;
@@ -242,6 +243,43 @@ void test_z()
     test_<CoefficientT>( "z", 2, 0, 3, list );
 }
 
+template< class CoefficientT >
+void test_z_candidates()
+{
+    std::vector<int> v_1 = {-1, -1,  1,  0,  1,  0,  0,  0,  1,  0,  1,  0, -1,  0,  0,  0,  0,  0,  1,  0, -1,  2,  0,  0,  1,  0,  2,  0,  1,  0,  0,  0,  0,  2,  1,  1, -1,  0,  0,  0,  0,  1,  0,  0,  1,  0,  0, -1,  0,  0,  0,  1,  0,  1,  0,  1,  0,  0,  0,  0, -1,  0,  0,  0,  0,  0,  0,  0,  0,  0, -1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0};
+    std::vector<int> v_2 = { 0,  0,  1,  0,  1,  1,  0,  0,  0,  0,  1,  0, -1, -1,  1,  0,  0,  0,  1,  0, -2,  0,  0,  1,  0,  0,  2,  0,  1, -1,  1,  0,  0,  0,  0,  1,  0,  0,  0, -2,  0,  1,  0,  0,  0, -1,  0,  0,  0,  0,  0,  0,  1,  0,  0,  1,  0,  1,  0,  1,  0,  0,  0,  1,  0,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  1,  1,  0, -1,  0,  0,  1,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, -1,  0,  0, -1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0};
+    
+    VectorField< CoefficientT > c_1(v_1.size());
+    VectorField< CoefficientT > c_2(v_2.size());
+    
+    MonoBasis base = load_basis(2,0,5);
+    
+    for( size_t i = 0; i < v_1.size(); ++i )
+    {
+        c_1(i) = v_1[i];
+        c_2(i) = v_2[i];
+    }
+    
+    std::cout << "Print cells of the first vector. There are " << c_1.number_non_vanishing_entries() << " cells involved." << std::endl;
+    for( const auto& it : base.basis )
+    {
+        if( c_1.at(it.id) != CoefficientT(0) )
+        {
+            std::cout << std::setw(4) << c_1.at(it.id) << " * " << it << std::endl;
+        }
+    }
+    
+    std::cout << "Print cells of the second vector. There are " << c_2.number_non_vanishing_entries() << " cells involved." << std::endl;
+    for( const auto& it : base.basis )
+    {
+        if( c_2.at(it.id) != CoefficientT(0) )
+        {
+            std::cout << std::setw(4) << c_2.at(it.id) << " * " << it << std::endl;
+        }
+    }
+    
+}
+
 int main( int argc, char** argv )
 {
     std::cout.setf(std::ios::unitbuf);
@@ -284,11 +322,13 @@ int main( int argc, char** argv )
 //    test_dd<Zm>();
 //    test_cd<Zm>();
 
-    cohomology_generators<Q>( 0, 2, 3);
-    cohomology_generators<Q>( 1, 0, 4);
-    cohomology_generators<Q>( 1, 0, 3);
-    cohomology_generators<Q>( 2, 0, 6);
-    //cohomology_generators<Q>( 2, 0, 5);
+//    cohomology_generators<Q>( 0, 2, 3);
+//    cohomology_generators<Q>( 1, 0, 4);
+//    cohomology_generators<Q>( 1, 0, 3);
+//    cohomology_generators<Q>( 2, 0, 6);
+//    cohomology_generators<Q>( 2, 0, 5);
+
+    test_z_candidates<Q>();
     
     return 0;
 }

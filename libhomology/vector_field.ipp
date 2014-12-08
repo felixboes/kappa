@@ -53,6 +53,21 @@ VectorField< CoefficientT >& VectorField< CoefficientT >::operator*=( const Coef
 }
 
 template< class CoefficientT >
+size_t VectorField< CoefficientT > :: number_non_vanishing_entries() const
+{
+    size_t res(0);
+    const CoefficientT zero(0);
+    for( const auto& it : data )
+    {
+        if( it != zero )
+        {
+            ++res;
+        }
+    }
+    return res;
+}
+
+template< class CoefficientT >
 bool VectorField< CoefficientT > :: is_zero() const
 {
     const CoefficientT zero(0);
