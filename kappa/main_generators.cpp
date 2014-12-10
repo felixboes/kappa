@@ -259,7 +259,7 @@ void test_z_candidates()
         c_1(i) = v_1[i];
         c_2(i) = v_2[i];
     }
-    
+
     std::cout << "Print cells of the first vector. There are " << c_1.number_non_vanishing_entries() << " cells involved." << std::endl;
     for( const auto& it : base.basis )
     {
@@ -277,7 +277,47 @@ void test_z_candidates()
             std::cout << std::setw(4) << c_2.at(it.id) << " * " << it << std::endl;
         }
     }
+}
+
+template< class CoefficientT >
+void test_z_candidates_tex()
+{
+    std::vector<int> v_1 = {-1, -1,  1,  0,  1,  0,  0,  0,  1,  0,  1,  0, -1,  0,  0,  0,  0,  0,  1,  0, -1,  2,  0,  0,  1,  0,  2,  0,  1,  0,  0,  0,  0,  2,  1,  1, -1,  0,  0,  0,  0,  1,  0,  0,  1,  0,  0, -1,  0,  0,  0,  1,  0,  1,  0,  1,  0,  0,  0,  0, -1,  0,  0,  0,  0,  0,  0,  0,  0,  0, -1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0};
+    std::vector<int> v_2 = { 0,  0,  1,  0,  1,  1,  0,  0,  0,  0,  1,  0, -1, -1,  1,  0,  0,  0,  1,  0, -2,  0,  0,  1,  0,  0,  2,  0,  1, -1,  1,  0,  0,  0,  0,  1,  0,  0,  0, -2,  0,  1,  0,  0,  0, -1,  0,  0,  0,  0,  0,  0,  1,  0,  0,  1,  0,  1,  0,  1,  0,  0,  0,  1,  0,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  1,  1,  0, -1,  0,  0,  1,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, -1,  0,  0, -1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0};
     
+    VectorField< CoefficientT > c_1(v_1.size());
+    VectorField< CoefficientT > c_2(v_2.size());
+    
+    MonoBasis base = load_basis(2,0,5);
+    
+    for( size_t i = 0; i < v_1.size(); ++i )
+    {
+        c_1(i) = v_1[i];
+        c_2(i) = v_2[i];
+    }
+    
+    std::cout << tex_preamble();
+    std::cout << "Print cells of the first vector. There are " << c_1.number_non_vanishing_entries() << " cells involved." << std::endl << std::endl;
+    for( const auto& it : base.basis )
+    {
+        if( c_1.at(it.id) != CoefficientT(0) )
+        {
+            std::cout << tex_cell(it);
+        }
+    }
+    
+    std::cout << std::endl;
+    
+    std::cout << "Print cells of the second vector. There are " << c_2.number_non_vanishing_entries() << " cells involved." << std::endl << std::endl;
+    for( const auto& it : base.basis )
+    {
+        if( c_2.at(it.id) != CoefficientT(0) )
+        {
+            std::cout << tex_cell(it);
+        }
+    }
+    
+    std::cout << tex_end();
 }
 
 int main( int argc, char** argv )
@@ -326,10 +366,11 @@ int main( int argc, char** argv )
 //    cohomology_generators<Q>( 0, 2, 3);
 //    cohomology_generators<Q>( 1, 0, 4);
 //    cohomology_generators<Q>( 1, 0, 3);
-//    cohomology_generators<Q>( 2, 0, 6);
-//    cohomology_generators<Q>( 2, 0, 5);
+    cohomology_generators<Q>( 2, 0, 6);
+    cohomology_generators<Q>( 2, 0, 5);
 
-    //test_z_candidates<Q>();
+    test_z_candidates<Q>();
+    test_z_candidates_tex<Q>();
     
     return 0;
 }
