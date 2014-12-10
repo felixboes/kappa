@@ -117,6 +117,8 @@ VectorField< CoefficientT > VectorField< CoefficientT > :: homology_class(
     apply_base_changes_kernel( base_changes_kernel, v );
     apply_base_changes_image ( base_changes_image, v );
     
+    //std::cout << v << std::endl;
+    
     // Prepare homology class.
     if( image_diagonal.size() > dim - kernel_diagonal.size() )
     {

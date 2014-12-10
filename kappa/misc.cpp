@@ -290,9 +290,10 @@ std::string tex_preamble()
 {
     std::stringstream tex;
     tex << "\\documentclass[paper=a4, fontsize=11pt, english]{scrreprt}" << std::endl
+        << "\\usepackage{amsmath,amssymb,amsthm,amsfonts,amsbsy,latexsym}" << std::endl
         << "\\usepackage{tikz}" << std::endl
-        << "\\usepackage[landscape]{geometry}" << std::endl
-        << "\\linespread{3}" << std::endl
+        << "\\usepackage[landscape, left=1cm, right=1cm, top=1cm, bottom=1cm]{geometry}" << std::endl
+        << "\\linespread{5}" << std::endl
         << "\\setlength{\\parindent}{0pt}" << std::endl
         << "\\begin{document}" << std::endl;
     
