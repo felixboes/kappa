@@ -285,3 +285,45 @@ double current_memory_usage_in_mb()
    proc_stat.close();
    return vsize / 1024.0 / 1024.0;
 }
+
+std::string tex_preamble()
+{
+    std::stringstream tex;
+    tex << "\\documentclass[paper=a4, fontsize=11pt, english]{scrreprt}" << std::endl
+        << "\\usepackage{tikz}" << std::endl
+        << "\\usepackage[landscape]{geometry}" << std::endl
+        << "\\linespread{3}" << std::endl
+        << "\\setlength{\\parindent}{0pt}" << std::endl
+        << "\\begin{document}" << std::endl;
+    
+    return tex.str();
+}
+
+std::string tex_cell( const Tuple& cell )
+{
+    const int32_t h = cell.norm();
+    const int32_t p = cell.p;
+    
+    std::stringstream tex;
+    tex << "\\tikz[baseline={([yshift=-2.5pt]current bounding box.center)}, x=15pt, y=7pt, every node/.style={shape=circle, fill=black, inner sep=.8pt}]{" << std::endl
+        << "    \\foreach \\y in {1,...," << p <<"}" << std::endl
+        << "    {" << std::endl
+        << "        \\draw (-0.5, \\y) -- (" << h-1 << ".5, \\y);" << std::endl
+        << "    }" << std::endl
+        << "    \\draw[color=black!50] (-0.5,.7) -- (" << h-1 << ".5,.7) -- ("<< h-1 << ".5, "<< p << ".3) -- (-0.5, " << p << ".3) -- (-0.5, .7);" << std::endl;
+    for( int32_t i = 1; i <= h; ++i )
+    {
+    tex << "    \\draw (" << h-i << "," << (int32_t)cell.at(i).first << ") node {} -- (" << h-i << "," << (int32_t)cell.at(i).second << ") node {};" << std::endl;
+    }
+    tex << "}" << std::endl;
+    
+    return tex.str();
+}
+
+std::string tex_end()
+{
+    std::stringstream tex;
+    tex << "\\end{document}" << std::endl;
+    
+    return tex.str();
+}

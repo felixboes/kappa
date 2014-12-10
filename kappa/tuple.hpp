@@ -130,6 +130,11 @@ public:
     Transposition& operator[](const size_t n);
 
     /**
+     *  Access the \f$ i \f$-th Transposition of the Tuple (const version).
+     */
+    const Transposition& at(const size_t n) const;
+    
+    /**
      *  @return Returns the norm (i.e. the number of transpositions).
      */
     int32_t norm() const;
@@ -207,6 +212,8 @@ public:
      */
     std::map< uint8_t, int8_t > orientation_sign() const;
     
+    
+    
     /**
      *  Consider a Tuple as radial cell.
      */ 
@@ -250,11 +257,6 @@ protected:
      *  Access the j-th Transposition.
      */
     Transposition& at(const size_t j);
-    
-    /**
-     *  Access the j-th Transposition.
-     */
-    const Transposition& at(const size_t j) const;
     
     /**
      *  @returns the cycle 1 -> 2 -> ... -> p-1 -> p -> 1.

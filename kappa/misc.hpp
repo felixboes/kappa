@@ -5,9 +5,12 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
+
+#include "tuple.hpp"
 
 /**
  *  @returns true iff the file exists.
@@ -43,6 +46,24 @@ std::string current_date();
  *  @returns the current memory usage in mb.
  */ 
 double current_memory_usage_in_mb();
+
+
+// Functions to print cells.
+/**
+ *  @returns the preamble of the tex file.
+**/
+std::string tex_preamble();
+
+/**
+ *  @returns the tex code for a given cell.
+**/
+std::string tex_cell( const Tuple& cell );
+
+/**
+ *  @returns the end of the tex file.
+**/
+std::string tex_end();
+ 
 
 // Three template functions that are used to print tuples nicely.
 template < size_t n, typename... T >

@@ -153,7 +153,7 @@ uint32_t Tuple::get_max_boundary_offset()
     return max_boundary_offset;
 }
 
-Transposition& Tuple :: at(const size_t n)
+Transposition & Tuple :: at(const size_t n)
 {
     return rep[n-1];
 }
