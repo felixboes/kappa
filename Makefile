@@ -15,6 +15,7 @@ EXCLUDE       := test_ version
 EXECUTE_BEFORE_BUILD_CHEAT := $(shell echo "const char* program_version_by_git = \"$(shell git rev-parse HEAD 2>/dev/null)\";" > kappa/version.cpp)
 
 ifdef ADV_OPTIMIZATION
+CXXFLAGS      += -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free
 LIBS          += -ltcmalloc lib/libgmpxx.a lib/libgmp.a
 INCL          := -I. -I./include/
 else
