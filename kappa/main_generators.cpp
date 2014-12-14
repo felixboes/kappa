@@ -77,7 +77,7 @@ void cohomology_generators_tex( const uint32_t g, const uint32_t m, const int32_
         auto c = v.homology_class( kernel, image );
         if( c.is_zero() == false )
         {
-            std::cout << "The following chain represents the class " << c << " $\\in H_3(\\mathfrak M_{2,1}^0; \\mathbb Z)$\\\\" << std::endl;
+            std::cout << "The following chain represents the class " << c << " $\\in H_3(\\mathfrak M_{2,1}^0; \\mathbb K)$\\\\" << std::endl;
             
             for( const auto& it : basis.basis )
             {
@@ -204,6 +204,15 @@ void test_d()
 }
 
 template< class CoefficientT >
+void test_d_tex()
+{
+    Tuple d(3,2);
+    d[1] = Transposition( 2, 1 );
+    d[2] = Transposition( 3, 1 );
+    std::cout << tex_cell(d);    
+}
+
+template< class CoefficientT >
 void test_dd()
 {
     Tuple dd(6,4);
@@ -212,6 +221,17 @@ void test_dd()
     dd[3] = Transposition( 5, 4 );
     dd[4] = Transposition( 6, 4 );
     test_<CoefficientT>( "d^2", 2, 0, 2, dd );
+}
+
+template< class CoefficientT >
+void test_dd_tex()
+{
+    Tuple dd(6,4);
+    dd[1] = Transposition( 2, 1 );
+    dd[2] = Transposition( 3, 1 );
+    dd[3] = Transposition( 5, 4 );
+    dd[4] = Transposition( 6, 4 );
+    std::cout << tex_cell(dd);
 }
 
 template< class CoefficientT >
@@ -446,10 +466,15 @@ int main( int argc, char** argv )
 //    cohomology_generators<Q>( 1, 0, 4);
 //    cohomology_generators<Q>( 1, 0, 3);
     //cohomology_generators<Q>( 2, 0, 6);
-    cohomology_generators_tex<Q>( 2, 0, 5);
+    //cohomology_generators_tex<Q>( 2, 0, 5);
 
     //test_z_candidates<Q>();
     //test_z_candidates_tex<Q>();
+    
+    std::cout << tex_preamble();
+    test_d_tex<Q>();
+    test_dd_tex<Q>();
+    std::cout << tex_end();
     
     return 0;
 }

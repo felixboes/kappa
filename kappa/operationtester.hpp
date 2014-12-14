@@ -142,7 +142,20 @@ public:
      */
     VectorType product( const MonoIndex& idx_v, const VectorType& v, const MonoIndex& idx_w, const VectorType& w );
     
+    /**
+     *  @returns Q(v).
+    **/
+    VectorType Q( const MonoIndex& idx_v, const VectorType& v );
     
+    /**
+     *  compute and add Q of a single tuple to a given vector.
+    **/
+    void compute_and_add_Q( const CoefficientType& c, const Tuple& t, VectorType v);
+    
+    /**
+     *  compute and add \f$\kappa^\ast\f$ of a single tuple to a given vector.
+    **/
+    compute_and_add_kappa_dual( const CoefficientType& c, const Tuple& t, VectorType v);
 //protected:
     std::string coefficient_prefix;
     std::map< MonoIndex, MonoBasis > basis;

@@ -401,3 +401,36 @@ typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< 
     
     return vect_prod;
 }
+
+template< class MatrixComplex, class VectorT >
+typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< MatrixComplex, VectorT > :: Q( const MonoIndex& idx, const VectorType& v )
+{
+    MonoIndex idx_res( std::get<0>(idx), 2 * std::get<1>(idx), 2 * std::get<2>(idx), 2 * std::get<3> - 1 );
+    load_basis(idx_res, false);
+    load_basis(idx, false);
+    size_t dim_res = dim(idx_res);
+    VectorType res( dim_res );
+    const CoefficientType zero(0);
+    const auto basis_v( basis.at( idx ).basis );
+    
+    for( const auto& basis_element : basis_v )
+    {
+        if( v( basis_v( basis_element ) ) != zero )
+        {
+            compute_and_add_Q( basis_v.at(c), basis_element, v);
+        }
+    }
+    
+}
+
+template< class MatrixComplex, class VectorT >
+void OperationTester< MatrixComplex, VectorT > :: compute_and_add_Q( const CoefficientType& c, const Tuple& t, VectorType v)
+{
+    
+}
+
+template< class MatrixComplex, class VectorT >
+void OperationTester< MatrixComplex, VectorT > :: compute_and_add_kappa_dual( const CoefficientType& c, const Tuple& t, VectorType v)
+{
+    
+}
