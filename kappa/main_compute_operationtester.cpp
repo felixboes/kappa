@@ -65,62 +65,6 @@ void test_member_methods()
     std::cout << Opt.diagonal[MonoIndex(true,2,2,5)] << std::endl;
 }
 
-void test_matrix_vector_stuff()
-{
-    OperationTesterQ Opt("q");
-    OperationTesterQ::MonoIndex idx(true, 0, 2, 4);
-    Opt.load_basis(idx);
-    std::cout << Opt.basis[idx] << std::endl;
-    
-    Opt.load_diagonal(idx);
-    std::cout << Opt.diagonal[idx] << std::endl;
-    
-    Opt.load_base_changes(idx);
-    std::cout << Opt.base_changes[idx] << std::endl;
-    
-    Opt.load_triangular(idx);
-    std::cout << Opt.triangular[idx] << std::endl;
-    
-    VectorQ v(2);
-    v(0) = 1;
-    
-    VectorQ w(2);
-    w(1) = 1;
-    
-    std::cout << v << std::endl;
-    std::cout << w << std::endl << std::endl;
-    
-    apply_base_changes( Opt.base_changes[idx], v );
-    apply_base_changes( Opt.base_changes[idx], w );
-    
-    std::cout << v << std::endl;
-    std::cout << w << std::endl << std::endl;
-    
-    std::cout << Opt.triangular[idx] << std::endl;
-    std::cout << Opt.diagonal[idx] << std::endl;
-    
-    VectorQ c(2);
-    c(0) = 1;
-    c(1) = 1;
-    std::cout << "The vector " << c << " is " << (Opt.vector_is_cycle( idx, c ) == true ? "indeed " : "not " ) << "a cycle." << std::endl;
-    std::cout << matrix_vector_product( Opt.triangular[idx], c ) << std::endl;
-    
-    Opt.forget_triangular(idx);
-    
-    VectorQ d(2);
-    d(0) = 0;
-    d(1) = 1;
-    std::cout << "The vector " << d << " is " << (Opt.vector_is_cycle( idx, d ) == true ? "indeed " : "not " ) << "a cycle." << std::endl;
-    std::cout << matrix_vector_product( Opt.triangular[idx], d ) << std::endl;
-    
-    Opt.load_basis(true, 0,2,3);
-    Opt.load_triangular(true, 0, 2, 3);
-    std::cout << Opt.triangular[ OperationTesterQ::MonoIndex(true,0,2,3) ] << std::endl;
-    
-    std::cout << "The class of " << c << " is " << Opt.vector_homology_class( idx, c ) << "." << std::endl;
-    std::cout << "The class of " << d << " is " << Opt.vector_homology_class( idx, d ) << "." << std::endl;
-}
-
 void test_products()
 {
     OperationTesterQ Opt("q");
@@ -149,6 +93,57 @@ void test_products()
     std::cout << v_1 << " * " << v_2 << " = " << Opt.product(idx, v_1, idx, v_2) << std::endl;
 }
 
+void test_kappa_dual()
+{
+    OperationTesterQ Opt("q");
+    OperationTesterQ::MonoIndex idx(true, 0, 1, 2);
+    OperationTesterQ::MonoIndex idx_res(true, 0, 2, 4);
+    Opt.load_basis( idx );
+    Opt.load_basis( idx_res );
+    
+    Tuple t(2);
+    t[1] = Transposition( 4, 3 );
+    t[2] = Transposition( 2, 1 );
+    std::cout << t << std::endl;
+    
+    VectorQ v(2);
+    std::vector< size_t > s;
+    s.push_back(1);
+   
+    Q c(1);
+    Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
+    
+    t[1] = Transposition( 4, 2 );
+    t[2] = Transposition( 3, 1 );
+    std::cout << t << std::endl;
+    Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
+    
+    t[1] = Transposition( 4, 1 );
+    t[2] = Transposition( 3, 2 );
+    std::cout << t << std::endl;
+    Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
+    
+    t[1] = Transposition( 3, 2 );
+    t[2] = Transposition( 3, 1 );
+    std::cout << t << std::endl;
+    Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
+    
+    t[1] = Transposition( 3, 2 );
+    t[2] = Transposition( 2, 1 );
+    std::cout << t << std::endl;
+    Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
+    
+    t[1] = Transposition( 3, 1 );
+    t[2] = Transposition( 2, 1 );
+    std::cout << t << std::endl;
+    Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
+    
+    t[1] = Transposition( 2, 1 );
+    t[2] = Transposition( 3, 1 );
+    std::cout << t << std::endl;
+    Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
+}
+
 int main( int argc , char** argv )
 {
     if( argc > 1 )
@@ -159,11 +154,11 @@ int main( int argc , char** argv )
         }
         else if ( atoi(argv[1]) == 2 )
         {
-            test_matrix_vector_stuff();
+            test_products();
         }
         else if( atoi(argv[1]) == 3 )
         {
-            test_products();
+            test_kappa_dual();
         }
         else
         {

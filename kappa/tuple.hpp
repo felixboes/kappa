@@ -135,6 +135,11 @@ public:
     const Transposition& at(const size_t n) const;
     
     /**
+     *  Access the j-th Transposition.
+     */
+    Transposition& at(const size_t j);
+    
+    /**
      *  @return Returns the norm (i.e. the number of transpositions).
      */
     int32_t norm() const;
@@ -189,7 +194,7 @@ public:
     /**
      *  @returns true iff the tuple is monotone.
      */
-    bool monotone();
+    bool monotone() const;
     
     /**
      *  Applies the function \f$ f_i \f$ for \f$ 1 \le i < h \f$ and returns true iff the norm is preserved thereby.
@@ -253,11 +258,6 @@ public:
     size_t id;  ///< The index of this Tuple in the basis of the MonoComplex.
 
 protected:
-    /**
-     *  Access the j-th Transposition.
-     */
-    Transposition& at(const size_t j);
-    
     /**
      *  @returns the cycle 1 -> 2 -> ... -> p-1 -> p -> 1.
      */

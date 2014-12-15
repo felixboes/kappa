@@ -23,6 +23,10 @@ LIBS          += -lgmpxx -lgmp
 INCL          := -I.
 endif
 
+ifdef ENABLE_KAPPA_DEBUG
+CXXFLAGS      += -g
+endif
+
 ifndef CXX
 CXX           := g++
 endif

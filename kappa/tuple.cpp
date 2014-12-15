@@ -288,7 +288,7 @@ int32_t Tuple::num_clusters() const
     return boost::connected_components(G, &components[0]) - min_symbol;
 }
 
-bool Tuple :: monotone()
+bool Tuple :: monotone() const
 {
     // A tuple is monotone iff the sequence of all at(i) is monotone.
     for( int32_t i = 1; i <= norm() - 1; i++ )

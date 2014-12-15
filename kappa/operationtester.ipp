@@ -407,19 +407,25 @@ typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< 
     const MonoIndex& idx,
     const VectorType& v )
 {
-    MonoIndex idx_res( std::get<0>(idx), 2 * std::get<1>(idx), 2 * std::get<2>(idx), 2 * std::get<3> - 1 );
+    const uint32_t& g = std::get<1>(idx);
+    const uint32_t& m = std::get<2>(idx);
+    const int32_t& p = std::get<3>(idx);
+    
+    MonoIndex idx_res( std::get<0>(idx), 2 * g, 2 * m, 2 * p - 1 );
     load_basis(idx_res, false);
     load_basis(idx, false);
     size_t dim_res = dim(idx_res);
     VectorType res( dim_res );
     const CoefficientType zero(0);
-    const auto basis_v( basis.at( idx ).basis );
+    const auto& basis_v  ( basis.at( idx ) );
+    const auto& basis_res( basis.at( idx_res ) );
     
-    for( const auto& basis_element : basis_v )
+    for( const auto& basis_element : basis_v.basis )
     {
-        if( v( basis_v( basis_element ) ) != zero )
+        const auto& c = v( basis_v.id_of( basis_element ) );
+        if( c != zero )
         {
-            compute_and_add_Q( basis_v.at(c), basis_element, basis_res, res);
+            compute_and_add_Q( c, basis_element, basis_res, res);
         }
     }
     
@@ -457,58 +463,78 @@ void OperationTester< MatrixComplex, VectorT > :: compute_and_add_kappa_dual_rec
     // End of kappa^\ast sequence.
     if( i == s.size() )
     {
-        if( i % 2 == 0 )
+        if( t.monotone() == false )
         {
-            res( b.id_of(t) ) += 1;
+            std::cout << "Adding " << t << " with coefficient 0; is not monotone." << std::endl;
+            return;
         }
         else
         {
-            res( b.id_of(t) ) -= 1;
+            std::cout << "Adding " <<t << " with coefficient " << ( i % 2 == 0 ? "" : "-" ) << c << std::endl;
+        }
+        
+        const auto j = b.id_of(t);
+        if( j < 0 )
+        {
+            std::cout << "The cell " << t << " is not a member of the basis." << std::endl;
+            return;
+        }
+        
+        if( i % 2 == 0 )
+        {
+            v( j ) += c;
+        }
+        else
+        {
+            v( j ) -= c;
         }
         return;
     }
     
+    // compare the mueta^\ast Lemma.
     const size_t s_i = s.at(i);
+    // case other then (1.1) - (2.2)
     if( t.at( s_i + 1 ).first >= t.at( s_i ).first )
     {
         return;
     }
-    
-    // supp(tau_{s_i + 1}) \cap supp(tau_{s_i}) = emptyset
-    if( (t.at( s_i + 1 ).first  != t.at( s_i ).second) &&
+    // cases (1.1) - (1.3)
+    else if( (t.at( s_i + 1 ).first  != t.at( s_i ).second) &&
         (t.at( s_i + 1 ).second != t.at( s_i ).first ) &&
         (t.at( s_i + 1 ).second != t.at( s_i ).second) )
     {
-        compute_and_add_kappa_dual_rec( c, t, s, i+1, v );
+        compute_and_add_kappa_dual_rec( c, t, b, v, s, i+1);
         
         Tuple tmp = t;
-        std::swap( tmp( s_i + 1 ), tmp( s_i ) );
-        compute_and_add_kappa_dual_rec( c, tmp, s, i+1, v );
+        std::swap( tmp[ s_i + 1 ], tmp[ s_i ] );
+        compute_and_add_kappa_dual_rec( c, tmp, b, v, s, i+1);
     }
+    // case(2.1)
     else if( t.at( s_i ).second == t.at( s_i + 1 ).first )
     {
-        compute_and_add_kappa_dual_rec( c, t, s, i+1, v );
+        compute_and_add_kappa_dual_rec( c, t, b, v, s, i+1);
         
         Tuple tmp = t;
-        tmp( s_i + 1) = t.at( s_i );
-        tmp( s_i ) = Transposition( t.at(s_i).first, t.at(s_i + 1).second );
-        compute_and_add_kappa_dual_rec( c, tmp, s, i+1, v );
+        tmp[ s_i + 1 ] = t.at( s_i );
+        tmp[ s_i ] = Transposition( t.at(s_i).first, t.at(s_i + 1).second );
+        compute_and_add_kappa_dual_rec( c, tmp, b, v, s, i+1);
         
-        tmp( s_i + 1 ) = tmp.at( s_i );
-        tmp( s_i ) = t.at(s_i + 1);
-        compute_and_add_kappa_dual_rec( c, tmp, s, i+1, v );
+        tmp[ s_i + 1 ] = tmp.at( s_i );
+        tmp[ s_i ] = t.at(s_i + 1);
+        compute_and_add_kappa_dual_rec( c, tmp, b, v, s, i+1);
     }
+    // case(2.2)
     else
     {
-        compute_and_add_kappa_dual_rec( c, t, s, i+1, v );
+        compute_and_add_kappa_dual_rec( c, t, b, v, s, i+1);
         
         Tuple tmp = t;
-        tmp( s_i + 1 ) = Transposition( t.at(s_i).first, t.at(s_i + 1).first );
-        tmp( s_i ) = t.at( s_i + 1 );
-        compute_and_add_kappa_dual_rec( c, tmp, s, i+1, v );
+        tmp[ s_i + 1 ] = Transposition( t.at(s_i).first, t.at(s_i + 1).first );
+        tmp[ s_i ] = t.at( s_i + 1 );
+        compute_and_add_kappa_dual_rec( c, tmp, b, v, s, i+1);
         
-        tmp( s_i + 1 ) = t.at( s_i );
-        tmp( s_i ) = tmp.at( s_i + 1 );
-        compute_and_add_kappa_dual_rec( c, tmp, s, i+1, v );
+        tmp[ s_i ] = tmp.at( s_i + 1 );
+        tmp[ s_i + 1 ] = t.at( s_i );
+        compute_and_add_kappa_dual_rec( c, tmp, b, v, s, i+1);
     }
 }
