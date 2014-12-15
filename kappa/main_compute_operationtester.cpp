@@ -142,6 +142,12 @@ void test_kappa_dual()
     t[2] = Transposition( 3, 1 );
     std::cout << t << std::endl;
     Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
+    
+    t = Tuple(3);
+    t[1] = Transposition( 5, 1 );
+    t[2] = Transposition( 3, 2 );
+    t[3] = Transposition( 4, 3 );
+    Opt.compute_and_add_kappa_dual(c, t, Opt.basis.at(idx_res), v);
 }
 
 int main( int argc , char** argv )

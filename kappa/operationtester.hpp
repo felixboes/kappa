@@ -4,6 +4,8 @@
 #include <string>
 #include <tuple>
 
+#include <boost/range/adaptor/reversed.hpp>
+
 #include "kappa.hpp"
 
 template< class MatrixComplex, class VectorT >

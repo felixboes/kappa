@@ -448,7 +448,36 @@ void OperationTester< MatrixComplex, VectorT > :: compute_and_add_kappa_dual(
     const MonoBasis& b,
     VectorType v )
 {
+    // iterate through all kappa dual sequences J = (j_k, \ldots, j_1).
+    // naive version.
+    // todo: Improve performence.
+    // here: We consider kappa^\ast sequences
+    //   J = ().(1,...,2-s_2).(2,...,3-s_3)...(h-1,...,h-s_h})
+    // with s_q <= q and counting
+    //   k \mapsto (s_q)_q   where   s_q = ( |_  k/(q-1)!  _| (mod q) )
     
+    const size_t h = t.norm();
+    for( size_t k = 0; k < factorial(h); ++k )
+    {
+        std::vector< size_t > kappa_dual_seq;
+        for( size_t q = h; q >= 2; --q )
+        {
+            const size_t s_q = ( k / factorial(q-1) ) % q;
+            for( size_t l = s_q; l >= 1; --l )
+            {
+                kappa_dual_seq.push_back( q - l );
+            }
+        }
+        
+        // compute and add kappa^\ast sequence.
+//        std::cout << "Computing ";
+//        for( const auto& it : boost::adaptors::reverse( kappa_dual_seq ) )
+//        {
+//            std::cout << it << " ";
+//        }
+//        std::cout << std::endl;
+        compute_and_add_kappa_dual_rec(c, t, b, v, kappa_dual_seq, 0);
+    }
 }
 
 template< class MatrixComplex, class VectorT >
@@ -465,12 +494,12 @@ void OperationTester< MatrixComplex, VectorT > :: compute_and_add_kappa_dual_rec
     {
         if( t.monotone() == false )
         {
-            std::cout << "Adding " << t << " with coefficient 0; is not monotone." << std::endl;
+//            std::cout << "Adding " << t << " with coefficient 0; is not monotone." << std::endl;
             return;
         }
         else
         {
-            std::cout << "Adding " <<t << " with coefficient " << ( i % 2 == 0 ? "" : "-" ) << c << std::endl;
+//            std::cout << "Adding " <<t << " with coefficient " << ( i % 2 == 0 ? "" : "-" ) << c << std::endl;
         }
         
         const auto j = b.id_of(t);
