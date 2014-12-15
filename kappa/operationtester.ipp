@@ -403,7 +403,9 @@ typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< 
 }
 
 template< class MatrixComplex, class VectorT >
-typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< MatrixComplex, VectorT > :: Q( const MonoIndex& idx, const VectorType& v )
+typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< MatrixComplex, VectorT > :: Q(
+    const MonoIndex& idx,
+    const VectorType& v )
 {
     MonoIndex idx_res( std::get<0>(idx), 2 * std::get<1>(idx), 2 * std::get<2>(idx), 2 * std::get<3> - 1 );
     load_basis(idx_res, false);
@@ -417,20 +419,96 @@ typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< 
     {
         if( v( basis_v( basis_element ) ) != zero )
         {
-            compute_and_add_Q( basis_v.at(c), basis_element, v);
+            compute_and_add_Q( basis_v.at(c), basis_element, basis_res, res);
         }
     }
     
 }
 
 template< class MatrixComplex, class VectorT >
-void OperationTester< MatrixComplex, VectorT > :: compute_and_add_Q( const CoefficientType& c, const Tuple& t, VectorType v)
+void OperationTester< MatrixComplex, VectorT > :: compute_and_add_Q(
+    const CoefficientType& c,
+    const Tuple& t,
+    const MonoBasis& b,
+    VectorType v )
 {
     
 }
 
 template< class MatrixComplex, class VectorT >
-void OperationTester< MatrixComplex, VectorT > :: compute_and_add_kappa_dual( const CoefficientType& c, const Tuple& t, VectorType v)
+void OperationTester< MatrixComplex, VectorT > :: compute_and_add_kappa_dual(
+    const CoefficientType& c,
+    const Tuple& t,
+    const MonoBasis& b,
+    VectorType v )
 {
     
+}
+
+template< class MatrixComplex, class VectorT >
+void OperationTester< MatrixComplex, VectorT > :: compute_and_add_kappa_dual_rec(
+    const CoefficientType& c,
+    const Tuple& t,
+    const MonoBasis& b,
+    VectorType v,
+    const std::vector<size_t> s,
+    const size_t i )
+{
+    // End of kappa^\ast sequence.
+    if( i == s.size() )
+    {
+        if( i % 2 == 0 )
+        {
+            res( b.id_of(t) ) += 1;
+        }
+        else
+        {
+            res( b.id_of(t) ) -= 1;
+        }
+        return;
+    }
+    
+    const size_t s_i = s.at(i);
+    if( t.at( s_i + 1 ).first >= t.at( s_i ).first )
+    {
+        return;
+    }
+    
+    // supp(tau_{s_i + 1}) \cap supp(tau_{s_i}) = emptyset
+    if( (t.at( s_i + 1 ).first  != t.at( s_i ).second) &&
+        (t.at( s_i + 1 ).second != t.at( s_i ).first ) &&
+        (t.at( s_i + 1 ).second != t.at( s_i ).second) )
+    {
+        compute_and_add_kappa_dual_rec( c, t, s, i+1, v );
+        
+        Tuple tmp = t;
+        std::swap( tmp( s_i + 1 ), tmp( s_i ) );
+        compute_and_add_kappa_dual_rec( c, tmp, s, i+1, v );
+    }
+    else if( t.at( s_i ).second == t.at( s_i + 1 ).first )
+    {
+        compute_and_add_kappa_dual_rec( c, t, s, i+1, v );
+        
+        Tuple tmp = t;
+        tmp( s_i + 1) = t.at( s_i );
+        tmp( s_i ) = Transposition( t.at(s_i).first, t.at(s_i + 1).second );
+        compute_and_add_kappa_dual_rec( c, tmp, s, i+1, v );
+        
+        tmp( s_i + 1 ) = tmp.at( s_i );
+        tmp( s_i ) = t.at(s_i + 1);
+        compute_and_add_kappa_dual_rec( c, tmp, s, i+1, v );
+    }
+    else
+    {
+        compute_and_add_kappa_dual_rec( c, t, s, i+1, v );
+        
+        Tuple tmp = t;
+        tmp( s_i + 1 ) = Transposition( t.at(s_i).first, t.at(s_i + 1).first );
+        tmp( s_i ) = t.at( s_i + 1 );
+        compute_and_add_kappa_dual_rec( c, tmp, s, i+1, v );
+        
+        tmp( s_i + 1 ) = t.at( s_i );
+        tmp( s_i ) = tmp.at( s_i + 1 );
+        compute_and_add_kappa_dual_rec( c, tmp, s, i+1, v );
+    }
 }

@@ -150,12 +150,14 @@ public:
     /**
      *  compute and add Q of a single tuple to a given vector.
     **/
-    void compute_and_add_Q( const CoefficientType& c, const Tuple& t, VectorType v);
+    void compute_and_add_Q( const CoefficientType& c, const Tuple& t, const MonoBasis& b, VectorType v );
     
     /**
      *  compute and add \f$\kappa^\ast\f$ of a single tuple to a given vector.
     **/
-    compute_and_add_kappa_dual( const CoefficientType& c, const Tuple& t, VectorType v);
+    compute_and_add_kappa_dual( const CoefficientType& c, const Tuple& t, const MonoBasis& b, VectorType v );
+    
+    compute_and_add_kappa_dual_rec( const CoefficientType& c, const Tuple& t, const MonoBasis& b, VectorType v, const std::vector<size_t> s, const size_t i );
 //protected:
     std::string coefficient_prefix;
     std::map< MonoIndex, MonoBasis > basis;
