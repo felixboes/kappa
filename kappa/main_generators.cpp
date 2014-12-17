@@ -423,10 +423,7 @@ int main( int argc, char** argv )
 {
     std::cout.setf(std::ios::unitbuf);
     
-    std::cout << "Program version: " << program_version_by_git << std::endl
-              << "GMP Version:     " << gmp_version << std::endl
-              << "Boost Version:   " << BOOST_VERSION / 100000 << "." << BOOST_VERSION / 100 % 1000 << "." << BOOST_VERSION % 100 << std::endl
-              << "Date:            " << current_date() << std::endl
+    std::cout << kappa_version()
               << std::endl;
     
 //    std::cout << "Rational computations." << std::endl;

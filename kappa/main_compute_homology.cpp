@@ -37,10 +37,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         }
     }         
     std::cout << std::endl
-              << "Program version: " << program_version_by_git << std::endl
-              << "GMP Version:     " << gmp_version << std::endl
-              << "Boost Version:   " << BOOST_VERSION / 100000 << "." << BOOST_VERSION / 100 % 1000 << "." << BOOST_VERSION % 100 << std::endl
-              << "Date:            " << current_date() << std::endl
+              << kappa_version()
               << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
               << "Cohomological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
@@ -57,10 +54,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         }
     }
     ofs       << std::endl
-              << "Program version: " << program_version_by_git << std::endl
-              << "GMP Version:     " << gmp_version << std::endl
-              << "Boost Version:   " << BOOST_VERSION / 100000 << "." << BOOST_VERSION / 100 % 1000 << "." << BOOST_VERSION % 100 << std::endl
-              << "Date:            " << current_date() << std::endl
+              << kappa_version()
               << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
               << "Cohomological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl

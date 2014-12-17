@@ -328,3 +328,13 @@ std::string tex_end()
     
     return tex.str();
 }
+
+std::string kappa_version()
+{
+    std::stringstream ret;
+    ret << "Program version: " << program_version_by_git << std::endl
+        << "GMP version:     " << gmp_version << std::endl
+        << "Boost version:   " << BOOST_VERSION / 100000 << "." << BOOST_VERSION / 100 % 1000 << "." << BOOST_VERSION % 100 << std::endl
+        << "Date:            " << current_date() << std::endl;
+    return ret.str();
+}
