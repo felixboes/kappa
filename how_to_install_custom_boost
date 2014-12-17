@@ -1,0 +1,19 @@
+1) Download boost 1.57.0 (or wharever version you prefere) e.g.
+     http://sourceforge.net/projects/boost/files/boost/1.57.0/boost_1_57_0.tar.bz2/download
+
+2) Unpack the library somewhere. If you downloaded the *.lz version you might want to install lzip first.
+     tar -xf boost_1_57_0.tar.bz2
+     cd boost_1_57_0.tar.bz2
+
+3) Configure and build the library. If you do not want to compile all packages, do not include the --with-liberay ...
+     ./bootstrap.sh --prefix=/path/to/kappa --with-libraries=filesystem,system,iostreams,serialization,program_options,date_time
+     ./b2 --prefix=/path/to/kappa --with-filesystem --with-system --with-iostreams --with-serialization --with-program_options --with-date_time install
+
+4) Compile the kappa project with advanced optimization options.
+     cd /path/to/kappa
+     make clean
+     make ADV_OPTIMIZATION=1 compute_...
+
+5) Before executing you program, you need to tell your OS where to find the shared libraries
+    export LD_LIBRARY_PATH=/path/to/kappa/lib/:$LD_LIBRARY_PATH
+    ./compute_...

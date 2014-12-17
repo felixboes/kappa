@@ -31,3 +31,7 @@
      make clean
      make ADV_OPTIMIZATION=1 compute_...
 
+10) Before executing you program, you need to tell your OS where to find the shared libraries
+    export LD_LIBRARY_PATH=/path/to/kappa/lib/:$LD_LIBRARY_PATH
+    ./compute_...
+
