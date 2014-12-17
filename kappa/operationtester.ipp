@@ -438,7 +438,69 @@ void OperationTester< MatrixComplex, VectorT > :: compute_and_add_Q(
     const MonoBasis& b,
     VectorType v )
 {
+    std::vector< size_t > slits;
+    const size_t h = t.norm();
+    size_t k = 2*h;
+    slits.push_back(k);
     
+    std::cout << t << std::endl;
+    while( k != 0 )
+    {
+        const size_t j = (k+1)/2;
+        const size_t a = ( 2*j - k == 1 ? t.at(j).first : t.at(j).second );
+        
+        std::cout << j << " -> " << a << std::endl;
+        
+        // search for slits on the same hight but below a (i.e. longer slits).
+        for( size_t l = j-1; l >= 1; --l )
+        {
+            if( a == t.at(l).first )
+            {
+                k = 2*l;
+                // [n3290: 6.1/1]: [..] The scope of a label is the function in which it appears. [..]
+                // Therefore we can use the name 'end_outer_loop'.
+                goto end_outer_loop;
+            }
+            else if( a == t.at(l).second )
+            {
+                k = 2*l-1;
+                goto end_outer_loop;
+            }
+        }
+        
+        // if a is the longest slit at the first line, we are done.
+        if( a == 1 )
+        {
+            k = 0;
+            goto end_outer_loop;
+        }
+        
+        // find the first slit below a.
+        for( size_t l = h; l > j; --l )
+        {
+            if( a-1 == t.at(l).first )
+            {
+                k = 2*l;
+                // [n3290: 6.1/1]: [..] The scope of a label is the function in which it appears. [..]
+                // Therefore we can use the name 'end_outer_loop'.
+                goto end_outer_loop;
+            }
+            else if( a-1 == t.at(l).second )
+            {
+                k = 2*l-1;
+                goto end_outer_loop;
+            }
+        }
+        
+        end_outer_loop:
+        slits.push_back(k);
+    }
+    
+    for( const auto& it : slits )
+    {
+        std::cout << it << " ";
+    }
+    std::cout << std::endl;
 }
 
 template< class MatrixComplex, class VectorT >
@@ -494,28 +556,21 @@ void OperationTester< MatrixComplex, VectorT > :: compute_and_add_kappa_dual_rec
     {
         if( t.monotone() == false )
         {
-//            std::cout << "Adding " << t << " with coefficient 0; is not monotone." << std::endl;
-            return;
-        }
-        else
-        {
-//            std::cout << "Adding " <<t << " with coefficient " << ( i % 2 == 0 ? "" : "-" ) << c << std::endl;
-        }
-        
-        const auto j = b.id_of(t);
-        if( j < 0 )
-        {
-            std::cout << "The cell " << t << " is not a member of the basis." << std::endl;
-            return;
-        }
-        
-        if( i % 2 == 0 )
-        {
-            v( j ) += c;
-        }
-        else
-        {
-            v( j ) -= c;
+            const auto j = b.id_of(t);
+            if( j < 0 )
+            {
+                std::cout << "Error: The cell " << t << " is not a member of the basis." << std::endl;
+                return;
+            }
+    
+            if( i % 2 == 0 )
+            {
+                v( j ) += c;
+            }
+            else
+            {
+                v( j ) -= c;
+            }
         }
         return;
     }

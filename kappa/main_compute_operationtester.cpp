@@ -143,15 +143,28 @@ void test_kappa_dual()
     std::cout << t << std::endl;
     Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
     
-    t = Tuple(3);
+    t[1] = Transposition( 2, 1 );
+    t[2] = Transposition( 3, 1 );
+    Opt.compute_and_add_Q(c,t,Opt.basis.at(idx_res),v);
+    
+    t = Tuple(5,3);
     t[1] = Transposition( 5, 1 );
     t[2] = Transposition( 3, 2 );
     t[3] = Transposition( 4, 3 );
     Opt.compute_and_add_kappa_dual(c, t, Opt.basis.at(idx_res), v);
+    
+    
+    t[1] = Transposition( 3, 1 );
+    t[2] = Transposition( 4, 2 );
+    t[3] = Transposition( 5, 3 );
+    Opt.compute_and_add_Q(c,t,Opt.basis.at(idx_res),v);
+    
+    
 }
 
 int main( int argc , char** argv )
 {
+    std::cout.setf(std::ios::unitbuf);
     if( argc > 1 )
     {
         if( atoi(argv[1]) == 1)
