@@ -464,6 +464,8 @@ void OperationTester< MatrixComplex, VectorT > :: compute_and_add_Q(
             else if( a == t.at(l).second )
             {
                 k = 2*l-1;
+                // [n3290: 6.1/1]: [..] The scope of a label is the function in which it appears. [..]
+                // Therefore we can use the name 'end_outer_loop'.
                 goto end_outer_loop;
             }
         }
@@ -472,11 +474,13 @@ void OperationTester< MatrixComplex, VectorT > :: compute_and_add_Q(
         if( a == 1 )
         {
             k = 0;
+            // [n3290: 6.1/1]: [..] The scope of a label is the function in which it appears. [..]
+            // Therefore we can use the name 'end_outer_loop'.
             goto end_outer_loop;
         }
         
         // find the first slit below a.
-        for( size_t l = h; l > j; --l )
+        for( size_t l = h; l >= 1; --l )
         {
             if( a-1 == t.at(l).first )
             {
@@ -488,6 +492,8 @@ void OperationTester< MatrixComplex, VectorT > :: compute_and_add_Q(
             else if( a-1 == t.at(l).second )
             {
                 k = 2*l-1;
+                // [n3290: 6.1/1]: [..] The scope of a label is the function in which it appears. [..]
+                // Therefore we can use the name 'end_outer_loop'.
                 goto end_outer_loop;
             }
         }
@@ -554,7 +560,7 @@ void OperationTester< MatrixComplex, VectorT > :: compute_and_add_kappa_dual_rec
     // End of kappa^\ast sequence.
     if( i == s.size() )
     {
-        if( t.monotone() == false )
+        if( t.monotone() == true )
         {
             const auto j = b.id_of(t);
             if( j < 0 )
