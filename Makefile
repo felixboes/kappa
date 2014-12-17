@@ -16,7 +16,11 @@ EXECUTE_BEFORE_BUILD_CHEAT := $(shell echo "const char* program_version_by_git =
 
 ifdef ADV_OPTIMIZATION
 CXXFLAGS      += -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free
-LIBS          += -ltcmalloc lib/libgmpxx.a lib/libgmp.a
+LIBS          := -ltcmalloc -lpthread \
+                 -L./lib/ \
+                 -lboost_filesystem -lboost_system -lboost_iostreams \
+                 -lboost_serialization -lboost_program_options \
+                 -lboost_date_time -lgmpxx -lgmp
 INCL          := -I. -I./include/
 else
 LIBS          += -lgmpxx -lgmp

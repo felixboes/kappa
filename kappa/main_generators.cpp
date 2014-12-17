@@ -463,16 +463,15 @@ int main( int argc, char** argv )
 //    cohomology_generators<Q>( 0, 2, 3);
 //    cohomology_generators<Q>( 1, 0, 4);
 //    cohomology_generators<Q>( 1, 0, 3);
-    //cohomology_generators<Q>( 2, 0, 6);
-    //cohomology_generators_tex<Q>( 2, 0, 5);
+    cohomology_generators<Q>( 2, 1, 4);
 
     //test_z_candidates<Q>();
     //test_z_candidates_tex<Q>();
     
-    std::cout << tex_preamble();
-    test_d_tex<Q>();
-    test_dd_tex<Q>();
-    std::cout << tex_end();
+//    std::cout << tex_preamble();
+//    test_d_tex<Q>();
+//    test_dd_tex<Q>();
+//    std::cout << tex_end();
     
     return 0;
 }
