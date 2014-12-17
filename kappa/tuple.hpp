@@ -192,6 +192,17 @@ public:
     int32_t num_clusters() const;
     
     /**
+     *  @returns a vector encoding the shuffle positions.
+     *  These are the slits occuring by traversing from top to bottom on the left hand side of the cell.
+     *  The last entry is a zero.
+     *  Here is a little example.
+     *  The cell \f$ \big(\ (3,1) \mid (2,1) \big) \f$ has four slits enumerated by their occurence in \f$ tau_j \f$ and their height.
+     *  More precisely the upper slit corresponding to \f$ \tau_j\f$ is \f$2j\f$ and the lower is \f$ 2j-1 \f$.
+     *  Here we tranverse the slits 4, 1, 3, 2.
+    **/
+    std::vector< size_t > shuffle_positions() const;
+    
+    /**
      *  @returns true iff the tuple is monotone.
      */
     bool monotone() const;
@@ -216,8 +227,6 @@ public:
      *  @returns the orientation signs \f$ \varepsilon_0, \ldots, \varepsilon_p \f$.
      */
     std::map< uint8_t, int8_t > orientation_sign() const;
-    
-    
     
     /**
      *  Consider a Tuple as radial cell.

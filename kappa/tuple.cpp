@@ -270,6 +270,73 @@ Tuple::ConnectedComponents Tuple::connected_components() const
     return components;
 }
 
+std::vector< size_t > Tuple::shuffle_positions() const
+{
+    std::vector< size_t > slits;
+    const size_t h = norm();
+    size_t k = 2*h;
+    slits.push_back(k);
+    
+    while( k != 0 )
+    {
+        const size_t j = (k+1)/2;
+        const size_t a = ( 2*j - k == 1 ? at(j).first : at(j).second );
+        
+        std::cout << j << " -> " << a << std::endl;
+        
+        // search for slits on the same hight but below a (i.e. longer slits).
+        for( size_t l = j-1; l >= 1; --l )
+        {
+            if( a == at(l).first )
+            {
+                k = 2*l;
+                // [n3290: 6.1/1]: [..] The scope of a label is the function in which it appears. [..]
+                // Therefore we can use the name 'end_outer_loop'.
+                goto end_outer_loop;
+            }
+            else if( a == at(l).second )
+            {
+                k = 2*l-1;
+                // [n3290: 6.1/1]: [..] The scope of a label is the function in which it appears. [..]
+                // Therefore we can use the name 'end_outer_loop'.
+                goto end_outer_loop;
+            }
+        }
+        
+        // if a is the longest slit at the first line, we are done.
+        if( a == 1 )
+        {
+            k = 0;
+            // [n3290: 6.1/1]: [..] The scope of a label is the function in which it appears. [..]
+            // Therefore we can use the name 'end_outer_loop'.
+            goto end_outer_loop;
+        }
+        
+        // find the first slit below a.
+        for( size_t l = h; l >= 1; --l )
+        {
+            if( a-1 == at(l).first )
+            {
+                k = 2*l;
+                // [n3290: 6.1/1]: [..] The scope of a label is the function in which it appears. [..]
+                // Therefore we can use the name 'end_outer_loop'.
+                goto end_outer_loop;
+            }
+            else if( a-1 == at(l).second )
+            {
+                k = 2*l-1;
+                // [n3290: 6.1/1]: [..] The scope of a label is the function in which it appears. [..]
+                // Therefore we can use the name 'end_outer_loop'.
+                goto end_outer_loop;
+            }
+        }
+        
+        end_outer_loop:
+        slits.push_back(k);
+    }
+    return slits;
+}
+
 int32_t Tuple::num_clusters() const
 {
     typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS> Graph;
