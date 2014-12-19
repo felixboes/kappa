@@ -335,7 +335,7 @@ std::string kappa_version( int argc, char** argv )
     if( argc > 0 && argv != nullptr )
     {
         ret << "Programcall:     ";
-        for( size_t i = 0; i < argc; ++i )
+        for( int i = 0; i < argc; ++i )
         {
             ret << argv[i] << " ";
         }

@@ -285,7 +285,7 @@ void test_cd()
     cd[2] = Transposition( 4, 2 );
     cd[3] = Transposition( 6, 5 );
     cd[4] = Transposition( 7, 5 );
-    test_<CoefficientT>( "cd", 2, 0, 1, cd );
+    //test_<CoefficientT>( "cd", 2, 0, 1, cd );
 }
 
 template< class CoefficientT >
@@ -419,12 +419,33 @@ void test_z_candidates_tex()
     std::cout << tex_end();
 }
 
+template< class CoefficientT >
+void test_Q()
+{
+    Tuple a(2,1);
+    a[1] = Transposition(2,1);
+    
+    const auto slits = a.slits();
+    for( const auto& it : slits )
+    {
+        std::cout << it << " ";
+    }
+    std::cout << std::endl;
+    
+    const auto shuffle_pos = a.shuffle_positions();
+    for( const auto& it : shuffle_pos )
+    {
+        std::cout << it << " ";
+    }
+    std::cout << std::endl;
+}
+
+
 int main( int argc, char** argv )
 {
     std::cout.setf(std::ios::unitbuf);
     
-    std::cout << kappa_version()
-              << std::endl;
+    std::cout << kappa_version( argc, argv ) << std::endl;
     
 //    std::cout << "Rational computations." << std::endl;
 //    std::cout << "--------------------------------" << std::endl;
@@ -463,15 +484,17 @@ int main( int argc, char** argv )
 //    cohomology_generators<Q>( 0, 2, 3);
 //    cohomology_generators<Q>( 1, 0, 4);
 //    cohomology_generators<Q>( 1, 0, 3);
-    cohomology_generators<Q>( 2, 1, 4);
+//    cohomology_generators<Q>( 2, 1, 4);
 
-    //test_z_candidates<Q>();
-    //test_z_candidates_tex<Q>();
+//    test_z_candidates<Q>();
+//    test_z_candidates_tex<Q>();
     
 //    std::cout << tex_preamble();
 //    test_d_tex<Q>();
 //    test_dd_tex<Q>();
 //    std::cout << tex_end();
+
+    test_Q<Q>();
     
     return 0;
 }
