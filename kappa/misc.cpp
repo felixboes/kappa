@@ -392,7 +392,7 @@ void list_set_partitions(size_t n)
     } while( next_partition() == true );
 }
 
-void list_number_partitions(size_t n)
+void list_connected_partitions(size_t n)
 {
     std::vector< size_t > k( n, 0 );
     
