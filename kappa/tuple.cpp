@@ -337,6 +337,29 @@ std::vector< size_t > Tuple::shuffle_positions() const
     return slits;
 }
 
+std::vector< size_t > Tuple::slits() const
+{
+    std::vector< size_t > the_slits;
+    size_t h = norm();
+    
+    for( size_t i = 1; i <= p; ++i )
+    {
+        for( size_t j = 1; j <= h; ++j )
+        {
+            if( at(j).first == i )
+            {
+                the_slits.push_back( 2*j );
+            }
+            else if ( at(j).second == i )
+            {
+                the_slits.push_back( 2*j - 1 );
+            }
+        }
+    }
+    
+    return the_slits;
+}
+
 int32_t Tuple::num_clusters() const
 {
     typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS> Graph;

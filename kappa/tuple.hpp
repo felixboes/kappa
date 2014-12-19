@@ -203,6 +203,15 @@ public:
     std::vector< size_t > shuffle_positions() const;
     
     /**
+     *  @returns an enumeration of the slits.
+     *  Here, we count the slits from bottom to top.
+     *  The position k means that the slit occures in the k/2-th transposition e.g. the slits of the cell
+     *  \f$ \big(\ (3,1) \mid (2,1) \big) /f$ are enumerated as follows.
+     *  \f$ 1, 3, 2, 4\f$.
+    **/
+    std::vector< size_t > slits() const;
+    
+    /**
      *  @returns true iff the tuple is monotone.
      */
     bool monotone() const;
