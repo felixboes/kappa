@@ -76,6 +76,12 @@ std::string tex_end();
 **/
 std::string kappa_version( int argc = 0, char** argv = nullptr );
 
+/**
+ *  lists all set partitions by declaring to which set an element belongs.
+**/
+void list_set_partitions( size_t n );
+
+void list_number_partitions( size_t n );
 // Three template functions that are used to print tuples nicely.
 template < size_t n, typename... T >
 typename std::enable_if< ( n >= sizeof...(T) ) >::type print_tuple( std::ostream&   , const std::tuple< T... >& )

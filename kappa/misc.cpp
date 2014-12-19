@@ -347,3 +347,75 @@ std::string kappa_version( int argc, char** argv )
         << "Date:            " << current_date() << std::endl;
     return ret.str();
 }
+
+
+void list_set_partitions(size_t n)
+{
+    std::vector< size_t > k( n, 0 );
+    std::vector< size_t > m( n, 0 );
+    
+    auto next_partition = [&]() -> bool
+    {
+        for( size_t i = n-1; i > 0; --i )
+        {
+            if( k.at(i) <= m.at(i-1) )
+            {
+                k[i] += 1;
+                if( k.at(i) > m.at(i) )
+                {
+                    m[i] = k.at(i);
+                }
+                for( size_t j = i+1; j < n; ++j )
+                {
+                    k[j] = k[0];
+                    m[j] = m[i];
+                }
+                return true;
+            }
+        }
+        return false;
+    };
+    
+    do
+    {
+        std::cout << "k = ";
+        for( const auto& it : k )
+        {
+            std::cout << it << " ";
+        }
+        std::cout << "m = ";
+        for( const auto& it : m )
+        {
+            std::cout << it << " ";
+        }
+        std::cout << std::endl;
+    } while( next_partition() == true );
+}
+
+void list_number_partitions(size_t n)
+{
+    std::vector< size_t > k( n, 0 );
+    
+    auto next_partition = [&]() -> bool
+    {
+        for( size_t i = n-1; i > 0; --i )
+        {
+            if( k.at(i) == k.at(i-1) )
+            {
+                k[i] += 1;
+                return true;
+            }
+        }
+        return false;
+    };
+    
+    do
+    {
+        std::cout << "k = ";
+        for( const auto& it : k )
+        {
+            std::cout << it << " ";
+        }
+        std::cout << std::endl;
+    } while( next_partition() == true );
+}

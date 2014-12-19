@@ -494,7 +494,9 @@ int main( int argc, char** argv )
 //    test_dd_tex<Q>();
 //    std::cout << tex_end();
 
-    test_Q<Q>();
+    //test_Q<Q>();
+    
+    list_number_partitions(3);
     
     return 0;
 }
