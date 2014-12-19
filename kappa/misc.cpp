@@ -329,9 +329,18 @@ std::string tex_end()
     return tex.str();
 }
 
-std::string kappa_version()
+std::string kappa_version( int argc, char** argv )
 {
     std::stringstream ret;
+    if( argc > 0 && argv != nullptr )
+    {
+        ret << "Programcall:     ";
+        for( size_t i = 0; i < argc; ++i )
+        {
+            ret << argv[i] << " ";
+        }
+        ret << std::endl;
+    }
     ret << "Program version: " << program_version_by_git << std::endl
         << "GMP version:     " << gmp_version << std::endl
         << "Boost version:   " << BOOST_VERSION / 100000 << "." << BOOST_VERSION / 100 % 1000 << "." << BOOST_VERSION % 100 << std::endl

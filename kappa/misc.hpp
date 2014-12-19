@@ -50,7 +50,6 @@ std::string current_date();
  */ 
 double current_memory_usage_in_mb();
 
-
 // Functions to print cells.
 /**
  *  @returns the preamble of the tex file.
@@ -70,7 +69,7 @@ std::string tex_end();
 /**
  *  @returns program and library versions as well as the date time.
 **/
-std::string kappa_version();
+std::string kappa_version( int argc = 0, char** argv = nullptr );
 
 // Three template functions that are used to print tuples nicely.
 template < size_t n, typename... T >

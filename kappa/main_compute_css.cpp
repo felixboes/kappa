@@ -24,35 +24,13 @@ void compute_css( SessionConfig conf, int argc, char** argv )
     ofs.open( filename );
     
     // Print status message.
-    std::cout << std::endl
-              << "Program name and parameters: ";
-    for( int i = 0; i < argc; ++i )
-    {
-        std::cout << argv[i];
-        if( i+1 < argc )
-        {
-            std::cout << " ";
-        }
-    }         
-    std::cout << std::endl
-              << kappa_version()
+    std::cout << kappa_version( argc, argv )
               << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
               << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
               << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
               << std::endl;
-    ofs       << std::endl
-              << "Program name and parameters: ";
-    for( int i = 0; i < argc; ++i )
-    {
-        ofs << argv[i];
-        if( i+1 < argc )
-        {
-            ofs << " ";
-        }
-    }
-    ofs       << std::endl
-              << kappa_version()
+    ofs       << kappa_version( argc, argv )
               << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
               << "homological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
