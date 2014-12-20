@@ -496,8 +496,33 @@ int main( int argc, char** argv )
 
     //test_Q<Q>();
    
-    list_set_partitions(3);
-    list_connected_partitions(3);
+    const auto res1 = list_set_partitions(4);
+    
+    for( const auto& it : res1 )
+    {
+        for( const auto& inner : it )
+        {
+            for( const auto& inner2 : inner )
+            {
+                std::cout << inner2 << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+    
+    const auto res2 = list_connected_partitions(4);
+    
+    for( const auto& it : res2 )
+    {
+        for( const auto& inner : it )
+        {
+            for( const auto& inner2 : inner )
+            {
+                std::cout << inner2 << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
     
     return 0;
 }

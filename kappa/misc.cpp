@@ -349,8 +349,10 @@ std::string kappa_version( int argc, char** argv )
 }
 
 
-void list_set_partitions(size_t n)
+std::vector< std::vector< std::vector< size_t > > > list_set_partitions(size_t n)
 {
+    std::vector< std::vector< std::vector< size_t > > > res(n);
+    
     std::vector< size_t > k( n, 0 );
     std::vector< size_t > m( n, 0 );
     
@@ -376,24 +378,19 @@ void list_set_partitions(size_t n)
         return false;
     };
     
+
     do
     {
-        std::cout << "k = ";
-        for( const auto& it : k )
-        {
-            std::cout << it << " ";
-        }
-        std::cout << "m = ";
-        for( const auto& it : m )
-        {
-            std::cout << it << " ";
-        }
-        std::cout << std::endl;
+        res[ m.at(n-1) ].push_back( k );
     } while( next_partition() == true );
+    
+    return res;
 }
 
-void list_connected_partitions(size_t n)
+std::vector< std::vector< std::vector< size_t > > > list_connected_partitions(size_t n)
 {
+    std::vector< std::vector< std::vector< size_t > > > res(n);
+    
     std::vector< size_t > k( n, 0 );
     
     auto next_partition = [&]() -> bool
@@ -403,6 +400,10 @@ void list_connected_partitions(size_t n)
             if( k.at(i) == k.at(i-1) )
             {
                 k[i] += 1;
+                for( size_t j = i+1; j < n; ++j )
+                {
+                    k[j] = k[i];
+                }
                 return true;
             }
         }
@@ -411,11 +412,8 @@ void list_connected_partitions(size_t n)
     
     do
     {
-        std::cout << "k = ";
-        for( const auto& it : k )
-        {
-            std::cout << it << " ";
-        }
-        std::cout << std::endl;
+        res[ k.at(n-1) ].push_back( k );
     } while( next_partition() == true );
+    
+    return res;
 }

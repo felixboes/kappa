@@ -79,12 +79,13 @@ std::string kappa_version( int argc = 0, char** argv = nullptr );
 /**
  *  lists all set partitions by declaring to which set an element belongs.
 **/
-void list_set_partitions( size_t n );
+std::vector< std::vector< std::vector< size_t > > > list_set_partitions( size_t n );
 
 /**
  *  lists all connected partitions by declaring to which set an element belongs.
 **/
-void list_connected_partitions( size_t n );
+std::vector< std::vector< std::vector< size_t > > > list_connected_partitions( size_t n );
+
 // Three template functions that are used to print tuples nicely.
 template < size_t n, typename... T >
 typename std::enable_if< ( n >= sizeof...(T) ) >::type print_tuple( std::ostream&   , const std::tuple< T... >& )
