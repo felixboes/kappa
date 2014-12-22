@@ -212,6 +212,11 @@ public:
     std::vector< size_t > slits() const;
     
     /**
+     * @brief generates a single term of Q with respect to the given data.
+    **/
+    Tuple Q_term( const std::vector< size_t >& shuffle_slit_conf, const size_t num_shuffle_pos, const size_t fuse_pos ) const;
+    
+    /**
      *  @returns true iff the tuple is monotone.
      */
     bool monotone() const;

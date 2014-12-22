@@ -395,11 +395,11 @@ std::vector< std::vector< std::vector< size_t > > > list_connected_partitions(si
     
     auto next_partition = [&]() -> bool
     {
-        for( size_t i = n-1; i > 0; --i )
+        for( size_t i = n; i --> 0; )
         {
-            if( k.at(i) == k.at(i-1) )
+            k[i] += 1;
+            if( k.at(i) < n )
             {
-                k[i] += 1;
                 for( size_t j = i+1; j < n; ++j )
                 {
                     k[j] = k[i];
@@ -412,7 +412,17 @@ std::vector< std::vector< std::vector< size_t > > > list_connected_partitions(si
     
     do
     {
-        res[ k.at(n-1) ].push_back( k );
+        size_t num_part = 0;
+        size_t cur = k.at(0);
+        for( size_t i = 1; i < n; ++i )
+        {
+            if( cur < k.at(i) )
+            {
+                ++num_part;
+                cur = k.at(i);
+            }
+        }
+        res[ num_part ].push_back( k );
     } while( next_partition() == true );
     
     return res;

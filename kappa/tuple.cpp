@@ -360,6 +360,21 @@ std::vector< size_t > Tuple::slits() const
     return the_slits;
 }
 
+Tuple Tuple::Q_term( const std::vector< size_t >& shuffle_slit_conf, const size_t num_shuffle_pos, const size_t fuse_pos ) const
+{
+    const size_t h = norm();
+    Tuple res(2*p, 2*norm()); // We reduce p later.
+    const auto the_slits = slits();
+    const auto the_shuffles = shuffle_positions();
+    
+    for( size_t j = 0; j < 2*h; ++j )
+    {
+                                                                         
+    }
+    
+    return res;
+}
+
 int32_t Tuple::num_clusters() const
 {
     typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS> Graph;
@@ -605,6 +620,9 @@ Tuple Tuple :: d_hor( const uint8_t k ) const
             b--;
         }
     }
+    
+    boundary.p -= 1;
+    
     return boundary;
 }
 
