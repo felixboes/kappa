@@ -252,7 +252,7 @@ bool matrix_vector_product_vanishes( const MatrixT& m, const VectorT& v );
 typedef VectorField<Q> VectorQ;     ///< This defines Vectors with \f$\mathbb Q\f$ coefficients.
 template < typename base_type = int8_t >
 using VectorZmBase = VectorField< ZmBase<base_type> >;   ///< This defines Vectors with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
-typedef VectorZmBase<> VectorZm;
+typedef VectorField< Zm > VectorZm;
 
 #include "vector_field.ipp"
 

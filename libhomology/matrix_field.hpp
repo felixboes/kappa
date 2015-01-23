@@ -672,14 +672,14 @@ protected:
 std::ostream& operator<< ( std::ostream& stream, const MatrixBoolCSS & matrix);
 
 typedef MatrixField<Q> MatrixQ;     ///< This defines Matrices with \f$\mathbb Q\f$ coefficients.
-template < typename base_type = int8_t >
+template < typename base_type >
 using MatrixZmBase = MatrixField< ZmBase <base_type> > ;   ///< This defines Matrices with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
-typedef MatrixZmBase<> MatrixZm;
+typedef MatrixField< Zm >MatrixZm;
 
 typedef MatrixFieldCSS<Q> MatrixCSSQ;     ///< This defines Matrices with \f$\mathbb Q\f$ coefficients.
-template < typename base_type = int8_t >
+template < typename base_type >
 using MatrixCSSZmBase = MatrixFieldCSS< ZmBase<base_type > >;   ///< This defines Matrices with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
-typedef MatrixCSSZmBase<> MatrixCSSZm;
+typedef MatrixFieldCSS< Zm > MatrixCSSZm;
 
 #include "matrix_field.ipp"
 
