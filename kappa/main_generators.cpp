@@ -186,6 +186,48 @@ void test_b()
 }
 
 template< class CoefficientT >
+void test_ab()
+{
+    std::list< Tuple > list;
+    
+    Tuple cell(5,3);
+    cell[1] = Transposition( 2, 1 );
+    cell[2] = Transposition( 3, 2 );
+    cell[3] = Transposition( 5, 4 );
+    list.push_back(cell);
+    
+    cell[1] = Transposition( 3, 2 );
+    cell[2] = Transposition( 3, 1 );
+    cell[3] = Transposition( 5, 4 );
+    list.push_back(cell);
+    
+    test_<CoefficientT>( "ab", 0, 3, 1, list );
+}
+
+template< class CoefficientT >
+void test_bb()
+{
+    std::list< Tuple > list;
+    std::list< Tuple > helper_list;
+    
+    Tuple cell(3,2);
+    cell[1] = Transposition( 2, 1 );
+    cell[2] = Transposition( 3, 2 );
+    helper_list.push_back(cell);
+    
+    cell[1] = Transposition( 3, 2 );
+    cell[2] = Transposition( 3, 1 );
+    helper_list.push_back(cell);
+    
+    list.push_back( helper_list.front() * helper_list.front() );
+    list.push_back( helper_list.front() * helper_list.back() );
+    list.push_back( helper_list.back()  * helper_list.front() );
+    list.push_back( helper_list.back()  * helper_list.back() );
+   
+    test_<CoefficientT>( "bb", 0, 4, 2, list );
+}
+
+template< class CoefficientT >
 void test_c()
 {
     Tuple c(4,2);
@@ -215,12 +257,10 @@ void test_d_tex()
 template< class CoefficientT >
 void test_dd()
 {
-    Tuple dd(6,4);
-    dd[1] = Transposition( 2, 1 );
-    dd[2] = Transposition( 3, 1 );
-    dd[3] = Transposition( 5, 4 );
-    dd[4] = Transposition( 6, 4 );
-    test_<CoefficientT>( "d^2", 2, 0, 2, dd );
+    Tuple d(3,2);
+    d[1] = Transposition( 2, 1 );
+    d[2] = Transposition( 3, 1 );
+    test_<CoefficientT>( "dd", 2, 0, 2, d*d );
 }
 
 template< class CoefficientT >
@@ -460,14 +500,16 @@ int main( int argc, char** argv )
 //    test_cd<Q>();
 //    test_z<Q>();
     
-//    std::cout << "Mod 2 computations." << std::endl;
-//    std::cout << "--------------------------------" << std::endl;
-//    Zm::set_modulus(2);
+    std::cout << "Mod 2 computations." << std::endl;
+    std::cout << "--------------------------------" << std::endl;
+    Zm::set_modulus(2);
 //    test_aa<Zm>();
 //    test_b<Zm>();
+    test_ab<Zm>();
+    test_bb<Zm>();
 //    test_c<Zm>();
 //    test_d<Zm>();
-//    test_dd<Zm>();
+    test_dd<Zm>();
 //    test_aad<Zm>();
 //    test_bc<Zm>();
 //    test_cc<Zm>();
@@ -496,33 +538,33 @@ int main( int argc, char** argv )
 
     //test_Q<Q>();
    
-    const auto res1 = list_set_partitions(4);
+//    const auto res1 = list_set_partitions(4);
     
-    for( const auto& it : res1 )
-    {
-        for( const auto& inner : it )
-        {
-            for( const auto& inner2 : inner )
-            {
-                std::cout << inner2 << " ";
-            }
-            std::cout << std::endl;
-        }
-    }
+//    for( const auto& it : res1 )
+//    {
+//        for( const auto& inner : it )
+//        {
+//            for( const auto& inner2 : inner )
+//            {
+//                std::cout << inner2 << " ";
+//            }
+//            std::cout << std::endl;
+//        }
+//    }
     
-    const auto res2 = list_connected_partitions(4);
+//    const auto res2 = list_connected_partitions(4);
     
-    for( const auto& it : res2 )
-    {
-        for( const auto& inner : it )
-        {
-            for( const auto& inner2 : inner )
-            {
-                std::cout << inner2 << " ";
-            }
-            std::cout << std::endl;
-        }
-    }
+//    for( const auto& it : res2 )
+//    {
+//        for( const auto& inner : it )
+//        {
+//            for( const auto& inner2 : inner )
+//            {
+//                std::cout << inner2 << " ";
+//            }
+//            std::cout << std::endl;
+//        }
+//    }
     
     return 0;
 }
