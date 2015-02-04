@@ -2,9 +2,9 @@
 
 // Initialize static memebers
 template < typename base_type >
-uint8_t ZmBase<base_type>::prim;
+base_type ZmBase<base_type>::prim;
 template < typename base_type >
-uint8_t ZmBase<base_type>::expo;
+base_type ZmBase<base_type>::expo;
 template < typename base_type >
 typename ZmBase<base_type>::BaseType ZmBase<base_type>::base;
 template < typename base_type >
@@ -12,7 +12,7 @@ typename std::vector< typename ZmBase<base_type>::BaseType > ZmBase<base_type>::
 
 // Implementation of (member-) functions
 template < typename base_type >
-void ZmBase<base_type>::set_modulus(const uint8_t p, const uint8_t k)
+void ZmBase<base_type>::set_modulus(const BaseType p, const BaseType k)
 {
     // A coefficient Z/(p^k) is invertible iff i%p != 0 .
     // By Eulers theorem a^{p^k - p^{k-1} - 1} = a^{-1} in Z/(p^k)
@@ -174,6 +174,20 @@ ZmBase<base_type>::operator bool() const
 }
 
 template < typename base_type >
+ZmBase<base_type>& ZmBase<base_type>::di (ThisType a)
+{
+    n = ( (n%base) / ((a.n)%base) );
+    return *this;
+}
+
+template < typename base_type >
+ZmBase<base_type>& ZmBase<base_type>::mod (ThisType a)
+{
+  n = (n%base) % (a.n%base);
+  return *this;
+}
+
+template < typename base_type >
 ZmBase<base_type> operator+(ZmBase<base_type> a, ZmBase<base_type> b)
 {
     ZmBase<base_type> r(a);
@@ -206,4 +220,57 @@ ZmBase<base_type> operator*(ZmBase<base_type> a, const base_type b)
 {
     ZmBase<base_type> r(a);
     return r *= ZmBase<base_type>(b);
+}
+
+template < typename base_type >
+ZmBase<base_type> di (const ZmBase<base_type> a, const ZmBase<base_type> b)
+{
+    ZmBase<base_type> r (a);
+    return r.di (b);
+}
+
+template < typename base_type >
+ZmBase<base_type> mod (const ZmBase<base_type> a, const ZmBase<base_type> b)
+{
+    ZmBase<base_type> r (a);
+    return r.mod (b);
+}
+
+template < typename base_type >
+ZmBase<base_type> gcd (const ZmBase<base_type> a, const ZmBase<base_type> b)
+{
+    ZmBase<base_type> r1 (a);
+    ZmBase<base_type> r2 (b);
+    ZmBase<base_type> r3;
+    while (r2 != ZmBase<base_type>(0) )
+    {
+        r3 = r1 - (di (r1, r2) * r2);
+        r1 = r2;
+        r2 = r3;
+    }
+    return r1;
+}
+
+template< typename base_type >
+std::pair< ZmBase<base_type>, ZmBase<base_type> > bezout (const ZmBase<base_type> a, const ZmBase<base_type> b)
+{
+    ZmBase<base_type> s (0), t (1), r (b), old_r (a), q (0), temp (0);
+    std::pair<ZmBase<base_type>, ZmBase<base_type>> coeff;
+    while (r != Zm (0))
+    {
+        q = di (old_r, r);
+        
+        temp = r;
+        r = old_r - q * r;
+        old_r = temp;
+        
+        temp = s;
+        s = coeff.first- q * r;
+        coeff.first = temp;
+        
+        temp = t;
+        t = coeff.second - q * t;
+        coeff.second = temp;
+    }
+    return coeff;
 }

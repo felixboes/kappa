@@ -30,7 +30,7 @@ public:
     typedef ZmBase< BaseType > ThisType;
     
     ZmBase(const BaseType m = 0);    ///< The default constructor creates a coefficient with value zero.
-    static void set_modulus(const uint8_t prime, const uint8_t expo = 1);    ///< Befor using ZmBase coefficients, you must define the modulus i.e. m = p^e.
+    static void set_modulus(const BaseType prime, const BaseType expo = 1);    ///< Befor using ZmBase coefficients, you must define the modulus i.e. m = p^e.
     static void print_modulus();    ///< Print the modulus to std::cout.
     static void print_inversetable();    ///< Print the table of invertible elements to std::cout.
     static BaseType get_modulus();   ///< @returns the modulus.
@@ -50,6 +50,9 @@ public:
     ThisType operator-() const;             ///< Inverting additively.
     operator bool() const;          ///< @returns false iff the coefficient is zero.
     
+    ThisType& di (const ThisType);
+    ThisType& mod(const ThisType);
+    
     /**
      *  grant std::ostream access in order to print coefficients to ostreams like 'std::cout << ZmBase(44) << std::endl;'
      */
@@ -58,8 +61,8 @@ public:
     
 protected:
     BaseType n;    ///< This integer stores a representative of the residue class \f$ c = [n] in \mathbb{Z}/m\mathbb{Z} \f$.
-    static uint8_t prim;    ///< We store the number m = p^e for all coeffients at once. Therefore we have to use set_modulus befor working with such coefficients.
-    static uint8_t expo;    ///< We store the number m = p^e for all coeffients at once. Therefore we have to use set_modulus befor working with such coefficients.
+    static BaseType prim;    ///< We store the number m = p^e for all coeffients at once. Therefore we have to use set_modulus befor working with such coefficients.
+    static BaseType expo;    ///< We store the number m = p^e for all coeffients at once. Therefore we have to use set_modulus befor working with such coefficients.
     static BaseType base;  ///< m = base = p^k.
     static std::vector<BaseType> inv; ///< This vector stores the table of inverse elements.
     operator int() const;       ///< In order to cast a ZmBase coefficient \f$c\f$ to an integer we pick a representative \f$ 0 \le c < base\f$.
@@ -81,6 +84,11 @@ template < typename base_type = int8_t > ZmBase<base_type> operator-(const ZmBas
 template < typename base_type = int8_t > ZmBase<base_type> operator*(const ZmBase<base_type>, const ZmBase<base_type>);   ///< Multiply two ZmBase Coeffients and return the result.
 template < typename base_type = int8_t > ZmBase<base_type> operator/(const ZmBase<base_type>, const ZmBase<base_type>);   ///< Divide two ZmBase Coeffients and return the result. @todo throw exception if necessary.
 template < typename base_type = int8_t > ZmBase<base_type> operator*(const ZmBase<base_type>, const base_type);   ///< Multiply a ZmBase coefficient and an integer and return the result.
+
+template < typename base_type = int8_t > ZmBase<base_type> di (const ZmBase<base_type>, const ZmBase<base_type>);
+template < typename base_type = int8_t > ZmBase<base_type> mod(const ZmBase<base_type>, const ZmBase<base_type>);
+template < typename base_type = int8_t > ZmBase<base_type> gcd(const ZmBase<base_type>, const ZmBase<base_type>);
+template < typename base_type = int8_t > std::pair<ZmBase<base_type>, ZmBase<base_type> >bezout(const ZmBase<base_type>, const ZmBase<base_type>);
 
 typedef ZmBase<> Zm;
 
