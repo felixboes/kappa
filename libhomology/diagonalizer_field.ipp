@@ -138,7 +138,7 @@ void DiagonalizerField< MatrixType > :: apply_base_changes( MatrixType& differen
                         {
                             for( size_t i = l+1; i < num_rows; ++i )
                             {
-                                differential( l, offset + j ) += base_change_single_col( i ) * differential.at( i, offset + j );
+                                differential( l, offset + j ) += base_change_single_col.at( i ) * differential.at( i, offset + j );
                             }
                         }
                     }
