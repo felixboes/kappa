@@ -41,17 +41,17 @@ public:
     
     // arithmetic operators
     bool operator==(const BaseType) const;  ///< compare a ZmBase with an int8_t
-    bool operator==(const ThisType) const;  ///< compare a ZmBase with another ZmBase.
-    ThisType& operator= (const BaseType);   ///< Assignement.
-    ThisType& operator+=(const ThisType);   ///< Adding.
-    ThisType& operator-=(const ThisType);   ///< Subtracting.
-    ThisType& operator*=(const ThisType);   ///< Multiplying.
-    ThisType& operator/=(const ThisType);   ///< Dividing. @todo: throw exeption if necessary.
+    bool operator==(const ThisType&) const;  ///< compare a ZmBase with another ZmBase.
+    ThisType& operator= (const BaseType&);   ///< Assignement.
+    ThisType& operator+=(const ThisType&);   ///< Adding.
+    ThisType& operator-=(const ThisType&);   ///< Subtracting.
+    ThisType& operator*=(const ThisType&);   ///< Multiplying.
+    ThisType& operator/=(const ThisType&);   ///< Dividing. @todo: throw exeption if necessary.
     ThisType operator-() const;             ///< Inverting additively.
     operator bool() const;          ///< @returns false iff the coefficient is zero.
     
-    ThisType& di (const ThisType);
-    ThisType& mod(const ThisType);
+    ThisType& di (const ThisType&);
+    ThisType& mod(const ThisType&);
     
     /**
      *  grant std::ostream access in order to print coefficients to ostreams like 'std::cout << ZmBase(44) << std::endl;'
@@ -78,17 +78,18 @@ protected:
     }
 };
 
-template < typename base_type = int8_t > bool operator !=( const ZmBase<base_type>, const ZmBase<base_type> ); ///< Compare two ZmBase coeffiencts and return true iff they are different.
-template < typename base_type = int8_t > ZmBase<base_type> operator+(const ZmBase<base_type>, const ZmBase<base_type>);   ///< Add two ZmBase Coeffients and return the result.
-template < typename base_type = int8_t > ZmBase<base_type> operator-(const ZmBase<base_type>, const ZmBase<base_type>);   ///< Substract two ZmBase Coeffients and return the result.
-template < typename base_type = int8_t > ZmBase<base_type> operator*(const ZmBase<base_type>, const ZmBase<base_type>);   ///< Multiply two ZmBase Coeffients and return the result.
-template < typename base_type = int8_t > ZmBase<base_type> operator/(const ZmBase<base_type>, const ZmBase<base_type>);   ///< Divide two ZmBase Coeffients and return the result. @todo throw exception if necessary.
-template < typename base_type = int8_t > ZmBase<base_type> operator*(const ZmBase<base_type>, const base_type);   ///< Multiply a ZmBase coefficient and an integer and return the result.
+template < typename base_type = int8_t > bool operator !=( const ZmBase<base_type>&, const ZmBase<base_type>& ); ///< Compare two ZmBase coeffiencts and return true iff they are different.
+template < typename base_type = int8_t > bool operator !=( const ZmBase<base_type>&, const base_type ); ///< Compare two ZmBase coeffiencts and return true iff they are different.
+template < typename base_type = int8_t > ZmBase<base_type> operator+(const ZmBase<base_type>&, const ZmBase<base_type>&);   ///< Add two ZmBase Coeffients and return the result.
+template < typename base_type = int8_t > ZmBase<base_type> operator-(const ZmBase<base_type>&, const ZmBase<base_type>&);   ///< Substract two ZmBase Coeffients and return the result.
+template < typename base_type = int8_t > ZmBase<base_type> operator*(const ZmBase<base_type>&, const ZmBase<base_type>&);   ///< Multiply two ZmBase Coeffients and return the result.
+template < typename base_type = int8_t > ZmBase<base_type> operator/(const ZmBase<base_type>&, const ZmBase<base_type>&);   ///< Divide two ZmBase Coeffients and return the result. @todo throw exception if necessary.
+template < typename base_type = int8_t > ZmBase<base_type> operator*(const ZmBase<base_type>&, const base_type);   ///< Multiply a ZmBase coefficient and an integer and return the result.
 
-template < typename base_type = int8_t > ZmBase<base_type> di (const ZmBase<base_type>, const ZmBase<base_type>);
-template < typename base_type = int8_t > ZmBase<base_type> mod(const ZmBase<base_type>, const ZmBase<base_type>);
-template < typename base_type = int8_t > ZmBase<base_type> gcd(const ZmBase<base_type>, const ZmBase<base_type>);
-template < typename base_type = int8_t > std::pair<ZmBase<base_type>, ZmBase<base_type> >bezout(const ZmBase<base_type>, const ZmBase<base_type>);
+template < typename base_type = int8_t > ZmBase<base_type> di (const ZmBase<base_type>&, const ZmBase<base_type>&);
+template < typename base_type = int8_t > ZmBase<base_type> mod(const ZmBase<base_type>&, const ZmBase<base_type>&);
+template < typename base_type = int8_t > ZmBase<base_type> gcd(const ZmBase<base_type>&, const ZmBase<base_type>&);
+template < typename base_type = int8_t > std::pair<ZmBase<base_type>, ZmBase<base_type> >bezout(const ZmBase<base_type>&, const ZmBase<base_type>&);
 
 typedef ZmBase<> Zm;
 

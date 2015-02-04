@@ -114,47 +114,53 @@ bool ZmBase<base_type>::operator==(const BaseType b) const
 }
 
 template < typename base_type >
-bool ZmBase<base_type>::operator== (const ThisType a) const
+bool ZmBase<base_type>::operator== (const ThisType& a) const
 {
     return (n - a.n) % base == 0;
 }
 
 template < typename base_type >
-bool operator !=( const ZmBase<base_type> a, const ZmBase<base_type> b )
+bool operator !=( const ZmBase<base_type>& a, const ZmBase<base_type>& b )
 {
     return !( a.operator==(b) );
 }
 
 template < typename base_type >
-ZmBase<base_type>& ZmBase<base_type>::operator=(const BaseType a)
+bool operator !=( const ZmBase<base_type>& a, const base_type b )
+{
+    return !( a.operator==(b) );
+}
+
+template < typename base_type >
+ZmBase<base_type>& ZmBase<base_type>::operator=(const BaseType& a)
 {
     n = ((a%base)+base)%base;
     return *this;
 }
 
 template < typename base_type >
-ZmBase<base_type>& ZmBase<base_type>::operator +=(ThisType a)
+ZmBase<base_type>& ZmBase<base_type>::operator +=(const ThisType& a)
 {
     n = (((n+a.n)%base)+base)%base;
     return *this;
 }
 
 template < typename base_type >
-ZmBase<base_type>& ZmBase<base_type>::operator -=(ThisType a)
+ZmBase<base_type>& ZmBase<base_type>::operator -=(const ThisType& a)
 {
     n = (((n-a.n)%base)+base)%base;
     return *this;
 }
 
 template < typename base_type >
-ZmBase<base_type>& ZmBase<base_type>::operator *=(ThisType a)
+ZmBase<base_type>& ZmBase<base_type>::operator *=(const ThisType& a)
 {
     n = (((n*a.n)%base)+base)%base;
     return *this;
 }
 
 template < typename base_type >
-ZmBase<base_type>& ZmBase<base_type>::operator /=(ThisType a)
+ZmBase<base_type>& ZmBase<base_type>::operator /=(const ThisType& a)
 {
     this->operator*= ( a.inverse() );
     return *this;
@@ -174,70 +180,70 @@ ZmBase<base_type>::operator bool() const
 }
 
 template < typename base_type >
-ZmBase<base_type>& ZmBase<base_type>::di (ThisType a)
+ZmBase<base_type>& ZmBase<base_type>::di (const ThisType& a)
 {
     n = ( (n%base) / ((a.n)%base) );
     return *this;
 }
 
 template < typename base_type >
-ZmBase<base_type>& ZmBase<base_type>::mod (ThisType a)
+ZmBase<base_type>& ZmBase<base_type>::mod (const ThisType& a)
 {
   n = (n%base) % (a.n%base);
   return *this;
 }
 
 template < typename base_type >
-ZmBase<base_type> operator+(ZmBase<base_type> a, ZmBase<base_type> b)
+ZmBase<base_type> operator+(const ZmBase<base_type>& a, const ZmBase<base_type>& b)
 {
     ZmBase<base_type> r(a);
     return r += b;
 }
 
 template < typename base_type >
-ZmBase<base_type> operator-(ZmBase<base_type> a, ZmBase<base_type> b)
+ZmBase<base_type> operator-(const ZmBase<base_type>& a, const ZmBase<base_type>& b)
 {
     ZmBase<base_type> r(a);
     return r -= b;
 }
 
 template < typename base_type >
-ZmBase<base_type> operator*(ZmBase<base_type> a, ZmBase<base_type> b)
+ZmBase<base_type> operator*(const ZmBase<base_type>& a, const ZmBase<base_type>& b)
 {
     ZmBase<base_type> r(a);
     return r *= b;
 }
 
 template < typename base_type >
-ZmBase<base_type> operator/ (ZmBase<base_type> a, ZmBase<base_type> b)
+ZmBase<base_type> operator/ (const ZmBase<base_type>& a, const ZmBase<base_type>& b)
 {
     ZmBase<base_type> r(a);
     return r /= b;
 }
 
 template < typename base_type >
-ZmBase<base_type> operator*(ZmBase<base_type> a, const base_type b)
+ZmBase<base_type> operator*(const ZmBase<base_type>& a, const base_type b)
 {
     ZmBase<base_type> r(a);
     return r *= ZmBase<base_type>(b);
 }
 
 template < typename base_type >
-ZmBase<base_type> di (const ZmBase<base_type> a, const ZmBase<base_type> b)
+ZmBase<base_type> di (const ZmBase<base_type>& a, const ZmBase<base_type>& b)
 {
     ZmBase<base_type> r (a);
     return r.di (b);
 }
 
 template < typename base_type >
-ZmBase<base_type> mod (const ZmBase<base_type> a, const ZmBase<base_type> b)
+ZmBase<base_type> mod (const ZmBase<base_type>& a, const ZmBase<base_type>& b)
 {
     ZmBase<base_type> r (a);
     return r.mod (b);
 }
 
 template < typename base_type >
-ZmBase<base_type> gcd (const ZmBase<base_type> a, const ZmBase<base_type> b)
+ZmBase<base_type> gcd (const ZmBase<base_type>& a, const ZmBase<base_type>& b)
 {
     ZmBase<base_type> r1 (a);
     ZmBase<base_type> r2 (b);
@@ -252,7 +258,7 @@ ZmBase<base_type> gcd (const ZmBase<base_type> a, const ZmBase<base_type> b)
 }
 
 template< typename base_type >
-std::pair< ZmBase<base_type>, ZmBase<base_type> > bezout (const ZmBase<base_type> a, const ZmBase<base_type> b)
+std::pair< ZmBase<base_type>, ZmBase<base_type> > bezout (const ZmBase<base_type>& a, const ZmBase<base_type>& b)
 {
     ZmBase<base_type> s (0), t (1), r (b), old_r (a), q (0), temp (0);
     std::pair<ZmBase<base_type>, ZmBase<base_type>> coeff;

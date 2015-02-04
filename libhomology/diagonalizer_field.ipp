@@ -199,7 +199,7 @@ uint32_t DiagonalizerField< MatrixType >::diag_field( MatrixType &matrix )
         {
             // Find first invertible (i.e. non-zero) entry in the remaining rows.
             auto it = rows_to_check.begin();
-            for( ; it != rows_to_check.end() && matrix( *it, col ) == typename MatrixType::CoefficientType(0); ++it )
+            for( ; it != rows_to_check.end() && matrix.at( *it, col ) == typename MatrixType::CoefficientType(0); ++it )
             {
             }
 
@@ -219,7 +219,7 @@ uint32_t DiagonalizerField< MatrixType >::diag_field( MatrixType &matrix )
                     size_t row_2 = *it;
                     // Assuming that the entry (row_2, col) differs from zero, we perform
                     // a row operation to matrix to zeroize the entry (row_2, col) using the entry (row_1, col).
-                    if( matrix( row_2, col ) != typename MatrixType::CoefficientType(0) )
+                    if( matrix.at( row_2, col) != typename MatrixType::CoefficientType(0) )
                     {
                         matrix.row_operation( row_1, row_2, col );
                     }
