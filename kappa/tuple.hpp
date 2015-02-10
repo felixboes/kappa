@@ -314,7 +314,7 @@ protected:
 /**
  *  Create a tuple consisting of h transpositions \f$\tau_h \ldots \tau_1\f$.
  */
-Tuple create_tuple( const size_t h, ... );
+Tuple create_cell( const size_t h, ... );
 
 // output stream
 std::ostream& operator<< (std::ostream& stream, const Tuple& tuple);

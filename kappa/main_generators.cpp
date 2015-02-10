@@ -130,8 +130,8 @@ void test_( const std::string& name, const uint32_t g, const uint32_t m, const u
     for( const auto& cell : list )
     {
         v += kappa_dual< VectorField< CoefficientT > >( 1, cell, basis );
-        std::cout << "Cell                  = " << cell << std::endl;
-        std::cout << "Kappa Dual            = " << kappa_dual< VectorField< CoefficientT > >( 1, cell, basis ) << std::endl;
+//        std::cout << "Cell                  = " << cell << std::endl;
+//        std::cout << "Kappa Dual            = " << kappa_dual< VectorField< CoefficientT > >( 1, cell, basis ) << std::endl;
     }
 //    std::cout << "Vector in given basis = " << v << std::endl;
     std::cout << "Cohomology class      = " << cohomology_class( g, m, 4*g+2*m-homological_p, v ) << std::endl;
@@ -150,33 +150,21 @@ void test_( const std::string& name, const uint32_t g, const uint32_t m, const u
 template< class CoefficientT >
 void test_a()
 {
-    Tuple a(2,1);
-    a[1] = Transposition( 2, 1 );
-    test_<CoefficientT>("a", 0, 1, 0, a);
+    test_<CoefficientT>("a", 0, 1, 0, create_cell(1, 2, 1) );
 }
 
 template< class CoefficientT >
 void test_aa()
 {
-    Tuple aa(4,2);
-    aa[1] = Transposition( 2, 1 );
-    aa[2] = Transposition( 4, 3 );
-    test_<CoefficientT>("a^2", 0, 2, 0, aa);
+    test_<CoefficientT>("a^2", 0, 2, 0, create_cell(2, 4, 3, 2, 1) );
 }
 
 template< class CoefficientT >
 void test_b()
 {
     std::list< Tuple > list;
-    
-    Tuple cell(3,2);
-    cell[1] = Transposition( 2, 1 );
-    cell[2] = Transposition( 3, 2 );
-    list.push_back(cell);
-    
-    cell[1] = Transposition( 3, 2 );
-    cell[2] = Transposition( 3, 1 );
-    list.push_back(cell);
+    list.push_back( create_cell(2, 3, 2, 2, 1) );
+    list.push_back( create_cell(2, 3, 1, 3, 2) );
     
     test_<CoefficientT>( "b", 0, 2, 1, list );
 }
@@ -186,16 +174,8 @@ void test_ab()
 {
     std::list< Tuple > list;
     
-    Tuple cell(5,3);
-    cell[1] = Transposition( 2, 1 );
-    cell[2] = Transposition( 3, 2 );
-    cell[3] = Transposition( 5, 4 );
-    list.push_back(cell);
-    
-    cell[1] = Transposition( 3, 2 );
-    cell[2] = Transposition( 3, 1 );
-    cell[3] = Transposition( 5, 4 );
-    list.push_back(cell);
+    list.push_back( create_cell(3, 5, 4, 3, 2, 2, 1) );
+    list.push_back( create_cell(3, 5, 4, 3, 1, 3, 2) );
     
     test_<CoefficientT>( "ab", 0, 3, 1, list );
 }
@@ -206,14 +186,8 @@ void test_bb()
     std::list< Tuple > list;
     std::list< Tuple > helper_list;
     
-    Tuple cell(3,2);
-    cell[1] = Transposition( 2, 1 );
-    cell[2] = Transposition( 3, 2 );
-    helper_list.push_back(cell);
-    
-    cell[1] = Transposition( 3, 2 );
-    cell[2] = Transposition( 3, 1 );
-    helper_list.push_back(cell);
+    helper_list.push_back( create_cell(2, 3, 2, 2, 1) );
+    helper_list.push_back( create_cell(2, 3, 1, 3, 2) );
     
     list.push_back( helper_list.front() * helper_list.front() );
     list.push_back( helper_list.front() * helper_list.back() );
@@ -226,58 +200,39 @@ void test_bb()
 template< class CoefficientT >
 void test_c()
 {
-    Tuple c(4,2);
-    c[1] = Transposition( 3, 1 );
-    c[2] = Transposition( 4, 2 );
-    test_<CoefficientT>( "c", 1, 0, 0, c );
+    test_<CoefficientT>( "c", 1, 0, 0, create_cell(2, 4, 2, 3, 1) );
 }
 
 template< class CoefficientT >
 void test_d()
 {
-    Tuple d(3,2);
-    d[1] = Transposition( 2, 1 );
-    d[2] = Transposition( 3, 1 );
-    test_<CoefficientT>( "d", 1, 0, 1, d );
+    test_<CoefficientT>( "d", 1, 0, 1, create_cell(2, 3, 1, 2, 1) );
 }
 
 template< class CoefficientT >
 void test_d_tex()
 {
-    Tuple d(3,2);
-    d[1] = Transposition( 2, 1 );
-    d[2] = Transposition( 3, 1 );
-    std::cout << tex_cell(d);    
+    std::cout << tex_cell( create_cell(2, 3, 1, 2, 1) );    
 }
 
 template< class CoefficientT >
 void test_dd()
 {
-    Tuple d(3,2);
-    d[1] = Transposition( 2, 1 );
-    d[2] = Transposition( 3, 1 );
+    Tuple d = create_cell(2, 3, 1, 2, 1);
     test_<CoefficientT>( "dd", 2, 0, 2, d*d );
 }
 
 template< class CoefficientT >
 void test_dd_tex()
 {
-    Tuple dd(6,4);
-    dd[1] = Transposition( 2, 1 );
-    dd[2] = Transposition( 3, 1 );
-    dd[3] = Transposition( 5, 4 );
-    dd[4] = Transposition( 6, 4 );
-    std::cout << tex_cell(dd);
+    Tuple d = create_cell(2, 3, 1, 2, 1);
+    std::cout << tex_cell(d*d);
 }
 
 template< class CoefficientT >
 void test_aad()
 {
-    Tuple aad(7,4);
-    aad[1] = Transposition( 2, 1 );
-    aad[2] = Transposition( 3, 1 );
-    aad[3] = Transposition( 5, 4 );
-    aad[4] = Transposition( 7, 6 );
+    Tuple aad = create_cell(4, 7, 6, 5, 4, 3, 1, 2, 1);
     test_<CoefficientT>( "aad", 1, 2, 1, aad );
 }
 
@@ -286,18 +241,8 @@ void test_bc()
 {
     std::list< Tuple > list;
     
-    Tuple cell(7,4);
-    cell[1] = Transposition( 2, 1 );
-    cell[2] = Transposition( 3, 2 );
-    cell[3] = Transposition( 6, 4 );
-    cell[4] = Transposition( 7, 5 );
-    list.push_back(cell);
-    
-    cell[1] = Transposition( 3, 2 );
-    cell[2] = Transposition( 3, 1 );
-    cell[3] = Transposition( 6, 4 );
-    cell[4] = Transposition( 7, 5 );
-    list.push_back(cell);
+    list.push_back( create_cell(4, 7, 5, 6, 4, 3, 2, 2, 1) );
+    list.push_back( create_cell(4, 7, 5, 6, 4, 3, 1, 3, 2) );
     
     test_<CoefficientT>( "bc", 1, 2, 1, list );
 }
@@ -305,58 +250,53 @@ void test_bc()
 template< class CoefficientT >
 void test_cc()
 {
-    Tuple cc(8,4);
-    cc[1] = Transposition( 3, 1 );
-    cc[2] = Transposition( 4, 2 );
-    cc[3] = Transposition( 7, 5 );
-    cc[4] = Transposition( 8, 6 );
-    test_<CoefficientT>( "c^2", 2, 0, 0, cc );
+    Tuple c = create_cell(2, 4, 2, 3, 1);
+    test_<CoefficientT>( "c^2", 2, 0, 0, c*c );
 }
 
 template< class CoefficientT >
 void test_cd()
 {
-    Tuple cd(7,4);
-    cd[1] = Transposition( 3, 1 );
-    cd[2] = Transposition( 4, 2 );
-    cd[3] = Transposition( 6, 5 );
-    cd[4] = Transposition( 7, 5 );
-    //test_<CoefficientT>( "cd", 2, 0, 1, cd );
+    test_<CoefficientT>( "cd", 2, 0, 1, create_cell(2, 4, 2, 3, 1) * create_cell(2, 3, 1, 2, 1) );
 }
 
 template< class CoefficientT >
-void test_z()
+void test_Qd()
 {
     std::list<Tuple> list;
-    list.push_back( create_tuple( 4, 5, 3, 4, 3, 3, 1, 2, 1 ) );
+    list.push_back( create_cell( 4, 5, 3, 4, 3, 3, 1, 2, 1 ) );
     
-    list.push_back( create_tuple( 4, 5, 3, 4, 1, 3, 1, 2, 1 ) );
-    list.push_back( create_tuple( 4, 5, 1, 4, 1, 3, 1, 2, 1 ) );
+    list.push_back( create_cell( 4, 5, 3, 4, 1, 3, 1, 2, 1 ) );
+    list.push_back( create_cell( 4, 5, 1, 4, 1, 3, 1, 2, 1 ) );
     
-    list.push_back( create_tuple( 4, 5, 3, 4, 2, 3, 1, 2, 1 ) );
-    list.push_back( create_tuple( 4, 5, 1, 4, 2, 3, 1, 2, 1 ) );
-    list.push_back( create_tuple( 4, 5, 2, 4, 2, 3, 1, 2, 1 ) );
+    list.push_back( create_cell( 4, 5, 3, 4, 2, 3, 1, 2, 1 ) );
+    list.push_back( create_cell( 4, 5, 1, 4, 2, 3, 1, 2, 1 ) );
+    list.push_back( create_cell( 4, 5, 2, 4, 2, 3, 1, 2, 1 ) );
     
-    list.push_back( create_tuple( 4, 5, 1, 4, 1, 4, 2, 3, 2 ) );
-    list.push_back( create_tuple( 4, 5, 2, 4, 1, 4, 2, 3, 2 ) );
-    list.push_back( create_tuple( 4, 5, 3, 4, 1, 4, 2, 3, 2 ) );
+    list.push_back( create_cell( 4, 5, 1, 4, 1, 4, 2, 3, 2 ) );
+    list.push_back( create_cell( 4, 5, 2, 4, 1, 4, 2, 3, 2 ) );
+    list.push_back( create_cell( 4, 5, 3, 4, 1, 4, 2, 3, 2 ) );
     
-    list.push_back( create_tuple( 4, 5, 1, 2, 1, 4, 2, 3, 2 ) );
-    list.push_back( create_tuple( 4, 5, 3, 2, 1, 4, 2, 3, 2 ) );
+    list.push_back( create_cell( 4, 5, 1, 2, 1, 4, 2, 3, 2 ) );
+    list.push_back( create_cell( 4, 5, 3, 2, 1, 4, 2, 3, 2 ) );
     
-    list.push_back( create_tuple( 4, 5, 1, 3, 1, 4, 2, 3, 2 ) );
+    list.push_back( create_cell( 4, 5, 1, 3, 1, 4, 2, 3, 2 ) );
     
-    list.push_back( create_tuple( 4, 5, 1, 2, 1, 5, 3, 4, 3 ) );
-    list.push_back( create_tuple( 4, 3, 1, 2, 1, 5, 3, 4, 3 ) );
-    list.push_back( create_tuple( 4, 4, 1, 2, 1, 5, 3, 4, 3 ) );
+    list.push_back( create_cell( 4, 5, 1, 2, 1, 5, 3, 4, 3 ) );
+    list.push_back( create_cell( 4, 3, 1, 2, 1, 5, 3, 4, 3 ) );
+    list.push_back( create_cell( 4, 4, 1, 2, 1, 5, 3, 4, 3 ) );
     
-    for( const auto& cell : list )
-    {
-        std::cout << cell << std::endl;
-    }
+    test_<CoefficientT>( "Q(d)", 2, 0, 3, list );
+}
+
+template< class CoefficientT >
+void test_Te()
+{
+    std::list< Tuple > list;
+    list.push_back( create_cell(4, 5, 3, 3, 1, 4, 3, 2, 1) );
+    list.push_back( create_cell(4, 5, 1, 3, 1, 4, 3, 2, 1) );
     
-    
-    //test_<CoefficientT>( "z", 2, 0, 3, list );
+    test_<CoefficientT>( "T(e)", 2, 0, 3, list );
 }
 
 template< class CoefficientT >
@@ -496,7 +436,7 @@ int main( int argc, char** argv )
 //    test_bc<Q>();
 //    test_cc<Q>();
 //    test_cd<Q>();
-//    test_z<Q>();
+//    test_Qd<Q>();
     
     std::cout << "Mod 2 computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
@@ -512,7 +452,8 @@ int main( int argc, char** argv )
     test_bc<Zm>();
     test_cc<Zm>();
     test_cd<Zm>();
-//    test_z<Zm>();
+    test_Qd<Zm>();
+    test_Te<Zm>();
     
 //    std::cout << "Mod 5 computations." << std::endl;
 //    std::cout << "--------------------------------" << std::endl;
@@ -520,7 +461,9 @@ int main( int argc, char** argv )
 //    test_bc<Zm>();
 //    test_dd<Zm>();
 //    test_cd<Zm>();
-
+//    test_Qd<Zm>();
+//    test_Te<Zm>();
+    
 //    cohomology_generators<Q>( 0, 2, 3);
 //    cohomology_generators<Q>( 1, 0, 4);
 //    cohomology_generators<Q>( 1, 0, 3);

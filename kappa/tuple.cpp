@@ -757,7 +757,7 @@ Permutation Tuple::long_cycle_inv() const
     return sigma;
 }
 
-Tuple create_tuple( const size_t h, ... )
+Tuple create_cell( const size_t h, ... )
 {
     Tuple t(h);
     t.p = 0;
