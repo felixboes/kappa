@@ -2,6 +2,7 @@
 #define TUPLE_HPP
 
 #include <cinttypes>
+#include <cstdarg>
 #include <functional>
 #include <iostream>
 #include <limits>
@@ -309,6 +310,11 @@ protected:
         ar & p & id & rep;
     }
 };
+
+/**
+ *  Create a tuple consisting of h transpositions \f$\tau_h \ldots \tau_1\f$.
+ */
+Tuple create_tuple( const size_t h, ... );
 
 // output stream
 std::ostream& operator<< (std::ostream& stream, const Tuple& tuple);

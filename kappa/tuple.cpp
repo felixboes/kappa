@@ -757,6 +757,24 @@ Permutation Tuple::long_cycle_inv() const
     return sigma;
 }
 
+Tuple create_tuple( const size_t h, ... )
+{
+    Tuple t(h);
+    t.p = 0;
+    va_list args;
+    va_start(args, h);
+    
+    for ( size_t i = h; i > 0; --i )
+    {
+        const uint8_t a = va_arg(args, int);
+        const uint8_t b = va_arg(args, int);
+        t[i] = Transposition( a, b );
+        t.p = std::max( t.p, (uint32_t)std::max( a, b ) );
+    }
+    va_end(args);
+    return t;
+}
+
 size_t HashTuple :: operator ()( const Tuple &tuple ) const
 {
     size_t hashvalue = 0;
