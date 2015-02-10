@@ -111,37 +111,37 @@ void test_kappa_dual()
     s.push_back(1);
    
     Q c(1);
-    Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
+    compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
     
     t[1] = Transposition( 4, 2 );
     t[2] = Transposition( 3, 1 );
     std::cout << t << std::endl;
-    Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
+    compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
     
     t[1] = Transposition( 4, 1 );
     t[2] = Transposition( 3, 2 );
     std::cout << t << std::endl;
-    Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
+    compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
     
     t[1] = Transposition( 3, 2 );
     t[2] = Transposition( 3, 1 );
     std::cout << t << std::endl;
-    Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
+    compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
     
     t[1] = Transposition( 3, 2 );
     t[2] = Transposition( 2, 1 );
     std::cout << t << std::endl;
-    Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
+    compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
     
     t[1] = Transposition( 3, 1 );
     t[2] = Transposition( 2, 1 );
     std::cout << t << std::endl;
-    Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
+    compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
     
     t[1] = Transposition( 2, 1 );
     t[2] = Transposition( 3, 1 );
     std::cout << t << std::endl;
-    Opt.compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
+    compute_and_add_kappa_dual_rec(c, t, Opt.basis.at(idx_res), v, s, 0);
     
     t[1] = Transposition( 2, 1 );
     t[2] = Transposition( 3, 1 );
@@ -151,7 +151,7 @@ void test_kappa_dual()
     t[1] = Transposition( 5, 1 );
     t[2] = Transposition( 3, 2 );
     t[3] = Transposition( 4, 3 );
-    Opt.compute_and_add_kappa_dual(c, t, Opt.basis.at(idx_res), v);
+    v = kappa_dual<VectorQ>(c, t, Opt.basis.at(idx_res) );
     
     
     t[1] = Transposition( 3, 1 );

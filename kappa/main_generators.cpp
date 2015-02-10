@@ -121,34 +121,30 @@ MonoBasis load_basis( const uint32_t g, const uint32_t m, const int32_t p )
 }
 
 template< class CoefficientT >
-void test_( const std::string& name, const uint32_t g, const uint32_t m, const uint32_t homological_p, const Tuple& cell )
-{
-    MonoBasis basis = load_basis( g, m, 4*g+2*m-homological_p );
-    VectorField< CoefficientT > v(basis.size());
-    add_cell<CoefficientT>(basis, v, 1, cell);
-    
-    std::cout << "Name                  = " << name << std::endl;
-    std::cout << "Cell                  = " << cell << std::endl;
-//    std::cout << "Vector in given basis = " << v << std::endl;
-    std::cout << "Cohomology class      = " << cohomology_class( g, m, 4*g+2*m-homological_p, v ) << std::endl;
-    std::cout << std::endl;
-}
-
-template< class CoefficientT >
 void test_( const std::string& name, const uint32_t g, const uint32_t m, const uint32_t homological_p, const std::list<Tuple>& list)
 {
     MonoBasis basis = load_basis( g, m, 4*g+2*m-homological_p );
     VectorField< CoefficientT > v(basis.size());
     
     std::cout << "Name                  = " << name << std::endl;
-    for( const auto& it : list )
+    for( const auto& cell : list )
     {
-        add_cell<CoefficientT>(basis, v, 1, it);
-        std::cout << "Cell                  = " << it << std::endl;
+        v += kappa_dual< VectorField< CoefficientT > >( 1, cell, basis );
+        std::cout << "Cell                  = " << cell << std::endl;
+        std::cout << "Kappa Dual            = " << kappa_dual< VectorField< CoefficientT > >( 1, cell, basis ) << std::endl;
     }
 //    std::cout << "Vector in given basis = " << v << std::endl;
     std::cout << "Cohomology class      = " << cohomology_class( g, m, 4*g+2*m-homological_p, v ) << std::endl;
     std::cout << std::endl;
+}
+
+template< class CoefficientT >
+void test_( const std::string& name, const uint32_t g, const uint32_t m, const uint32_t homological_p, const Tuple& cell )
+{
+    std::list< Tuple > list;
+    list.push_back(cell);
+    
+    test_< CoefficientT >(name, g, m, homological_p, list);
 }
 
 template< class CoefficientT >
@@ -332,33 +328,35 @@ template< class CoefficientT >
 void test_z()
 {
     std::list<Tuple> list;
-
-    Tuple cell(5,4);
-    cell[1] = Transposition( 4, 2 );
-    cell[2] = Transposition( 4, 3 );
-    cell[3] = Transposition( 4, 1 );
-    cell[4] = Transposition( 5, 3 );
-    list.push_back(cell);
+    list.push_back( create_tuple( 4, 5, 3, 4, 3, 3, 1, 2, 1 ) );
     
-    cell[1] = Transposition( 3, 2 );
-    cell[2] = Transposition( 5, 1 );
-    cell[3] = Transposition( 5, 4 );
-    cell[4] = Transposition( 5, 2 );
-    list.push_back(cell);
+    list.push_back( create_tuple( 4, 5, 3, 4, 1, 3, 1, 2, 1 ) );
+    list.push_back( create_tuple( 4, 5, 1, 4, 1, 3, 1, 2, 1 ) );
     
-    cell[1] = Transposition( 3, 1 );
-    cell[2] = Transposition( 4, 2 );
-    cell[3] = Transposition( 4, 3 );
-    cell[4] = Transposition( 5, 3 );
-    list.push_back(cell);
+    list.push_back( create_tuple( 4, 5, 3, 4, 2, 3, 1, 2, 1 ) );
+    list.push_back( create_tuple( 4, 5, 1, 4, 2, 3, 1, 2, 1 ) );
+    list.push_back( create_tuple( 4, 5, 2, 4, 2, 3, 1, 2, 1 ) );
     
-    cell[1] = Transposition( 2, 1 );
-    cell[2] = Transposition( 5, 3 );
-    cell[3] = Transposition( 5, 1 );
-    cell[4] = Transposition( 5, 4 );
-    list.push_back(cell);
+    list.push_back( create_tuple( 4, 5, 1, 4, 1, 4, 2, 3, 2 ) );
+    list.push_back( create_tuple( 4, 5, 2, 4, 1, 4, 2, 3, 2 ) );
+    list.push_back( create_tuple( 4, 5, 3, 4, 1, 4, 2, 3, 2 ) );
     
-    test_<CoefficientT>( "z", 2, 0, 3, list );
+    list.push_back( create_tuple( 4, 5, 1, 2, 1, 4, 2, 3, 2 ) );
+    list.push_back( create_tuple( 4, 5, 3, 2, 1, 4, 2, 3, 2 ) );
+    
+    list.push_back( create_tuple( 4, 5, 1, 3, 1, 4, 2, 3, 2 ) );
+    
+    list.push_back( create_tuple( 4, 5, 1, 2, 1, 5, 3, 4, 3 ) );
+    list.push_back( create_tuple( 4, 3, 1, 2, 1, 5, 3, 4, 3 ) );
+    list.push_back( create_tuple( 4, 4, 1, 2, 1, 5, 3, 4, 3 ) );
+    
+    for( const auto& cell : list )
+    {
+        std::cout << cell << std::endl;
+    }
+    
+    
+    //test_<CoefficientT>( "z", 2, 0, 3, list );
 }
 
 template< class CoefficientT >
@@ -503,17 +501,17 @@ int main( int argc, char** argv )
     std::cout << "Mod 2 computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
     Zm::set_modulus(2);
-//    test_aa<Zm>();
-//    test_b<Zm>();
+    test_aa<Zm>();
+    test_b<Zm>();
     test_ab<Zm>();
     test_bb<Zm>();
-//    test_c<Zm>();
-//    test_d<Zm>();
+    test_c<Zm>();
+    test_d<Zm>();
     test_dd<Zm>();
-//    test_aad<Zm>();
-//    test_bc<Zm>();
-//    test_cc<Zm>();
-//    test_cd<Zm>();
+    test_aad<Zm>();
+    test_bc<Zm>();
+    test_cc<Zm>();
+    test_cd<Zm>();
 //    test_z<Zm>();
     
 //    std::cout << "Mod 5 computations." << std::endl;

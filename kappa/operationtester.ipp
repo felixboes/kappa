@@ -447,12 +447,8 @@ void OperationTester< MatrixComplex, VectorT > :: compute_and_add_Q(
     std::cout << std::endl;
 }
 
-template< class MatrixComplex, class VectorT >
-void OperationTester< MatrixComplex, VectorT > :: compute_and_add_kappa_dual(
-    const CoefficientType& c,
-    const Tuple& t,
-    const MonoBasis& b,
-    VectorType v )
+template< class VectorT, class CoefficientT >
+VectorT kappa_dual( const CoefficientT& c, const Tuple& t, const MonoBasis& b)
 {
     // iterate through all kappa dual sequences J = (j_k, \ldots, j_1).
     // naive version.
@@ -461,6 +457,8 @@ void OperationTester< MatrixComplex, VectorT > :: compute_and_add_kappa_dual(
     //   J = ().(1,...,2-s_2).(2,...,3-s_3)...(h-1,...,h-s_h})
     // with s_q <= q and counting
     //   k \mapsto (s_q)_q   where   s_q = ( |_  k/(q-1)!  _| (mod q) )
+    
+    VectorT v( b.size() );
     
     const size_t h = t.norm();
     for( size_t k = 0; k < factorial(h); ++k )
@@ -482,16 +480,18 @@ void OperationTester< MatrixComplex, VectorT > :: compute_and_add_kappa_dual(
 //            std::cout << it << " ";
 //        }
 //        std::cout << std::endl;
-        compute_and_add_kappa_dual_rec(c, t, b, v, kappa_dual_seq, 0);
+        compute_and_add_kappa_dual_rec<VectorT, CoefficientT>(c, t, b, v, kappa_dual_seq, 0);
     }
+    
+    return v;
 }
 
-template< class MatrixComplex, class VectorT >
-void OperationTester< MatrixComplex, VectorT > :: compute_and_add_kappa_dual_rec(
-    const CoefficientType& c,
+template< class VectorT, class CoefficientT >
+void compute_and_add_kappa_dual_rec(
+    const CoefficientT& c,
     const Tuple& t,
     const MonoBasis& b,
-    VectorType v,
+    VectorT& v,
     const std::vector<size_t> s,
     const size_t i )
 {
