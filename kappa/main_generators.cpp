@@ -307,6 +307,42 @@ void test_Te()
     test_<CoefficientT>( "T(e)", 2, 0, 3, list );
 }
 
+std::list< Tuple > create_z()
+{
+    std::list<Tuple> list;
+    list.push_back( create_cell( 4, 5, 3, 4, 3, 3, 1, 2, 1 ) );
+    
+    list.push_back( create_cell( 4, 5, 3, 4, 1, 3, 1, 2, 1 ) );
+    list.push_back( create_cell( 4, 5, 1, 4, 1, 3, 1, 2, 1 ) );
+    
+    list.push_back( create_cell( 4, 5, 3, 4, 2, 3, 1, 2, 1 ) );
+    list.push_back( create_cell( 4, 5, 1, 4, 2, 3, 1, 2, 1 ) );
+    list.push_back( create_cell( 4, 5, 2, 4, 2, 3, 1, 2, 1 ) );
+    
+    list.push_back( create_cell( 4, 5, 1, 4, 1, 4, 2, 3, 2 ) );
+    list.push_back( create_cell( 4, 5, 2, 4, 1, 4, 2, 3, 2 ) );
+    list.push_back( create_cell( 4, 5, 3, 4, 1, 4, 2, 3, 2 ) );
+    
+    list.push_back( create_cell( 4, 5, 1, 2, 1, 4, 2, 3, 2 ) );
+    list.push_back( create_cell( 4, 5, 3, 2, 1, 4, 2, 3, 2 ) );
+    
+    list.push_back( create_cell( 4, 5, 1, 3, 1, 4, 2, 3, 2 ) );
+    
+    list.push_back( create_cell( 4, 4, 2, 3, 2, 5, 1, 2, 1 ) );
+    
+    list.push_back( create_cell( 4, 4, 1, 3, 1, 5, 2, 3, 2 ) );
+    
+    list.push_back( create_cell( 4, 4, 1, 2, 1, 5, 3, 4, 3 ) );
+    
+    return list;
+}
+
+template< class CoefficientT >
+void test_z()
+{
+    test_<CoefficientT>( "z", 2, 0, 3, create_z() );
+}
+
 template< class CoefficientT >
 void test_z_candidates()
 {
@@ -446,9 +482,9 @@ int main( int argc, char** argv )
 //    test_cd<Q>();
 //    test_Qd<Q>();
     
-//    std::cout << "Mod 2 computations." << std::endl;
-//    std::cout << "--------------------------------" << std::endl;
-//    Zm::set_modulus(2);
+    std::cout << "Mod 2 computations." << std::endl;
+    std::cout << "--------------------------------" << std::endl;
+    Zm::set_modulus(2);
 //    test_aa<Zm>();
 //    test_b<Zm>();
 //    test_ab<Zm>();
@@ -462,6 +498,7 @@ int main( int argc, char** argv )
 //    test_cd<Zm>();
 //    test_Qd<Zm>();
 //    test_Te<Zm>();
+    test_z<Zm>();
     
 //    std::cout << "Mod 5 computations." << std::endl;
 //    std::cout << "--------------------------------" << std::endl;
@@ -480,11 +517,11 @@ int main( int argc, char** argv )
 //    test_z_candidates<Q>();
 //    test_z_candidates_tex<Q>();
     
-    std::cout << tex_preamble();
+//    std::cout << tex_preamble();
 //    test_d_tex<Q>();
 //    test_dd_tex<Q>();
-    test_Qd_tex();
-    std::cout << tex_end();
+//    test_Qd_tex();
+//    std::cout << tex_end();
 
     //test_Q<Q>();
    
