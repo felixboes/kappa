@@ -64,6 +64,11 @@ std::string tex_preamble();
 std::string tex_cell( const Tuple& cell );
 
 /**
+ *  @returns the tex code for a given list of cells.
+**/
+std::string tex_cell( const std::list<Tuple>& cells );
+
+/**
  *  @returns the end of the tex file.
 **/
 std::string tex_end();

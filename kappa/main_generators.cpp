@@ -209,7 +209,6 @@ void test_d()
     test_<CoefficientT>( "d", 1, 0, 1, create_cell(2, 3, 1, 2, 1) );
 }
 
-template< class CoefficientT >
 void test_d_tex()
 {
     std::cout << tex_cell( create_cell(2, 3, 1, 2, 1) );    
@@ -222,7 +221,6 @@ void test_dd()
     test_<CoefficientT>( "dd", 2, 0, 2, d*d );
 }
 
-template< class CoefficientT >
 void test_dd_tex()
 {
     Tuple d = create_cell(2, 3, 1, 2, 1);
@@ -260,8 +258,7 @@ void test_cd()
     test_<CoefficientT>( "cd", 2, 0, 1, create_cell(2, 4, 2, 3, 1) * create_cell(2, 3, 1, 2, 1) );
 }
 
-template< class CoefficientT >
-void test_Qd()
+std::list< Tuple > create_Qd()
 {
     std::list<Tuple> list;
     list.push_back( create_cell( 4, 5, 3, 4, 3, 3, 1, 2, 1 ) );
@@ -286,7 +283,18 @@ void test_Qd()
     list.push_back( create_cell( 4, 3, 1, 2, 1, 5, 3, 4, 3 ) );
     list.push_back( create_cell( 4, 4, 1, 2, 1, 5, 3, 4, 3 ) );
     
-    test_<CoefficientT>( "Q(d)", 2, 0, 3, list );
+    return list;
+}
+
+template< class CoefficientT >
+void test_Qd()
+{
+    test_<CoefficientT>( "Q(d)", 2, 0, 3, create_Qd() );
+}
+
+void test_Qd_tex()
+{
+    std::cout << tex_cell( create_Qd() );
 }
 
 template< class CoefficientT >
@@ -423,7 +431,7 @@ int main( int argc, char** argv )
 {
     std::cout.setf(std::ios::unitbuf);
     
-    std::cout << kappa_version( argc, argv ) << std::endl;
+//    std::cout << kappa_version( argc, argv ) << std::endl;
     
 //    std::cout << "Rational computations." << std::endl;
 //    std::cout << "--------------------------------" << std::endl;
@@ -438,22 +446,22 @@ int main( int argc, char** argv )
 //    test_cd<Q>();
 //    test_Qd<Q>();
     
-    std::cout << "Mod 2 computations." << std::endl;
-    std::cout << "--------------------------------" << std::endl;
-    Zm::set_modulus(2);
-    test_aa<Zm>();
-    test_b<Zm>();
-    test_ab<Zm>();
-    test_bb<Zm>();
-    test_c<Zm>();
-    test_d<Zm>();
-    test_dd<Zm>();
-    test_aad<Zm>();
-    test_bc<Zm>();
-    test_cc<Zm>();
-    test_cd<Zm>();
-    test_Qd<Zm>();
-    test_Te<Zm>();
+//    std::cout << "Mod 2 computations." << std::endl;
+//    std::cout << "--------------------------------" << std::endl;
+//    Zm::set_modulus(2);
+//    test_aa<Zm>();
+//    test_b<Zm>();
+//    test_ab<Zm>();
+//    test_bb<Zm>();
+//    test_c<Zm>();
+//    test_d<Zm>();
+//    test_dd<Zm>();
+//    test_aad<Zm>();
+//    test_bc<Zm>();
+//    test_cc<Zm>();
+//    test_cd<Zm>();
+//    test_Qd<Zm>();
+//    test_Te<Zm>();
     
 //    std::cout << "Mod 5 computations." << std::endl;
 //    std::cout << "--------------------------------" << std::endl;
@@ -472,10 +480,11 @@ int main( int argc, char** argv )
 //    test_z_candidates<Q>();
 //    test_z_candidates_tex<Q>();
     
-//    std::cout << tex_preamble();
+    std::cout << tex_preamble();
 //    test_d_tex<Q>();
 //    test_dd_tex<Q>();
-//    std::cout << tex_end();
+    test_Qd_tex();
+    std::cout << tex_end();
 
     //test_Q<Q>();
    

@@ -321,6 +321,17 @@ std::string tex_cell( const Tuple& cell )
     return tex.str();
 }
 
+std::string tex_cell( const std::list<Tuple>& cells )
+{
+    std::stringstream tex;
+    for( const auto& it : cells )
+    {
+        tex << tex_cell( it );
+    }
+    
+    return tex.str();
+}
+
 std::string tex_end()
 {
     std::stringstream tex;
