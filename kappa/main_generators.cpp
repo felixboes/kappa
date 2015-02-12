@@ -307,7 +307,7 @@ void test_Te()
     test_<CoefficientT>( "T(e)", 2, 0, 3, list );
 }
 
-std::list< Tuple > create_z()
+std::list< Tuple > create_z_1()
 {
     std::list<Tuple> list;
     list.push_back( create_cell( 4, 5, 3, 4, 3, 3, 1, 2, 1 ) );
@@ -338,9 +338,44 @@ std::list< Tuple > create_z()
 }
 
 template< class CoefficientT >
-void test_z()
+void test_z_1()
 {
-    test_<CoefficientT>( "z", 2, 0, 3, create_z() );
+    test_<CoefficientT>( "z", 2, 0, 3, create_z_1() );
+}
+
+std::list< Tuple > create_z_2()
+{
+    std::list<Tuple> list;
+    list.push_back( create_cell( 4, 5, 3, 4, 3, 3, 1, 2, 1 ) );
+    
+    list.push_back( create_cell( 4, 5, 3, 4, 1, 3, 1, 2, 1 ) );
+    list.push_back( create_cell( 4, 5, 1, 4, 1, 3, 1, 2, 1 ) );
+    
+    list.push_back( create_cell( 4, 5, 1, 4, 3, 4, 1, 2, 1 ) );
+    list.push_back( create_cell( 4, 5, 3, 4, 3, 4, 1, 2, 1 ) );
+    
+    list.push_back( create_cell( 4, 5, 3, 3, 1, 4, 1, 2, 1 ) );
+    
+    list.push_back( create_cell( 4, 4, 1, 2, 1, 5, 3, 4, 3 ) );
+    
+    return list;
+}
+
+template< class CoefficientT >
+void test_z_2()
+{
+    test_<CoefficientT>( "z", 2, 0, 3, create_z_2() );
+}
+
+template< class CoefficientT >
+void test_tilde_d()
+{
+    std::list< Tuple > list;
+    list.push_back( create_cell(4, 5, 4, 5, 4, 3, 1, 2, 1) );
+    list.push_back( create_cell(4, 5, 3, 4, 3, 2, 1, 2, 1) );
+    list.push_back( create_cell(4, 4, 3, 5, 4, 2, 1, 2, 1) );
+    list.push_back( create_cell(4, 5, 4, 5, 4, 2, 1, 3, 2) );
+    test_<CoefficientT>( "tilde d", 2, 0, 3, list );
 }
 
 template< class CoefficientT >
@@ -467,7 +502,7 @@ int main( int argc, char** argv )
 {
     std::cout.setf(std::ios::unitbuf);
     
-//    std::cout << kappa_version( argc, argv ) << std::endl;
+    std::cout << kappa_version( argc, argv ) << std::endl;
     
 //    std::cout << "Rational computations." << std::endl;
 //    std::cout << "--------------------------------" << std::endl;
@@ -481,6 +516,9 @@ int main( int argc, char** argv )
 //    test_cc<Q>();
 //    test_cd<Q>();
 //    test_Qd<Q>();
+//    test_Te<Q>();
+//    test_z_1<Q>();
+//    test_z_2<Q>();
     
     std::cout << "Mod 2 computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
@@ -491,14 +529,19 @@ int main( int argc, char** argv )
 //    test_bb<Zm>();
 //    test_c<Zm>();
 //    test_d<Zm>();
-//    test_dd<Zm>();
+    test_dd<Zm>();
 //    test_aad<Zm>();
 //    test_bc<Zm>();
 //    test_cc<Zm>();
 //    test_cd<Zm>();
 //    test_Qd<Zm>();
-//    test_Te<Zm>();
-    test_z<Zm>();
+    test_Te<Zm>();
+    test_z_1<Zm>();
+    test_z_2<Zm>();
+    test_tilde_d<Zm>();
+    
+    //cohomology_generators<Zm>(2, 0, 2*2*2-3);
+    //cohomology_generators<Zm>(2, 0, 4*2 + 2*0 - 2);
     
 //    std::cout << "Mod 5 computations." << std::endl;
 //    std::cout << "--------------------------------" << std::endl;

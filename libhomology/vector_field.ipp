@@ -267,6 +267,11 @@ std::vector< VectorT > compute_base_of_kernel( const MatrixT& m )
     const size_t dim_kernel = num_cols - dim_image;
     std::vector< VectorT > base(dim_kernel, num_cols);
     
+//    std::cout << "num rows   = " << num_rows << std::endl;
+//    std::cout << "num cols   = " << num_cols << std::endl;
+//    std::cout << "dim image  = " << dim_image << std::endl;
+//    std::cout << "dim kernel = " << dim_kernel << std::endl;
+    
     if( num_rows == 0 )
     {
         for( size_t j = 0; j < num_cols; ++j )
