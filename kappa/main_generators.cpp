@@ -258,6 +258,18 @@ void test_cd()
     test_<CoefficientT>( "cd", 2, 0, 1, create_cell(2, 4, 2, 3, 1) * create_cell(2, 3, 1, 2, 1) );
 }
 
+template< class CoefficientT >
+void test_e()
+{
+    test_<CoefficientT>( "e", 1, 1, 2, create_cell(3, 3, 1, 4, 3, 2, 1)  );
+}
+
+template< class CoefficientT >
+void test_de()
+{
+    test_<CoefficientT>( "de", 2, 1, 3, create_cell(2, 3, 1, 2, 1) * create_cell(3, 3, 1, 4, 3, 2, 1) );
+}
+
 std::list< Tuple > create_Qd()
 {
     std::list<Tuple> list;
@@ -539,6 +551,8 @@ int main( int argc, char** argv )
     test_z_1<Zm>();
     test_z_2<Zm>();
     test_tilde_d<Zm>();
+    test_e<Zm>();
+    test_de<Zm>();
     
     //cohomology_generators<Zm>(2, 0, 2*2*2-3);
     //cohomology_generators<Zm>(2, 0, 4*2 + 2*0 - 2);
