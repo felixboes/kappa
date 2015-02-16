@@ -2,10 +2,7 @@ LANG = en_US.UTF-8
 
 CXXFLAGS      := -O3 -std=c++11 -D_GLIBCXX_USE_NANOSLEEP \
                  -Wextra -Wall -Wno-long-long -pedantic-errors
-LIBS          := -lpthread \
-                 -lboost_filesystem -lboost_system -lboost_iostreams \
-                 -lboost_serialization -lboost_program_options \
-                 -lboost_date_time
+INCL          := -I.
 BUILDDIR      := build
 EXT           := cpp
 SRCDIRS       := kappa libhomology
@@ -14,18 +11,21 @@ EXCLUDE       := test_ version
 
 EXECUTE_BEFORE_BUILD_CHEAT := $(shell echo "const char* program_version_by_git = \"$(shell git rev-parse HEAD 2>/dev/null)\";" > kappa/version.cpp)
 
-ifdef ADV_OPTIMIZATION
+ifdef ENABLE_TCMALLOC
 CXXFLAGS      += -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free
-LIBS          := -ltcmalloc -lpthread \
-                 -L./lib/ \
-                 -lboost_filesystem -lboost_system -lboost_iostreams \
+LIBS          := -ltcmalloc -lpthread
+else
+LIBS          := -lpthread
+endif
+
+ifdef ENABLE_CUSTOM_LIBS
+LIBS          += -L./lib/
+INCL          += -I./include/
+endif
+
+LIBS          += -lboost_filesystem -lboost_system -lboost_iostreams \
                  -lboost_serialization -lboost_program_options \
                  -lboost_date_time -lgmpxx -lgmp
-INCL          := -I. -I./include/
-else
-LIBS          += -lgmpxx -lgmp
-INCL          := -I.
-endif
 
 ifdef ENABLE_KAPPA_DEBUG
 CXXFLAGS      += -g
@@ -34,6 +34,7 @@ endif
 ifndef CXX
 CXX           := g++
 endif
+
 ifndef DOXYGEN
 DOXYGEN       := doxygen
 endif
