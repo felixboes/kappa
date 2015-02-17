@@ -40,7 +40,7 @@ MonoCochainField< CoefficientT > create_cochain( const Generator& name )
     {
         CochainType cochain(1, 1, 4);
         cochain.set_name("e");
-        cochain.add_kappa_dual( 1, create_cell(3, 3, 1, 4, 3, 2, 1) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(3, 3, 1, 4, 3, 2, 1) );
         return cochain;
     }
         

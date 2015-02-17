@@ -215,6 +215,29 @@ public:
     void add_kappa_dual( const CoefficientType& c, const Tuple& t )
     {
         VectorType::operator+=( kappa_dual< VectorType >( c, t, basis ) );
+    } 
+    
+    template< class T >
+    friend ThisType operator*( const ThisType&, const ThisType& );
+    
+    uint32_t get_g() const
+    {
+        return g;
+    }
+    
+    uint32_t get_m() const
+    {
+        return m;
+    }
+        
+    uint32_t get_p() const
+    {
+        return p;
+    }
+    
+    std::string get_name() const
+    {
+        return name;
     }
     
     const MonoBasis& get_basis_reference() const
@@ -233,6 +256,33 @@ protected:
     uint32_t p;
     std::string name;
 };
+
+template< class CoefficientT >
+MonoCochainField< CoefficientT > operator*( const MonoCochainField< CoefficientT >&  x, const MonoCochainField< CoefficientT >& y )
+{
+    typedef MonoCochainField< CoefficientT > CochainType;
+    CochainType res( x.get_g() + y.get_g(), x.get_m() + y.get_m(), x.get_p() + y.get_p() );
+    
+    res.set_name( x.get_name() + y.get_name() );
+    
+    for( const auto cell_x : x.get_basis_reference().basis )
+    {
+        const CoefficientT& coeff_x = x.at( cell_x );
+        if( coeff_x != CoefficientT(0) )
+        {
+            for( const auto cell_y : y.get_basis_reference().basis )
+            {
+                const CoefficientT& coeff_y = y.at( cell_y );
+                if( coeff_y != CoefficientT(0) )
+                {
+                    res( cell_x * cell_y ) = coeff_x * coeff_y;
+                }
+            }
+        }
+    }
+    
+    return res;
+}
 
 template< class CoefficientT >
 std::ostream& operator<< ( std::ostream& stream, const MonoCochainField< CoefficientT > & cochain )

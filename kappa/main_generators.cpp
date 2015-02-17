@@ -111,155 +111,20 @@ void test_( const std::string& name, const uint32_t g, const uint32_t m, const u
 }
 
 template< class CoefficientT >
+void test_( const MonoCochainField< CoefficientT >& cochain )
+{
+    std::cout << "Name                  = " << cochain.get_name() << std::endl;
+    std::cout << "Cohomology class      = " << cohomology_class( cochain.get_g(), cochain.get_m(), cochain.get_p(), cochain ) << std::endl;
+    std::cout << std::endl;
+}
+
+template< class CoefficientT >
 void test_( const std::string& name, const uint32_t g, const uint32_t m, const uint32_t homological_p, const Tuple& cell )
 {
     std::list< Tuple > list;
     list.push_back(cell);
     
     test_< CoefficientT >(name, g, m, homological_p, list);
-}
-
-template< class CoefficientT >
-void test_a()
-{
-    test_<CoefficientT>("a", 0, 1, 0, create_cell(1, 2, 1) );
-}
-
-template< class CoefficientT >
-void test_aa()
-{
-    test_<CoefficientT>("a^2", 0, 2, 0, create_cell(2, 4, 3, 2, 1) );
-    test_<CoefficientT>("a^2", 0, 2, 0, create_cell(2, 4, 1, 3, 2) );
-}
-
-template< class CoefficientT >
-void test_b()
-{
-    std::list< Tuple > list;
-    list.push_back( create_cell(2, 3, 2, 2, 1) );
-    list.push_back( create_cell(2, 3, 1, 3, 2) );
-    
-    test_<CoefficientT>( "b", 0, 2, 1, list );
-}
-
-template< class CoefficientT >
-void test_ab()
-{
-    std::list< Tuple > list;
-    
-    list.push_back( create_cell(3, 5, 4, 3, 2, 2, 1) );
-    list.push_back( create_cell(3, 5, 4, 3, 1, 3, 2) );
-    
-    test_<CoefficientT>( "ab", 0, 3, 1, list );
-}
-
-template< class CoefficientT >
-void test_bb()
-{
-    std::list< Tuple > list;
-    std::list< Tuple > helper_list;
-    
-    helper_list.push_back( create_cell(2, 3, 2, 2, 1) );
-    helper_list.push_back( create_cell(2, 3, 1, 3, 2) );
-    
-    list.push_back( helper_list.front() * helper_list.front() );
-    list.push_back( helper_list.front() * helper_list.back() );
-    list.push_back( helper_list.back()  * helper_list.front() );
-    list.push_back( helper_list.back()  * helper_list.back() );
-   
-    test_<CoefficientT>( "bb", 0, 4, 2, list );
-}
-
-template< class CoefficientT >
-void test_c()
-{
-    test_<CoefficientT>( "c", 1, 0, 0, create_cell(2, 4, 2, 3, 1) );
-}
-
-template< class CoefficientT >
-void test_d()
-{
-    test_<CoefficientT>( "d", 1, 0, 1, create_cell(2, 3, 1, 2, 1) );
-}
-
-void test_d_tex()
-{
-    std::cout << tex_cell( create_cell(2, 3, 1, 2, 1) );    
-}
-
-template< class CoefficientT >
-void test_dd()
-{
-    Tuple d = create_cell(2, 3, 1, 2, 1);
-    test_<CoefficientT>( "dd", 2, 0, 2, d*d );
-}
-
-void test_dd_tex()
-{
-    Tuple d = create_cell(2, 3, 1, 2, 1);
-    std::cout << tex_cell(d*d);
-}
-
-template< class CoefficientT >
-void test_aad()
-{
-    Tuple aad = create_cell(4, 7, 6, 5, 4, 3, 1, 2, 1);
-    test_<CoefficientT>( "aad", 1, 2, 1, aad );
-}
-
-template< class CoefficientT >
-void test_bc()
-{
-    std::list< Tuple > list;
-    
-    list.push_back( create_cell(4, 7, 5, 6, 4, 3, 2, 2, 1) );
-    list.push_back( create_cell(4, 7, 5, 6, 4, 3, 1, 3, 2) );
-    
-    test_<CoefficientT>( "bc", 1, 2, 1, list );
-}
-
-template< class CoefficientT >
-void test_ccb()
-{
-    std::list< Tuple > list;
-    
-    Tuple c = create_cell(2, 4, 2, 3, 1);
-    
-    list.push_back( c * c * create_cell(2, 3, 2, 2, 1) );
-    list.push_back( c * c * create_cell(2, 3, 1, 3, 2) );
-    
-    test_<CoefficientT>( "ccb", 2, 2, 1, list );
-}
-
-template< class CoefficientT >
-void test_cc()
-{
-    Tuple c = create_cell(2, 4, 2, 3, 1);
-    test_<CoefficientT>( "c^2", 2, 0, 0, c*c );
-}
-
-template< class CoefficientT >
-void test_cd()
-{
-    test_<CoefficientT>( "cd", 2, 0, 1, create_cell(2, 4, 2, 3, 1) * create_cell(2, 3, 1, 2, 1) );
-}
-
-template< class CoefficientT >
-void test_e()
-{
-    test_<CoefficientT>( "e", 1, 1, 2, create_cell(3, 3, 1, 4, 3, 2, 1)  );
-}
-
-template< class CoefficientT >
-void test_ce()
-{
-    test_<CoefficientT>( "ce", 2, 1, 2, create_cell(2, 4, 2, 3, 1) * create_cell(3, 3, 1, 4, 3, 2, 1)  );
-}
-
-template< class CoefficientT >
-void test_de()
-{
-    test_<CoefficientT>( "de", 2, 1, 3, create_cell(2, 3, 1, 2, 1) * create_cell(3, 3, 1, 4, 3, 2, 1) );
 }
 
 template< class CoefficientT >
@@ -541,9 +406,10 @@ int main( int argc, char** argv )
     std::cout << create_cochain<Q>( Generator::c ) << std::endl;
     std::cout << create_cochain<Q>( Generator::d ) << std::endl;
     std::cout << create_cochain<Q>( Generator::e ) << std::endl;
+    std::cout << create_cochain<Q>( Generator::a ) * create_cochain<Q>( Generator::b ) << std::endl;
     
-//    std::cout << "Rational computations." << std::endl;
-//    std::cout << "--------------------------------" << std::endl;
+    std::cout << "Rational computations." << std::endl;
+    std::cout << "--------------------------------" << std::endl;
 //    test_aa<Q>();
 //    test_b<Q>();
 //    test_c<Q>();
@@ -557,11 +423,18 @@ int main( int argc, char** argv )
 //    test_Te<Q>();
 //    test_z_1<Q>();
 //    test_z_2<Q>();
+
+    test_( create_cochain<Q>( Generator::a ) );
+    test_( create_cochain<Q>( Generator::b ) );
+    test_( create_cochain<Q>( Generator::c ) );
+    test_( create_cochain<Q>( Generator::d ) );
+    test_( create_cochain<Q>( Generator::e ) );
+    test_( create_cochain<Q>( Generator::a ) * create_cochain<Q>( Generator::b ) );
     
-//    std::cout << "Mod 2 computations." << std::endl;
-//    std::cout << "--------------------------------" << std::endl;
-//    Zm::set_modulus(2);
-//    test_aa<Zm>();
+    std::cout << "Mod 2 computations." << std::endl;
+    std::cout << "--------------------------------" << std::endl;
+    Zm::set_modulus(2);
+//    test_a<Zm>();
 //    test_b<Zm>();
 //    test_ab<Zm>();
 //    test_bb<Zm>();
@@ -581,6 +454,15 @@ int main( int argc, char** argv )
 //    test_de<Zm>();
 //    test_ccb<Zm>();
 //    test_Qc<Zm>();
+
+    test_( create_cochain<Zm>( Generator::a ) );
+    test_( create_cochain<Zm>( Generator::b ) );
+    test_( create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::e ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) );
+    test_( create_cochain<Zm>( Generator::e ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::e ) * create_cochain<Zm>( Generator::d ) );
     
     //cohomology_generators<Zm>(2, 0, 2*2*2-3);
     //cohomology_generators<Zm>(2, 0, 4*2 + 2*0 - 2);
