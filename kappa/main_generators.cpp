@@ -1,41 +1,24 @@
 #include "kappa.hpp"
 
-MonoBasis load_basis( const uint32_t g, const uint32_t m, const int32_t p );
-
-template< class CoefficientT >
-std::string filename_pref( uint32_t g, uint32_t m );
-
-template<>
-std::string filename_pref<Q>( uint32_t g, uint32_t m )
-{
-    return "./cache/differentials_parallel/q_" + std::to_string(g) + "_" + std::to_string(m) + "_";
-}
-
-template<>
-std::string filename_pref<Zm>( uint32_t g, uint32_t m )
-{
-    return "./cache/differentials_parallel/s" + std::to_string( Zm::get_modulus() ) + "_" + std::to_string(g) + "_" + std::to_string(m) + "_";
-}
-
 template< class CoefficientT >
 VectorField< CoefficientT > cohomology_class( const uint32_t g, const uint32_t m, const int32_t p, const VectorField< CoefficientT > v )
 {         
-    MatrixField< CoefficientT > image  = load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p-1) + "_base_changes", false );
-    MatrixField< CoefficientT > kernel = load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
+    MatrixField< CoefficientT > image  = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p-1) + "_base_changes", false );
+    MatrixField< CoefficientT > kernel = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
 //    std::cout << "Image:" << std::endl << image << std::endl << std::endl;
 //    std::cout << "Kernel:" << std::endl << kernel << std::endl << std::endl;
 //    std::cout << "Diagonal:" << std::endl << diagonal << std::endl << std::endl;
-    std::cout << "The chain is " << ( matrix_vector_product_vanishes(load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false ), v) == true ? "indeed " : "NOT " ) << "a cycle." << std::endl;
+    std::cout << "The chain is " << ( matrix_vector_product_vanishes(load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false ), v) == true ? "indeed " : "NOT " ) << "a cycle." << std::endl;
     return v.homology_class( kernel, image );
 }
 
 template< class CoefficientT >
 void cohomology_generators( const uint32_t g, const uint32_t m, const int32_t p )
 {         
-    MatrixField< CoefficientT > image  = load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p-1) + "_base_changes", false );
-    MatrixField< CoefficientT > kernel = load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
-    MatrixField< CoefficientT > vanishing_test = load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
-    MonoBasis basis = load_basis( g, m, p );
+    MatrixField< CoefficientT > image  = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p-1) + "_base_changes", false );
+    MatrixField< CoefficientT > kernel = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
+    MatrixField< CoefficientT > vanishing_test = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
+    MonoBasis basis = load_parallel_mono_basis( g, m, p );
     
     auto base = compute_base_of_kernel< MatrixField<CoefficientT>, VectorField<CoefficientT> >( kernel );
     for( const auto& v : base )
@@ -64,10 +47,10 @@ void cohomology_generators( const uint32_t g, const uint32_t m, const int32_t p 
 template< class CoefficientT >
 void cohomology_generators_tex( const uint32_t g, const uint32_t m, const int32_t p )
 {         
-    MatrixField< CoefficientT > image  = load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p-1) + "_base_changes", false );
-    MatrixField< CoefficientT > kernel = load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
-    MatrixField< CoefficientT > vanishing_test = load_from_file_bz2< MatrixField< CoefficientT > >( filename_pref<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
-    MonoBasis basis = load_basis( g, m, p );
+    MatrixField< CoefficientT > image  = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p-1) + "_base_changes", false );
+    MatrixField< CoefficientT > kernel = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
+    MatrixField< CoefficientT > vanishing_test = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
+    MonoBasis basis = load_parallel_mono_basis( g, m, p );
     
     
     std::cout << tex_preamble();
@@ -109,21 +92,10 @@ void add_cell( const MonoBasis& basis, VectorField< CoefficientT >& v, const Coe
     v( (size_t)id ) += alpha;
 }
 
-MonoBasis load_basis( const uint32_t g, const uint32_t m, const int32_t p )
-{
-    std::string filename =
-            "./cache/bases_parallel/" +
-            std::to_string(g) + "_" +
-            std::to_string(m) + "_" +
-            std::to_string(p);
-    
-    return load_from_file_bz2< MonoBasis >( filename, false );
-}
-
 template< class CoefficientT >
 void test_( const std::string& name, const uint32_t g, const uint32_t m, const uint32_t homological_p, const std::list<Tuple>& list)
 {
-    MonoBasis basis = load_basis( g, m, 4*g+2*m-homological_p );
+    MonoBasis basis = load_parallel_mono_basis( g, m, 4*g+2*m-homological_p );
     VectorField< CoefficientT > v(basis.size());
     
     std::cout << "Name                  = " << name << std::endl;
@@ -401,7 +373,7 @@ void test_z_candidates()
     VectorField< CoefficientT > c_2(v_2.size());
     VectorField< CoefficientT > c_3(v_3.size());
     
-    MonoBasis base = load_basis(2,0,5);
+    MonoBasis base = load_parallel_mono_basis(2,0,5);
     
     for( size_t i = 0; i < v_1.size(); ++i )
     {
@@ -456,7 +428,7 @@ void test_z_candidates_tex()
     VectorField< CoefficientT > c_1(v_1.size());
     VectorField< CoefficientT > c_2(v_2.size());
     
-    MonoBasis base = load_basis(2,0,5);
+    MonoBasis base = load_parallel_mono_basis(2,0,5);
     
     for( size_t i = 0; i < v_1.size(); ++i )
     {
@@ -516,6 +488,14 @@ int main( int argc, char** argv )
     
     std::cout << kappa_version( argc, argv ) << std::endl;
     
+    MonoBasis b = load_parallel_mono_basis(1, 0, 4);
+    MonoCochainField<Q> cochain( 1, 0, 4 );
+    
+    cochain( create_cell(2, 4, 2, 3, 1) ) = 6;
+    
+    std::cout << cochain << std::endl;
+    
+    
 //    std::cout << "Rational computations." << std::endl;
 //    std::cout << "--------------------------------" << std::endl;
 //    test_aa<Q>();
@@ -532,27 +512,27 @@ int main( int argc, char** argv )
 //    test_z_1<Q>();
 //    test_z_2<Q>();
     
-    std::cout << "Mod 2 computations." << std::endl;
-    std::cout << "--------------------------------" << std::endl;
-    Zm::set_modulus(2);
+//    std::cout << "Mod 2 computations." << std::endl;
+//    std::cout << "--------------------------------" << std::endl;
+//    Zm::set_modulus(2);
 //    test_aa<Zm>();
 //    test_b<Zm>();
 //    test_ab<Zm>();
 //    test_bb<Zm>();
 //    test_c<Zm>();
 //    test_d<Zm>();
-    test_dd<Zm>();
+//    test_dd<Zm>();
 //    test_aad<Zm>();
 //    test_bc<Zm>();
 //    test_cc<Zm>();
 //    test_cd<Zm>();
 //    test_Qd<Zm>();
-    test_Te<Zm>();
-    test_z_1<Zm>();
-    test_z_2<Zm>();
-    test_tilde_d<Zm>();
-    test_e<Zm>();
-    test_de<Zm>();
+//    test_Te<Zm>();
+//    test_z_1<Zm>();
+//    test_z_2<Zm>();
+//    test_tilde_d<Zm>();
+//    test_e<Zm>();
+//    test_de<Zm>();
     
     //cohomology_generators<Zm>(2, 0, 2*2*2-3);
     //cohomology_generators<Zm>(2, 0, 4*2 + 2*0 - 2);

@@ -98,7 +98,7 @@ public:
      *  Fills every entry with CoefficientT(0).
      */
     void clear();
-        
+ 
     /**
      *  @returns the homology class of the vector (with respect to differentials).
     **/
@@ -109,7 +109,7 @@ public:
     
     // grant std::ostream access in order to print matrices to ostreams.
     template< class T >
-    friend std::ostream& operator<< ( std::ostream& stream, const VectorField<T> & matrix );
+    friend std::ostream& operator<< ( std::ostream& stream, const VectorField<T> & vector );
 
 protected:
     VectorStorageType data; ///< This realizes the data.
@@ -126,7 +126,7 @@ protected:
 };
 
 template< class CoefficientT >
-std::ostream& operator<< ( std::ostream& stream, const VectorField< CoefficientT > & matrix );
+std::ostream& operator<< ( std::ostream& stream, const VectorField< CoefficientT > & vector );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -203,7 +203,7 @@ public:
      *  Fills every entry with 0.
      */
     void clear();
-
+    
     // grant std::ostream access in order to print vectors to ostreams.
     friend std::ostream& operator<< ( std::ostream& stream, const VectorBool & vector);
 

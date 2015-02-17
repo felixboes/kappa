@@ -359,6 +359,17 @@ std::string kappa_version( int argc, char** argv )
     return ret.str();
 }
 
+template<>
+std::string filename_prefix_parallel_differentials<Q>( uint32_t g, uint32_t m )
+{
+    return "./cache/differentials_parallel/q_" + std::to_string(g) + "_" + std::to_string(m) + "_";
+}
+
+template<>
+std::string filename_prefix_parallel_differentials<Zm>( uint32_t g, uint32_t m )
+{
+    return "./cache/differentials_parallel/s" + std::to_string( Zm::get_modulus() ) + "_" + std::to_string(g) + "_" + std::to_string(m) + "_";
+}
 
 std::vector< std::vector< std::vector< size_t > > > list_set_partitions(size_t n)
 {

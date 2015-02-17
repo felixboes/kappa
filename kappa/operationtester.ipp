@@ -450,6 +450,11 @@ void OperationTester< MatrixComplex, VectorT > :: compute_and_add_Q(
 template< class VectorT, class CoefficientT >
 VectorT kappa_dual( const CoefficientT& c, const Tuple& t, const MonoBasis& b)
 {
+    if( c == CoefficientT(0) )
+    {
+        return VectorT( b.size() );
+    }
+
     // iterate through all kappa dual sequences J = (j_k, \ldots, j_1).
     // naive version.
     // todo: Improve performence.
@@ -457,7 +462,6 @@ VectorT kappa_dual( const CoefficientT& c, const Tuple& t, const MonoBasis& b)
     //   J = ().(1,...,2-s_2).(2,...,3-s_3)...(h-1,...,h-s_h})
     // with s_q <= q and counting
     //   k \mapsto (s_q)_q   where   s_q = ( |_  k/(q-1)!  _| (mod q) )
-    
     VectorT v( b.size() );
     
     const size_t h = t.norm();
