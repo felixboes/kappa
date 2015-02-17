@@ -247,7 +247,7 @@ public:
     MonoCochainField( uint32_t genus, uint32_t num_punct, uint32_t cohom_deg ) :
         VectorType(), g(genus), m(num_punct), p(cohom_deg)
     {
-        this->basis = load_parallel_mono_basis(g, m, p);
+        basis = load_parallel_mono_basis(g, m, p);
         VectorType::resize( basis.size() );
     }
     
@@ -261,6 +261,11 @@ public:
         return VectorType::at( basis.id_of(t) );
     }
     
+    std::string set_name( const std::string& new_name )
+    {
+        return name = new_name;
+    } 
+    
     // grant std::ostream access in order to print matrices to ostreams.
     template< class T >
     friend std::ostream& operator<< ( std::ostream& stream, const MonoCochainField<T> & cochain );
@@ -270,13 +275,18 @@ protected:
     uint32_t g;
     uint32_t m;
     uint32_t p;
+    std::string name;
 };
 
 template< class CoefficientT >
 std::ostream& operator<< ( std::ostream& stream, const MonoCochainField< CoefficientT > & cochain )
 {
     return stream
-        << "g = " << cochain.g << ", m = " << cochain.m << ", p = " << cochain.p << ", representing vector = "
+        << "name = " << cochain.name
+        << ", g = " << cochain.g
+        << ", m = " << cochain.m
+        << ", p = " << cochain.p
+        << ", representing vector = "
         << static_cast< const typename MonoCochainField< CoefficientT >::VectorType & >(cochain);
 }
 

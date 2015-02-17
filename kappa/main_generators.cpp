@@ -488,12 +488,8 @@ int main( int argc, char** argv )
     
     std::cout << kappa_version( argc, argv ) << std::endl;
     
-    MonoBasis b = load_parallel_mono_basis(1, 0, 4);
-    MonoCochainField<Q> cochain( 1, 0, 4 );
-    
-    cochain( create_cell(2, 4, 2, 3, 1) ) = 6;
-    
-    std::cout << cochain << std::endl;
+    std::cout << create_cochain<Q>( Generator::a ) << std::endl;
+    std::cout << create_cochain<Q>( Generator::b ) << std::endl;
     
     
 //    std::cout << "Rational computations." << std::endl;
