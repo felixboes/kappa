@@ -12,6 +12,7 @@
 #include <libhomology/homology.hpp>
 
 #include "factorial.hpp"
+#include "misc.hpp"
 #include "sessionconfig.hpp"
 #include "tuple.hpp"
 
@@ -72,6 +73,8 @@ struct MonoBasis
     // This is required as saving and loading are different methods.
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
+
+MonoBasis load_parallel_mono_basis( const uint32_t g, const uint32_t m, const int32_t p );
 
 std::ostream& operator<< (std::ostream& stream, const MonoBasis& basis);
 
@@ -231,6 +234,61 @@ int32_t sign(const int32_t          parity,
              const int8_t           i,
              const int8_t           or_sign,
              const SignConvention & sign_conv );
+
+template< class CoefficientT >
+class MonoCochainField : public VectorField< CoefficientT >
+{
+public:    
+    typedef CoefficientT CoefficientType;
+    typedef MonoCochainField< CoefficientType > ThisType;
+    typedef typename VectorField< CoefficientType > :: ThisType VectorType;
+    typedef typename VectorField< CoefficientType > :: VectorStorageType VectorStorageType;
+
+    MonoCochainField( uint32_t genus, uint32_t num_punct, uint32_t cohom_deg ) :
+        VectorType(), g(genus), m(num_punct), p(cohom_deg)
+    {
+        basis = load_parallel_mono_basis(g, m, p);
+        VectorType::resize( basis.size() );
+    }
+    
+    CoefficientType & operator()( const Tuple& t )
+    {
+        return VectorType::operator()( basis.id_of(t) );
+    }
+
+    const CoefficientType& at( const Tuple& t ) const
+    {
+        return VectorType::at( basis.id_of(t) );
+    }
+    
+    std::string set_name( const std::string& new_name )
+    {
+        return name = new_name;
+    } 
+    
+    // grant std::ostream access in order to print matrices to ostreams.
+    template< class T >
+    friend std::ostream& operator<< ( std::ostream& stream, const MonoCochainField<T> & cochain );
+    
+protected:
+    MonoBasis basis;
+    uint32_t g;
+    uint32_t m;
+    uint32_t p;
+    std::string name;
+};
+
+template< class CoefficientT >
+std::ostream& operator<< ( std::ostream& stream, const MonoCochainField< CoefficientT > & cochain )
+{
+    return stream
+        << "name = " << cochain.name
+        << ", g = " << cochain.g
+        << ", m = " << cochain.m
+        << ", p = " << cochain.p
+        << ", representing vector = "
+        << static_cast< const typename MonoCochainField< CoefficientT >::VectorType & >(cochain);
+}
 
 #include "monocomplex.ipp"
 

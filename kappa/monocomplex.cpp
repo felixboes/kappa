@@ -35,6 +35,17 @@ int64_t MonoBasis :: id_of(const Tuple &t) const
     }
 }
 
+MonoBasis load_parallel_mono_basis( const uint32_t g, const uint32_t m, const int32_t p )
+{
+    std::string filename =
+            "./cache/bases_parallel/" +
+            std::to_string(g) + "_" +
+            std::to_string(m) + "_" +
+            std::to_string(p);
+    
+    return load_from_file_bz2< MonoBasis >( filename, false );
+}
+
 std::ostream& operator<< ( std::ostream& os, const MonoBasis& mb )
 {
     for( auto it = mb.basis.cbegin(); it != mb.basis.cend(); ++it )

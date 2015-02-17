@@ -81,6 +81,15 @@ std::string tex_end();
 **/
 std::string kappa_version( int argc = 0, char** argv = nullptr );
 
+template< class CoefficientT >
+std::string filename_prefix_parallel_differentials( uint32_t g, uint32_t m );
+
+template<>
+std::string filename_prefix_parallel_differentials<Q>( uint32_t g, uint32_t m );
+
+template<>
+std::string filename_prefix_parallel_differentials<Zm>( uint32_t g, uint32_t m );
+
 /**
  *  lists all set partitions by declaring to which set an element belongs.
 **/

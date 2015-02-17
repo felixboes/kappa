@@ -556,42 +556,59 @@ int main( int argc, char** argv )
 //    test_z_1<Q>();
 //    test_z_2<Q>();
     
+<<<<<<< HEAD
+    std::cout << "Mod 2 computations." << std::endl;
+    std::cout << "--------------------------------" << std::endl;
+    Zm::set_modulus(2);
+      test_aa<Zm>();
+=======
 //    std::cout << "Mod 2 computations." << std::endl;
 //    std::cout << "--------------------------------" << std::endl;
 //    Zm::set_modulus(2);
 //    test_aa<Zm>();
+>>>>>>> a7d9ecd8386321a1a93a3ccb1d849344756d569f
 //    test_b<Zm>();
 //    test_ab<Zm>();
 //    test_bb<Zm>();
 //    test_c<Zm>();
 //    test_d<Zm>();
-    test_dd<Zm>();
+//    test_dd<Zm>();
 //    test_aad<Zm>();
 //    test_bc<Zm>();
 //    test_cc<Zm>();
 //    test_cd<Zm>();
 //    test_Qd<Zm>();
+<<<<<<< HEAD
+    test_Te<Zm>();
+    test_z_1<Zm>();
+    test_z_2<Zm>();
+    test_tilde_d<Zm>();
+    test_e<Zm>();
+//    test_ce<Zm>();
+//    test_de<Zm>();
+//    test_ccb<Zm>();
+    test_Qc<Zm>();
+=======
 //    test_Te<Zm>();
 //    test_z_1<Zm>();
 //    test_z_2<Zm>();
 //    test_tilde_d<Zm>();
 //    test_e<Zm>();
 //    test_de<Zm>();
-//    test_ccb<Zm>();
-//    test_Qc<Zm>();
+>>>>>>> a7d9ecd8386321a1a93a3ccb1d849344756d569f
     
     //cohomology_generators<Zm>(2, 0, 2*2*2-3);
     //cohomology_generators<Zm>(2, 0, 4*2 + 2*0 - 2);
     
-//    std::cout << "Mod 5 computations." << std::endl;
-//    std::cout << "--------------------------------" << std::endl;
-//    Zm::set_modulus(5);
+    std::cout << "Mod 5 computations." << std::endl;
+    std::cout << "--------------------------------" << std::endl;
+    Zm::set_modulus(5);
 //    test_bc<Zm>();
 //    test_dd<Zm>();
 //    test_cd<Zm>();
 //    test_Qd<Zm>();
 //    test_Te<Zm>();
-//    test_Qc<Zm>();
+    test_Qc<Zm>();
     
 //    cohomology_generators<Q>( 0, 2, 3);
 //    cohomology_generators<Q>( 1, 0, 4);
