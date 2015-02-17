@@ -6,7 +6,10 @@
 
 #include <boost/range/adaptor/reversed.hpp>
 
-#include "kappa.hpp"
+#include "monobasis.hpp"
+#include "cssbasis.hpp"
+#include "libhomology/homology.hpp"
+
 
 template< class MatrixComplex, class VectorT >
 class OperationTester

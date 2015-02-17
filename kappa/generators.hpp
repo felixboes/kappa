@@ -4,11 +4,15 @@
 #include <string>
 
 #include "monocomplex.hpp"
+#include "operationtester.hpp"
 
 enum Generator
 {
     a,
-    b
+    b,
+    c,
+    d,
+    e
 };
 
 template< class CoefficientT >

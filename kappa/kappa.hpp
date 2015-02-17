@@ -8,6 +8,7 @@
 #include "factorial.hpp"
 #include "generators.hpp"
 #include "misc.hpp"
+#include "monobasis.hpp"
 #include "monocomplex.hpp"
 #include "sessionconfig.hpp"
 #include "operationtester.hpp"

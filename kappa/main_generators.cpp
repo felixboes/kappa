@@ -538,7 +538,9 @@ int main( int argc, char** argv )
     
     std::cout << create_cochain<Q>( Generator::a ) << std::endl;
     std::cout << create_cochain<Q>( Generator::b ) << std::endl;
-    
+    std::cout << create_cochain<Q>( Generator::c ) << std::endl;
+    std::cout << create_cochain<Q>( Generator::d ) << std::endl;
+    std::cout << create_cochain<Q>( Generator::e ) << std::endl;
     
 //    std::cout << "Rational computations." << std::endl;
 //    std::cout << "--------------------------------" << std::endl;
@@ -565,7 +567,7 @@ int main( int argc, char** argv )
 //    test_bb<Zm>();
 //    test_c<Zm>();
 //    test_d<Zm>();
-    test_dd<Zm>();
+//    test_dd<Zm>();
 //    test_aad<Zm>();
 //    test_bc<Zm>();
 //    test_cc<Zm>();

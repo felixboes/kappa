@@ -13,70 +13,11 @@
 
 #include "factorial.hpp"
 #include "misc.hpp"
+#include "monobasis.hpp"
+#include "operationtester.hpp"
 #include "sessionconfig.hpp"
 #include "tuple.hpp"
 
-
-/**
-    The MonoBasis keeps track of the basis elements of a module in a MonoComplex.
-**/
-struct MonoBasis
-{
-    MonoBasis();
-    
-    /// Add a basis element.
-    uint32_t add_basis_element (Tuple& t);
-    
-    /// output stream
-    friend std::ostream& operator<< (std::ostream& stream, const MonoBasis& mb);
-    
-    /// Returns the number of basis elements.
-    uint64_t size() const;
-
-    /// Returns the index of the Tuple that is stored in the MonoBasis or -1.
-    int64_t id_of( const Tuple& t ) const;
-    
-    /// Stores the orderd basis.
-    std::unordered_set< Tuple, HashTuple > basis;
-    
-    friend class boost::serialization::access;
-    
-    /// @warning The serialization library from boost does not yet support unorderd maps (we use boost in the version 1.49). Therefore we must provide a workaround.
-    /// boost::serialization method that we use to save a MonoBasis to file.
-    template<class Archive>
-    void save(Archive & ar, const unsigned int) const
-    {
-        // In order to load an unorderd_set we need to know the exact number of elemets that are stored.
-        size_t size = basis.size();
-        ar & size;
-        for( const auto& it : basis )
-        {
-            ar & it;
-        }
-    }
-    
-    /// boost::serialization method that we use to load a MonoBasis from file.
-    template<class Archive>
-    void load(Archive & ar, const unsigned int)
-    {
-        size_t size;
-        Tuple t;
-        
-        ar & size;
-        for( size_t i = 0; i < size; ++i )
-        {
-            ar & t;
-            basis.insert(t);
-        }
-    }
-    
-    // This is required as saving and loading are different methods.
-    BOOST_SERIALIZATION_SPLIT_MEMBER()
-};
-
-MonoBasis load_parallel_mono_basis( const uint32_t g, const uint32_t m, const int32_t p );
-
-std::ostream& operator<< (std::ostream& stream, const MonoBasis& basis);
 
 /**
  * This function is supposed to update the differential according to the contribution
@@ -253,7 +194,12 @@ public:
     
     CoefficientType & operator()( const Tuple& t )
     {
-        return VectorType::operator()( basis.id_of(t) );
+        const auto res = basis.id_of(t);
+        if( res == -1 )
+        {
+            std::cout << "Error: " << t << " is no basis element." << std::endl;
+        }
+        return VectorType::operator()( res );
     }
 
     const CoefficientType& at( const Tuple& t ) const
@@ -265,6 +211,16 @@ public:
     {
         return name = new_name;
     } 
+    
+    void add_kappa_dual( const CoefficientType& c, const Tuple& t )
+    {
+        VectorType::operator+=( kappa_dual< VectorType >( c, t, basis ) );
+    }
+    
+    const MonoBasis& get_basis_reference() const
+    {
+        return basis;
+    }
     
     // grant std::ostream access in order to print matrices to ostreams.
     template< class T >
