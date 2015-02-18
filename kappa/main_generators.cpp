@@ -321,12 +321,19 @@ int main( int argc, char** argv )
     // m = 1
     test_( create_cochain<Zm>( Generator::a ) );
     // m = 2
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) );
     test_( create_cochain<Zm>( Generator::b ) );
     // m = 4
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) );
     test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) );
     test_( create_cochain<Zm>( Generator::Qb ) );
     // m = 6
-    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b )  * create_cochain<Zm>( Generator::b ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Qb ) );
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) );
     test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::Qb ) );
     
     // Classes for g = 1:
@@ -343,8 +350,8 @@ int main( int argc, char** argv )
     test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::e ) );
     test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::Eb ) );
     // m = 4:
-//    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) );
-//    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
     
     // Classes for g = 2:
     // m = 0:
