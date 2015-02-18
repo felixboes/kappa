@@ -47,22 +47,22 @@ MonoCochainField< CoefficientT > create_cochain( const Generator& name )
     {
         CochainType cochain(2, 0, 7);
         cochain.set_name("Qc");
-        
+        // Observe that every two adjecent cells differ by a face index 1, hence the sign is kept.
         cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 7, 5, 6, 4, 4, 2, 3, 1) );
         cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 7, 5, 6, 1, 4, 2, 3, 1) );
         cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 7, 5, 6, 2, 4, 2, 3, 1) );
         cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 7, 5, 6, 3, 4, 2, 3, 1) );
-        
+        // Now jumping to the groud differs by a face index of 4, hence we have to change the sign.
         cochain.add_kappa_dual( CoefficientT(-1), create_cell(4, 7, 5, 6, 1, 5, 3, 4, 2) );
         cochain.add_kappa_dual( CoefficientT(-1), create_cell(4, 7, 2, 6, 1, 5, 3, 4, 2) );
         cochain.add_kappa_dual( CoefficientT(-1), create_cell(4, 7, 3, 6, 1, 5, 3, 4, 2) );
         cochain.add_kappa_dual( CoefficientT(-1), create_cell(4, 7, 4, 6, 1, 5, 3, 4, 2) );
-        
+        // Now jumping to the groud differs by a face index of 4, hence we have to change the sign.
         cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 7, 2, 6, 1, 6, 4, 5, 3) );
         cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 7, 2, 3, 1, 6, 4, 5, 3) );
         cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 7, 2, 4, 1, 6, 4, 5, 3) );
         cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 7, 2, 5, 1, 6, 4, 5, 3) );
-        
+        // Now jumping to the groud differs by a face index of 4, hence we have to change the sign.
         cochain.add_kappa_dual( CoefficientT(-1), create_cell(4, 7, 2, 3, 1, 7, 5, 6, 4) );
         cochain.add_kappa_dual( CoefficientT(-1), create_cell(4, 4, 2, 3, 1, 7, 5, 6, 4) );
         cochain.add_kappa_dual( CoefficientT(-1), create_cell(4, 5, 2, 3, 1, 7, 5, 6, 4) );

@@ -315,7 +315,7 @@ int main( int argc, char** argv )
     
     std::cout << "Mod 2 computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
-    Zm::set_modulus(2);;
+    Zm::set_modulus(2);
 //    test_z_1<Zm>();
 //    test_z_2<Zm>();
 //    test_tilde_d<Zm>();
