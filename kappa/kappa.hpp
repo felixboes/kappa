@@ -4,6 +4,7 @@
 #include <libhomology/homology.hpp>
 
 #include "blockfinder.hpp"
+#include "cssbasis.hpp"
 #include "css.hpp"
 #include "factorial.hpp"
 #include "generators.hpp"

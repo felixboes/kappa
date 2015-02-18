@@ -52,6 +52,8 @@ void DiagonalizerField< MatrixType > :: apply_base_changes( MatrixType& differen
         
         for( auto diag_entry : base_changes.diagonal )
         {
+            //std::cout << "*";
+            
             // all entries left of diag_entry are zero.
             // The k-th row of the differential is altered using the entries right of the diagonal entry.
             const size_t k = diag_entry.first;
@@ -82,7 +84,8 @@ void DiagonalizerField< MatrixType > :: apply_base_changes( MatrixType& differen
                     last_round = true;
                 }
                 
-                threads.emplace_back(
+                threads.emplace_back
+                (
                     [&base_change_single_col, &base_changes, k, lambda, offset, chunk_size]
                     {
                         for( size_t j = 0; j < chunk_size; ++j )
@@ -131,11 +134,12 @@ void DiagonalizerField< MatrixType > :: apply_base_changes( MatrixType& differen
                     last_round = true;
                 }
                 
-                threads.emplace_back(
+                threads.emplace_back
+                (
                     [&differential, &base_change_single_col, l, lambda, offset, chunk_size, num_rows]
                     {
-                        const CoefficientType zero = 0;
-                        for( size_t j = 0; j < chunk_size; ++j )
+                        const CoefficientType zero(0);
+                        for( size_t j = offset; j < offset + chunk_size; ++j )
                         {
                             for( size_t i = l+1; i < num_rows; ++i )
                             {
@@ -143,7 +147,7 @@ void DiagonalizerField< MatrixType > :: apply_base_changes( MatrixType& differen
                                 const auto & entry = base_change_single_col.at( i );
                                 if( entry != zero )
                                 {
-                                    differential( l, offset + j ) += entry * differential.at( i, offset + j );
+                                    differential( l, j ) += entry * differential.at( i, j );
                                 }
                             }
                         }
@@ -200,6 +204,8 @@ uint32_t DiagonalizerField< MatrixType >::diag_field( MatrixType &matrix )
         size_t col = 0;
         size_t row_1 = 0;
 
+        const typename MatrixType::CoefficientType zero(0);
+        
         // Iterate through columns. We may stop if the rank is maximal.
         for (; col < num_cols && current_rank < num_rows; ++col )
         {
@@ -225,7 +231,7 @@ uint32_t DiagonalizerField< MatrixType >::diag_field( MatrixType &matrix )
                     size_t row_2 = *it;
                     // Assuming that the entry (row_2, col) differs from zero, we perform
                     // a row operation to matrix to zeroize the entry (row_2, col) using the entry (row_1, col).
-                    if( matrix.at( row_2, col) != typename MatrixType::CoefficientType(0) )
+                    if( matrix.at( row_2, col) != zero )
                     {
                         matrix.row_operation( row_1, row_2, col );
                     }
@@ -505,10 +511,11 @@ void DiagonalizerField< MatrixType >::Worker::work( MatrixType& matrix )
     }
     if (new_col < matrix.size2())
     {
+        const typename MatrixType::CoefficientType zero(0);
         for ( jobs.get_work_chunk(id, begin, end); begin < end; ++begin )
         {
             size_t row_2 = jobs.rows_to_work_at[begin];
-            if ( matrix(row_2, new_col) == typename MatrixType::CoefficientType(0) )
+            if ( matrix(row_2, new_col) == zero )
             {
                 new_remaining_rows.push_back(row_2);
             }
@@ -541,10 +548,11 @@ void DiagonalizerField< MatrixType >::Worker::collect_remaining_work( MatrixType
     size_t new_col = jobs.col + 1;
     if ( new_col < matrix.size2() )
     {
+        const typename MatrixType::CoefficientType zero(0);
         for ( jobs.get_remaining_chunk(id, begin, end); begin < end; ++begin )
         {
             size_t row = remaining_rows[begin];
-            if ( matrix(row, new_col) == typename MatrixType::CoefficientType(0) )
+            if ( matrix(row, new_col) == zero )
             {
                 new_remaining_rows.push_back(row);
             }
