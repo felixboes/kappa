@@ -82,6 +82,7 @@ template< class CoefficientT >
 void test_( const MonoCochainField< CoefficientT >& cochain )
 {
     std::cout << "Name                  = " << cochain.get_name() << std::endl;
+    std::cout << "(g,m,p)               = (" << cochain.get_g() << "," << cochain.get_m() << "," << 4*cochain.get_g() + 2*cochain.get_m() - cochain.get_p() << ")" << std::endl;
     std::cout << "Cohomology class      = " << cohomology_class( cochain.get_g(), cochain.get_m(), cochain.get_p(), cochain ) << std::endl;
     std::cout << std::endl;
 }
@@ -341,17 +342,26 @@ int main( int argc, char** argv )
     test_( create_cochain<Zm>( Generator::c ) );
     test_( create_cochain<Zm>( Generator::d ) );
     // m = 1:
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) );
     test_( create_cochain<Zm>( Generator::e ) );
     test_( create_cochain<Zm>( Generator::Eb ) );
     // m = 2:
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::e ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Eb ) );
     test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) );
     test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
     // m = 3:
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::e ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Eb ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
     test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::e ) );
     test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::Eb ) );
-    // m = 4:
-    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) );
-    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
     
     // Classes for g = 2:
     // m = 0:
@@ -362,6 +372,12 @@ int main( int argc, char** argv )
     test_( create_cochain<Zm>( Generator::Te ) );
     test_( create_cochain<Zm>( Generator::TEb ) );
     // m = 1:
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Qd ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Te ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::TEb ) );
     test_( create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::Eb ) );
     test_( create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::e ) );
     test_( create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::Eb ) );
