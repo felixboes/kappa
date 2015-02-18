@@ -316,21 +316,58 @@ int main( int argc, char** argv )
     std::cout << "Mod 2 computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
     Zm::set_modulus(2);
+
+    // Classes for g = 0:
+    // m = 1
+    test_( create_cochain<Zm>( Generator::a ) );
+    // m = 2
+    test_( create_cochain<Zm>( Generator::b ) );
+    // m = 4
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) );
+    test_( create_cochain<Zm>( Generator::Qb ) );
+    // m = 6
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b )  * create_cochain<Zm>( Generator::b ) );
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::Qb ) );
+    
+    // Classes for g = 1:
+    // m = 0:
+    test_( create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::d ) );
+    // m = 1:
+    test_( create_cochain<Zm>( Generator::e ) );
+    test_( create_cochain<Zm>( Generator::Eb ) );
+    // m = 2:
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
+    // m = 3:
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::e ) );
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::Eb ) );
+    // m = 4:
+//    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) );
+//    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
+    
+    // Classes for g = 2:
+    // m = 0:
+    test_( create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::Qd ) );
+    test_( create_cochain<Zm>( Generator::Te ) );
+    test_( create_cochain<Zm>( Generator::TEb ) );
+    // m = 1:
+    test_( create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::Eb ) );
+    test_( create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::e ) );
+    test_( create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::Eb ) );
+    
+    
+    // Moreover:
+    test_( create_cochain<Zm>( Generator::Qc ) );
+    
+    // Later:
 //    test_z_1<Zm>();
 //    test_z_2<Zm>();
 //    test_tilde_d<Zm>();
-
-    test_( create_cochain<Zm>( Generator::a ) );
-    test_( create_cochain<Zm>( Generator::b ) );
-    test_( create_cochain<Zm>( Generator::c ) );
-    test_( create_cochain<Zm>( Generator::d ) );
-    test_( create_cochain<Zm>( Generator::e ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) );
-    test_( create_cochain<Zm>( Generator::e ) * create_cochain<Zm>( Generator::c ) );
-    test_( create_cochain<Zm>( Generator::e ) * create_cochain<Zm>( Generator::d ) );
-    test_( create_cochain<Zm>( Generator::Qc ) );
-    test_( create_cochain<Zm>( Generator::Qd ) );
-    test_( create_cochain<Zm>( Generator::Te ) );
+    
     
     std::cout << "Mod 5 computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
