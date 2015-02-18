@@ -12,7 +12,10 @@ enum Generator
     b,
     c,
     d,
-    e
+    e,
+    Qc,
+    Qd, ///< This is soley defined for coefficients with 2 = 0.
+    Te
 };
 
 template< class CoefficientT >
