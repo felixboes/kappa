@@ -134,11 +134,17 @@ void DiagonalizerField< MatrixType > :: apply_base_changes( MatrixType& differen
                 threads.emplace_back(
                     [&differential, &base_change_single_col, l, lambda, offset, chunk_size, num_rows]
                     {
+                        const CoefficientType zero = 0;
                         for( size_t j = 0; j < chunk_size; ++j )
                         {
                             for( size_t i = l+1; i < num_rows; ++i )
                             {
-                                differential( l, offset + j ) += base_change_single_col.at( i ) * differential.at( i, offset + j );
+                                // This if statement speeds up the computation by about 2 to 4 times.
+                                const auto & entry = base_change_single_col.at( i );
+                                if( entry != zero )
+                                {
+                                    differential( l, offset + j ) += entry * differential.at( i, offset + j );
+                                }
                             }
                         }
                     }
