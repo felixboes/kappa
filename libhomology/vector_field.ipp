@@ -321,22 +321,23 @@ std::vector< VectorT > compute_base_of_kernel( const MatrixT& m )
 template< class MatrixT, class VectorT >
 VectorT matrix_vector_product( const MatrixT& m, const VectorT& v )
 {
-    size_t dim = v.size();
-    VectorT res(dim);
+    const size_t dim_v = v.size();
+    const size_t dim_res = m.size1();
+    VectorT res(dim_res);
     
     if( m.size1() == 0 || m.size2() == 0 )
     {
         return res;
     }
-    if( dim != m.size2() )
+    if( dim_v != m.size2() )
     {
         std::cout << "Error: The number of rows of the matrix is not equals the dimension of the vector." << std::endl;
         return VectorT();
     }
 
-    for( size_t i = 0; i < dim; ++i )
+    for( size_t i = 0; i < dim_res; ++i )
     {
-        for( size_t j = 0; j < m.size2(); ++j )
+        for( size_t j = 0; j < dim_v; ++j )
         {
             res(i) += m.at(i,j) * v.at(j);
         }
