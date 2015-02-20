@@ -100,81 +100,86 @@ void test_( const MonoCochainField< CoefficientT >& cochain )
 template< class CoefficientT >
 void test_( const std::string& name, const uint32_t g, const uint32_t m, const uint32_t homological_p, const Tuple& cell )
 {
-    std::list< Tuple > list;
-    list.push_back(cell);
+    MonoCochainField< CoefficientT > cochain(g, m, 4*g+2*m-homological_p );
+    cochain.add_kappa_dual( CoefficientT(1),cell);
     
-    test_< CoefficientT >(name, g, m, homological_p, list);
+    test_< CoefficientT >(name, g, m, homological_p, cochain);
 }
 
-std::list< Tuple > create_z_1()
+template< class CoefficientT >
+MonoCochainField< CoefficientT > create_z_1()
 {
-    std::list<Tuple> list;
-    list.push_back( create_cell( 4, 5, 3, 4, 3, 3, 1, 2, 1 ) );
+    MonoCochainField< CoefficientT > cochain(2, 0, 5);
+    cochain.set_name("z");
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 3, 4, 3, 3, 1, 2, 1 ) );
     
-    list.push_back( create_cell( 4, 5, 3, 4, 1, 3, 1, 2, 1 ) );
-    list.push_back( create_cell( 4, 5, 1, 4, 1, 3, 1, 2, 1 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 3, 4, 1, 3, 1, 2, 1 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 1, 4, 1, 3, 1, 2, 1 ) );
     
-    list.push_back( create_cell( 4, 5, 3, 4, 2, 3, 1, 2, 1 ) );
-    list.push_back( create_cell( 4, 5, 1, 4, 2, 3, 1, 2, 1 ) );
-    list.push_back( create_cell( 4, 5, 2, 4, 2, 3, 1, 2, 1 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 3, 4, 2, 3, 1, 2, 1 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 1, 4, 2, 3, 1, 2, 1 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 2, 4, 2, 3, 1, 2, 1 ) );
     
-    list.push_back( create_cell( 4, 5, 1, 4, 1, 4, 2, 3, 2 ) );
-    list.push_back( create_cell( 4, 5, 2, 4, 1, 4, 2, 3, 2 ) );
-    list.push_back( create_cell( 4, 5, 3, 4, 1, 4, 2, 3, 2 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 1, 4, 1, 4, 2, 3, 2 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 2, 4, 1, 4, 2, 3, 2 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 3, 4, 1, 4, 2, 3, 2 ) );
     
-    list.push_back( create_cell( 4, 5, 1, 2, 1, 4, 2, 3, 2 ) );
-    list.push_back( create_cell( 4, 5, 3, 2, 1, 4, 2, 3, 2 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 1, 2, 1, 4, 2, 3, 2 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 3, 2, 1, 4, 2, 3, 2 ) );
     
-    list.push_back( create_cell( 4, 5, 1, 3, 1, 4, 2, 3, 2 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 1, 3, 1, 4, 2, 3, 2 ) );
     
-    list.push_back( create_cell( 4, 4, 2, 3, 2, 5, 1, 2, 1 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 4, 2, 3, 2, 5, 1, 2, 1 ) );
     
-    list.push_back( create_cell( 4, 4, 1, 3, 1, 5, 2, 3, 2 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 4, 1, 3, 1, 5, 2, 3, 2 ) );
     
-    list.push_back( create_cell( 4, 4, 1, 2, 1, 5, 3, 4, 3 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 4, 1, 2, 1, 5, 3, 4, 3 ) );
     
-    return list;
+    return cochain;
 }
 
 template< class CoefficientT >
 void test_z_1()
 {
-    test_<CoefficientT>( "z", 2, 0, 3, create_z_1() );
+    test_( create_z_1<CoefficientT>() );
 }
 
-std::list< Tuple > create_z_2()
+template< class CoefficientT >
+MonoCochainField< CoefficientT > create_z_2()
 {
-    std::list<Tuple> list;
-    list.push_back( create_cell( 4, 5, 3, 4, 3, 3, 1, 2, 1 ) );
+    MonoCochainField< CoefficientT > cochain(2, 0, 5);
+    cochain.set_name("z");
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 3, 4, 3, 3, 1, 2, 1 ) );
     
-    list.push_back( create_cell( 4, 5, 3, 4, 1, 3, 1, 2, 1 ) );
-    list.push_back( create_cell( 4, 5, 1, 4, 1, 3, 1, 2, 1 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 3, 4, 1, 3, 1, 2, 1 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 1, 4, 1, 3, 1, 2, 1 ) );
     
-    list.push_back( create_cell( 4, 5, 1, 4, 3, 4, 1, 2, 1 ) );
-    list.push_back( create_cell( 4, 5, 3, 4, 3, 4, 1, 2, 1 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 1, 4, 3, 4, 1, 2, 1 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 3, 4, 3, 4, 1, 2, 1 ) );
     
-    list.push_back( create_cell( 4, 5, 3, 3, 1, 4, 1, 2, 1 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 3, 3, 1, 4, 1, 2, 1 ) );
     
-    list.push_back( create_cell( 4, 4, 1, 2, 1, 5, 3, 4, 3 ) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 4, 1, 2, 1, 5, 3, 4, 3 ) );
     
-    return list;
+    return cochain;
 }
 
 template< class CoefficientT >
 void test_z_2()
 {
-    test_<CoefficientT>( "z", 2, 0, 3, create_z_2() );
+    test_( create_z_2<CoefficientT>() );
 }
 
 template< class CoefficientT >
 void test_tilde_d()
 {
-    std::list< Tuple > list;
-    list.push_back( create_cell(4, 5, 4, 5, 4, 3, 1, 2, 1) );
-    list.push_back( create_cell(4, 5, 3, 4, 3, 2, 1, 2, 1) );
-    list.push_back( create_cell(4, 4, 3, 5, 4, 2, 1, 2, 1) );
-    list.push_back( create_cell(4, 5, 4, 5, 4, 2, 1, 3, 2) );
-    test_<CoefficientT>( "tilde d", 2, 0, 3, list );
+    MonoCochainField< CoefficientT > cochain(2, 0, 5);
+    cochain.set_name("tilde d");
+    cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 5, 4, 5, 4, 3, 1, 2, 1) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 5, 3, 4, 3, 2, 1, 2, 1) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 4, 3, 5, 4, 2, 1, 2, 1) );
+    cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 5, 4, 5, 4, 2, 1, 3, 2) );
+    test_( cochain );
 }
 
 template< class CoefficientT >
@@ -296,6 +301,87 @@ void test_Q()
     std::cout << std::endl;
 }
 
+void verify_known_generators()
+{
+    std::cout << "Mod 2 computations." << std::endl;
+    std::cout << "--------------------------------" << std::endl;
+    Zm::set_modulus(2);
+
+    // Classes for g = 0:
+    // m = 1
+    test_( create_cochain<Zm>( Generator::a ) );
+    // m = 2
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) );
+    test_( create_cochain<Zm>( Generator::b ) );
+    // m = 4
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) );
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) );
+    test_( create_cochain<Zm>( Generator::Qb ) );
+    // m = 6
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Qb ) );
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) );
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::Qb ) );
+    
+    // Classes for g = 1:
+    // m = 0:
+    test_( create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::d ) );
+    // m = 1:
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::e ) );
+    test_( create_cochain<Zm>( Generator::Eb ) );
+    // m = 2:
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::e ) );
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Eb ) );
+    // m = 3:
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) ); 
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::e ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::e ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Eb ) );
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::Eb ) );
+    // m = 4:
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) ); 
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::e ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::e ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Eb ) );
+    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::Eb ) );
+    
+    // Classes for g = 2:
+    // m = 0:
+    test_( create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::Qd ) );
+    test_( create_cochain<Zm>( Generator::Te ) );
+    test_( create_cochain<Zm>( Generator::TEb ) );
+    // m = 1:
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Qd ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Te ) );
+    test_( create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::Eb ) );
+    test_( create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::e ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::TEb ) );
+    test_( create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::Eb ) );
+}
 
 int main( int argc, char** argv )
 {
@@ -303,117 +389,61 @@ int main( int argc, char** argv )
     
     std::cout << kappa_version( argc, argv ) << std::endl;
     
-//    std::cout << create_cochain<Q>( Generator::a ) << std::endl;
-//    std::cout << create_cochain<Q>( Generator::b ) << std::endl;
-//    std::cout << create_cochain<Q>( Generator::c ) << std::endl;
-//    std::cout << create_cochain<Q>( Generator::d ) << std::endl;
-//    std::cout << create_cochain<Q>( Generator::e ) << std::endl;
-//    std::cout << create_cochain<Q>( Generator::a ) * create_cochain<Q>( Generator::b ) << std::endl;
+    if( argc > 1 )
+    {
+        if( atoi( argv[1] ) == 1 )
+        {
+            verify_known_generators();
+            return 0;
+        }
+    }
+    std::cout << create_cochain<Q>( Generator::a ) << std::endl;
+    std::cout << create_cochain<Q>( Generator::b ) << std::endl;
+    std::cout << create_cochain<Q>( Generator::c ) << std::endl;
+    std::cout << create_cochain<Q>( Generator::d ) << std::endl;
+    std::cout << create_cochain<Q>( Generator::e ) << std::endl;
+    std::cout << create_cochain<Q>( Generator::a ) * create_cochain<Q>( Generator::b ) << std::endl;
     
-//    std::cout << "Rational computations." << std::endl;
-//    std::cout << "--------------------------------" << std::endl;
-//    test_z_1<Q>();
-//    test_z_2<Q>();
+    std::cout << "Rational computations." << std::endl;
+    std::cout << "--------------------------------" << std::endl;
+    test_z_1<Q>();
+    test_z_2<Q>();
 
-//    test_( create_cochain<Q>( Generator::a ) );
-//    test_( create_cochain<Q>( Generator::b ) );
-//    test_( create_cochain<Q>( Generator::c ) );
-//    test_( create_cochain<Q>( Generator::d ) );
-//    test_( create_cochain<Q>( Generator::e ) );
-//    test_( create_cochain<Q>( Generator::a ) * create_cochain<Q>( Generator::b ) );
-//    test_( create_cochain<Q>( Generator::Qc ) );
-//    test_( create_cochain<Q>( Generator::Te ) );
+    test_( create_cochain<Q>( Generator::a ) );
+    test_( create_cochain<Q>( Generator::b ) );
+    test_( create_cochain<Q>( Generator::c ) );
+    test_( create_cochain<Q>( Generator::d ) );
+    test_( create_cochain<Q>( Generator::e ) );
+    test_( create_cochain<Q>( Generator::a ) * create_cochain<Q>( Generator::b ) );
+    test_( create_cochain<Q>( Generator::Qc ) );
+    test_( create_cochain<Q>( Generator::Te ) );
     
     std::cout << "Mod 2 computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
     Zm::set_modulus(2);
-
-//    // Classes for g = 0:
-//    // m = 1
-//    test_( create_cochain<Zm>( Generator::a ) );
-//    // m = 2
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) );
-//    test_( create_cochain<Zm>( Generator::b ) );
-//    // m = 4
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) );
-//    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) );
-//    test_( create_cochain<Zm>( Generator::Qb ) );
-//    // m = 6
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Qb ) );
-//    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) );
-//    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::Qb ) );
-    
-//    // Classes for g = 1:
-//    // m = 0:
-//    test_( create_cochain<Zm>( Generator::c ) );
-//    test_( create_cochain<Zm>( Generator::d ) );
-//    // m = 1:
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) );
-//    test_( create_cochain<Zm>( Generator::e ) );
-//    test_( create_cochain<Zm>( Generator::Eb ) );
-//    // m = 2:
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) );
-//    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::e ) );
-//    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Eb ) );
-//    // m = 3:
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) ); 
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::e ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
-//    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::e ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Eb ) );
-//    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::Eb ) );
-    
-//    // Classes for g = 2:
-//    // m = 0:
-//    test_( create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::c ) );
-//    test_( create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::d ) );
-//    test_( create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::d ) );
-//    test_( create_cochain<Zm>( Generator::Qd ) );
-//    test_( create_cochain<Zm>( Generator::Te ) );
-//    test_( create_cochain<Zm>( Generator::TEb ) );
-//    // m = 1:
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::c ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::d ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::d ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Qd ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Te ) );
-//    test_( create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::Eb ) );
-//    test_( create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::e ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::TEb ) );
-//    test_( create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::Eb ) );
 
     // Moreover:
     test_( create_cochain<Zm>( Generator::Qc ) );
     test_( create_cochain<Zm>( Generator::Q3d ) );
     
     // Later:
-//    test_z_1<Zm>();
-//    test_z_2<Zm>();
-//    test_tilde_d<Zm>();
+    test_z_1<Zm>();
+    test_z_2<Zm>();
+    test_tilde_d<Zm>();
     
     
-//    std::cout << "Mod 5 computations." << std::endl;
-//    std::cout << "--------------------------------" << std::endl;
-//    Zm::set_modulus(5);
+    std::cout << "Mod 5 computations." << std::endl;
+    std::cout << "--------------------------------" << std::endl;
+    Zm::set_modulus(5);
     
-//    test_( create_cochain<Zm>( Generator::a ) );
-//    test_( create_cochain<Zm>( Generator::b ) );
-//    test_( create_cochain<Zm>( Generator::c ) );
-//    test_( create_cochain<Zm>( Generator::d ) );
-//    test_( create_cochain<Zm>( Generator::e ) );
-//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) );
-//    test_( create_cochain<Zm>( Generator::Qc ) );
-//    test_( create_cochain<Zm>( Generator::Te ) );
+    test_( create_cochain<Zm>( Generator::a ) );
+    test_( create_cochain<Zm>( Generator::b ) );
+    test_( create_cochain<Zm>( Generator::c ) );
+    test_( create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( Generator::e ) );
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) );
+    test_( create_cochain<Zm>( Generator::Qc ) );
+    test_( create_cochain<Zm>( Generator::Te ) );
     
 //    cohomology_generators<Q>( 0, 2, 3);
 //    cohomology_generators<Q>( 1, 0, 4);
