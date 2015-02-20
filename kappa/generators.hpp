@@ -19,7 +19,10 @@ enum Generator
     Te,
     Eb,
     TEb,
-    Q3d
+    Q_alpha_d,
+    Q_beta_d,
+    Q_gamma_d,
+    xxx
 };
 
 template< class CoefficientT >

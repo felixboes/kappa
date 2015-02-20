@@ -134,7 +134,41 @@ MonoCochainField< CoefficientT > create_cochain( const Generator& name )
         cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 4, 1, 2, 1, 2, 1, 3, 1) );
         return cochain;
     }
-    case Q3d:
+    case Q_alpha_d:
+    {
+        CochainType cochain( create_cochain<CoefficientT>( Generator::Qd ) );
+        cochain.set_name("Q_alpha(d)");
+        return cochain;
+    }
+    case Q_beta_d:
+    {
+        CochainType cochain(2, 0, 5);
+        cochain.set_name("Q_beta(d)");
+        
+        cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 3, 1, 2, 1, 5, 3, 4, 3 ) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 1, 2, 1, 5, 3, 4, 3 ) );
+        
+        cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 1, 3, 1, 4, 2, 3, 2 ) );
+        
+        cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 2, 3, 2, 4, 1, 2, 1 ) );
+        \
+        return cochain;
+    }
+    case Q_gamma_d:
+    {
+        CochainType cochain(2, 0, 5);
+        cochain.set_name("Q_gamma(d)");
+        
+        cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 3, 1, 4, 3, 5, 1, 2, 1 ) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 3, 4, 3, 5, 1, 2, 1 ) );
+        
+        cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 2, 3, 2, 4, 1, 2, 1 ) );
+        
+        cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 5, 1, 3, 1, 4, 2, 3, 2 ) );
+        
+        return cochain;
+    }
+    case xxx:
     {
         CochainType cochain(2, 0, 5);
         cochain.set_name("Q_(3) (d)");

@@ -397,53 +397,51 @@ int main( int argc, char** argv )
             return 0;
         }
     }
-    std::cout << create_cochain<Q>( Generator::a ) << std::endl;
-    std::cout << create_cochain<Q>( Generator::b ) << std::endl;
-    std::cout << create_cochain<Q>( Generator::c ) << std::endl;
-    std::cout << create_cochain<Q>( Generator::d ) << std::endl;
-    std::cout << create_cochain<Q>( Generator::e ) << std::endl;
-    std::cout << create_cochain<Q>( Generator::a ) * create_cochain<Q>( Generator::b ) << std::endl;
     
-    std::cout << "Rational computations." << std::endl;
-    std::cout << "--------------------------------" << std::endl;
-    test_z_1<Q>();
-    test_z_2<Q>();
+//    std::cout << "Rational computations." << std::endl;
+//    std::cout << "--------------------------------" << std::endl;
+//    test_z_1<Q>();
+//    test_z_2<Q>();
 
-    test_( create_cochain<Q>( Generator::a ) );
-    test_( create_cochain<Q>( Generator::b ) );
-    test_( create_cochain<Q>( Generator::c ) );
-    test_( create_cochain<Q>( Generator::d ) );
-    test_( create_cochain<Q>( Generator::e ) );
-    test_( create_cochain<Q>( Generator::a ) * create_cochain<Q>( Generator::b ) );
-    test_( create_cochain<Q>( Generator::Qc ) );
-    test_( create_cochain<Q>( Generator::Te ) );
+//    test_( create_cochain<Q>( Generator::a ) );
+//    test_( create_cochain<Q>( Generator::b ) );
+//    test_( create_cochain<Q>( Generator::c ) );
+//    test_( create_cochain<Q>( Generator::d ) );
+//    test_( create_cochain<Q>( Generator::e ) );
+//    test_( create_cochain<Q>( Generator::a ) * create_cochain<Q>( Generator::b ) );
+//    test_( create_cochain<Q>( Generator::Qc ) );
+//    test_( create_cochain<Q>( Generator::Te ) );
     
     std::cout << "Mod 2 computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
     Zm::set_modulus(2);
 
     // Moreover:
-    test_( create_cochain<Zm>( Generator::Qc ) );
-    test_( create_cochain<Zm>( Generator::Q3d ) );
+//    test_( create_cochain<Zm>( Generator::Qc ) );
+    test_( create_cochain<Zm>( Generator::Qd ) );
+    test_( create_cochain<Zm>( Generator::Te ) );
+    test_( create_cochain<Zm>( Generator::Q_alpha_d ) );
+    test_( create_cochain<Zm>( Generator::Q_beta_d ) );
+    test_( create_cochain<Zm>( Generator::Q_gamma_d ) );
     
     // Later:
-    test_z_1<Zm>();
-    test_z_2<Zm>();
-    test_tilde_d<Zm>();
+//    test_z_1<Zm>();
+//    test_z_2<Zm>();
+//    test_tilde_d<Zm>();
     
     
-    std::cout << "Mod 5 computations." << std::endl;
-    std::cout << "--------------------------------" << std::endl;
-    Zm::set_modulus(5);
+//    std::cout << "Mod 5 computations." << std::endl;
+//    std::cout << "--------------------------------" << std::endl;
+//    Zm::set_modulus(5);
     
-    test_( create_cochain<Zm>( Generator::a ) );
-    test_( create_cochain<Zm>( Generator::b ) );
-    test_( create_cochain<Zm>( Generator::c ) );
-    test_( create_cochain<Zm>( Generator::d ) );
-    test_( create_cochain<Zm>( Generator::e ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) );
-    test_( create_cochain<Zm>( Generator::Qc ) );
-    test_( create_cochain<Zm>( Generator::Te ) );
+//    test_( create_cochain<Zm>( Generator::a ) );
+//    test_( create_cochain<Zm>( Generator::b ) );
+//    test_( create_cochain<Zm>( Generator::c ) );
+//    test_( create_cochain<Zm>( Generator::d ) );
+//    test_( create_cochain<Zm>( Generator::e ) );
+//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) );
+//    test_( create_cochain<Zm>( Generator::Qc ) );
+//    test_( create_cochain<Zm>( Generator::Te ) );
     
 //    cohomology_generators<Q>( 0, 2, 3);
 //    cohomology_generators<Q>( 1, 0, 4);
