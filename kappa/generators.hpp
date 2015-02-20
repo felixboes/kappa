@@ -19,6 +19,9 @@ enum Generator
     Te,
     Eb,
     TEb,
+    Q_alpha_c,
+    Q_beta_c,
+    Q_gamma_c,    
     Q_alpha_d,
     Q_beta_d,
     Q_gamma_d

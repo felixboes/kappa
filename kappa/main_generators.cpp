@@ -418,7 +418,10 @@ int main( int argc, char** argv )
 
     // Moreover:
 //    test_( create_cochain<Zm>( Generator::Qc ) );
-    test_( create_cochain<Zm>( Generator::Qd ) );
+    test_( create_cochain<Zm>( Generator::Q_alpha_c ) );
+    test_( create_cochain<Zm>( Generator::Q_beta_c ) );
+    test_( create_cochain<Zm>( Generator::Q_gamma_c ) );
+    
     test_( create_cochain<Zm>( Generator::Te ) );
     test_( create_cochain<Zm>( Generator::Q_alpha_d ) );
     test_( create_cochain<Zm>( Generator::Q_beta_d ) );
@@ -430,9 +433,13 @@ int main( int argc, char** argv )
 //    test_tilde_d<Zm>();
     
     
-//    std::cout << "Mod 5 computations." << std::endl;
-//    std::cout << "--------------------------------" << std::endl;
-//    Zm::set_modulus(5);
+    std::cout << "Mod 5 computations." << std::endl;
+    std::cout << "--------------------------------" << std::endl;
+    Zm::set_modulus(5);
+    
+    test_( create_cochain<Zm>( Generator::Q_alpha_c ) );
+    test_( create_cochain<Zm>( Generator::Q_beta_c ) );
+    test_( create_cochain<Zm>( Generator::Q_gamma_c ) );
     
 //    test_( create_cochain<Zm>( Generator::a ) );
 //    test_( create_cochain<Zm>( Generator::b ) );
