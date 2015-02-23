@@ -19,7 +19,7 @@ enum Generator
     Te,
     Eb,
     TEb,
-    Q_alpha_c,
+    Q_alpha_inv_c,
     Q_beta_c,
     Q_gamma_c,    
     Q_alpha_d,
@@ -29,7 +29,8 @@ enum Generator
     R_alpha_inv_gamma_inv_c_d,
     R_alpha_inv_gamma_c_d,
     R_alpha_inv_beta_inv_c_d,
-    R_alpha_inv_alpha_inv_c_d
+    R_alpha_inv_alpha_inv_c_d,
+    R_alpha_inv_beta_c_c
 };
 
 template< class CoefficientT >
