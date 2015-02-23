@@ -24,7 +24,12 @@ enum Generator
     Q_gamma_c,    
     Q_alpha_d,
     Q_beta_d,
-    Q_gamma_d
+    Q_gamma_d,
+    R_alpha_inv_beta_c_d,
+    R_alpha_inv_gamma_inv_c_d,
+    R_alpha_inv_gamma_c_d,
+    R_alpha_inv_beta_inv_c_d,
+    R_alpha_inv_alpha_inv_c_d
 };
 
 template< class CoefficientT >
