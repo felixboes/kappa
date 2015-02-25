@@ -71,4 +71,4 @@ struct DoubleComplexBasis
 
 std::ostream& operator<< (std::ostream& stream, const DoubleComplexBasis& basis);
 
-#endif // MONOBASIS_HPP
+#endif // DOUBLECOMPLEXBASIS_HPP

@@ -1,3 +1,5 @@
+#include <boost/range/adaptor/reversed.hpp>
+
 #include "kappa.hpp"
 
 void play_in_the_double_complex()
@@ -22,10 +24,27 @@ void play_in_the_double_complex()
             Tuple boundary;
             if( (boundary = cell.d_hor_double_complex(i)) )
             {
-                std::cout << "    " << ( i +or_sign.at(i) % 2 == 0 ? " 1 " : "-1 " ) << boundary << std::endl;
+                std::cout << "    " << ( (1-2*(i%2)) * or_sign.at(i) == 1 ? " 1 " : "-1 " ) << boundary << std::endl;
             }
         }
     }
+}
+
+
+void create_and_test_doublecomplex(uint32_t g = 0, uint32_t m = 2)
+{
+    std::cout << "Rational: " << std::endl;
+    DoubleComplex< ChainComplexQ > dcq(g, m, SignConvention::all_signs, 1, 1);
+    
+    for( const auto& it : boost::adaptors::reverse( dcq.bases ) )
+    {
+        std::cout << "Topcells of horizontal dimension " << (int32_t)it.first << ":" << std::endl;
+        std::cout << it.second << std::endl;
+    }
+    
+    dcq.gen_differential(4);
+    
+    std::cout << dcq.get_current_differential() << std::endl;
 }
 
 int main( int argc, char** argv )
@@ -41,9 +60,15 @@ int main( int argc, char** argv )
             play_in_the_double_complex();
             return 0;
         }
+        else if( atoi( argv[1] ) == 2 )
+        {
+            create_and_test_doublecomplex();
+            return 0;
+        }
     }
     
-    play_in_the_double_complex();
+    create_and_test_doublecomplex();
+    
     return 0;
     
 }
