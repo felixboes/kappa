@@ -233,10 +233,16 @@ public:
     bool phi( const uint32_t q, const uint32_t i);
     
     /** Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} and the projection on the monotonous cells.
-     *  Returns an empty tuple if the boundary is degenerate, the boundary tuple otherwise.
+     *  Returns an empty tuple if the boundary is degenerate (with respect to the Ehrenfriedcomplex), the boundary tuple otherwise.
      *  \note The parameter i has to fulfill 0 < i < p.
      */
     Tuple d_hor( const uint8_t i ) const;
+    
+    /** Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} without the projection on the monotonous cells.
+     *  Returns an empty tuple if the boundary is degenerate (with respect to the double complex), the boundary tuple otherwise.
+     *  \note The parameter i has to fulfill 0 < i < p.
+     */
+    Tuple d_hor_double_complex( const uint8_t i ) const;
     
     /**
      *  @returns the orientation signs \f$ \varepsilon_0, \ldots, \varepsilon_p \f$.

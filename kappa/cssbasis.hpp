@@ -20,7 +20,7 @@ struct CSSBasis
     typedef std::map< int32_t , LBasisType > BasisType;
     
     /// Add a basis element.
-    int32_t add_basis_element ( Tuple& t );
+    int32_t add_basis_element ( Tuple t );
     
     /// output stream
     friend std::ostream& operator<< (std::ostream& stream, const CSSBasis& cssb);

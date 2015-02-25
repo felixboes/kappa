@@ -4,12 +4,13 @@ MonoBasis::MonoBasis() : basis()
 {
 }
  
-uint32_t MonoBasis :: add_basis_element (Tuple& t)
+uint32_t MonoBasis :: add_basis_element (Tuple t)
 {
-    t.id = basis.size();
-    basis.insert(t);
+    uint32_t id = basis.size();
+    t.id = id;
+    basis.insert(std::move(t));
     
-    return t.id;
+    return id;
 }
 
 uint64_t MonoBasis :: size() const
@@ -43,9 +44,9 @@ MonoBasis load_parallel_mono_basis( const uint32_t g, const uint32_t m, const in
 
 std::ostream& operator<< ( std::ostream& os, const MonoBasis& mb )
 {
-    for( auto it = mb.basis.cbegin(); it != mb.basis.cend(); ++it )
+    for( const auto it : mb.basis )
     {
-        os << it->id << ": " <<*it << std::endl;
+        os << it.id << ": " << it << std::endl;
     }
     return os;
 }

@@ -1,13 +1,14 @@
 #include "cssbasis.hpp"
 
-int32_t CSSBasis :: add_basis_element ( Tuple& t )
+int32_t CSSBasis :: add_basis_element ( Tuple t )
 {
     uint32_t num_clusters = t.num_clusters();
     LBasisType& l_basis = basis[num_clusters];
-    t.id = l_basis.size();
-    l_basis.insert(t);
+    uint32_t id = l_basis.size();
+    t.id = id;
+    l_basis.insert( std::move(t) );
     
-    return t.id;
+    return id;
 }
 
 int32_t CSSBasis :: size( const int32_t l ) const
@@ -58,7 +59,7 @@ int32_t CSSBasis :: total_id_of( Tuple& t ) const
 
 std::ostream& operator<< ( std::ostream& os, const CSSBasis& cb )
 {
-    for( auto& it : cb.basis )
+    for( const auto& it : cb.basis )
     {
         os << "Cluster of size " << it.first << std::endl;
         for( auto& b : it.second )

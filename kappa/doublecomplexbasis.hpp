@@ -1,5 +1,5 @@
-#ifndef MONOBASIS_HPP
-#define MONOBASIS_HPP
+#ifndef DOUBLECOMPLEXBASIS_HPP
+#define DOUBLECOMPLEXBASIS_HPP
 
 #include <iostream>
 #include <unordered_set>
@@ -12,15 +12,15 @@
 /**
     The MonoBasis keeps track of the basis elements of a module in a MonoComplex.
 **/
-struct MonoBasis
+struct DoubleComplexBasis
 {
-    MonoBasis();
+    DoubleComplexBasis();
     
     /// Add a basis element.
-    uint32_t add_basis_element (Tuple t);
+    uint32_t add_basis_element ( Tuple t );
     
     /// output stream
-    friend std::ostream& operator<< (std::ostream& stream, const MonoBasis& mb);
+    friend std::ostream& operator<< (std::ostream& stream, const DoubleComplexBasis& mb);
     
     /// Returns the number of basis elements.
     uint64_t size() const;
@@ -30,6 +30,9 @@ struct MonoBasis
     
     /// Stores the orderd basis.
     std::unordered_set< Tuple, HashTuple > basis;
+    
+    /// Returns a const reference to the container.
+    const std::unordered_set< Tuple, HashTuple >& get_container() const;
     
     friend class boost::serialization::access;
     
@@ -66,8 +69,6 @@ struct MonoBasis
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
-MonoBasis load_parallel_mono_basis( const uint32_t g, const uint32_t m, const int32_t p );
-
-std::ostream& operator<< (std::ostream& stream, const MonoBasis& basis);
+std::ostream& operator<< (std::ostream& stream, const DoubleComplexBasis& basis);
 
 #endif // MONOBASIS_HPP

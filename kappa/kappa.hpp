@@ -6,6 +6,7 @@
 #include "blockfinder.hpp"
 #include "cssbasis.hpp"
 #include "css.hpp"
+#include "doublecomplexbasis.hpp"
 #include "factorial.hpp"
 #include "generators.hpp"
 #include "misc.hpp"

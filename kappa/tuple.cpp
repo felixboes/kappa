@@ -270,6 +270,7 @@ Tuple::ConnectedComponents Tuple::connected_components() const
     return components;
 }
 
+/*
 std::vector< size_t > Tuple::shuffle_positions() const
 {
     std::vector< size_t > slits;
@@ -374,6 +375,7 @@ Tuple Tuple::Q_term( const std::vector< size_t >& shuffle_slit_conf, const size_
     
     return res;
 }
+*/
 
 int32_t Tuple::num_clusters() const
 {
@@ -602,6 +604,101 @@ Tuple Tuple :: d_hor( const uint8_t k ) const
     if (not boundary.monotone())
     {
         return Tuple();
+    }
+    
+    // Renormalize all tau'
+    for(uint8_t q = 1; q <= boundary.norm(); ++q)
+    {
+        // Write tau_q = (a,b)
+        auto& a = boundary[q].first;
+        auto& b = boundary[q].second;
+
+        if(a > k)
+        {
+            a--;
+        }
+        if(b > k)
+        {
+            b--;
+        }
+    }
+    
+    boundary.p -= 1;
+    
+    return boundary;
+}
+
+Tuple Tuple :: d_hor_double_complex( const uint8_t k ) const
+{
+    Tuple boundary = *this;
+    
+    // start with sigma_0.
+    Permutation sigma = long_cycle();
+    Permutation sigma_inv = long_cycle_inv();
+    
+    for(uint8_t q = 1; q <= boundary.norm(); ++q)
+    {
+        // Write tau_q = (a,b)
+        auto a = boundary[q].first;
+        auto b = boundary[q].second;
+        
+        //Write (k, sigma_{q-1}(k)) = (k,l)
+        auto l = sigma[k];
+        
+         // Compute tau':
+        // Most of the time the transpositions are disjoint hence (a,b)(k,l) = (k,l)(a,b) and
+        // the left transposition will be killed by D_k
+        if( k != a && k != b && l != a && l != b )
+        {
+        }
+        // The degenerate case:
+        // k and l are both part of tau_q.
+        else if( a == std::max(k, l) and ( b == std::min(k, l) or k == l))
+        {
+            return Tuple();
+        }
+        // The non degenerate case:
+        else
+        {   
+            // Compute Z = (a,b)(k,l)
+            // Z(k) = l iff l != a and l != b hence k == a or k == b
+            // In this case: (Z(k),k)Z = (k,l)(a,b)(k,l) = (c,l) with c != k
+            if( l != a && l != b)
+            {
+                if(a != k)
+                {
+                    boundary[q].first  = std::max(a,l);
+                    boundary[q].second = std::min(a,l);
+                }
+                else
+                {
+                    boundary[q].first  = std::max(b,l);
+                    boundary[q].second = std::min(b,l);
+                }
+            }
+            // Z(k) != l iff l = a or l = b hence k != a and k != b
+            // In this case: (Z(k),k)Z = (c,k)(a,b)(k,l) = (c,l) with c != l,
+            // but we see that this is just (a,b):
+            // if l != a, then k,l != a and we map
+            // a to a to b != c since otherwise a would map to k
+            // therefore a = c and l = b.
+            // Thus we do not need to alter the boundary.
+        }
+        
+        // Compute sigma_{q}
+        // (a,b)sigma(k) =
+        //   a          if k = sigma^{-1}(b)
+        //   b          if k = sigma^{-1}(a)
+        //   sigma(k)   else
+        // this is done by swapping the values of sigma^{-1}(a) and sigma^{-1}(b) under sigma:
+        std::swap( sigma[ sigma_inv[a] ], sigma[ sigma_inv[b] ] );
+        
+        // sigma^{-1}(a,b) (k) = 
+        //   sigma^{-1}(b)  if k = a
+        //   sigma^{-1}(a)  if k = b
+        //   sigma^{-1}(k)  else
+        // this is done by interchanging the values of a and b under sigma^{-1}
+        std::swap( sigma_inv[a], sigma_inv[b] );
     }
     
     // Renormalize all tau'
