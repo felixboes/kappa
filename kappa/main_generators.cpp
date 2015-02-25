@@ -401,7 +401,7 @@ int main( int argc, char** argv )
     std::cout << "Rational computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
 
-    test_( create_cochain<Q>( Generator::R_alpha_inv_beta_c_c ) );
+    test_( create_cochain<Q>( Generator::R_alpha_inv_alpha_inv_c_d ) );
 
     std::cout << "Mod 2 computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
@@ -418,7 +418,7 @@ int main( int argc, char** argv )
 //    test_( create_cochain<Zm>( Generator::Q_beta_d ) );
 //    test_( create_cochain<Zm>( Generator::Q_gamma_d ) );
     
-    test_( create_cochain<Zm>( Generator::R_alpha_inv_beta_c_c ) );
+    test_( create_cochain<Zm>( Generator::R_alpha_inv_alpha_inv_c_d ) );
     
     // Later:
 //    test_z_1<Zm>();
@@ -433,7 +433,7 @@ int main( int argc, char** argv )
 //    test_( create_cochain<Zm>( Generator::Q_alpha_c ) );
 //    test_( create_cochain<Zm>( Generator::Q_beta_c ) );
 //    test_( create_cochain<Zm>( Generator::Q_gamma_c ) );
-    test_( create_cochain<Zm>( Generator::R_alpha_inv_beta_c_c ) );
+    test_( create_cochain<Zm>( Generator::R_alpha_inv_alpha_inv_c_d ) );
     
 //    cohomology_generators<Q>( 0, 2, 3);
 //    cohomology_generators<Q>( 1, 0, 4);

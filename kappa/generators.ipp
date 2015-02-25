@@ -377,10 +377,10 @@ MonoCochainField< CoefficientT > create_cochain( const Generator& name )
         cochain.set_name("R(alpha^{-1}*beta, c, c)");
         
         cochain.add_kappa_dual( CoefficientT(1),  create_cell( 4, 7, 5, 6, 4, 4, 2, 3, 1 ) );
-        cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 7, 5, 6, 1, 4, 2, 3, 1 ) );
-        cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 7, 5, 6, 2, 4, 2, 3, 1 ) );
+        cochain.add_kappa_dual( CoefficientT(1),  create_cell( 4, 7, 5, 6, 1, 4, 2, 3, 1 ) );
+        cochain.add_kappa_dual( CoefficientT(1),  create_cell( 4, 7, 5, 6, 2, 4, 2, 3, 1 ) );
         
-        cochain.add_kappa_dual( CoefficientT(1), create_cell( 4, 7, 5, 6, 4, 5, 2, 3, 1 ) );
+        cochain.add_kappa_dual( CoefficientT(1),  create_cell( 4, 7, 5, 6, 4, 5, 2, 3, 1 ) );
         cochain.add_kappa_dual( CoefficientT(1),  create_cell( 4, 7, 1, 6, 4, 5, 2, 3, 1 ) );
         cochain.add_kappa_dual( CoefficientT(1),  create_cell( 4, 7, 2, 6, 4, 5, 2, 3, 1 ) );
         
@@ -388,7 +388,7 @@ MonoCochainField< CoefficientT > create_cochain( const Generator& name )
         cochain.add_kappa_dual( CoefficientT(1),  create_cell( 4, 7, 5, 4, 1, 6, 2, 3, 1 ) );
         cochain.add_kappa_dual( CoefficientT(1),  create_cell( 4, 7, 5, 4, 2, 6, 2, 3, 1 ) );
         
-        cochain.add_kappa_dual( CoefficientT(-1),  create_cell( 4, 6, 2, 3, 1, 7, 5, 6, 4 ) );
+        cochain.add_kappa_dual( CoefficientT(-1), create_cell( 4, 6, 2, 3, 1, 7, 5, 6, 4 ) );
         
         return cochain;
     }

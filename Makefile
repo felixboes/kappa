@@ -76,6 +76,10 @@ $(CXXOBJ): $(BUILDDIR)/%.o: %.$(EXT) $(BUILDDIR)/%.dep
 $(CXXDEP): $(BUILDDIR)/%.dep: %.$(EXT) $(TAGS)
 	$(CXX) $(CXXFLAGS) $(INCL) -MM $< -MT $@ -MT $(<:.$(EXT)=.o) -o $@
 
+overflowtest:
+	$(CXX) -ftrapv overflowtest.cpp -o overflowtest_cxx
+	clang++ -ftrapv overflowtest.cpp -o overflowtest_clang
+
 %.tag:
 	@mkdir -p $(dir $(@))
 	@touch $@
@@ -89,6 +93,7 @@ doc:
 .PHONY: clean
 clean:
 	rm -rf $(TARGETS) $(BUILDDIR)
+	rm -rf overflowtest_cxx overflowtest_clang
 	rm -rf version
 	rm -rf doc/html/ doc/latex/ doc/*.pdf
 
