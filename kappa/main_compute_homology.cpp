@@ -8,7 +8,7 @@
 
 void print_usage(int, char** argv)
 {
-    std::cout << "Usage: " << argv[0] << " -g arg -m arg (-r|-n arg)" << std::endl;
+    std::cout << "Usage: " << argv[0] << " -g arg -m arg (-q|-n arg)" << std::endl;
 }
 
 template< class MonoComplexT >
