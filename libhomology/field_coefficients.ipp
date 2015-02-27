@@ -57,6 +57,12 @@ typename ZmBase<base_type>::BaseType ZmBase<base_type>::get_modulus()
 }
 
 template < typename base_type >
+typename ZmBase<base_type>::BaseType ZmBase<base_type>::get_base()
+{
+    return base;
+}
+
+template < typename base_type >
 void ZmBase<base_type>::clean_up()
 {
     base = 0;
