@@ -180,7 +180,7 @@ public:
      * \return In the parallel case: true iff the number of cycles equals m + 1;
      *         in the radial case: true iff the number of cycles equals m.
      */
-    bool has_correct_num_cycles(size_t m) const;
+    bool has_correct_num_cycles(const size_t m) const;
 
     /**
      *  @returns the number connected compontents of the corresponding graph, where \f$ \tau_j \f$ is seen an edge.

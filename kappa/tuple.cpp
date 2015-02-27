@@ -207,7 +207,7 @@ Tuple :: operator bool() const
     return true;
 }
 
-bool Tuple :: has_correct_num_cycles(size_t m) const
+bool Tuple :: has_correct_num_cycles(const size_t m) const
 {
     // min_symbol = 1 iff radial = false iff num_components = m + 'exactly one boundary component of the surface'
     return num_cycles() == m + min_symbol;
