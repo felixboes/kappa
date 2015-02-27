@@ -53,13 +53,13 @@ void ZmBase<base_type>::set_modulus(const BaseType p, const BaseType k)
 template < typename base_type >
 typename ZmBase<base_type>::BaseType ZmBase<base_type>::get_modulus()
 {
-    return prim;
+    return base;
 }
 
 template < typename base_type >
-typename ZmBase<base_type>::BaseType ZmBase<base_type>::get_base()
+typename ZmBase<base_type>::BaseType ZmBase<base_type>::get_prime()
 {
-    return base;
+    return prim;
 }
 
 template < typename base_type >

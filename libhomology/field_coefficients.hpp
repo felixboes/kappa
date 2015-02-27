@@ -31,7 +31,7 @@ public:
     
     ZmBase(const BaseType m = 0);    ///< The default constructor creates a coefficient with value zero.
     static void set_modulus(const BaseType prime, const BaseType expo = 1);    ///< Befor using ZmBase coefficients, you must define the modulus i.e. m = p^e.
-    static BaseType get_base();
+    static BaseType get_prime();
     static void print_modulus();    ///< Print the modulus to std::cout.
     static void print_inversetable();    ///< Print the table of invertible elements to std::cout.
     static BaseType get_modulus();   ///< @returns the modulus.
