@@ -17,12 +17,12 @@
 #include "monocomplex.hpp"
 #include "operationtester.hpp"
 #include "sessionconfig.hpp"
-#include "tuple.hpp"
+#include "high_cell.hpp"
 
 
 /**
  * This function is supposed to update the differential according to the contribution
- * of tuple and its boundary to improve readability of the method gen_differential.
+ * of HighCell and its boundary to improve readability of the method gen_differential.
  *
  * @warning We don't give a general implementation for this template function since the
  * two specializations we do implement below use specific functions not both of
@@ -61,12 +61,12 @@ public:
     /**
      *  Recursive function initializing the basis_complex.
     **/
-    void gen_bases( const uint32_t l, const uint32_t p, const uint32_t start_symbol, Tuple& tuple);
+    void gen_bases( const uint32_t l, const uint32_t p, const uint32_t start_symbol, HighCell& highcell);
     
     /**
-     *  computes the boundary of a given Tuple and saves the result in the differential.
+     *  computes the boundary of a given HighCell and saves the result in the differential.
      */ 
-    void compute_boundary( Tuple & tuple, const uint32_t p, MatrixType & differential );
+    void compute_boundary( HighCell & highcell, const uint32_t p, MatrixType & differential );
     
     /**
      *  Generates the p-th differential.
@@ -108,10 +108,6 @@ public:
      */
     void erase_current_differential();
     
-    /**
-     *  print a basis to std::out.
-     */
-    void show_basis( const int32_t p ) const;
 //protected:
 
     uint32_t g;                 ///< genus
@@ -124,7 +120,7 @@ public:
     std::map< int32_t, DoubleComplexBasis > bases;        ///< basis_complex[n] is the n-th DoubleBasis, i.e. the basis of the n-th module of this DoubleComplex. 
 };
 
-typedef std::vector<Tuple> DoubleComplexWork;
+typedef std::vector<HighCell> DoubleComplexWork;
 
 template< class MatrixComplex >
 void doublecomplex_work(DoubleComplex<MatrixComplex> & doublecomplex, DoubleComplexWork & work, const uint32_t p, typename MatrixComplex::MatrixType & differential);

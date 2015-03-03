@@ -18,81 +18,50 @@ DoubleComplex< MatrixComplex > :: DoubleComplex(
     diago.num_working_threads = number_working_threads;
     diago.num_remaining_threads = number_remaining_threads;
     
-    if ( Tuple::get_radial() ) // For radial cells, we have h = 2g + m - 1.
-    {
-        --h;
-    }
     if (h == 0)
     {
         return;
     }
-    // Generate all tuples with h transpositions containing the symbols 1, ..., p,
+    // Generate all highcells with h transpositions containing the symbols 1, ..., p,
     // each at least once, with the correct number of cycles.
-    Tuple tuple(h);
-    tuple[1] = Transposition(2, 1);
-    tuple.p = 2;
-    gen_bases(1, 2, 1, tuple);  // We start with the transposition ... (2 1).
-    // In the radial case, we also generate all tuples as above, but also containing
-    // the symbol 0.
-    if ( Tuple::get_radial() )
-    {
-        Tuple radial_tuple(h);
-        radial_tuple.p = 1;
-        radial_tuple[1] = Transposition(1, 0);
-        gen_bases(1, 1, 0, radial_tuple);
-    }
+    HighCell highcell(h);
+    highcell[1] = Transposition(2, 1);
+    highcell.p = 2;
+    gen_bases(1, 2, 1, highcell);  // We start with the transposition ... (2 1).
 }
 
 template< class MatrixComplex >
-void DoubleComplex< MatrixComplex > :: show_basis( const int32_t p ) const
+void DoubleComplex< MatrixComplex > :: gen_bases( const uint32_t l, const uint32_t p, const uint32_t start_symbol, HighCell& highcell )
 {
-    if( bases.count(p) )
-    {
-        std::cout << "This it the " << p << "-th basis:" << std::endl;
-        const auto& basis_vector = bases.at(p).basis;
-        for( auto it = basis_vector.cbegin(); it != basis_vector.cend(); ++it )
-        {
-            std::cout << it->id << ": " << *it << std::endl;
-        }
-    }
-    else
-    {
-        std::cout << "The " << p << "-th basis is empty" << std::endl;
-    }
-}
-
-template< class MatrixComplex >
-void DoubleComplex< MatrixComplex > :: gen_bases( const uint32_t l, const uint32_t p, const uint32_t start_symbol, Tuple& tuple )
-{
-    // Up to now we have determined all monotonic tuples of l transpositions containing the 
+    // Up to now we have determined all monotonic highcells of l transpositions containing the 
     // symbols 1, ..., p, each at least once. We now add an (l+1)-th transposition and continue
     // recursively.
     if(l < h) // There are h-l transpositions left to be determined.
     {
-	// From an l-tuple containing p symbols we can build up an (l+1)-tuple 
+	// From an l-highcell containing p symbols we can build up an (l+1)-highcell 
     // with p, p+1 or p+2 symbols.
 
         // p -> p
         // In this case we use the same number of symbols.
-        tuple.p = p;
+        highcell.p = p;
         for(uint32_t a = start_symbol; a <= p; ++a)
         {
             for( uint32_t b = start_symbol; b < a; ++b )
             {
-                tuple[l+1] = Transposition(a, b); 
-                gen_bases(l+1, p, start_symbol, tuple);
+                highcell[l+1] = Transposition(a, b); 
+                gen_bases(l+1, p, start_symbol, highcell);
             }
         }
 
         // p -> p+1
         // In this case we use p+1 symbols instead of p. Two cases occur.
-        tuple.p = p+1;
+        highcell.p = p+1;
         // Case 1: The new row in the parallel slit domain is inserted the spot a.
         for (uint32_t a = start_symbol; a <= p+1; ++a)
         {
             for( uint32_t b = start_symbol; b < a; ++b )
             {
-                Tuple tmp = tuple;
+                HighCell tmp = highcell;
                 for( uint32_t j = l; j >= 1; j-- )
                 {
                     if( tmp[j].first >= a )
@@ -114,7 +83,7 @@ void DoubleComplex< MatrixComplex > :: gen_bases( const uint32_t l, const uint32
         {
             for( uint32_t b = start_symbol; b < a; ++b )
             {
-                Tuple tmp = tuple;
+                HighCell tmp = highcell;
                 for( uint32_t j = l; j >= 1; j-- )
                 {
                     if( tmp[j].first >= b )
@@ -133,12 +102,12 @@ void DoubleComplex< MatrixComplex > :: gen_bases( const uint32_t l, const uint32
 
         // p -> p+2
         // Now we use p+2 symbols instead of p. Thus one row is inserted at the spot a and the other at the spot b.
-        tuple.p = p+2;
+        highcell.p = p+2;
         for (uint32_t a = start_symbol; a <= p+2; ++a)
         {
             for( uint32_t b = start_symbol; b < a; ++b )
             {
-                Tuple tmp = tuple;
+                HighCell tmp = highcell;
                 for( uint32_t j = l; j >= 1; j-- )
                 {
                     if( tmp[j].first >= b )
@@ -164,13 +133,22 @@ void DoubleComplex< MatrixComplex > :: gen_bases( const uint32_t l, const uint32
             }  
         }
     }
-    else // Check whether the created h-tuple is really a generator, i.e. if it has the correct 
-         // number of cycles. If this is the case, we add tuple to the basis elements of the 
-         // p-th basis and store the index of tuple in this basis as the id of tuple.
+    else // Check whether the created h-highcell is really a generator, i.e. if it has the correct 
+         // number of cycles. If this is the case, we add highcell to the basis elements of the 
+         // p-th basis and store the index of highcell in this basis as the id of highcell.
     {
-        if (tuple.has_correct_num_cycles(m))
+        if (highcell.has_correct_num_cycles(m))
         {
-            tuple.id = bases[p].add_basis_element( tuple );
+            highcell.id = bases[p].add_basis_element( highcell );
+            // find first occurence of monotony-break if any
+            for( uint32_t i = 1; i <= h - 1; ++i )
+            {
+                if( highcell.at(i+1).first < highcell.at(i).first )
+                {
+                    HighCell boundary = highcell.d_ver(i);
+                    boundary.id = bases[p].add_basis_element( boundary );
+                }
+            }
         }
     }
 }
@@ -188,21 +166,38 @@ void update_differential_doublecomplex(MatrixType &           differential,
 }
 
 template< class MatrixComplex >
-void DoubleComplex<MatrixComplex>::compute_boundary( Tuple & tuple, const uint32_t p, typename MatrixComplex::MatrixType & differential )
+void DoubleComplex<MatrixComplex>::compute_boundary( HighCell & highcell, const uint32_t p, typename MatrixComplex::MatrixType & differential )
 {
     std::map< uint8_t, int8_t > or_sign;
     if( sign_conv == all_signs )
     {
-        or_sign.operator =( std::move(tuple.orientation_sign()) );
+        or_sign.operator =( std::move(highcell.orientation_sign()) );
     }
 
-    for( uint32_t i = Tuple::get_min_boundary_offset(); i <= p - Tuple::get_max_boundary_offset(); i++ )
+    for( uint32_t i = HighCell::get_min_boundary_offset(); i <= p - HighCell::get_max_boundary_offset(); i++ )
     {
-        Tuple boundary = tuple.d_hor_double_complex(i);
+        HighCell boundary = highcell.d_hor_double_complex(i);
         if( boundary )
         {
             boundary.id = bases[p-1].id_of(boundary);
-            update_differential_doublecomplex<MatrixType>(differential, tuple.id, boundary.id, i, or_sign.at(i), sign_conv);
+            update_differential_doublecomplex<MatrixType>(differential, highcell.id, boundary.id, i, or_sign.at(i), sign_conv);
+        }
+    }
+    
+    for( int32_t j = 1; j < highcell.norm(); ++j )
+    {
+        HighCell boundary = highcell.d_ver(j);
+        if( boundary )
+        {
+            boundary.id = bases[p].id_of(boundary);
+            if( j % 2 == 0 )
+            {
+                differential(highcell.id, bases.at(p-1).size_h() + boundary.id) += -1;
+            }
+            else
+            {
+                differential(highcell.id, bases.at(p-1).size_h() + boundary.id) += 1;
+            }
         }
     }
 }
@@ -226,25 +221,25 @@ void DoubleComplex< MatrixComplex > :: gen_differential( const int32_t p )
     MatrixType & differential = get_current_differential();  
     
     //differential.resize( bases[p].size(), bases[p-1].size() );
-    differential.resize( ( bases.count(p) != 0 ? bases.at(p).size() : 0 ), ( bases.count(p-1) != 0 ? bases.at(p-1).size() : 0 ) );
+    differential.resize( ( bases.count(p) != 0 ? bases.at(p).size_h() : 0 ), ( bases.count(p-1) != 0 ? bases.at(p-1).size_h() : 0 ) + ( bases.count(p) != 0 ? bases.at(p).size_h_1() : 0 ) );
     
     if( differential.size1() == 0 || differential.size2() == 0 )
     {
         return;
     }
     
-    // For each tuple t in the basis, we compute all basis elements that
+    // For each highcell t in the basis, we compute all basis elements that
     // occur in kappa(t).
     std::vector<DoubleComplexWork> elements_per_threads (num_threads);
-    uint32_t num_elements_per_thread = bases.at(p).size() / num_threads;
+    uint32_t num_elements_per_thread = bases.at(p).size_h() / num_threads;
     
-    if (bases.at(p).size() % num_threads != 0)
+    if (bases.at(p).size_h() % num_threads != 0)
     {
         ++num_elements_per_thread;
     }
     uint32_t t = 0;
     uint32_t cur = 0;
-    for ( auto it : bases.at(p).basis )
+    for ( auto it : bases.at(p).basis_h )
     {
         elements_per_threads[t].push_back(it);
         ++cur;
