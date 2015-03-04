@@ -270,6 +270,12 @@ void MatrixField< CoefficientT > :: cache_diagonal( std::string filename, bool p
 }
 
 template< class CoefficientT >
+typename MatrixField< CoefficientT >::MatrixStorageType& MatrixField< CoefficientT > :: get_data_rep()
+{
+    return data;
+}
+
+template< class CoefficientT >
 std::ostream& operator<< ( std::ostream& stream, const MatrixField<CoefficientT> & matrix )
 {
     // print diagonal if any.

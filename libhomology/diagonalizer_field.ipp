@@ -226,12 +226,12 @@ uint32_t DiagonalizerField< MatrixType >::diag_field( MatrixType &matrix )
                 // After erasing, it will point to the next element in the vector.
                 it = rows_to_check.erase(it);
                 // Use row operations to zeroize the remaining elements of the column.
-                for( size_t relative_position=0 ; it != rows_to_check.end(); ++it, ++relative_position )
+                for( ; it != rows_to_check.end(); ++it )
                 {
                     size_t row_2 = *it;
                     // Assuming that the entry (row_2, col) differs from zero, we perform
                     // a row operation to matrix to zeroize the entry (row_2, col) using the entry (row_1, col).
-                    if( matrix.at( row_2, col) != zero )
+                    if( matrix.at( row_2, col ) != zero )
                     {
                         matrix.row_operation( row_1, row_2, col );
                     }

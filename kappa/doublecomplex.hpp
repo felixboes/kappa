@@ -74,6 +74,13 @@ public:
     void gen_differential( const int32_t p );
     
     /**
+     *  Compute the projection to the Ehrenfried complex. The result is stored in the current differential.
+     *  @warning at the moment it is only possible to use field coefficients.
+     *  @todo implement this function for non-field coefficients.
+    **/
+    void compute_proj_E( const int32_t p );
+    
+    /**
      *  @returns a reference to the current differential.
      */
     MatrixType&       get_current_differential();

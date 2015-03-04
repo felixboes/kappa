@@ -266,6 +266,37 @@ void DoubleComplex< MatrixComplex > :: gen_differential( const int32_t p )
     }
 }
 
+template<class MatrixComplex>
+void DoubleComplex< MatrixComplex > :: compute_proj_E( const int32_t p )
+{
+    if( bases.count(p) == 0 || bases.count(p-1) == 0 )
+    {
+        erase_current_differential();
+        return;
+    }
+    
+    gen_differential(p);
+    auto& diag = get_diagonalizer();
+    auto& diff = get_current_differential();
+    diag.diag_field(diff);
+    
+    size_t num_col = bases.at(p).size_col();
+    size_t num_red = bases.at(p).size_red();
+    size_t num_ess = bases.at(p-1).size_ess();
+    MatrixType proj( num_col, num_ess );
+    
+    for( size_t i = 0; i < num_col; ++i )
+    {
+        for( size_t j = 0; j < num_ess; ++j )
+        {
+            proj( i, j ) = diff( i, num_red + j );
+        }
+    }
+    
+    erase_current_differential();
+    diff.swap( proj );
+}
+
 template< class MatrixComplex >
 typename DoubleComplex< MatrixComplex >::MatrixType & DoubleComplex< MatrixComplex > :: get_current_differential()
 {

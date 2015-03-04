@@ -60,7 +60,14 @@ void create_and_test_doublecomplex(uint32_t g = 0, uint32_t m = 2)
     for( size_t p = 2*h; p >= h; --p )
     {
         dcq.gen_differential(p);
-        std::cout << dcq.get_current_differential() << std::endl;
+        auto& diff = dcq.get_current_differential();
+        std::cout << diff << std::endl;
+        DiagonalizerField<MatrixQ> diago;
+        diago.diag_field(diff);
+        std::cout << diff << std::endl;
+        
+        dcq.compute_proj_E(p);
+        std::cout << diff << std::endl;
     }
 }
 

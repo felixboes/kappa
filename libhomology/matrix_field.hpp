@@ -152,6 +152,11 @@ public:
      */
     void cache_diagonal( std::string filename, bool print_duration = true  ) const;
     
+    /**
+     *  @returns the represenation of the data.
+    **/
+    MatrixStorageType& get_data_rep();
+    
     // grant std::ostream access in order to print matrices to ostreams.
     template< class T >
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixField<T> & matrix );
