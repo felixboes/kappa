@@ -11,7 +11,23 @@ void play_in_the_double_complex()
     basis.add_basis_element( create_highcell(2, 2, 1, 4, 3) );
     basis.add_basis_element( create_highcell(2, 3, 2, 4, 1) );
     
-    for( const auto& cell : basis.basis_h )
+    for( const auto& cell : basis.basis_col )
+    {
+        std::cout << cell << std::endl;
+        
+        const std::map< uint8_t, int8_t > or_sign( cell.orientation_sign() );
+    
+        for( uint32_t i = HighCell::get_min_boundary_offset(); i <= 4 - HighCell::get_max_boundary_offset(); i++ )
+        {
+            HighCell boundary;
+            if( (boundary = cell.d_hor_double_complex(i)) )
+            {
+                std::cout << "    " << ( (1-2*(i%2)) * or_sign.at(i) == 1 ? " 1 " : "-1 " ) << boundary << std::endl;
+            }
+        }
+    }
+    
+    for( const auto& cell : basis.basis_ess )
     {
         std::cout << cell << std::endl;
         
@@ -41,7 +57,9 @@ void create_and_test_doublecomplex(uint32_t g = 0, uint32_t m = 2)
     }
     
     dcq.gen_differential(4);
+    std::cout << dcq.get_current_differential() << std::endl;
     
+    dcq.gen_differential(3);
     std::cout << dcq.get_current_differential() << std::endl;
 }
 

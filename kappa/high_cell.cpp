@@ -621,7 +621,7 @@ std::ostream& operator<< (std::ostream& stream, const HighCell& highcell)
         }
         else
         {
-            stream << " kollapsable"; 
+            stream << " collapsible"; 
         }
     }
     else

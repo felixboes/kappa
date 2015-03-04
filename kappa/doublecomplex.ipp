@@ -173,14 +173,15 @@ void DoubleComplex<MatrixComplex>::compute_boundary( HighCell & highcell, const 
     {
         or_sign.operator =( std::move(highcell.orientation_sign()) );
     }
-
+    
+    size_t offset = (bases.count(p) != 0 ? bases.at(p).size_red() : 0);
     for( uint32_t i = HighCell::get_min_boundary_offset(); i <= p - HighCell::get_max_boundary_offset(); i++ )
     {
         HighCell boundary = highcell.d_hor_double_complex(i);
-        if( boundary )
+        if( boundary && boundary.monotone() )
         {
             boundary.id = bases[p-1].id_of(boundary);
-            update_differential_doublecomplex<MatrixType>(differential, highcell.id, boundary.id, i, or_sign.at(i), sign_conv);
+            update_differential_doublecomplex<MatrixType>(differential, highcell.id, offset + boundary.id, i, or_sign.at(i), sign_conv);
         }
     }
     
@@ -192,11 +193,11 @@ void DoubleComplex<MatrixComplex>::compute_boundary( HighCell & highcell, const 
             boundary.id = bases[p].id_of(boundary);
             if( j % 2 == 0 )
             {
-                differential(highcell.id, bases.at(p-1).size_h() + boundary.id) += -1;
+                differential(highcell.id, boundary.id) += -1;
             }
             else
             {
-                differential(highcell.id, bases.at(p-1).size_h() + boundary.id) += 1;
+                differential(highcell.id, boundary.id) += 1;
             }
         }
     }
@@ -221,7 +222,7 @@ void DoubleComplex< MatrixComplex > :: gen_differential( const int32_t p )
     MatrixType & differential = get_current_differential();  
     
     //differential.resize( bases[p].size(), bases[p-1].size() );
-    differential.resize( ( bases.count(p) != 0 ? bases.at(p).size_h() : 0 ), ( bases.count(p-1) != 0 ? bases.at(p-1).size_h() : 0 ) + ( bases.count(p) != 0 ? bases.at(p).size_h_1() : 0 ) );
+    differential.resize( ( bases.count(p) != 0 ? bases.at(p).size_col() : 0 ), ( bases.count(p) != 0 ? bases.at(p).size_red() : 0 ) + ( bases.count(p-1) != 0 ? bases.at(p-1).size_ess() : 0 ) );
     
     if( differential.size1() == 0 || differential.size2() == 0 )
     {
@@ -231,15 +232,15 @@ void DoubleComplex< MatrixComplex > :: gen_differential( const int32_t p )
     // For each highcell t in the basis, we compute all basis elements that
     // occur in kappa(t).
     std::vector<DoubleComplexWork> elements_per_threads (num_threads);
-    uint32_t num_elements_per_thread = bases.at(p).size_h() / num_threads;
+    uint32_t num_elements_per_thread = bases.at(p).size_col() / num_threads;
     
-    if (bases.at(p).size_h() % num_threads != 0)
+    if (bases.at(p).size_col() % num_threads != 0)
     {
         ++num_elements_per_thread;
     }
     uint32_t t = 0;
     uint32_t cur = 0;
-    for ( auto it : bases.at(p).basis_h )
+    for ( auto it : bases.at(p).basis_col )
     {
         elements_per_threads[t].push_back(it);
         ++cur;
