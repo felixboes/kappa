@@ -28,6 +28,11 @@ DoubleComplex< MatrixComplex > :: DoubleComplex(
     highcell[1] = Transposition(2, 1);
     highcell.p = 2;
     gen_bases(1, 2, 1, highcell);  // We start with the transposition ... (2 1).
+    
+    for( auto& it : bases )
+    {
+        it.second.generate_indices();
+    }
 }
 
 template< class MatrixComplex >
@@ -139,14 +144,15 @@ void DoubleComplex< MatrixComplex > :: gen_bases( const uint32_t l, const uint32
     {
         if (highcell.has_correct_num_cycles(m))
         {
-            highcell.id = bases[p].add_basis_element( highcell );
+            bases[p].add_basis_element( highcell );
             // find first occurence of monotony-break if any
             for( uint32_t i = 1; i <= h - 1; ++i )
             {
                 if( highcell.at(i+1).first < highcell.at(i).first )
                 {
                     HighCell boundary = highcell.d_ver(i);
-                    boundary.id = bases[p].add_basis_element( boundary );
+                    bases[p].add_basis_element( boundary );
+                    break;
                 }
             }
         }

@@ -56,11 +56,12 @@ void create_and_test_doublecomplex(uint32_t g = 0, uint32_t m = 2)
         std::cout << it.second << std::endl;
     }
     
-    dcq.gen_differential(4);
-    std::cout << dcq.get_current_differential() << std::endl;
-    
-    dcq.gen_differential(3);
-    std::cout << dcq.get_current_differential() << std::endl;
+    const size_t h = 2*g+m;
+    for( size_t p = 2*h; p >= h; --p )
+    {
+        dcq.gen_differential(p);
+        std::cout << dcq.get_current_differential() << std::endl;
+    }
 }
 
 int main( int argc, char** argv )
@@ -69,18 +70,10 @@ int main( int argc, char** argv )
     
     std::cout << kappa_version( argc, argv ) << std::endl;
     
-    if( argc > 1 )
+    if( argc > 2 )
     {
-        if( atoi( argv[1] ) == 1 )
-        {
-            play_in_the_double_complex();
-            return 0;
-        }
-        else if( atoi( argv[1] ) == 2 )
-        {
-            create_and_test_doublecomplex();
-            return 0;
-        }
+        create_and_test_doublecomplex( atoi(argv[1]) , atoi( argv[2] ) );
+        return 0;
     }
     
     create_and_test_doublecomplex();

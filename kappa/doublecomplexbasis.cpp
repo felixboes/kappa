@@ -4,29 +4,20 @@ DoubleComplexBasis::DoubleComplexBasis() : basis_red(), basis_col(), basis_ess()
 {
 }
  
-uint32_t DoubleComplexBasis :: add_basis_element ( HighCell t )
+void DoubleComplexBasis :: add_basis_element ( HighCell t )
 {
-    uint32_t id = 0;
     if( t.is_redundant() )
     {
-        id = basis_red.size();
-        t.id = id;
         basis_red.insert(std::move(t));
     }
     else if( t.monotone() )
     {
-        id = basis_ess.size();
-        t.id = id;
         basis_ess.insert(std::move(t));
     }
     else
     {
-        id = basis_col.size();
-        t.id = id;
         basis_col.insert(std::move(t));
     }
-    
-    return id;
 }
 
 uint64_t DoubleComplexBasis :: size_red() const
@@ -42,6 +33,28 @@ uint64_t DoubleComplexBasis :: size_col() const
 uint64_t DoubleComplexBasis :: size_ess() const
 {
     return basis_ess.size();
+}
+
+void DoubleComplexBasis::generate_indices()
+{
+    size_t id = 0;
+    for( auto& cell : basis_red )
+    {
+        cell.id = id;
+        ++id;
+    }
+    id = 0;
+    for( auto& cell : basis_col )
+    {
+        cell.id = id;
+        ++id;
+    }
+    id = 0;
+    for( auto& cell : basis_ess )
+    {
+        cell.id = id;
+        ++id;
+    }
 }
 
 int64_t DoubleComplexBasis :: id_of(const HighCell &t) const

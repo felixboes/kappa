@@ -25,8 +25,6 @@
 class HighCell
 {
 public:
-    friend class HashHighCell;
-    
     /**
      *  Data structure to store the connected components.
      *  The zeroth entry stores the number of connected components.
@@ -88,6 +86,12 @@ public:
      *  @return Returns false iff both HighCells are elementwise equal.
      */
     bool operator!=(const HighCell& t) const;
+    
+    
+    /**
+     *  @return Returns true iff this HighCell is smaller.
+     */
+    bool operator< (const HighCell& t) const;
     
     /**
      *  @return Returns true iff the HighCell is not marked as degenerate.
@@ -179,7 +183,7 @@ public:
     
     uint32_t p; ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
     uint32_t redundancy_index;           ///< This is 0 iff the cell is not redundant. In the other case it is paired with exactly one cell in the top dimension by a destinguished coboundary, whose index is stored.
-    size_t id;  ///< The index of this HighCell in the basis of the MonoComplex.
+    mutable size_t id;  ///< The index of this HighCell in the basis of the MonoComplex.
     
 protected:
     /**
@@ -222,21 +226,5 @@ std::ostream& operator<< (std::ostream& stream, const HighCell& highcell);
  *  @returns the product of two HighCells in the sense of the product of two slit domains.
  */
 HighCell operator*( const HighCell& v_2, const HighCell& v_1 );
-
-/**
- *  In order to save HighCells in a hash table (e.g. in MonoBasis) we need a function object, that hashes HighCells.
- */ 
-class HashHighCell
-{
-public:
-    size_t operator()( const HighCell& ) const;
-    
-    friend class boost::serialization::access;
-    
-    template <class Archive>
-    void serialize(Archive &, const unsigned int) ///< Implements the serialization.
-    {
-    }
-};
 
 #endif // HIGH_CELL_HPP

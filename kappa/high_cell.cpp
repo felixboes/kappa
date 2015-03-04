@@ -96,6 +96,68 @@ bool HighCell :: operator!=(const HighCell& t) const
     return ( (this->redundancy_index != t.redundancy_index) || (this->rep != t.rep) );
 }
 
+bool HighCell :: operator< (const HighCell& t) const
+{
+    // rule out all cases where this and t are of different type.
+    // this could be ignored for efficiency.
+    if( this->norm() < t.norm() )
+    {
+        return true;
+    }
+    else if( this-> norm() > t.norm() )
+    {
+        return false;
+    }
+    
+    if( this->is_redundant() ) // this is redundant
+    {
+        if( t.is_redundant() == false ) // this is redundant and t is either collapsible or essential.
+        {
+            return true;
+        }
+    }
+    else if( this->monotone() ) // this is essential
+    {
+        if( t.is_redundant() == true || t.monotone() == false ) // this is essential and t is redundant or collapsible
+        {
+            return false;
+        }
+    }
+    else // this is collapsible
+    {
+        if( t.is_redundant() == true || t.monotone() == true ) // this is collapsible and t is redundant or essential
+        {
+            return false;
+        }
+    }
+    
+    // this and t is of the same type (redundant, collapsible, essential).
+    // Therefore we compare the lexicographic order.
+    const size_t h = this->norm();
+    for( size_t j = h; j > 0; --j )
+    {
+        if( this->at(j).first < t.at(j).first )
+        {
+            return true;
+        }
+        else if( this->at(j).first > t.at(j).first )
+        {
+            return false;
+        }
+        else if( this->at(j).second < t.at(j).second )
+        {
+            return true;
+        }
+        else if( this->at(j).second > t.at(j).second )
+        {
+            return false;
+        }
+    }
+    
+    // both are equal
+    return false;
+}
+
 HighCell :: operator bool() const
 {
     if (rep.size() == 0)
@@ -426,7 +488,21 @@ HighCell HighCell::d_ver(const uint8_t i) const
     }
     
     HighCell boundary = *this;
-    if( boundary.f(i) == true )
+    // check if result is redundant.
+    auto height = boundary.at(1).first;
+    for( uint8_t j = 2; j < i; ++j )
+    {
+        if( height <= boundary.at(j).first )
+        {
+            height = boundary.at(j).first;
+        }
+        else
+        {
+            return HighCell();
+        }
+    }
+    
+    if( boundary.f(i) == true && height <= boundary.at(i).first )
     {
         boundary.redundancy_index = i;
         return boundary;    
@@ -585,18 +661,6 @@ HighCell create_highcell( const size_t h, ... )
     }
     va_end(args);
     return t;
-}
-
-size_t HashHighCell :: operator ()( const HighCell &highcell ) const
-{
-    size_t hashvalue = 0;
-    size_t offset = 2;
-    for( const auto& cit : highcell.rep )
-    {
-        hashvalue += offset*(cit.first + 8*cit.second);
-        offset *= 16;
-    }
-    return hashvalue + highcell.redundancy_index;
 }
 
 std::ostream& operator<< (std::ostream& stream, const HighCell& highcell)
