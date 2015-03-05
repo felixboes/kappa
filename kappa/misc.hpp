@@ -56,6 +56,15 @@ double current_memory_usage_in_mb();
 
 /**
  *  Limit the amount of memory that might be allocated.
+ *  @warning According to 'man 7 setrlimit',
+ *  on 32bit systems the limit is either <= 2GiB or unlimited.
+ *  This might result in unwanted behaviour.
+ *
+ *  int setrlimit(int resource, const struct rlimit *rlim);
+ *  
+ *  RLIMIT_AS ...
+ *  Since the value is a long, on machines with a 32-bit long either this
+ *  limit is at most 2 GiB, or this resource is unlimited.
 **/
 void limit_memory( int32_t percent );
 
