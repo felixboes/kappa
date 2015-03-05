@@ -11,6 +11,8 @@ void play_in_the_double_complex()
     basis.add_basis_element( create_highcell(2, 2, 1, 4, 3) );
     basis.add_basis_element( create_highcell(2, 3, 2, 4, 1) );
     
+    basis.generate_indices();
+    
     for( const auto& cell : basis.basis_col )
     {
         std::cout << cell << std::endl;
@@ -42,6 +44,11 @@ void play_in_the_double_complex()
             }
         }
     }
+    
+    std::cout << basis << std::endl;
+    
+    const Tuple t = create_cell(2,4,3,2,1);
+    std::cout << t << " " << basis.id_of(t) << std::endl;
 }
 
 
@@ -83,7 +90,7 @@ int main( int argc, char** argv )
         return 0;
     }
     
-    create_and_test_doublecomplex();
+    play_in_the_double_complex();
     
     return 0;
     

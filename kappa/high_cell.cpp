@@ -26,6 +26,13 @@ HighCell :: HighCell(const uint32_t symbols, const size_t h) :
 {
 }
 
+HighCell :: HighCell( const Tuple& t ) :
+    p(t.p),
+    redundancy_index(0),
+    rep( t.get_data_rep() )
+{
+}
+
 uint32_t HighCell::get_min_symbol()
 {
     return min_symbol;

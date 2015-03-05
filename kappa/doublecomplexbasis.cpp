@@ -97,6 +97,11 @@ int64_t DoubleComplexBasis :: id_of(const HighCell &t) const
     }
 }
 
+int64_t DoubleComplexBasis :: id_of(const Tuple &t) const
+{
+    return id_of( HighCell(t) );
+}
+
 std::ostream& operator<< ( std::ostream& os, const DoubleComplexBasis& dcb )
 {
     if( dcb.size_col() > 0 )

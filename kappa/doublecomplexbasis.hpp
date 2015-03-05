@@ -27,10 +27,15 @@ struct DoubleComplexBasis
     uint64_t size_col() const;
     uint64_t size_ess() const;
 
+    /// Generates the enumeration of the basis elements.
+    /// This should be called as soon as the basis is completely generated.
     void generate_indices();
 
-    /// Returns the index of the HighCell that is stored in the MonoBasis or -1.
+    /// Returns the index of the HighCell that is stored in the Basis or -1.
     int64_t id_of( const HighCell& t ) const;
+    
+    /// Returns the index of the HighCell associated to the Tuple that is stored in the Basis or -1.
+    int64_t id_of( const Tuple& t ) const;
     
     /// Stores the orderd basis.
     std::set< HighCell > basis_red;

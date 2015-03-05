@@ -48,6 +48,11 @@ public:
     HighCell(const uint32_t p, const size_t h);
 
     /**
+     *  Construct a HighCell from a Tuple
+     */
+    HighCell(const Tuple& t);
+    
+    /**
      *  Access the \f$ i \f$-th Transposition of the HighCell.
      */
     Transposition& operator[](const size_t n);

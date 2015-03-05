@@ -854,6 +854,11 @@ Permutation Tuple::long_cycle_inv() const
     return sigma;
 }
 
+const std::vector< Transposition >& Tuple::get_data_rep() const
+{
+    return rep;
+}
+
 Tuple create_cell( const size_t h, ... )
 {
     Tuple t(h);

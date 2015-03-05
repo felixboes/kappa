@@ -284,6 +284,11 @@ public:
      */
     friend Tuple operator*( const Tuple& v_2, const Tuple& v_1 );
     
+    /**
+     *  @returns the data representation.
+    **/
+    const std::vector< Transposition >& get_data_rep() const;
+    
     uint32_t p; ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
     size_t id;  ///< The index of this Tuple in the basis of the MonoComplex.
 
