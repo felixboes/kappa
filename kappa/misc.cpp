@@ -295,12 +295,18 @@ void limit_memory( int32_t percent )
     rlimit64 lim;
     lim.rlim_cur = ( ( ((rlim64_t)pages) * page_size ) / 100 ) * percent;
     lim.rlim_max = RLIM64_INFINITY;
-    setrlimit64( RLIMIT_AS, &lim );
+    if( setrlimit64( RLIMIT_AS, &lim ) != 0 )
+    {
+        std::cout << "An error occured in limit_memory(). " << strerror(errno) << std::endl;
+    }
     #else
     rlimit lim;
     lim.rlim_cur = ( ( ((rlim_t)pages) * page_size ) / 100 ) * percent;
     lim.rlim_max = RLIM_INFINITY;
-    setrlimit( RLIMIT_AS, &lim );
+    if( setrlimit( RLIMIT_AS, &lim ) != 0 )
+    {
+        std::cout << "An error occured in limit_memory(). " << strerror(errno) << std::endl;
+    }
     #endif
 }
 

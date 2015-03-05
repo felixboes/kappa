@@ -2,9 +2,11 @@
 #define MISC_HPP
 
 #include <ctime>
-#include <iostream>
+#include <errno.h>
 #include <fstream>
+#include <iostream>
 #include <string>
+#include <string.h>
 #include <sstream>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
