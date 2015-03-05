@@ -290,16 +290,15 @@ void limit_memory( int32_t percent )
 {
     long int pages = sysconf(_SC_PHYS_PAGES);
     long int page_size = sysconf(_SC_PAGE_SIZE);
-    long int total_sys_mem = pages * page_size;
     
     #ifdef __USE_LARGEFILE64
     rlimit64 lim;
-    lim.rlim_cur = ( ( (rlim64_t)total_sys_mem ) / 100 ) * percent;
+    lim.rlim_cur = ( ( ((rlim64_t)pages) * page_size ) / 100 ) * percent;
     lim.rlim_max = RLIM64_INFINITY;
     setrlimit64( RLIMIT_AS, &lim );
     #else
     rlimit lim;
-    lim.rlim_cur = ( ( (rlim_t)total_sys_mem ) / 100 ) * percent;
+    lim.rlim_cur = ( ( ((rlim_t)pages) * page_size ) / 100 ) * percent;
     lim.rlim_max = RLIM_INFINITY;
     setrlimit( RLIMIT_AS, &lim );
     #endif
