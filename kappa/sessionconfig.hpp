@@ -8,6 +8,8 @@
 
 #include "libhomology/homology.hpp"
 
+#include "misc.hpp"
+
 /**
  *  \brief The sign convention in the Ehrenfried complex.
  *  Here, all_signs corresponds to the orientation coefficients,
@@ -56,6 +58,7 @@ struct SessionConfig
     SignConvention sgn_conv;    ///< The sign convention we use.
     bool apply_base_changes;    ///< Apply base changes.
     bool create_cache;      ///< Stores diagonalized matrices iff this is true.
+    int32_t limit_mem;      ///< Stores the percentage of the total memory available that is allowed to be used.
     bool valid;             ///< Is set to true if a given configuration is valid.
     bool print_help;        ///< Prints the help to screen iff this is true.
 };

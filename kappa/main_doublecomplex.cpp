@@ -45,7 +45,7 @@ void play_in_the_double_complex()
 }
 
 
-void create_and_test_doublecomplex(uint32_t g = 0, uint32_t m = 2)
+void create_and_test_doublecomplex(uint32_t g = 1, uint32_t m = 1)
 {
     std::cout << "Rational: " << std::endl;
     DoubleComplex< ChainComplexQ > dcq(g, m, SignConvention::all_signs, 1, 1);

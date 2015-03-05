@@ -12,6 +12,8 @@
 #include <boost/version.hpp>
 
 #include <bzlib.h>
+#include <sys/resource.h>
+#include <unistd.h>
 
 #include "tuple.hpp"
 
@@ -51,6 +53,11 @@ std::string current_date();
  *  @returns the current memory usage in mb.
  */ 
 double current_memory_usage_in_mb();
+
+/**
+ *  Limit the amount of memory that might be allocated.
+**/
+void limit_memory( int32_t percent );
 
 // Functions to print cells.
 /**

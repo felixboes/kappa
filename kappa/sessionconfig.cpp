@@ -15,6 +15,7 @@ SessionConfig::SessionConfig() :
     sgn_conv(all_signs),
     apply_base_changes(false),
     create_cache(false),
+    limit_mem(0),
     valid(false),
     print_help(false)
 {}
@@ -34,6 +35,7 @@ SessionConfig::SessionConfig( const int argc, char **argv ) :
     last_basis(0),
     apply_base_changes(false),
     create_cache(false),
+    limit_mem(0),
     valid(false),
     print_help(false)
 {
@@ -49,6 +51,7 @@ SessionConfig::SessionConfig( const int argc, char **argv ) :
             ("num_remaining_threads", boost::program_options::value(&num_remaining_threads), "the number of additional threads used in diagonalization")
             ("apply_base_changes", "applies base changes to the matrices.")
             ("cache", "cache the diagonalized matrices")
+            ("limit", boost::program_options::value(&limit_mem), "limit used memory to arg% of the total memory available")
             ("first_diff", boost::program_options::value(&start_p), "start with the differential first_diff")
             ("last_diff", boost::program_options::value(&end_p), "end with the differential last_diff")
             ("first_basis", boost::program_options::value(&first_basis), "start with the basis first_basis")
@@ -74,6 +77,21 @@ SessionConfig::SessionConfig( const int argc, char **argv ) :
     }
 
     // Configure Session
+    if( vm.count("limit") == false )
+    {
+        limit_mem = 0;
+    }
+    else
+    {
+        if(limit_mem < 0)
+        {
+            limit_mem = 0;
+        }
+        else if( limit_mem > 100 )
+        {
+            limit_mem = 100;
+        }
+    }
     if( vm.count("help") == true )
     {
         print_help = true;
@@ -107,6 +125,10 @@ bool SessionConfig::setup_configuration()
 {
     if( valid )
     {
+        if( limit_mem > 0 )
+        {
+            limit_memory(limit_mem);
+        }
         if( num_punctures >= 2 )
         {
             sgn_conv = all_signs;
