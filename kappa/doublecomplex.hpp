@@ -81,6 +81,11 @@ public:
     void compute_proj_E( const int32_t p );
     
     /**
+     *  prints proj_E^*( cell ) to the screen.
+    **/
+    void proj_E_ast( const HighCell& cell ) const;
+    
+    /**
      *  @returns a reference to the current differential.
      */
     MatrixType&       get_current_differential();

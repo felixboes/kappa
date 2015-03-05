@@ -39,11 +39,6 @@ struct DoubleComplexBasis
     std::set< HighCell > basis_col;
     std::set< HighCell > basis_ess;
     
-    /// Returns a const reference to the container.
-    const std::set< HighCell >& get_container_red() const;
-    const std::set< HighCell >& get_container_col() const;
-    const std::set< HighCell >& get_container_ess() const;
-    
     friend class boost::serialization::access;
     
     template<class Archive>

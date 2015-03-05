@@ -51,7 +51,6 @@ void play_in_the_double_complex()
     std::cout << t << " " << basis.id_of(t) << std::endl;
 }
 
-
 void create_and_test_doublecomplex(uint32_t g = 1, uint32_t m = 1)
 {
     std::cout << "Rational: " << std::endl;
@@ -78,6 +77,14 @@ void create_and_test_doublecomplex(uint32_t g = 1, uint32_t m = 1)
     }
 }
 
+void test_proj_E()
+{
+    DoubleComplex< ChainComplexQ > dcq(0, 2, SignConvention::all_signs, 1, 1);
+    dcq.compute_proj_E(4);
+    dcq.proj_E_ast( create_cell(2, 3, 2, 2, 1) );
+    dcq.proj_E_ast( create_cell(2, 3, 1, 3, 2) );
+}
+
 int main( int argc, char** argv )
 {
     std::cout.setf(std::ios::unitbuf);
@@ -90,7 +97,7 @@ int main( int argc, char** argv )
         return 0;
     }
     
-    play_in_the_double_complex();
+    test_proj_E();
     
     return 0;
     

@@ -298,6 +298,30 @@ void DoubleComplex< MatrixComplex > :: compute_proj_E( const int32_t p )
 }
 
 template< class MatrixComplex >
+void DoubleComplex< MatrixComplex> :: proj_E_ast( const HighCell &cell ) const
+{
+    const auto p = cell.p;
+    if( bases.count(p+1) == 0 || bases.count(p) == 0 )
+    {
+        return;
+    }
+    const auto id = bases.at(p).id_of(cell);
+    const auto& diff = get_current_differential();
+    const CoefficientType zero(0);
+    
+    std::cout << "  1 " << cell << std::endl;
+    
+    for( const auto& red : bases.at(p+1).basis_red )
+    {
+        const auto& lambda = diff.at(red.id, id);
+        if( lambda != zero )
+        {
+            std::cout << std::setw(3) << lambda << " " << red << std::endl;
+        }
+    }
+}
+
+template< class MatrixComplex >
 typename DoubleComplex< MatrixComplex >::MatrixType & DoubleComplex< MatrixComplex > :: get_current_differential()
 {
     return matrix_complex.get_current_differential();
