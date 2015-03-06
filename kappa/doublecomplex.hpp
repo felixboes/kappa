@@ -83,7 +83,12 @@ public:
     /**
      *  prints proj_E^*( cell ) to the screen.
     **/
-    void proj_E_ast( const HighCell& cell ) const;
+    void proj_E_ast( const CoefficientType& alpha, const HighCell& cell ) const;
+    
+    /**
+     *  prints tex code of proj_E^*( cell ) to the screen.
+    **/
+    void proj_E_ast_tex( const CoefficientType& alpha, const HighCell& cell ) const;
     
     /**
      *  @returns a reference to the current differential.

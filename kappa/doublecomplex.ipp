@@ -298,25 +298,69 @@ void DoubleComplex< MatrixComplex > :: compute_proj_E( const int32_t p )
 }
 
 template< class MatrixComplex >
-void DoubleComplex< MatrixComplex> :: proj_E_ast( const HighCell &cell ) const
+void DoubleComplex< MatrixComplex> :: proj_E_ast( const CoefficientType& alpha, const HighCell &cell ) const
 {
+    // preparetion
     const auto p = cell.p;
-    if( bases.count(p+1) == 0 || bases.count(p) == 0 )
+    if( bases.count(p) == 0 )
     {
         return;
     }
     const auto id = bases.at(p).id_of(cell);
     const auto& diff = get_current_differential();
     const CoefficientType zero(0);
+    if( alpha == zero )
+    {
+        return;
+    }
     
+    // print
     std::cout << "  1 " << cell << std::endl;
-    
+    if( bases.count(p+1) == 0 )
+    {
+        return;
+    }
     for( const auto& red : bases.at(p+1).basis_red )
     {
         const auto& lambda = diff.at(red.id, id);
         if( lambda != zero )
         {
             std::cout << std::setw(3) << lambda << " " << red << std::endl;
+        }
+    }
+}
+
+template< class MatrixComplex >
+void DoubleComplex< MatrixComplex> :: proj_E_ast_tex( const CoefficientType& alpha, const HighCell &cell ) const
+{
+    // preparetion
+    const auto p = cell.p;
+    if( bases.count(p) == 0 )
+    {
+        return;
+    }
+    const auto id = bases.at(p).id_of(cell);
+    const auto& diff = get_current_differential();
+    const CoefficientType zero(0);
+    if( alpha == zero )
+    {
+        return;
+    }
+    
+    // print
+    std::cout << "\\makebox[5ex][r]{$\\scriptstyle " << alpha << "\\ $}";
+    std::cout << tex_cell(cell);
+    if( bases.count(p+1) == 0 )
+    {
+        return;
+    }
+    for( const auto& red : bases.at(p+1).basis_red )
+    {
+        const auto& lambda = diff.at(red.id, id);
+        if( lambda != zero )
+        {
+            std::cout << "\\makebox[5ex][r]{$\\scriptstyle " << alpha*lambda << "\\ $}";
+            std::cout << tex_cell( red );
         }
     }
 }

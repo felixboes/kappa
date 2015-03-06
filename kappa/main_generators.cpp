@@ -65,20 +65,20 @@ void cohomology_generators_tex( const uint32_t g, const uint32_t m, const int32_
     
     std::cout << tex_preamble();
     auto base = compute_base_of_kernel< MatrixField<CoefficientT>, VectorField<CoefficientT> >( kernel );
+    DoubleComplex< ChainComplex< CoefficientT, MatrixField<CoefficientT>, DiagonalizerField<MatrixField<CoefficientT>>, HomologyField > > dc(g, m, SignConvention::all_signs, 1, 1);
     for( const auto& v : base )
     {
         auto c = v.homology_class( kernel, image );
         if( c.is_zero() == false )
         {
-            std::cout << "The following cochain represents the class " << c << " $\\in H_3(\\mathfrak M_{2,1}^0; \\mathbb K)$\\\\" << std::endl;
+            std::cout << "The following cochain represents the class " << c << " $\\in H_" << (4*g + 2*m - p) << "(\\mathfrak M_{" << g << ",1}^{" << m << "};\\mathbb K)$\\\\" << std::endl;
+            dc.compute_proj_E(p+1);
             
             for( const auto& it : basis.basis )
             {
                 if( v.at(it.id) != CoefficientT(0) )
                 {
-                    //std::cout << "\\makebox[5ex][r]{$\\scriptstyle " << ( v.at(it.id) >= 0 ? "+" : "") << v.at(it.id) << "\\ $}";
-                    std::cout << "\\makebox[5ex][r]{$\\scriptstyle " << v.at(it.id) << "\\ $}";
-                    std::cout << tex_cell(it);
+                    dc.proj_E_ast_tex(v.at(it.id), it);
                 }
             }
             
@@ -383,6 +383,12 @@ void verify_known_generators()
     test_( create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::Eb ) );
 }
 
+template< class CoefficientT >
+void print_cohomology_generators_tex( const uint32_t g=2, const uint32_t m=0, const int32_t p=3 )
+{
+    cohomology_generators_tex<CoefficientT>(g, m, 4*g+2*m-p);
+}
+
 int main( int argc, char** argv )
 {
     std::cout.setf(std::ios::unitbuf);
@@ -394,6 +400,18 @@ int main( int argc, char** argv )
         if( atoi( argv[1] ) == 1 )
         {
             verify_known_generators();
+            return 0;
+        }
+        else if( atoi(argv[1]) == 2 )
+        {
+            if( argc > 4 )
+            {
+                print_cohomology_generators_tex<Q>( atoi(argv[2]), atoi(argv[3]), atoi(argv[4]) );
+            }
+            else
+            {
+                print_cohomology_generators_tex<Q>();
+            }
             return 0;
         }
     }

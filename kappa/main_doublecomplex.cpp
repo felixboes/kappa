@@ -81,8 +81,16 @@ void test_proj_E()
 {
     DoubleComplex< ChainComplexQ > dcq(0, 2, SignConvention::all_signs, 1, 1);
     dcq.compute_proj_E(4);
-    dcq.proj_E_ast( create_cell(2, 3, 2, 2, 1) );
-    dcq.proj_E_ast( create_cell(2, 3, 1, 3, 2) );
+    dcq.proj_E_ast( 1, create_cell(2, 3, 2, 2, 1) );
+    dcq.proj_E_ast( 1, create_cell(2, 3, 1, 3, 2) );
+    
+    
+    HighCell cell( create_cell(3, 5, 4, 2, 1, 3, 2) );
+    cell.redundancy_index = 1;
+    std::cout << tex_preamble() << std::endl
+              << tex_cell( cell ) << std::endl
+              << tex_end() << std::endl;
+    
 }
 
 int main( int argc, char** argv )
