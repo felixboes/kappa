@@ -31,6 +31,10 @@ ifdef ENABLE_KAPPA_DEBUG
 CXXFLAGS      += -g
 endif
 
+ifdef USE_LIBMAGICKXX
+CXXFLAGS      += `Magick++-config --cppflags --cxxflags --ldflags --libs`
+endif
+
 ifndef CXX
 CXX           := g++
 endif
