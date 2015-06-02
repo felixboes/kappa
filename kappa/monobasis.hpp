@@ -17,7 +17,10 @@ struct MonoBasis
     MonoBasis();
     
     /// Add a basis element.
-    uint32_t add_basis_element (Tuple t);
+    uint32_t add_basis_element ( Tuple t );
+
+    /// Add a basis element that is not a multiple of a.
+    uint32_t add_basis_element_reduced ( Tuple t );
     
     /// output stream
     friend std::ostream& operator<< (std::ostream& stream, const MonoBasis& mb);

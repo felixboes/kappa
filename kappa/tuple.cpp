@@ -213,6 +213,28 @@ bool Tuple :: has_correct_num_cycles(const size_t m) const
     return num_cycles() == m + min_symbol;
 }
 
+bool Tuple :: is_multiple_of_a() const
+{
+    if( this->operator bool() == true )
+    {
+        if( this->at( this->rep.size() ) == Transposition( this->p, this->p-1 ) )
+        {
+            const size_t rep_size_min_1 = rep.size() - 1;
+            const size_t p_min_2 = this -> p - 2;
+            for( size_t i = 0; i < rep_size_min_1; ++i )
+            {
+                if( rep.at(i).first > p_min_2 || rep.at(i).second > p_min_2 )
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    return false;
+}
+
 uint32_t Tuple :: num_cycles() const
 {
     // Since the t_i are transpositions, one can instead count the number of cycles of (p p-1 ... 1) t_1 ... t_h.
@@ -626,6 +648,19 @@ Tuple Tuple :: d_hor( const uint8_t k ) const
     boundary.p -= 1;
     
     return boundary;
+}
+
+Tuple Tuple :: d_hor_reduced(const uint8_t i) const
+{
+    const Tuple boundary = this->d_hor(i);
+    if( boundary.is_multiple_of_a() == false )
+    {
+        return boundary;
+    }
+    else
+    {
+        return Tuple();
+    }
 }
 
 Tuple Tuple :: d_hor_double_complex( const uint8_t k ) const

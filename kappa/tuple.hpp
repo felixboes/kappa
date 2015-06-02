@@ -182,6 +182,13 @@ public:
      */
     bool has_correct_num_cycles(const size_t m) const;
 
+    /*!
+     * \brief Determines wether this Tuple is in the product of the cocycle a with something else.
+     * \returns In the parallel case: true iff it is the product.
+     *          in the radial case: not yet implemented correctly.
+     */
+    bool is_multiple_of_a() const;
+
     /**
      *  @returns the number connected compontents of the corresponding graph, where \f$ \tau_j \f$ is seen an edge.
      */
@@ -238,6 +245,11 @@ public:
      */
     Tuple d_hor( const uint8_t i ) const;
     
+    /**
+     *  Computes the boundary mod multiples of a.
+     */
+    Tuple d_hor_reduced( const uint8_t i ) const;
+
     /** Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} without the projection on the monotonous cells.
      *  Returns an empty tuple if the boundary is degenerate (with respect to the double complex), the boundary tuple otherwise.
      *  \note The parameter i has to fulfill 0 < i < p.

@@ -4,13 +4,25 @@ MonoBasis::MonoBasis() : basis()
 {
 }
  
-uint32_t MonoBasis :: add_basis_element (Tuple t)
+uint32_t MonoBasis :: add_basis_element ( Tuple t )
 {
     uint32_t id = basis.size();
     t.id = id;
     basis.insert(std::move(t));
     
     return id;
+}
+
+uint MonoBasis :: add_basis_element_reduced( Tuple t )
+{
+    if( t.is_multiple_of_a() )
+    {
+        return 0;
+    }
+    else
+    {
+        return add_basis_element(t);
+    }
 }
 
 uint64_t MonoBasis :: size() const
