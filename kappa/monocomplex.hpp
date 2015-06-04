@@ -91,11 +91,13 @@ public:
      *  computes the boundary of a given Tuple and saves the result in the differential.
      */ 
     void compute_boundary( Tuple & tuple, const uint32_t p, MatrixType & differential);
+    void compute_boundary_sage( Tuple & tuple, const uint32_t p, SagemathInterface& sage);
     
     /**
      *  Generates the p-th differential.
      */
     void gen_differential( const int32_t p );
+    void gen_differential_sage( const int32_t p, SagemathInterface& sage);
     
     /**
      *  Apply base changes.

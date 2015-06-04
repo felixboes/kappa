@@ -235,6 +235,63 @@ void MonoComplex<MatrixComplex>::compute_boundary( Tuple & tuple, const uint32_t
 }
 
 template< class MatrixComplex >
+void MonoComplex<MatrixComplex>::compute_boundary_sage( Tuple & tuple, const uint32_t p, SagemathInterface& sage )
+{
+    int32_t parity = 0;
+    Tuple boundary;
+    uint32_t s_q;
+    MatrixType row( 1, bases[p-1].size() );
+    for( uint32_t k = 0; k < factorial(h); k++ )
+    // in each iteration we enumerate one sequence of indices according to the above formula
+    {
+        Tuple current_basis = tuple;
+        bool norm_preserved = true;
+
+        // parity of the exponent of the sign of the current summand of the differential
+        if( sign_conv != no_signs )
+        {
+            parity = ((h*(h+1))/2) % 2;
+        }
+
+        // Calculate phi_{(s_h, ..., s_1)}( Sigma )
+        for( uint32_t q = 1; q <= h; q++ )
+        {
+            s_q = 1 + ( ( k / factorial(q-1)) % q );
+            if( sign_conv != no_signs )
+            {
+                parity += s_q;
+            }
+            if( current_basis.phi(q, s_q) == false )
+            {
+                norm_preserved = false;
+                break;
+            }
+        }
+
+        // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
+        if( norm_preserved )   // Compute all horizontal boundaries.
+        {
+            std::map< uint8_t, int8_t > or_sign;
+            if( sign_conv == all_signs )
+            {
+                or_sign.operator =( std::move(current_basis.orientation_sign()) );
+            }
+
+            for( uint32_t i = Tuple::get_min_boundary_offset(); i <= p - Tuple::get_max_boundary_offset(); i++ )
+            {
+                if( (boundary = current_basis.d_hor_reduced(i)) )
+                {
+                    boundary.id = bases[p-1].id_of(boundary);
+                    update_differential<MatrixType>(row, 0, boundary.id,
+                                            parity, i, or_sign[i], sign_conv);
+                }
+            }
+        }
+    }
+    sage.update_row( tuple.id, row );
+}
+
+template< class MatrixComplex >
 void monocomplex_work(
         MonoComplex<MatrixComplex> &            monocomplex,
         MonocomplexWork &                       work,
@@ -306,6 +363,22 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
     for (uint32_t t = 0; t < num_threads; ++t)
     {
         workers[t].join();
+    }
+}
+
+template< class MatrixComplex >
+void MonoComplex< MatrixComplex > :: gen_differential_sage( const int32_t p, SagemathInterface& sage )
+{
+    if( ( bases.count(p) != 0 ? bases.at(p).size() : 0 ) == 0 || ( bases.count(p-1) != 0 ? bases.at(p-1).size() : 0 ) == 0 )
+    {
+        return;
+    }
+
+    sage.create_matrix<CoefficientType>( bases.at(p).size(), bases.at(p-1).size() );
+
+    for ( auto it : bases.at(p).basis )
+    {
+        compute_boundary_sage(it, p, sage);
     }
 }
 
