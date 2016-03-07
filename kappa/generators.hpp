@@ -25,6 +25,7 @@ enum Generator
     Q_alpha_d,
     Q_beta_d,
     Q_gamma_d,
+    R_a_e,
     R_alpha_inv_beta_c_d,
     R_alpha_inv_gamma_inv_c_d,
     R_alpha_inv_gamma_c_d,

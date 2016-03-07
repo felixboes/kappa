@@ -437,13 +437,15 @@ int main( int argc, char** argv )
 //    test_( create_cochain<Zm>( Generator::Q_beta_d ) );
 //    test_( create_cochain<Zm>( Generator::Q_gamma_d ) );
     
-    test_( create_cochain<Zm>( Generator::R_alpha_inv_alpha_inv_c_d ) );
+//     test_( create_cochain<Zm>( Generator::R_alpha_inv_alpha_inv_c_d ) );
     
     // Later:
 //    test_z_1<Zm>();
 //    test_z_2<Zm>();
 //    test_tilde_d<Zm>();
     
+    
+    test_( create_cochain<Zm>( Generator::R_a_e) );
     
     std::cout << "Mod 5 computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
@@ -452,7 +454,7 @@ int main( int argc, char** argv )
 //    test_( create_cochain<Zm>( Generator::Q_alpha_c ) );
 //    test_( create_cochain<Zm>( Generator::Q_beta_c ) );
 //    test_( create_cochain<Zm>( Generator::Q_gamma_c ) );
-    test_( create_cochain<Zm>( Generator::R_alpha_inv_alpha_inv_c_d ) );
+//     test_( create_cochain<Zm>( Generator::R_alpha_inv_alpha_inv_c_d ) );
     
 //    cohomology_generators<Q>( 0, 2, 3);
 //    cohomology_generators<Q>( 1, 0, 4);
