@@ -13,6 +13,7 @@ enum Generator
     c,
     d,
     e,
+    u,
     Qb,
     Qc,
     Qd, ///< This is soley defined for coefficients with 2 = 0.

@@ -445,7 +445,10 @@ int main( int argc, char** argv )
 //    test_tilde_d<Zm>();
     
     
-    test_( create_cochain<Zm>( Generator::R_a_e) );
+//     test_( create_cochain<Zm>( Generator::R_a_e) );
+    
+    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Eb ) );
+    test_( create_cochain<Zm>( Generator::u) );
     
     std::cout << "Mod 5 computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
