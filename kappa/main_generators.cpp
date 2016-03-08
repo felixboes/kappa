@@ -421,6 +421,7 @@ int main( int argc, char** argv )
     std::cout << "--------------------------------" << std::endl;
 
     test_( create_cochain<Q>( Generator::R_alpha_inv_alpha_inv_c_d ) );
+    test_( create_cochain<Q>( Generator::u) );
 
     std::cout << "Mod 2 computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
