@@ -151,7 +151,7 @@ MonoCochainField< CoefficientT > create_cochain( const Generator& name )
     case Q_alpha_inv_c:
     {
         CochainType cochain( create_cochain<CoefficientT>( Generator::Qc ) );
-        cochain.set_name("Q_alpha(c)");
+        cochain.set_name("Q_alpha^{-1}(c)");
         return cochain;
     }
     case Q_beta_c:
@@ -188,10 +188,10 @@ MonoCochainField< CoefficientT > create_cochain( const Generator& name )
         
         return cochain;
     }
-    case Q_alpha_d:
+    case Q_alpha_inv_d:
     {
         CochainType cochain( create_cochain<CoefficientT>( Generator::Qd ) );
-        cochain.set_name("Q_alpha(d)");
+        cochain.set_name("Q_alpha^{-1}(d)");
         return cochain;
     }
     case Q_beta_d:
