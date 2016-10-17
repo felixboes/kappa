@@ -23,7 +23,7 @@ enum Generator
     Q_alpha_inv_c,
     Q_beta_c,
     Q_gamma_c,    
-    Q_alpha_d,
+    Q_alpha_inv_d,
     Q_beta_d,
     Q_gamma_d,
     R_a_e,
