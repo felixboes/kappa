@@ -26,6 +26,8 @@ public:
     HomologyDummy::TorsT tors() {return HomologyDummy::TorsT();}
     
     bool transp;
+    uint32_t num_working_threads;
+    uint32_t num_remaining_threads;
 };
 
 #endif // DIAGONALIZER_DUMMY_HPP

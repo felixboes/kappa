@@ -7,30 +7,33 @@
  */
 template< class MatrixComplex >
 MonoComplex< MatrixComplex > :: MonoComplex(
-        const uint32_t _g,
-        const uint32_t _m,
-        SignConvention sgn,
-        const uint32_t number_working_threads,
-        const uint32_t number_remaining_threads)
-    : g(_g),
-      m(_m),
-      h(2*_g + _m),
+        const uint32_t          genus,
+        const uint32_t          num_punctures,
+        const SignConvention    sgn,
+        const uint32_t          number_working_threads,
+        const uint32_t          number_remaining_threads)
+    : g(genus),
+      m(num_punctures),
+      h(2*genus + num_punctures),
       num_threads(number_working_threads + number_remaining_threads),
       sign_conv(sgn),
-      matrix_complex(false)
+      diff_complex(false)
 {
-    DiagonalizerType& diago = get_diagonalizer();
+    // Configure diagoanlizer
+    DiagonalizerType& diago = diff_complex.get_diagonalizer();
     diago.num_working_threads = number_working_threads;
     diago.num_remaining_threads = number_remaining_threads;
-    
+
+    // Get parameter right.
     if ( Tuple::get_radial() ) // For radial cells, we have h = 2g + m - 1.
     {
         --h;
     }
-    if (h == 0)
+    if ( h == 0 )
     {
         return;
     }
+
     // Generate all tuples with h transpositions containing the symbols 1, ..., p,
     // each at least once, with the correct number of cycles.
     Tuple tuple(h);
@@ -51,10 +54,10 @@ MonoComplex< MatrixComplex > :: MonoComplex(
 template< class MatrixComplex >
 void MonoComplex< MatrixComplex > :: show_basis( const int32_t p ) const
 {
-    if( bases.count(p) )
+    if( basis_complex.count(p) )
     {
         std::cout << "This it the " << p << "-th basis:" << std::endl;
-        const auto& basis_vector = bases.at(p).basis;
+        const auto& basis_vector = basis_complex.at(p).basis;
         for( auto it = basis_vector.cbegin(); it != basis_vector.cend(); ++it )
         {
             std::cout << it->id << ": " << *it << std::endl;
@@ -67,37 +70,37 @@ void MonoComplex< MatrixComplex > :: show_basis( const int32_t p ) const
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t l, const uint32_t p, const uint32_t start_symbol, Tuple& tuple )
+void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t s, const uint32_t p, const uint32_t start_symbol, Tuple& tuple )
 {
-    /* Up to now we have determined all monotonic tuples of l transpositions containing the 
-       symbols 1, ..., p, each at least once. We now add an (l+1)-th transposition and continue
+    /* Up to now we have determined all monotonic tuples of s transpositions containing the
+       symbols 1, ..., p, each at least once. We now add an (s+1)-th transposition and continue
        recursively.*/
-    if(l < h) // There are h-l transpositions left to be determined.
+    if(s < h) // There are h-s transpositions left to be determined.
     {
-	/* From an l-tuple containing p symbols we can build up an (l+1)-tuple 
+        /* From an s-tuple containing p symbols we can build up an (s+1)-tuple
         with p, p+1 or p+2 symbols. */
 
         /* p -> p
            In this case we use the same number of symbols. Since we only
-           enumerate monotonic tuples, the height of the (l+1)-th transposition needs to be p.
-           We try out all possibilities for the second symbol in the (l+1)-th transposition. */
+           enumerate monotonic tuples, the height of the (s+1)-th transposition needs to be p.
+           We try out all possibilities for the second symbol in the (s+1)-th transposition. */
         tuple.p = p;
         for(uint32_t i = start_symbol; i < p; ++i)
         {
-            tuple[l+1] = Transposition(p, i); 
-            gen_bases(l+1, p, start_symbol, tuple);
+            tuple[s+1] = Transposition(p, i);
+            gen_bases(s+1, p, start_symbol, tuple);
         }
 
         /* p -> p+1
            In this case we use p+1 symbols instead of p. Two cases occur. */
         tuple.p = p+1;
-        /* Case 1: The new row in the parallel slit domain is inserted at the top, i.e. 
-                   the transpositions 1, ..., l remain the same and we only insert the symbol 
-                   p+1 in the (l+1)-th transposition, together with any symbol of 1, ..., p. */
+        /* Case 1: The new row in the parallel slit domain is inserted at the top, i.e.
+                   the transpositions 1, ..., s remain the same and we only insert the symbol
+                   p+1 in the (s+1)-th transposition, together with any symbol of 1, ..., p. */
         for (uint32_t i = start_symbol; i <= p; ++i)
         {
-            tuple[l+1] = Transposition(p+1, i);
-            gen_bases(l+1, p+1, start_symbol, tuple);
+            tuple[s+1] = Transposition(p+1, i);
+            gen_bases(s+1, p+1, start_symbol, tuple);
         }
 
         /* Case 2: The new row in the parallel slit domain is not inserted at the top but at a position
@@ -105,7 +108,7 @@ void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t l, const uint32_t
         for(uint32_t i = start_symbol; i <= p; ++i)
         {
             Tuple tmp = tuple;
-            for( uint32_t j = l; j >= 1; --j )
+            for( uint32_t j = s; j >= 1; --j )
             {
                 if( tmp[j].first >= i )
                 {
@@ -121,21 +124,21 @@ void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t l, const uint32_t
                 }
             }
 
-            tmp[l+1] = Transposition(p+1, i);
-            gen_bases(l+1, p+1, start_symbol, tmp);
+            tmp[s+1] = Transposition(p+1, i);
+            gen_bases(s+1, p+1, start_symbol, tmp);
         }
 
         /* p -> p+2
-           Now we use p+2 symbols instead of p. Thus one row is inserted at the top of the 
-           parallel slit domain, i.e. p+2 is the height of the (l+1)-th transposition. The other row is inserted 
-           either directly below the top row or between the old rows. Since the symbol p+1 does not 
-           occur in the transpositions 1, ..., l, both cases can be expressed by choosing a symbol
-           i = 1, ..., p+1 and by shifting up all indices >= i by one. */ 
+           Now we use p+2 symbols instead of p. Thus one row is inserted at the top of the
+           parallel slit domain, i.e. p+2 is the height of the (s+1)-th transposition. The other row is inserted
+           either directly below the top row or between the old rows. Since the symbol p+1 does not
+           occur in the transpositions 1, ..., s, both cases can be expressed by choosing a symbol
+           i = 1, ..., p+1 and by shifting up all indices >= i by one. */
         tuple.p = p+2;
         for( uint32_t i = start_symbol; i <= p + 1; ++i)
         {
             Tuple tmp = tuple;
-            for( uint32_t j = l; j >= 1; j-- )
+            for( uint32_t j = s; j >= 1; j-- )
             {
                 if( tmp[j].first >= i )
                 {
@@ -151,17 +154,17 @@ void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t l, const uint32_t
                 }
             }
 
-            tmp[l+1] = Transposition(p+2, i);
-            gen_bases(l+1, p+2, start_symbol, tmp);
+            tmp[s+1] = Transposition(p+2, i);
+            gen_bases(s+1, p+2, start_symbol, tmp);
         }
     }
-    else // Check whether the created h-tuple is really a generator, i.e. if it has the correct 
-         // number of cycles. If this is the case, we add tuple to the basis elements of the 
+    else // Check whether the created h-tuple is really a generator, i.e. if it has the correct
+         // number of cycles. If this is the case, we add tuple to the basis elements of the
          // p-th basis and store the index of tuple in this basis as the id of tuple.
     {
         if (tuple.has_correct_num_cycles(m))
         {
-            tuple.id = bases[p].add_basis_element_reduced( tuple );
+            tuple.id = basis_complex[p].add_basis_element( tuple );
         }
     }
 }
@@ -176,7 +179,8 @@ void update_differential(MatrixType &           differential,
                          const int8_t           or_sign,
                          const SignConvention & sign_conv)
 {
-    differential(row, column) += typename MatrixType::CoefficientType( sign(parity, i, or_sign, sign_conv) );
+    // differential(row, column) += typename MatrixType::CoefficientType( sign(parity, i, or_sign, sign_conv) );
+    differential(row, column) += sign(parity, i, or_sign, sign_conv);
 }
 
 template< class MatrixComplex >
@@ -225,7 +229,7 @@ void MonoComplex<MatrixComplex>::compute_boundary( Tuple & tuple, const uint32_t
             {
                 if( (boundary = current_basis.d_hor_reduced(i)) )
                 {
-                    boundary.id = bases[p-1].id_of(boundary);
+                    boundary.id = basis_complex[p-1].id_of(boundary);
                     update_differential<MatrixType>(differential, tuple.id, boundary.id,
                                             parity, i, or_sign[i], sign_conv);
                 }
@@ -240,7 +244,7 @@ void MonoComplex<MatrixComplex>::compute_boundary_sage( Tuple & tuple, const uin
     int32_t parity = 0;
     Tuple boundary;
     uint32_t s_q;
-    MatrixType row( 1, bases[p-1].size() );
+    MatrixType row( 1, basis_complex[p-1].size() );
     for( uint32_t k = 0; k < factorial(h); k++ )
     // in each iteration we enumerate one sequence of indices according to the above formula
     {
@@ -281,7 +285,7 @@ void MonoComplex<MatrixComplex>::compute_boundary_sage( Tuple & tuple, const uin
             {
                 if( (boundary = current_basis.d_hor_reduced(i)) )
                 {
-                    boundary.id = bases[p-1].id_of(boundary);
+                    boundary.id = basis_complex[p-1].id_of(boundary);
                     update_differential<MatrixType>(row, 0, boundary.id,
                                             parity, i, or_sign[i], sign_conv);
                 }
@@ -324,11 +328,11 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
 	 *  is bijective. This is shown in the document s_qformel.pdf.	
     **/
     
-    matrix_complex.make_current_diff_old();
+    diff_complex.make_current_diff_old();
     MatrixType & differential = get_current_differential();  
     
-    //differential.resize( bases[p].size(), bases[p-1].size() );
-    differential.resize( ( bases.count(p) != 0 ? bases.at(p).size() : 0 ), ( bases.count(p-1) != 0 ? bases.at(p-1).size() : 0 ) );
+    //differential.resize( basis_complex[p].size(), basis_complex[p-1].size() );
+    differential.resize( ( basis_complex.count(p) != 0 ? basis_complex.at(p).size() : 0 ), ( basis_complex.count(p-1) != 0 ? basis_complex.at(p-1).size() : 0 ) );
     
     if( differential.size1() == 0 || differential.size2() == 0 )
     {
@@ -338,15 +342,15 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
     // For each tuple t in the basis, we compute all basis elements that
     // occur in kappa(t).
     std::vector<MonocomplexWork> elements_per_threads (num_threads);
-    uint32_t num_elements_per_thread = bases.at(p).size() / num_threads;
+    uint32_t num_elements_per_thread = basis_complex.at(p).size() / num_threads;
     
-    if (bases.at(p).size() % num_threads != 0)
+    if (basis_complex.at(p).size() % num_threads != 0)
     {
         ++num_elements_per_thread;
     }
     uint32_t t = 0;
     uint32_t cur = 0;
-    for ( auto it : bases.at(p).basis )
+    for ( auto it : basis_complex.at(p).basis )
     {
         elements_per_threads[t].push_back(it);
         ++cur;
@@ -369,14 +373,14 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
 template< class MatrixComplex >
 void MonoComplex< MatrixComplex > :: gen_differential_sage( const int32_t p, SagemathInterface& sage )
 {
-    if( ( bases.count(p) != 0 ? bases.at(p).size() : 0 ) == 0 || ( bases.count(p-1) != 0 ? bases.at(p-1).size() : 0 ) == 0 )
+    if( ( basis_complex.count(p) != 0 ? basis_complex.at(p).size() : 0 ) == 0 || ( basis_complex.count(p-1) != 0 ? basis_complex.at(p-1).size() : 0 ) == 0 )
     {
         return;
     }
 
-    sage.create_matrix<CoefficientType>( bases.at(p).size(), bases.at(p-1).size() );
+    sage.create_matrix<CoefficientType>( basis_complex.at(p).size(), basis_complex.at(p-1).size() );
 
-    for ( auto it : bases.at(p).basis )
+    for ( auto it : basis_complex.at(p).basis )
     {
         compute_boundary_sage(it, p, sage);
     }
@@ -385,7 +389,7 @@ void MonoComplex< MatrixComplex > :: gen_differential_sage( const int32_t p, Sag
 template< class MatrixComplex >
 void MonoComplex< MatrixComplex > :: apply_base_changes()
 {
-    matrix_complex.apply_base_changes();
+    diff_complex.apply_base_changes();
 }
 
 template< class MatrixComplex >
@@ -437,47 +441,47 @@ typename MonoComplex< MatrixComplex >::HomologyType MonoComplex< MatrixComplex >
 template< class MatrixComplex >
 typename MonoComplex< MatrixComplex >::MatrixType & MonoComplex< MatrixComplex > :: get_current_differential()
 {
-    return matrix_complex.get_current_differential();
+    return diff_complex.get_current_differential();
 }
 
 template< class MatrixComplex >
 const typename MonoComplex< MatrixComplex >::MatrixType & MonoComplex< MatrixComplex > :: get_current_differential() const
 {
-    return matrix_complex.get_current_differential();
+    return diff_complex.get_current_differential();
 }
 
 template< class MatrixComplex >
 size_t MonoComplex< MatrixComplex > :: num_rows() const
 {
-    return matrix_complex.num_rows();
+    return diff_complex.num_rows();
 }
 
 template< class MatrixComplex >
 size_t MonoComplex< MatrixComplex > :: num_cols() const
 {
-    return matrix_complex.num_cols();
+    return diff_complex.num_cols();
 }
 
 template< class MatrixComplex >
 typename MonoComplex< MatrixComplex >::DiagonalizerType & MonoComplex< MatrixComplex > :: get_diagonalizer()
 {
-    return matrix_complex.get_diagonalizer();
+    return diff_complex.get_diagonalizer();
 }
 
 template< class MatrixComplex >
 const typename MonoComplex< MatrixComplex >::DiagonalizerType & MonoComplex< MatrixComplex > :: get_diagonalizer() const
 {
-    return matrix_complex.get_diagonalizer();
+    return diff_complex.get_diagonalizer();
 }
 
 template< class MatrixComplex >
 void MonoComplex< MatrixComplex >::erase_current_differential()
 {
-    matrix_complex.erase();
+    diff_complex.erase();
 }
 
 template< class MatrixComplex >
 typename MonoComplex< MatrixComplex >::HomologyType MonoComplex< MatrixComplex > :: compute_current_kernel_and_torsion( const int32_t n )
 {
-    return matrix_complex.compute_current_kernel_and_torsion(n);
+    return diff_complex.compute_current_kernel_and_torsion(n);
 }

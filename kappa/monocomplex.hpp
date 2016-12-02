@@ -77,13 +77,20 @@ public:
     typedef typename MatrixComplex::DiagonalizerType DiagonalizerType;
     typedef MonoComplex< MatrixComplex > ThisType;
 
-    MonoComplex( const uint32_t genus, const uint32_t num_punctures, SignConvention sgn, const uint32_t number_working_threads, const uint32_t number_remaining_threads);
+    MonoComplex(
+            const uint32_t          genus,
+            const uint32_t          num_punctures,
+            const SignConvention    sgn,
+            const uint32_t          number_working_threads,
+            const uint32_t          number_remaining_threads );
     /** Recursive function initializing the basis_complex.
-        In the call of gen_bases with the parameters l, p and tuple, we assume that the first l transpositions
-        containing symbols start_symbol, ..., p are fixed and append all possible transpositions at position l+1, applying 	the function recursively in an appropriate way.
-        If l == h, we don't append another transposition since we have completed a possible basis element. 
+        In the call of gen_bases with the parameters s, p and tuple, we assume that the first s transpositions
+        containing symbols 1, ..., p are fixed and append all possible transpositions at position s+1, applying
+        the function recursively in an appropriate way.
+        If s == h, we don't append another transposition since we have completed a possible basis element.
         We check whether its number of cycles is appropriate for it to be a basis element, and if this is
-        the case, we add it to the basis in degree p.
+        the case, we add it to the basis in degree p. Thereby, basis elements are sorted according to the number
+        of clusters.
     **/
     void gen_bases( const uint32_t l, const uint32_t p, const uint32_t start_symbol, Tuple& tuple);
     
@@ -160,9 +167,9 @@ public:
     uint32_t h;                 ///< h = 2*g+m for the parallel case; and h = 2*g+m-1 for the radial case.
     uint32_t num_threads;       ///< number of threads used to construct the differential
 
-    SignConvention sign_conv;   ///< The sign convention.
-    MatrixComplex matrix_complex;                         ///< underlying matrix complex of this MonoComplex
-    std::map< int32_t, MonoBasis > bases;        ///< basis_complex[n] is the n-th MonoBasis, i.e. the basis of the n-th module of this MonoComplex. 
+    SignConvention sign_conv;                    ///< The sign convention.
+    MatrixComplex diff_complex;                  ///< Due to RAM limitations, we are working with at most two matrices at a time. Therefore we do not model the whole spectral sequence.
+    std::map< int32_t, MonoBasis > basis_complex; ///< basis_complex[n] is the n-th MonoBasis.
 };
 
 typedef std::vector<Tuple> MonocomplexWork;

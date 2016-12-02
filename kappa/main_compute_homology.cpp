@@ -66,7 +66,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             std::string( (conf.parallel == true) ? "parallel_" : "radial_" ) + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
         
         // Store bases.
-        for( const auto& it : monocomplex.bases )
+        for( const auto& it : monocomplex.basis_complex )
         {
             const auto& p = it.first;
             
@@ -91,7 +91,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             "./cache/list_of_files_that_should_not_be_overwritten/differentials_" + std::string( ( conf.parallel == true ? "parallel" : "radial") ) + std::string("_") +
             (conf.rational == true ? std::string("q") : std::string("s") + std::to_string(conf.prime) ) + std::string("_") +
             std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
-        for( int32_t p = 2; p < monocomplex.bases.cbegin()->first; ++p )
+        for( int32_t p = 2; p < monocomplex.basis_complex.cbegin()->first; ++p )
         {
             // Check if file may be overwritten
             if( file_exists(check_writable_prefix + std::to_string(p) ) == false )
@@ -120,21 +120,21 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     ofs << "-------- Computing Homology --------" << std::endl;
 
     // Compute all differentials and homology consecutively.
-    for( auto& it : boost::adaptors::reverse( monocomplex.bases ) )
+    for( auto& it : boost::adaptors::reverse( monocomplex.basis_complex ) )
     {
-        int32_t p = it.first;
+        int32_t p = it.first+1;
         if ( p < conf.start_p || p > conf.end_p + 2 )
         {
             continue;
         }
 
         // Generate a single differential.
-        std::cout << "Constructing the " << p << "-th differential of size " << monocomplex.bases.at(p).size() << " x " << ( monocomplex.bases.count(p+1) ? monocomplex.bases.at(p+1).size() : 0 );
+        std::cout << "Constructing the " << p << "-th differential of size " << ( monocomplex.basis_complex.count(p) ? monocomplex.basis_complex.at(p).size() : 0 ) << " x " << ( monocomplex.basis_complex.count(p-1) ? monocomplex.basis_complex.at(p-1).size() : 0 );
         std::cout.flush();
-        ofs << "Constructing the " << p << "-th differential of size " << monocomplex.bases.at(p).size() << " x " << ( monocomplex.bases.count(p+1) ? monocomplex.bases.at(p+1).size() : 0 );
+        ofs << "Constructing the " << p << "-th differential of size " << ( monocomplex.basis_complex.count(p) ? monocomplex.basis_complex.at(p).size() : 0 ) << " x " << ( monocomplex.basis_complex.count(p-1) ? monocomplex.basis_complex.at(p-1).size() : 0 );
 
         measure_duration = Clock();
-        monocomplex.gen_differential(p+1);
+        monocomplex.gen_differential(p);
         std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         if( conf.apply_base_changes == true )
@@ -153,13 +153,13 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         // Diagoanlize differetnial and save results.
         measure_duration = Clock();
         uint32_t max_possible_rank( std::min( monocomplex.num_rows(), monocomplex.num_cols() ) );
-        if( (uint32_t)homology.get_kern(p+1) > 0 )
+        if( (uint32_t)homology.get_kern(p) > 0 )
         {
-            max_possible_rank = std::min( max_possible_rank, (uint32_t)homology.get_kern(p+1) );
+            max_possible_rank = std::min( max_possible_rank, (uint32_t)homology.get_kern(p) );
         }
-        auto partial_homology = monocomplex.diagonalize_current_differential( p+1, max_possible_rank, true );
-        homology.set_kern( p, partial_homology.get_kern(p+1) );
-        homology.set_tors( p+1, partial_homology.get_tors(p) );
+        auto partial_homology = monocomplex.diagonalize_current_differential( p, max_possible_rank, true );
+        homology.set_kern( p, partial_homology.get_kern(p) );
+        homology.set_tors( p+1, partial_homology.get_tors(p-1) );
 
         // Print status message.
         std::cout << "Diagonalization done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
