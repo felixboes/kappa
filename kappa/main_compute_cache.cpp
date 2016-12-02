@@ -51,7 +51,7 @@ int main(int argc, char** argv)
     std::string prefix_basis("./cache/bases/");
     prefix_basis += std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
     
-    for( auto& it : monocomplex.bases )
+    for( auto& it : monocomplex.basis_complex )
     {
         // Store the p-th basis.
         auto& p = it.first;
@@ -61,15 +61,15 @@ int main(int argc, char** argv)
     // Compute all differentials.
     std::string prefix_differentials("./cache/differentials/");
     prefix_differentials += std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
-    MatrixZDontDiagonalize & differential = monocomplex.matrix_complex.get_current_differential();
-    for( auto& it : monocomplex.bases )
+    MatrixZDontDiagonalize & differential = monocomplex.diff_complex.get_current_differential();
+    for( auto& it : monocomplex.basis_complex )
     {
         auto& p = it.first;
-        size_t num_rows = monocomplex.bases[p].size();
-        size_t num_cols = monocomplex.bases[p-1].size();
+        size_t num_rows = monocomplex.basis_complex[p].size();
+        size_t num_cols = monocomplex.basis_complex[p-1].size();
         initialize_zero_matrix(differential, num_rows, num_cols);
         monocomplex.gen_differential( p );
-        save_to_file_bz2<MatrixZDontDiagonalize>( monocomplex.matrix_complex.get_current_differential(), prefix_differentials + std::to_string(p) );
+        save_to_file_bz2<MatrixZDontDiagonalize>( monocomplex.diff_complex.get_current_differential(), prefix_differentials + std::to_string(p) );
         monocomplex.erase_current_differential();
     }
 }

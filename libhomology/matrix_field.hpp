@@ -423,6 +423,12 @@ public:
      */
     void clear();
 
+
+    /**
+     *  Swaps the content of two matrices.
+     */
+    void swap( ThisType& m );
+
     /**
      *  @brief Prints base change to the standard output.
      *  
