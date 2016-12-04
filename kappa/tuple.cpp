@@ -487,7 +487,7 @@ bool Tuple :: f(const uint32_t i)
     {
         if( c == d ) // (ab)(b*) = (ab*) -> (b*)(ab)
         {
-            std::swap( at(i), at(i) );
+            std::swap( at(i+1), at(i) );
             return true;
         }
         else // (ab)(bd) = (abd) and (abd)' = (ad) and (abd)(ad) = (bd)
