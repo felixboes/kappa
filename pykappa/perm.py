@@ -17,10 +17,23 @@
 # You should have received a copy of the GNU General Public License
 # along with pykappa.  If not, see <http://www.gnu.org/licenses/>.
 
+class Transposition:
+
+    def __init__(self, a, b):
+        self._a = max(a, b)
+        self._b = min(a, b)
+
+    def get_a(self):
+        return self._a
+
+    def get_b(self):
+        return self._b
+
 class Permutation:
 
     # Static variable that is often used.
     long_cycle = {}
+    long_cycle_inv = {}
 
     @classmethod
     def get_long_cycle(cls, p):
@@ -30,11 +43,22 @@ class Permutation:
             cls.long_cycle[p] = long_cyc_p
         return cls.long_cycle[p]
 
-    def __init__(self, p):
+    @classmethod
+    def get_long_cycle_inv(cls, p):
+        if not cls.long_cycle_inv.has_key(p):
+            long_cyc_inv_p = Permutation(p)
+            long_cyc_inv_p._repr = [i + 1 for i in range(p)] + [0]
+            cls.long_cycle_inv[p] = long_cyc_inv_p
+        return cls.long_cycle_inv[p]
+
+    def __init__(self, p, tr=None):
        self._p = p
        self._repr = [ i for i in range(self._p + 1) ]
-       self._valid = True
+       if tr is Transposition:
+           self._repr[tr.get_a()] = tr.get_b()
+           self._repr[tr.get_b()] = tr.get_a()
 
+       self._valid = True
 
     def __mul__(self, other):
         if self._p != other._p:
