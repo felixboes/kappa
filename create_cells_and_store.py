@@ -26,31 +26,15 @@ import inspect
 import sys
 import time
 
-import perm
-import radial_cell
-import misc_usability_stuff as misc
+import pykappa
 
-# Produce a list of all indices in T_1 x T_2 x ... x T_m
-def count(list_of_tuples):
-    if list_of_tuples is not None and len(list_of_tuples) == 0:
-        return []
-    if len(list_of_tuples) == 1:
-        return [[i] for i in list_of_tuples[0]]
-
-    ret = []
-    for i in list_of_tuples[0]:
-        for remaining in count(list_of_tuples[1:]):
-            if remaining is not None:
-                ret.append([i] + remaining)
-    return ret
-
-# Store all top cells for which 2g+m = h.
+# Store all top cells for which h = 2g+m-1.
 def store_top_cells(h, parametrized):
     if parametrized:
         raise ValueError('Parametrization is not yet working.')
 
     if h < 1:
-        print "h = 2g+m-1 is to small."
+        print("h = 2g+m-1 is to small.")
         return
 
     sys.stdout.write('Creating and storing cells for 2g+m-1=' + str(h) + ' ... ' + '\r')
@@ -69,14 +53,14 @@ def store_top_cells(h, parametrized):
 
         # Create directories.
         try:
-            misc.create_directories()
+            pykappa.create_directories()
             archive_of.append(gzip.GzipFile('./data/top_cell_g_' + str(g) + '_m_' + str(m_of[g]) + '.bz2', 'wb'))
         except:
             # Print the error.
             frameinfo = inspect.getframeinfo(inspect.currentframe())
-            print frameinfo.filename, frameinfo.lineno
+            print(frameinfo.filename, frameinfo.lineno)
             e, p, t = sys.exc_info()
-            print e, p
+            print(e, p)
             return
 
     # iterate through all pairs
@@ -98,7 +82,7 @@ def store_top_cells(h, parametrized):
             sys.stdout.flush()
 
         # Create Cell from permutation. This cell is a top cell by construction.
-        cell = radial_cell.Cell(h, tau)
+        cell = pykappa.Cell(h, tau)
         g = cell.get_g()
         pickle.dump(tau, archive_of[g])
         num_cells_of[g] += 1
@@ -132,13 +116,13 @@ def main():
     args = vars(parser.parse_args())
 
     # Write Preamble.
-    pre, valid = misc.preamble()
+    pre, valid = pykappa.preamble()
     sys.stdout.write(pre + '\n')
     sys.stdout.flush()
 
     # Stop of something went wrong.
     if valid == False:
-        print "Could not initialize everything. Abroating."
+        print("Could not initialize everything. Abroating.")
         return 1
 
     # Start actual computation.

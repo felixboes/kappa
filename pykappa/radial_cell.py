@@ -17,27 +17,38 @@
 # You should have received a copy of the GNU General Public License
 # along with pykappa.  If not, see <http://www.gnu.org/licenses/>.
 
-import copy
-from perm import *
-import networkx as nx
 
+import copy
+import gzip
+import inspect
+import networkx as nx
+import os
+import cPickle as pickle
+import sys
+
+from perm import *
 
 class Cell:
     def __init__(self, h, tau):
         self._p = 2*h
         self._h = h
         self._inhomogenous = [ Transposition(tau_i[0], tau_i[1]) for tau_i in tau ]
-        self._valid = True
         self._m = None
         self._g = None
+        self._hash = None
 
         self.compute_g_and_m()
+
+        self._valid = True
 
     def __getitem__(self, j):
         return self._inhomogenous[j-1]
 
     def __setitem__(self, j, val):
         self._inhomogenous[j-1] = val
+
+    def degree(self):
+        return self._p
 
     def get_g(self):
         return self._g
@@ -153,9 +164,6 @@ class Cell:
         return True
 
     def d_hor(self, k):
-
-        boundary = copy.deepcopy(self)
-
         sigma = Permutation.get_long_cycle(self._p)._repr
         sigma_inv = Permutation.get_long_cycle_inv(self._p)._repr
 
@@ -182,9 +190,9 @@ class Cell:
                 # In this case: (Z(k),k)Z = (k,l)(a,b)(k,l) = (c,l) with c != k
                 if l != a and l != b:
                     if a != k:
-                        boundary[q] = Transposition(a, l)
+                        self[q] = Transposition(a, l)
                     else:
-                        boundary[q] = Transposition(b, l)
+                        self[q] = Transposition(b, l)
                 # Z(k) != l iff l = a or l = b hence k != a and k != b
                 # In this case: (Z(k),k)Z = (c,k)(a,b)(k,l) = (c,l) with c != l,
                 # but we see that this is just (a,b):
@@ -209,23 +217,78 @@ class Cell:
             sigma_inv[a], sigma_inv[b] = sigma_inv[b], sigma_inv[a]
 
         #boundary is monotone iff its renormalization is monotone. Thus we check for monotony now to avoid unnecessary renormalization.
-        if not boundary.monotone():
+        if not self.monotone():
             return Cell(0,0,0,False)
 
         # Renormalize all tau'
         for q in range(1, self._h+1):
             # We denote tau_q = (a,b)
-            a, b = boundary[q].get_a(), boundary[q].get_b()
+            a, b = self[q].get_a(), self[q].get_b()
 
             if a > k:
                 a -= 1
             if b > k:
                 b -= 2
-            boundary[q] = Transposition(a,b)
+                self[q] = Transposition(a,b)
 
-        boundary._p -= 1
+            self._p -= 1
 
-        return boundary
+    def face(self, i):
+        raise NotImplementedError('Complete the code that is commented out.')
+# template< class MatrixComplex >
+# void MonoComplex<MatrixComplex>::compute_boundary( Tuple & tuple, const uint32_t p, typename MatrixComplex::MatrixType & differential )
+# {
+#     int32_t parity = 0;
+#     Tuple boundary;
+#     uint32_t s_q;
+#     for( uint32_t k = 0; k < factorial(h); k++ )
+#     // in each iteration we enumerate one sequence of indices according to the above formula
+#     {
+#         Tuple current_basis = tuple;
+#         bool norm_preserved = true;
+#
+#         // parity of the exponent of the sign of the current summand of the differential
+#         if( sign_conv != no_signs )
+#         {
+#             parity = ((h*(h+1))/2) % 2;
+#         }
+#
+#         // Calculate phi_{(s_h, ..., s_1)}( Sigma )
+#         for( uint32_t q = 1; q <= h; q++ )
+#         {
+#             s_q = 1 + ( ( k / factorial(q-1)) % q );
+#             if( sign_conv != no_signs )
+#             {
+#                 parity += s_q;
+#             }
+#             if( current_basis.phi(q, s_q) == false )
+#             {
+#                 norm_preserved = false;
+#                 break;
+#             }
+#         }
+#
+#         // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
+#         if( norm_preserved )   // Compute all horizontal boundaries.
+#         {
+#             std::map< uint8_t, int8_t > or_sign;
+#             if( sign_conv == all_signs )
+#             {
+#                 or_sign.operator =( std::move(current_basis.orientation_sign()) );
+#             }
+#
+#             for( uint32_t i = Tuple::get_min_boundary_offset(); i <= p - Tuple::get_max_boundary_offset(); i++ )
+#             {
+#                 if( (boundary = current_basis.d_hor_reduced(i)) )
+#                 {
+#                     boundary.id = basis_complex[p-1].id_of(boundary);
+#                     update_differential<MatrixType>(differential, tuple.id, boundary.id,
+#                                             parity, i, or_sign[i], sign_conv);
+#                 }
+#             }
+#         }
+#     }
+# }
 
     def sigma_h(self):
         # initialize with sigma_0
@@ -300,6 +363,30 @@ class Cell:
             i += 1
         return sign
 
+    def get_clean_copy(self):
+        ret = copy.deepcopy(self)
+        ret._hash = None
+        return ret
+
+    def __hash__(self):
+        if self._hash is None:
+            self._hash = int(0)
+            offset = int(2)
+            for tau_i in self._inhomogenous:
+                self._hash += offset * ( tau_i.get_a() + 8 * tau_i.get_b() )
+                offset *= 16
+            return self._hash
+        else:
+            hash_tmp = int(0)
+            offset = int(2)
+            for tau_i in self._inhomogenous:
+                hash_tmp += offset * ( tau_i.get_a() + 8 * tau_i.get_b() )
+                offset *= 16
+            if self._hash == hash_tmp:
+                return self._hash
+            else:
+                raise ValueError("Hash values are different..." + str(self._hash) + " " + str(hash_tmp) + "\n")
+
     def __eq__(self, other):
         if self._valid != other._valid:
             return False
@@ -324,3 +411,83 @@ class Cell:
         s += str(self[1])
 
         return s
+
+
+class TopCellTauArchive:
+    def __init__(self, gziparchive=None):
+        self._archive = gziparchive
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        if self._archive is None:
+            raise StopIteration
+
+        try:
+            tau = pickle.load(self._archive)
+        except EOFError:
+            # We reached the archives end.
+            raise StopIteration
+        except:
+            # Other error.
+            frameinfo = inspect.getframeinfo(inspect.currentframe())
+            sys.stdout.write(str(frameinfo.filename) + ' ' + str(frameinfo.lineno) + '\n')
+            e, p, t = sys.exc_info()
+            sys.stdout.write(str(e) + ' ' + str(p) + '\n')
+            raise StopIteration
+        else:
+            return tau
+
+    # Python 3:
+    __next__ = next
+
+    def close(self):
+        if isinstance(self._archive, gzip.GzipFile):
+            self._archive.close()
+        elif self._archive is not None:
+            sys.stdout.write("Wrong file type: " + str(type(self._archive)) + '\n')
+
+
+class LoadTopCellTau:
+    def __init__(self, g, m):
+        self._g = g
+        self._m = m
+        self._valid = True
+        self._archive = None
+        if g < 0 or m < 1:
+            self._valid = False
+
+    def __enter__(self):
+        # open archive
+        try:
+            if (os.path.exists('./data/') and os.path.exists('./data/top_cell_g_' + str(self._g) + '_m_' + str(self._m) + '.bz2')):
+                self._archive = TopCellTauArchive(gzip.GzipFile('./data/top_cell_g_' + str(self._g) + '_m_' + str(self._m) + '.bz2','rb'))
+                return self._archive
+            else:
+                sys.stdout.write('File ' + './data/top_cell_g_' + str(self._g) + '_m_' + str(self._m) + '.bz2 does not name a valid file.\n')
+                self._valid = False
+                return None
+        except:
+            # Print the error.
+            frameinfo = inspect.getframeinfo(inspect.currentframe())
+            sys.stdout.write(str(frameinfo.filename) + ' ' + str(frameinfo.lineno) + '\n')
+            e, p, t = sys.exc_info()
+            sys.stdout.write(str(e) + ' ' + str(p) + '\n')
+            return None
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+
+        if exc_type is not None:
+            if isinstance(self._archive, TopCellTauArchive):
+                self._archive.close()
+            return False
+        else:
+            if isinstance(self._archive, TopCellTauArchive):
+                self._archive.close()
+                return True
+            elif self._archive is not None:
+                sys.stdout.write("Wrong file type: " + str(type(self._archive)) + '\n')
+                return False
+            else:
+                return True
