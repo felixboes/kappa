@@ -4,12 +4,12 @@
 #
 # This file is part of pykappa.
 #
-# pyradbar is free software: you can redistribute it and/or modify
+# pykappa is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# pyradbar is distributed in the hope that it will be useful,
+# pykappa is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -28,6 +28,9 @@ class Transposition:
 
     def get_b(self):
         return self._b
+
+    def __str__(self):
+        return '(' + str(self._a) + ',' + str(self._b) + ')'
 
 class Permutation:
 
@@ -54,7 +57,7 @@ class Permutation:
     def __init__(self, p, tr=None):
        self._p = p
        self._repr = [ i for i in range(self._p + 1) ]
-       if tr is Transposition:
+       if tr is not None:
            self._repr[tr.get_a()] = tr.get_b()
            self._repr[tr.get_b()] = tr.get_a()
 

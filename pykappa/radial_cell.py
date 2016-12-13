@@ -4,12 +4,12 @@
 #
 # This file is part of pykappa.
 #
-# pyradbar is free software: you can redistribute it and/or modify
+# pykappa is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# pyradbar is distributed in the hope that it will be useful,
+# pykappa is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -23,14 +23,15 @@ import networkx as nx
 
 
 class Cell:
+    def __init__(self, h, tau):
+        self._p = 2*h
+        self._h = h
+        self._inhomogenous = [ Transposition(tau_i[0], tau_i[1]) for tau_i in tau ]
+        self._valid = True
+        self._m = None
+        self._g = None
 
-    def __init__(self, p, g, m, valid= True):
-        self._p = p
-        self._g = g
-        self._m = m
-        self._h = 2*self._g + self._m
-        self._inhomogenous = self._h*[ Transposition(2, 1) ]
-        self._valid = valid
+        self.compute_g_and_m()
 
     def __getitem__(self, j):
         return self._inhomogenous[j-1]
@@ -38,20 +39,31 @@ class Cell:
     def __setitem__(self, j, val):
         self._inhomogenous[j-1] = val
 
-    def norm(self):
-        return sum( [ Permutation(self._inhomogenous[i]).norm() for i in range(self._h) ] )
+    def get_g(self):
+        return self._g
 
-    def num_cycles(self):
+    def get_m(self):
+        return self._m
+
+    def norm(self):
+        return sum( [ Permutation(self._p, self._inhomogenous[i]).norm() for i in range(self._h) ] )
+
+    def compute_m(self):
         sigma_h = Permutation(self._p)
 
-        for tau in reversed( self._inhomogenous ):
-            sigma_h *= Permutation(tau)
-        sigma_h *= Permutation.get_long_cycle(self._p)
+        for tau_i in reversed( self._inhomogenous ):
+            t = Permutation(self._p, tau_i)
+            sigma_h = sigma_h * t
+        sigma_h = sigma_h * Permutation.get_long_cycle(self._p)
 
         return sigma_h.num_cyc()
 
+    def compute_g_and_m(self):
+        self._m = self.compute_m()
+        self._g = (self._h - self._m + 1) / 2
+
     def has_correct_num_cycles(self):
-        return self.num_cycles() == self._m
+        return self.compute_m() == self._m
 
     def connected_components(self):
         G = nx.Graph()
@@ -289,13 +301,15 @@ class Cell:
         return sign
 
     def __eq__(self, other):
-        return (self._valid == other._valid == False) or \
-               (
-                   self._p == other._p and
-                   self._g == other._g and
-                   self._m == other._m and
-                   self._inhomogenous == other._inhomogenous
-                )
+        if self._valid != other._valid:
+            return False
+        else:
+            return (
+               self._p == other._p and
+               self._g == other._g and
+               self._m == other._m and
+               self._inhomogenous == other._inhomogenous
+            )
 
     def __bool__(self):
         return self._valid
@@ -303,3 +317,10 @@ class Cell:
     # In Python 2, the evalutation to bool is done by the function __nonzero__.
     __nonzero__ = __bool__
 
+    def __str__(self):
+        s = str(self._h) + ' ' + str(self._g) + ' ' + str(self._m) + ' '
+        for q in range(self._h, 1, -1):
+          s += str(self[q]) + '|'
+        s += str(self[1])
+
+        return s
