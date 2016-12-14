@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with pykappa.  If not, see <http://www.gnu.org/licenses/>.
 
+import copy
+
 class Transposition:
 
     def __init__(self, a, b):
@@ -28,6 +30,9 @@ class Transposition:
 
     def get_b(self):
         return self._b
+
+    def __eq__(self, other):
+        return self._a == other._a and self._b == other._b
 
     def __str__(self):
         return '(' + str(self._a) + ',' + str(self._b) + ')'
@@ -44,15 +49,15 @@ class Permutation:
             long_cyc_p = Permutation(p)
             long_cyc_p._repr = [i + 1 for i in range(p)] + [0]
             cls.long_cycle[p] = long_cyc_p
-        return cls.long_cycle[p]
+        return copy.deepcopy(cls.long_cycle[p])
 
     @classmethod
     def get_long_cycle_inv(cls, p):
         if not cls.long_cycle_inv.has_key(p):
             long_cyc_inv_p = Permutation(p)
-            long_cyc_inv_p._repr = [i + 1 for i in range(p)] + [0]
+            long_cyc_inv_p._repr = [p] + [i - 1 for i in range(1, p+1)]
             cls.long_cycle_inv[p] = long_cyc_inv_p
-        return cls.long_cycle_inv[p]
+        return copy.deepcopy(cls.long_cycle_inv[p])
 
     def __init__(self, p, tr=None):
        self._p = p

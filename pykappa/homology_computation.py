@@ -21,6 +21,7 @@
 # sage -python /path/to/script.py
 
 import inspect
+import itertools
 import sys
 import time
 
@@ -108,8 +109,8 @@ def compute_homology(g=1, m=2, verbose=True, homchain_file=None):
             sys.stdout.flush()
             starting_time = time.clock()
 
-            next_basis, num_rows, num_cols, bdry_matrix_dict = compute_faces_matrix(next_basis)
-            dict_chaincomplex[degree] = (num_rows, num_cols, bdry_matrix_dict)
+        next_basis, num_rows, num_cols, bdry_matrix_dict = compute_faces_matrix(next_basis)
+        dict_chaincomplex[degree] = (num_rows, num_cols, bdry_matrix_dict)
 
         if verbose:
             sys.stdout.write('Done. Duration = ' + str(time.clock() - starting_time) + '\n')
@@ -157,6 +158,7 @@ def compute_faces_matrix(cells):
     # Get the degree.
     # The 'first' element of a dictionary is given by cells.iterkeys().next()
     degree = cells.iterkeys().next().degree()
+    h = cells.iterkeys().next().get_h()
     if degree == 0:
         num_cols = len(cells)
         return next_basis, num_rows, num_cols, matrix_dict
@@ -167,20 +169,41 @@ def compute_faces_matrix(cells):
         # compute the boundary of the given cell
         coefficients = {}
         sign = 1
-        for i in range(degree + 1):
-            face = cell.get_clean_copy()
-            face.face(i)
-            face_idx = next_basis[face] = next_basis.get(face, len(next_basis))
-            coefficients[face_idx] = coefficients.get(face_idx, 0) + sign
-            sign *= -1
+
+        for s in itertools.product( *[ [i for i in range(1, q+1, 1)] for q in range(1, h+1, 1) ] ):
+            current_basis = cell.get_clean_copy()
+            norm_preserved = True
+            parity = ((h * (h + 1)) / 2) % 2
+
+            for q, s_q in enumerate(s):
+                parity += s_q
+                if current_basis.phi(q+1, s_q) is False:
+                    norm_preserved = False
+                    break
+            parity = 1 if parity % 2 == 0 else -1
+
+            if norm_preserved:
+                or_sign = current_basis.orientation_sign()
+
+                for i in range(0, degree+1, 1):
+                    face = current_basis.get_clean_copy()
+                    if face.d_hor(i) == True:
+                        face_idx = next_basis[face] = next_basis.get(face, len(next_basis))
+                        coefficients[face_idx] = coefficients.get(face_idx, 0) + sign*parity*or_sign[i]
+                        sign *= -1
+                        #print '   ' + str(current_basis) + ' & ' + str(i) + ' -> ' + str(face)
 
         # store the column in the dictionary
         for face_idx, coeff in coefficients.items():
             matrix_dict[face_idx, cell_idx] = coeff
 
+
     # Compute number of columns and rows.
     num_cols = len(cells)
     num_rows = len(next_basis)
+
+    for cell in next_basis:
+        print cell
 
     # Done.
     return next_basis, num_rows, num_cols, matrix_dict

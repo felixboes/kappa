@@ -56,6 +56,9 @@ class Cell:
     def get_m(self):
         return self._m
 
+    def get_h(self):
+        return self._h
+
     def norm(self):
         return sum( [ Permutation(self._p, self._inhomogenous[i]).norm() for i in range(self._h) ] )
 
@@ -91,8 +94,8 @@ class Cell:
         return nx.number_connected_components(G)
 
     def monotone(self):
-        for i in range( self._h - 1 ):
-            if self._inhomogenous[i+1].get_a() < self._inhomogenous[i].get_a():
+        for q in range( 1, self._h, 1 ):
+            if self[q+1].get_a() < self[q].get_a():
                 return False
         return True
 
@@ -157,8 +160,8 @@ class Cell:
         if i == 0 or i > q:
             raise RuntimeError('q=' + str(q) + ' and i=' + str(i) + ', but 0 < i <= q is asserted.')
 
-        for j in range( q-1, i-1, -1): # The loop terminates due to i > 0.
-            if self.f(j) == False: # The norm of the product falls.
+        for j in range( q-1, i-1, -1):
+            if self.f(j) == False:
                 return False
 
         return True
@@ -169,7 +172,7 @@ class Cell:
 
         for q in range(1, self._h+1):
             # We denote tau_q = (a,b)
-            a, b = boundary[q].get_a(), boundary[q].get_b()
+            a, b = self[q].get_a(), self[q].get_b()
 
             # We denote (k, sigma_{q-1}(k)) = (k,l)
             l = sigma[k]
@@ -182,7 +185,7 @@ class Cell:
             # The degenerate case:
             # k and l are both part of tau_q.
             elif a == max(k, l) and ( b == min(k, l) or k == l):
-                return Cell(0,0,0,False)
+                return False
             # The non degenerate case:
             else:
                 # Compute Z = (a,b)(k,l)
@@ -216,9 +219,10 @@ class Cell:
             # this is done by interchanging the values of a and b under sigma^{-1}
             sigma_inv[a], sigma_inv[b] = sigma_inv[b], sigma_inv[a]
 
+
         #boundary is monotone iff its renormalization is monotone. Thus we check for monotony now to avoid unnecessary renormalization.
         if not self.monotone():
-            return Cell(0,0,0,False)
+            return False
 
         # Renormalize all tau'
         for q in range(1, self._h+1):
@@ -228,67 +232,15 @@ class Cell:
             if a > k:
                 a -= 1
             if b > k:
-                b -= 2
-                self[q] = Transposition(a,b)
+                b -= 1
+            self[q] = Transposition(a,b)
 
-            self._p -= 1
+        self._p -= 1
+
+        return True
 
     def face(self, i):
         raise NotImplementedError('Complete the code that is commented out.')
-# template< class MatrixComplex >
-# void MonoComplex<MatrixComplex>::compute_boundary( Tuple & tuple, const uint32_t p, typename MatrixComplex::MatrixType & differential )
-# {
-#     int32_t parity = 0;
-#     Tuple boundary;
-#     uint32_t s_q;
-#     for( uint32_t k = 0; k < factorial(h); k++ )
-#     // in each iteration we enumerate one sequence of indices according to the above formula
-#     {
-#         Tuple current_basis = tuple;
-#         bool norm_preserved = true;
-#
-#         // parity of the exponent of the sign of the current summand of the differential
-#         if( sign_conv != no_signs )
-#         {
-#             parity = ((h*(h+1))/2) % 2;
-#         }
-#
-#         // Calculate phi_{(s_h, ..., s_1)}( Sigma )
-#         for( uint32_t q = 1; q <= h; q++ )
-#         {
-#             s_q = 1 + ( ( k / factorial(q-1)) % q );
-#             if( sign_conv != no_signs )
-#             {
-#                 parity += s_q;
-#             }
-#             if( current_basis.phi(q, s_q) == false )
-#             {
-#                 norm_preserved = false;
-#                 break;
-#             }
-#         }
-#
-#         // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
-#         if( norm_preserved )   // Compute all horizontal boundaries.
-#         {
-#             std::map< uint8_t, int8_t > or_sign;
-#             if( sign_conv == all_signs )
-#             {
-#                 or_sign.operator =( std::move(current_basis.orientation_sign()) );
-#             }
-#
-#             for( uint32_t i = Tuple::get_min_boundary_offset(); i <= p - Tuple::get_max_boundary_offset(); i++ )
-#             {
-#                 if( (boundary = current_basis.d_hor_reduced(i)) )
-#                 {
-#                     boundary.id = basis_complex[p-1].id_of(boundary);
-#                     update_differential<MatrixType>(differential, tuple.id, boundary.id,
-#                                             parity, i, or_sign[i], sign_conv);
-#                 }
-#             }
-#         }
-#     }
-# }
 
     def sigma_h(self):
         # initialize with sigma_0
@@ -357,8 +309,8 @@ class Cell:
                     sign[min_symbol] = -1
 
             # for all other symbols of the cycle, we set the sign to 1
-            for c in range(len(cycle)):
-                if c in cycle and c != min_symbol:
+            for c in cycle:
+                if c != min_symbol:
                     sign[c] = 1
             i += 1
         return sign
@@ -408,7 +360,7 @@ class Cell:
         s = str(self._h) + ' ' + str(self._g) + ' ' + str(self._m) + ' '
         for q in range(self._h, 1, -1):
           s += str(self[q]) + '|'
-        s += str(self[1])
+        s += str(self[1]) + ' ' + str(self._hash)
 
         return s
 

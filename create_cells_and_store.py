@@ -78,7 +78,7 @@ def store_top_cells(h, parametrized):
     for n, tau in enumerate(taus):
         if n % 5000 == 0:
             sys.stdout.write(
-                'Creating and storing cells for 2g+m=' + str(h) + ' ... ' + "{:.0%}".format(float(n) / l) + '\r')
+                'Creating and storing cells for 2g+m=-1' + str(h) + ' ... ' + "{:.0%}".format(float(n) / l) + '\r')
             sys.stdout.flush()
 
         # Create Cell from permutation. This cell is a top cell by construction.
@@ -87,7 +87,7 @@ def store_top_cells(h, parametrized):
         pickle.dump(tau, archive_of[g])
         num_cells_of[g] += 1
 
-    sys.stdout.write('Creating and storing cells for 2g+m=' + str(h) + ' ... Done. Number of cells: ' + ''.join( ['g='+ str(g) + ' -> ' + str(num_cells_of[g]) + '. ' for g in range((h+2)/2)] ) + 'Duration = ' + str(time.clock() - starting_time) + '\n')
+    sys.stdout.write('Creating and storing cells for 2g+m-1=' + str(h) + ' ... Done. Number of cells: ' + ''.join( ['g='+ str(g) + ' -> ' + str(num_cells_of[g]) + '. ' for g in range((h+2)/2)] ) + 'Duration = ' + str(time.clock() - starting_time) + '\n')
     sys.stdout.flush()
 
 
