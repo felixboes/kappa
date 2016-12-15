@@ -28,7 +28,7 @@ import time
 from radial_cell import *
 from misc_usability_stuff import *
 
-def compute_homology(g=1, m=2, verbose=True, homchain_file=None):
+def compute_homology(g=1, m=2, verbose='True', homchain_file=None):
     # Setup coefficients and other variables.
     if g < 0 or m <= 0:
         sys.stdout.write(
@@ -168,7 +168,6 @@ def compute_faces_matrix(cells):
         cell_idx = cells[cell]
         # compute the boundary of the given cell
         coefficients = {}
-        sign = 1
 
         for s in itertools.product( *[ [i for i in range(1, q+1, 1)] for q in range(1, h+1, 1) ] ):
             current_basis = cell.get_clean_copy()
@@ -183,15 +182,15 @@ def compute_faces_matrix(cells):
             parity = 1 if parity % 2 == 0 else -1
 
             if norm_preserved:
+                sign = 1
                 or_sign = current_basis.orientation_sign()
 
                 for i in range(0, degree+1, 1):
                     face = current_basis.get_clean_copy()
                     if face.d_hor(i) == True:
                         face_idx = next_basis[face] = next_basis.get(face, len(next_basis))
-                        coefficients[face_idx] = coefficients.get(face_idx, 0) + sign*parity*or_sign[i]
-                        sign *= -1
-                        #print '   ' + str(current_basis) + ' & ' + str(i) + ' -> ' + str(face)
+                        coefficients[face_idx] = coefficients.get(face_idx, 0) + parity*sign*or_sign[i]
+                    sign = -sign
 
         # store the column in the dictionary
         for face_idx, coeff in coefficients.items():
@@ -201,9 +200,6 @@ def compute_faces_matrix(cells):
     # Compute number of columns and rows.
     num_cols = len(cells)
     num_rows = len(next_basis)
-
-    for cell in next_basis:
-        print cell
 
     # Done.
     return next_basis, num_rows, num_cols, matrix_dict
@@ -286,13 +282,13 @@ def write_chaincomplex_to_chomp_representation(open_file, diffs, verbose):
             sys.stdout.flush()
 
 
-def main(g=0, m=7, verbose=None, result_file=None, homchain_file=None):
+def main(g=0, m=7, result_file=None, homchain_file=None):
     # Tee the output.
     tee = Tee(result_file, 'a')
 
-    compute_homology(g, m, verbose, homchain_file)
+    compute_homology(g, m, 'True', homchain_file)
     sys.stdout.write('The Homology of the complex should be computed using the program \'homchain_gmp\'.\n')
     sys.stdout.flush()
 
 
-main(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3], sys.argv[4], sys.argv[5])
+main(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3], sys.argv[4])

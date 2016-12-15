@@ -357,10 +357,10 @@ class Cell:
     __nonzero__ = __bool__
 
     def __str__(self):
-        s = str(self._h) + ' ' + str(self._g) + ' ' + str(self._m) + ' '
+        s = ''
         for q in range(self._h, 1, -1):
           s += str(self[q]) + '|'
-        s += str(self[1]) + ' ' + str(self._hash)
+        s += str(self[1])
 
         return s
 

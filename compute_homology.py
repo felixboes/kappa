@@ -25,13 +25,13 @@ import sys
 
 import pykappa
 
-def call(g=1, m=2, verbose=None, result_file=None, homcain_file=None):
+def call(g=1, m=2, result_file=None, homcain_file=None):
     script_path = './pykappa/homology_computation.py'
     sys.stdout.write(
-        'Calling python ' + script_path + ' ' + str(g) + ' ' + str(m) + ' ' + str(verbose) + ' ' + str(result_file) +
+        'Calling python ' + script_path + ' ' + str(g) + ' ' + str(m) + ' ' + str(result_file) +
         ' ' + str(homcain_file[0])  + '\n')
     sys.stdout.flush()
-    cmd = ['python', script_path, str(g), str(m), str(verbose), str(result_file), homcain_file[0]]
+    cmd = ['python', script_path, str(g), str(m), str(result_file), homcain_file[0]]
     subprocess.call(cmd)
 
 def main():

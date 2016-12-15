@@ -227,7 +227,7 @@ void MonoComplex<MatrixComplex>::compute_boundary( Tuple & tuple, const uint32_t
 
             for( uint32_t i = Tuple::get_min_boundary_offset(); i <= p - Tuple::get_max_boundary_offset(); i++ )
             {
-                if( (boundary = current_basis.d_hor_reduced(i)) )
+                if( (boundary = current_basis.d_hor(i)) )
                 {
                     boundary.id = basis_complex[p-1].id_of(boundary);
                     update_differential<MatrixType>(differential, tuple.id, boundary.id,
