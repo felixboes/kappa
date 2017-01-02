@@ -25,13 +25,13 @@ import sys
 
 import pykappa
 
-def call(g=1, m=2, result_file=None, homcain_file=None):
+def call(g=1, m=2, parametrized=None, result_file=None, homcain_file=None):
     script_path = './pykappa/homology_computation.py'
     sys.stdout.write(
-        'Calling python ' + script_path + ' ' + str(g) + ' ' + str(m) + ' ' + str(result_file) +
+        'Calling python ' + script_path + ' ' + str(g) + ' ' + str(m) + ' ' + str(parametrized) + ' ' + str(result_file) +
         ' ' + str(homcain_file[0])  + '\n')
     sys.stdout.flush()
-    cmd = ['python', script_path, str(g), str(m), str(result_file), homcain_file[0]]
+    cmd = ['python', script_path, str(g), str(m), str(parametrized), str(result_file), homcain_file[0]]
     subprocess.call(cmd)
 
 def main():
@@ -56,7 +56,8 @@ def main():
     # Thus, we supress nargs.
     parser.add_argument('-g', '--gen', required=True, action='store', type=int, dest='g', metavar='arg', help='The genus of the Riemann surfaces')
     parser.add_argument('-m', '--pun', required=True, action='store', type=int, dest='m', metavar='arg', help='The number of punctures of the Riemann surfaces')
-    parser.add_argument('-s',          required=True, action='store', nargs=1, dest='homcain_file', metavar='file', help='Store homchain file.')
+    parser.add_argument('-p',                         action='store_true',      dest='parametrized',     help='If set, we use the parallel model', default=False)
+    parser.add_argument('-s',          required=True, action='store', nargs=1,  dest='homcain_file', metavar='file', help='Store homchain file.')
 
     args = vars(parser.parse_args())
 

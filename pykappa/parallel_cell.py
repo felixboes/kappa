@@ -28,7 +28,7 @@ import sys
 
 from perm import *
 
-class RadialCell:
+class ParallelCell:
     def __init__(self, h, tau):
         self._p = 2*h
         self._h = h
@@ -70,11 +70,11 @@ class RadialCell:
             sigma_h = sigma_h * t
         sigma_h = sigma_h * Permutation.get_long_cycle(self._p)
 
-        return sigma_h.num_cyc()
+        return sigma_h.num_cyc() - 1
 
     def compute_g_and_m(self):
         self._m = self.compute_m()
-        self._g = (self._h - self._m + 1) / 2
+        self._g = (self._h - self._m) / 2
 
     def has_correct_num_cycles(self):
         return self.compute_m() == self._m
@@ -167,6 +167,9 @@ class RadialCell:
         return True
 
     def d_hor(self, k):
+        if k <= 0 or k >= self._p:
+            return False
+
         sigma = Permutation.get_long_cycle(self._p)._repr
         sigma_inv = Permutation.get_long_cycle_inv(self._p)._repr
 
@@ -365,7 +368,7 @@ class RadialCell:
         return s
 
 
-class TopRadialCellTauArchive:
+class TopParallelCellTauArchive:
     def __init__(self, gziparchive=None):
         self._archive = gziparchive
 
@@ -401,23 +404,23 @@ class TopRadialCellTauArchive:
             sys.stdout.write("Wrong file type: " + str(type(self._archive)) + '\n')
 
 
-class LoadTopRadialCellTau:
+class LoadTopParallelCellTau:
     def __init__(self, g, m):
         self._g = g
         self._m = m
         self._valid = True
         self._archive = None
-        if g < 0 or m < 1:
+        if g < 0 or m < 0:
             self._valid = False
 
     def __enter__(self):
         # open archive
         try:
-            if (os.path.exists('./data/') and os.path.exists('./data/top_cell_g_' + str(self._g) + '_m_' + str(self._m) + '.bz2')):
-                self._archive = TopRadialCellTauArchive(gzip.GzipFile('./data/top_cell_g_' + str(self._g) + '_m_' + str(self._m) + '.bz2','rb'))
+            if (os.path.exists('./data/') and os.path.exists('./data/top_cell_g_' + str(self._g) + '_m_' + str(self._m+1) + '.bz2')):
+                self._archive = TopParallelCellTauArchive(gzip.GzipFile('./data/top_cell_g_' + str(self._g) + '_m_' + str(self._m+1) + '.bz2','rb'))
                 return self._archive
             else:
-                sys.stdout.write('File ' + './data/top_cell_g_' + str(self._g) + '_m_' + str(self._m) + '.bz2 does not name a valid file.\n')
+                sys.stdout.write('File ' + './data/top_cell_g_' + str(self._g) + '_m_' + str(self._m+1) + '.bz2 does not name a valid file.\n')
                 self._valid = False
                 return None
         except:
@@ -431,11 +434,11 @@ class LoadTopRadialCellTau:
     def __exit__(self, exc_type, exc_val, exc_tb):
 
         if exc_type is not None:
-            if isinstance(self._archive, TopRadialCellTauArchive):
+            if isinstance(self._archive, TopParallelCellTauArchive):
                 self._archive.close()
             return False
         else:
-            if isinstance(self._archive, TopRadialCellTauArchive):
+            if isinstance(self._archive, TopParallelCellTauArchive):
                 self._archive.close()
                 return True
             elif self._archive is not None:

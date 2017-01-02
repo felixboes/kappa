@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with pykappa.  If not, see <http://www.gnu.org/licenses/>.
 
-from radial_cell import *
-from misc_usability_stuff import *
+
 from perm import *
+from misc_usability_stuff import *
+from radial_cell import *
+from parallel_cell import *

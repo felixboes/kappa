@@ -78,11 +78,11 @@ def store_top_cells(h, parametrized):
     for n, tau in enumerate(taus):
         if n % 5000 == 0:
             sys.stdout.write(
-                'Creating and storing cells for 2g+m=-1' + str(h) + ' ... ' + "{:.0%}".format(float(n) / l) + '\r')
+                'Creating and storing cells for 2g+m-1=' + str(h) + ' ... ' + "{:.0%}".format(float(n) / l) + '\r')
             sys.stdout.flush()
 
         # Create Cell from permutation. This cell is a top cell by construction.
-        cell = pykappa.Cell(h, tau)
+        cell = pykappa.RadialCell(h, tau)
         g = cell.get_g()
         pickle.dump(tau, archive_of[g])
         num_cells_of[g] += 1
@@ -111,8 +111,8 @@ def main():
     # Provide all arguments.
     # Note: we provide nargs=N and the N arguments from the command line will be gathered together into a list.
     # Thus, we supress nargs.
-    parser.add_argument('-hh', required=True, action='store', type=int, dest='h', metavar='arg', help='All top cells with h = 2g+m-1 = 2*genus + number of outgoing boundaries - 1.')
-    parser.add_argument('-p', '--parametrized', action='store_true', dest='parametrized',        help='Consider parametrized boundary.', default=False)
+    parser.add_argument('-hh', required=True,   action='store', type=int, dest='h', metavar='arg', help='All top cells with h = 2g+m-1 = 2*genus + number of outgoing boundaries - 1.')
+    parser.add_argument('-p', '--parametrized', action='store_true',      dest='parametrized',     help='Consider parametrized boundary.', default=False)
     args = vars(parser.parse_args())
 
     # Write Preamble.

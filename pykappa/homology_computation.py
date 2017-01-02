@@ -26,11 +26,12 @@ import sys
 import time
 
 from radial_cell import *
+from parallel_cell import *
 from misc_usability_stuff import *
 
-def compute_homology(g=1, m=2, verbose='True', homchain_file=None):
+def compute_homology(g=1, m=2, parametrized='True', verbose='True', homchain_file=None):
     # Setup coefficients and other variables.
-    if g < 0 or m <= 0:
+    if g < 0 or (m < 0 if parametrized else m <= 0) :
         sys.stdout.write(
             'The genus has to be non-negative and the number of punctures has to be positive.\n'
             'Got g = ' + str(g) + '; m = ' + str(m) + '.\n'
@@ -41,6 +42,7 @@ def compute_homology(g=1, m=2, verbose='True', homchain_file=None):
         raise ValueError()
 
     verbose = True if verbose == 'True' else False
+    parametrized = True if parametrized == 'True' else False
     open_file = None
     if homchain_file is not None:
         sys.stdout.write('Opening file \'' + homchain_file + '\' ... ')
@@ -60,7 +62,7 @@ def compute_homology(g=1, m=2, verbose='True', homchain_file=None):
     # Setup other variables.
     next_basis = {}
     dict_chaincomplex = {}
-    degree = 4 * g + 2 * (m - 1)
+    degree = 4 * g + 2 * (m - 1) if parametrized == False else 4 * g + 2 * m
     starting_time = None
 
     # Load top cells.
@@ -73,7 +75,7 @@ def compute_homology(g=1, m=2, verbose='True', homchain_file=None):
         sys.stdout.flush()
         starting_time = time.clock()
     if g > 0 or m > 0:
-        LoadTopCells = LoadTopCellTau(g, m)
+        LoadTopCells = LoadTopRadialCellTau(g, m) if parametrized == False else LoadTopParallelCellTau(g, m)
         with LoadTopCells as rho_archive:
             # Check wether the archive exists or not.
             if rho_archive is None:
@@ -83,7 +85,7 @@ def compute_homology(g=1, m=2, verbose='True', homchain_file=None):
                 raise RuntimeError()
 
             for rho in rho_archive:
-                cell = Cell(2*g+m-1, rho)
+                cell = RadialCell(2*g+m-1, rho) if parametrized == False else ParallelCell(2*g+m, rho)
                 next_basis[cell] = next_basis.get(cell, len(next_basis))
     if verbose:
         sys.stdout.write('Done. Duration = ' + str(time.clock() - starting_time) + '\n')
@@ -185,7 +187,7 @@ def compute_faces_matrix(cells):
                 sign = 1
                 or_sign = current_basis.orientation_sign()
 
-                for i in range(0, degree+1, 1):
+                for i in range(1, degree, 1):
                     face = current_basis.get_clean_copy()
                     if face.d_hor(i) == True:
                         face_idx = next_basis[face] = next_basis.get(face, len(next_basis))
@@ -282,13 +284,13 @@ def write_chaincomplex_to_chomp_representation(open_file, diffs, verbose):
             sys.stdout.flush()
 
 
-def main(g=0, m=7, result_file=None, homchain_file=None):
+def main(g=0, m=7, parametrized=None, result_file=None, homchain_file=None):
     # Tee the output.
     tee = Tee(result_file, 'a')
 
-    compute_homology(g, m, 'True', homchain_file)
+    compute_homology(g, m, parametrized, 'True', homchain_file)
     sys.stdout.write('The Homology of the complex should be computed using the program \'homchain_gmp\'.\n')
     sys.stdout.flush()
 
 
-main(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3], sys.argv[4])
+main(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3], sys.argv[4], sys.argv[5])
