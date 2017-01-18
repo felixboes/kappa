@@ -4,10 +4,12 @@
 #include <chrono>
 #include <stdint.h>
 #include <functional>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <map>
 #include <unordered_set>
+#include <sstream>
 
 #include <libhomology/homology.hpp>
 
@@ -112,6 +114,11 @@ public:
     void apply_base_changes();
     
     /**
+     *  Compute Homchain.
+    **/
+    void homchain(int32_t p);
+
+    /**
      *  Diagoanlize current differential.
      */
     HomologyType diagonalize_current_differential( const int32_t p, uint32_t max_rank = 0, const bool print_duration = true );
@@ -170,6 +177,7 @@ public:
     SignConvention sign_conv;                    ///< The sign convention.
     MatrixComplex diff_complex;                  ///< Due to RAM limitations, we are working with at most two matrices at a time. Therefore we do not model the whole spectral sequence.
     std::map< int32_t, MonoBasis > basis_complex; ///< basis_complex[n] is the n-th MonoBasis.
+    std::ofstream homchain_file;
 };
 
 typedef std::vector<Tuple> MonocomplexWork;

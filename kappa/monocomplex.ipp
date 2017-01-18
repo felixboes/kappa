@@ -333,12 +333,20 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
     
     //differential.resize( basis_complex[p].size(), basis_complex[p-1].size() );
     differential.resize( ( basis_complex.count(p) != 0 ? basis_complex.at(p).size() : 0 ), ( basis_complex.count(p-1) != 0 ? basis_complex.at(p-1).size() : 0 ) );
-    
+
     if( differential.size1() == 0 || differential.size2() == 0 )
     {
         return;
     }
     
+    for( size_t j = 0; j < differential.size2(); ++j)
+    {
+        for( size_t i = 0; i < differential.size1(); ++i)
+        {
+            differential(i,j) = 0;
+        }
+    }
+
     // For each tuple t in the basis, we compute all basis elements that
     // occur in kappa(t).
     std::vector<MonocomplexWork> elements_per_threads (num_threads);
@@ -391,6 +399,58 @@ void MonoComplex< MatrixComplex > :: apply_base_changes()
 {
     diff_complex.apply_base_changes();
 }
+
+template< class MatrixComplex >
+void MonoComplex< MatrixComplex > :: homchain(int32_t p)
+{
+    if( basis_complex.empty() == true )
+    {
+        return;
+    }
+
+    if( homchain_file.is_open() == false )
+    {
+        std::stringstream ss;
+        ss << "homchain_g_" << (int)g << "_m_" << (int)m << ".chomp";
+        homchain_file.open(ss.str());
+
+        homchain_file << "chain complex\n\nmaxdimension = " << (int)(1 + basis_complex.rbegin()->first) << "\n\n";
+    }
+
+    homchain_file << "dimension " << p << "\n";
+    auto mat = get_current_differential();
+    size_t num_rows = mat.size1();
+    size_t num_cols = mat.size2();
+    CoefficientType coeff;
+
+    for( size_t i = 0; i < num_rows; ++i)
+    {
+        coeff = 0;
+        bool non_zero_column = false;
+        homchain_file << "   boundary a" << (int)(i + 1) << " = ";
+        for( size_t j = 0; j < num_cols; ++j)
+        {
+            if( (coeff = mat(i,j)) != 0 )
+            {
+                non_zero_column = true;
+                if( coeff > 0 )
+                {
+                    homchain_file << "+ " <<  coeff << " * a" << (int)(j + 1) << " ";
+                }
+                else
+                {
+                    homchain_file << "- " << -coeff << " * a" << (int)(j + 1) << " ";
+                }
+            }
+        }
+        if( non_zero_column == false )
+        {
+            homchain_file << "0";
+        }
+        homchain_file << "\n";
+    }
+}
+
 
 template< class MatrixComplex >
 typename MonoComplex< MatrixComplex >::HomologyType MonoComplex< MatrixComplex > :: diagonalize_current_differential( const int32_t p, uint32_t max_possible_rank, const bool print_duration )
