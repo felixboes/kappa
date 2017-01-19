@@ -116,7 +116,7 @@ public:
     /**
      *  Compute Homchain.
     **/
-    void homchain(int32_t p);
+    void homchain(int32_t p, bool homology = false, int32_t maxdimension=-1);
 
     /**
      *  Diagoanlize current differential.
@@ -177,7 +177,8 @@ public:
     SignConvention sign_conv;                    ///< The sign convention.
     MatrixComplex diff_complex;                  ///< Due to RAM limitations, we are working with at most two matrices at a time. Therefore we do not model the whole spectral sequence.
     std::map< int32_t, MonoBasis > basis_complex; ///< basis_complex[n] is the n-th MonoBasis.
-    std::ofstream homchain_file;
+    std::ofstream homchain_homology_file;
+    std::ofstream homchain_cohomology_file;
 };
 
 typedef std::vector<Tuple> MonocomplexWork;

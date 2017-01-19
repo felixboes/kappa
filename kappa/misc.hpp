@@ -18,6 +18,8 @@
 #include <sys/resource.h>
 #include <unistd.h>
 
+#include <libhomology/field_coefficients.hpp>
+
 #include "high_cell.hpp"
 #include "tuple.hpp"
 

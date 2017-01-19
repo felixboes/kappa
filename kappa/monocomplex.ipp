@@ -401,53 +401,100 @@ void MonoComplex< MatrixComplex > :: apply_base_changes()
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: homchain(int32_t p)
+void MonoComplex< MatrixComplex > :: homchain(int32_t p, bool homology, int32_t maxdimension)
 {
-    if( basis_complex.empty() == true )
+    if( homology == false )
     {
-        return;
-    }
-
-    if( homchain_file.is_open() == false )
-    {
-        std::stringstream ss;
-        ss << "homchain_g_" << (int)g << "_m_" << (int)m << ".chomp";
-        homchain_file.open(ss.str());
-
-        homchain_file << "chain complex\n\nmaxdimension = " << (int)(1 + basis_complex.rbegin()->first) << "\n\n";
-    }
-
-    homchain_file << "dimension " << p << "\n";
-    auto mat = get_current_differential();
-    size_t num_rows = mat.size1();
-    size_t num_cols = mat.size2();
-    CoefficientType coeff;
-
-    for( size_t i = 0; i < num_rows; ++i)
-    {
-        coeff = 0;
-        bool non_zero_column = false;
-        homchain_file << "   boundary a" << (int)(i + 1) << " = ";
-        for( size_t j = 0; j < num_cols; ++j)
+        if( basis_complex.empty() == true )
         {
-            if( (coeff = mat(i,j)) != 0 )
+            return;
+        }
+
+        if( homchain_cohomology_file.is_open() == false )
+        {
+            std::stringstream ss;
+            ss << "homchain_cohomology_g_" << (int)g << "_m_" << (int)m << ".chomp";
+            homchain_cohomology_file.open(ss.str());
+
+            homchain_cohomology_file << "chain complex\n\nmaxdimension = " << (int)(1 + basis_complex.rbegin()->first) << "\n\n";
+        }
+
+        homchain_cohomology_file << "dimension " << p << "\n";
+        auto mat = get_current_differential();
+        size_t num_rows = mat.size1();
+        size_t num_cols = mat.size2();
+        CoefficientType coeff;
+
+        for( size_t i = 0; i < num_rows; ++i)
+        {
+            coeff = 0;
+            bool non_zero_column = false;
+            homchain_cohomology_file << "   boundary a" << (int)(i + 1) << " = ";
+            for( size_t j = 0; j < num_cols; ++j)
             {
-                non_zero_column = true;
-                if( coeff > 0 )
+                if( (coeff = mat(i,j)) != 0 )
                 {
-                    homchain_file << "+ " <<  coeff << " * a" << (int)(j + 1) << " ";
-                }
-                else
-                {
-                    homchain_file << "- " << -coeff << " * a" << (int)(j + 1) << " ";
+                    non_zero_column = true;
+                    if( coeff > 0 )
+                    {
+                        homchain_cohomology_file << "+ " <<  coeff << " * a" << (int)(j + 1) << " ";
+                    }
+                    else
+                    {
+                        homchain_cohomology_file << "- " << -coeff << " * a" << (int)(j + 1) << " ";
+                    }
                 }
             }
+            if( non_zero_column == false )
+            {
+                homchain_cohomology_file << "0";
+            }
+            homchain_cohomology_file << "\n";
         }
-        if( non_zero_column == false )
+    }
+    else
+    {
+        if( homchain_homology_file.is_open() == false )
         {
-            homchain_file << "0";
+            std::stringstream ss;
+            ss << "homchain_homology_g_" << (int)g << "_m_" << (int)m << ".chomp";
+            homchain_homology_file.open(ss.str());
+
+            homchain_homology_file << "chain complex\n\nmaxdimension = " << maxdimension << "\n\n";
         }
-        homchain_file << "\n";
+
+        homchain_homology_file << "dimension " << maxdimension - p << "\n";
+        auto mat = get_current_differential();
+        size_t num_rows = mat.size1();
+        size_t num_cols = mat.size2();
+        CoefficientType coeff;
+
+        for( size_t j = 0; j < num_cols; ++j)
+        {
+            coeff = 0;
+            bool non_zero_column = false;
+            homchain_homology_file << "   boundary a" << (int)(j + 1) << " = ";
+            for( size_t i = 0; i < num_rows; ++i)
+            {
+                if( (coeff = mat(i,j)) != 0 )
+                {
+                    non_zero_column = true;
+                    if( coeff > 0 )
+                    {
+                        homchain_homology_file << "+ " <<  coeff << " * a" << (int)(i + 1) << " ";
+                    }
+                    else
+                    {
+                        homchain_homology_file << "- " << -coeff << " * a" << (int)(i + 1) << " ";
+                    }
+                }
+            }
+            if( non_zero_column == false )
+            {
+                homchain_homology_file << "0";
+            }
+            homchain_homology_file << "\n";
+        }
     }
 }
 

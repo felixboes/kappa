@@ -79,6 +79,8 @@ void compute_homchain( SessionConfig conf, int argc, char** argv )
         std::cout.flush();
         ofs << "Constructing Homchain";
         monocomplex.homchain(p);
+        int32_t maxdimension = 1 + monocomplex.basis_complex.rbegin()->first;
+        monocomplex.homchain(p, true, maxdimension);
         std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
     }
