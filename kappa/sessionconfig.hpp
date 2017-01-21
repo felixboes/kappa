@@ -6,7 +6,7 @@
 
 #include <boost/program_options.hpp>
 
-#include <libhomology/field_coefficients.hpp>
+#include <libhomology/homology.hpp>
 
 #include "misc.hpp"
 

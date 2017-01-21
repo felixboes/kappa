@@ -1,4 +1,4 @@
-#include "field_coefficients_impl.hpp"
+#include "field_coefficients.hpp"
 
 // Initialize static memebers
 template < typename base_type >
@@ -266,9 +266,9 @@ ZmBase<base_type> gcd (const ZmBase<base_type>& a, const ZmBase<base_type>& b)
 template< typename base_type >
 std::pair< ZmBase<base_type>, ZmBase<base_type> > bezout (const ZmBase<base_type>& a, const ZmBase<base_type>& b)
 {
-    ZmBase<base_type> s (0), t (1), r (b), old_r (a), q (0), temp (0);
+    ZmBase<base_type> s (0), t (1), r (b), old_r (a), q (0), temp (0), zero(0);
     std::pair<ZmBase<base_type>, ZmBase<base_type>> coeff;
-    while (r != Zm (0))
+    while (r != zero )
     {
         q = di (old_r, r);
         

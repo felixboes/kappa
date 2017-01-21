@@ -15,6 +15,10 @@
 
 #include "parallelization.hpp"
 
+// Work around Reference problem: For CoefficientT == bool, we want use vector<bool> which returns a bool instead of a bool& for speed reasons.
+template< typename T > struct ChainComplexCoefficientReferenceStruct { typedef T& type; };
+template<> struct ChainComplexCoefficientReferenceStruct<bool> { typedef bool type; };
+
 /**
   *  In our applications we do not always need explicit basis.
   *  Therefore we imagine a chaincomplex as a list of matrices.
@@ -42,7 +46,9 @@ public:
     typedef MatrixT MatrixType;             ///< We use this typedef to grant access this type from other classes.
     typedef DiagonalizerT DiagonalizerType; ///< We use this typedef to grant access this type from other classes.
     typedef HomologyT HomologyType;         ///< We use this typedef to grant access this type from other classes.
-    
+    typedef typename ChainComplexCoefficientReferenceStruct< CoefficientType >::type CoefficientReferenceType;
+
+
     ChainComplex(bool matrices_are_transposed = false); ///< Constructs an empty chain complex.
 
     // Methods for the usage of current_differential.
@@ -88,7 +94,7 @@ public:
     /**
      *  Access the coefficient of the current differential at the position (row, col).
     **/
-    CoefficientT &operator() ( const uint32_t row, const uint32_t col );
+    CoefficientReferenceType operator() ( const uint32_t row, const uint32_t col );
     
     /**
      * @return number of rows of the current differential
@@ -136,7 +142,7 @@ public:
     /**
      *  Access the coefficient of the \f$n\f$-th differential at the position (row, col).
     **/
-    CoefficientT &operator() ( const int32_t n, const uint32_t row, const uint32_t col );
+    CoefficientReferenceType operator() ( const int32_t n, const uint32_t row, const uint32_t col );
     
     /**
      *  Compute the homology at the \f$n\f$-th spot.
@@ -178,7 +184,5 @@ protected:
         ar & differential;
     }
 };
-
-#include "chain_complex.ipp"
 
 #endif

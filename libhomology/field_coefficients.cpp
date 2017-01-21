@@ -1,7 +1,9 @@
 #include "field_coefficients.hpp"
 #include "field_coefficients_impl.ipp"
 
-/* Force template instanciation for used types */
+#include "homology.hpp"
+
+/* Force template instantiation for used types */
 
 template class ZmBase<>;
 template std::ostream& operator<< (std::ostream& stream, const ZmBase<>& coeff);

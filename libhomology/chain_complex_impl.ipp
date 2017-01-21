@@ -83,7 +83,7 @@ size_t ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::num_rows
 }
 
 template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator() ( const uint32_t row, const uint32_t col )
+typename ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::CoefficientReferenceType ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator() ( const uint32_t row, const uint32_t col )
 {
     return current_differential(row, col);
 }
@@ -141,8 +141,8 @@ void ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::erase_all 
     differential.clear();
 }
 
- template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
-CoefficientT &ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator() ( const int32_t n, const uint32_t row, const uint32_t col )
+template< class CoefficientT, class MatrixT, class DiagonalizerT, class HomologyT >
+typename ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::CoefficientReferenceType ChainComplex< CoefficientT, MatrixT, DiagonalizerT, HomologyT >::operator() ( const int32_t n, const uint32_t row, const uint32_t col )
 {
     return differential[n](row, col);
 }

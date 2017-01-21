@@ -31,7 +31,7 @@ public:
     typedef std::vector< CoefficientT > MatrixStorageType;  ///< This realizes the implementation of the data.
     typedef std::pair< size_t, size_t > MatrixEntryType;
     typedef std::list< MatrixEntryType > DiagonalType;
-    
+
     /**
      *  Creates a \f$ 0 \times 0\f$ matrix.
      */
@@ -211,7 +211,7 @@ public:
     typedef std::pair< size_t, size_t > MatrixEntryType;
     typedef std::list< MatrixEntryType > DiagonalType;
     typedef MatrixFieldCSS< CoefficientType > ThisType;
-    
+
     enum MatrixFieldCSSInitialization
     {
         only_main,
@@ -263,7 +263,7 @@ public:
      *  @return The function returns a reference to the given entry.
      *  @todo throw an exception if necessary i.e. if (i,j) is not a valid entry.
      */ 
-    CoefficientType & operator()( const size_t i, const size_t j ); 
+    CoefficientType & operator()( const size_t i, const size_t j );
     CoefficientType & main_op( const size_t i, const size_t j );
     CoefficientType & sec_op( const size_t i, const size_t j );
     
@@ -311,6 +311,11 @@ public:
      */
     void sec_clear();
     
+    /**
+     *  Swaps the content of two matrices.
+     */
+    void swap( ThisType& m );
+
    // grant std::ostream access in order to print matrices to ostreams.
     template< class T >
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<T> & matrix );
@@ -422,7 +427,6 @@ public:
      *  Fills every entry with 0.
      */
     void clear();
-
 
     /**
      *  Swaps the content of two matrices.
@@ -648,6 +652,11 @@ public:
      */
     void sec_clear();
     
+    /**
+     *  Swaps the content of two matrices.
+     */
+    void swap( ThisType& m );
+
     // grant std::ostream access in order to print matrices to ostreams.matrix_field.hpp
     friend std::ostream& operator<< ( std::ostream& stream, const MatrixBoolCSS & matrix );
 
@@ -681,11 +690,5 @@ protected:
 };
 
 std::ostream& operator<< ( std::ostream& stream, const MatrixBoolCSS & matrix);
-
-typedef MatrixField<Q> MatrixQ;     ///< This defines Matrices with \f$\mathbb Q\f$ coefficients.
-typedef MatrixField< Zm >MatrixZm;  ///< This defines Matrices with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
-
-typedef MatrixFieldCSS<Q> MatrixCSSQ;     ///< This defines Matrices with \f$\mathbb Q\f$ coefficients.
-typedef MatrixFieldCSS< Zm > MatrixCSSZm; ///< This defines Matrices with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
 
 #endif // MATRIX_FIELD_HPP

@@ -522,6 +522,18 @@ void MatrixFieldCSS<CoefficientT>::sec_clear()
 }
 
 template< class CoefficientT >
+void MatrixFieldCSS<CoefficientT>::swap( ThisType& m )
+{
+    data.swap( m.data );
+    sec_data.swap( m.sec_data );
+    std::swap( num_rows, m.num_rows );
+    std::swap( sec_num_rows, m.sec_num_rows );
+    std::swap( num_cols, m.num_cols );
+    std::swap( sec_num_cols, m.sec_num_cols );
+    std::swap( diagonal, m.diagonal );
+}
+
+template< class CoefficientT >
 std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<CoefficientT> & matrix )
 {
     stream << "main " << matrix.num_rows << "x" << matrix.num_cols << ", secondary " << matrix.sec_num_rows << "x" << matrix.sec_num_cols << std::endl;

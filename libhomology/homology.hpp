@@ -23,13 +23,35 @@
 #include "thread.hpp"
 #include "vector_field.hpp"
 
+
+// Coefficients
+typedef ZmBase<> Zm;
+
+// Vectors
+typedef VectorField<Q> VectorQ;     ///< This defines Vectors with \f$\mathbb Q\f$ coefficients.
+typedef VectorField<Zm> VectorZm;   ///< This defines Vectors with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
+
+// Matrices
+typedef MatrixField<Q> MatrixQ;     ///< This defines Matrices with \f$\mathbb Q\f$ coefficients.
+typedef MatrixField< Zm >MatrixZm;  ///< This defines Matrices with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
+typedef MatrixFieldCSS<Q> MatrixQCSS;     ///< This defines Matrices with \f$\mathbb Q\f$ coefficients.
+typedef MatrixFieldCSS< Zm > MatrixZmCSS; ///< This defines Matrices with \f$\mathbb Z/ m\mathbb Zf$ coefficients.
+
+// Diagonalizers
+typedef DiagonalizerField<MatrixQ> DiagonalizerQ;             ///< This defines Diagonalizer with \f$\mathbb Q\f$ coefficients.
+typedef DiagonalizerField<MatrixZm> DiagonalizerZm;           ///< This defines Diagonalizer with \f$\mathbb Z_m\f$ coefficients.
+typedef DiagonalizerField<MatrixBool> DiagonalizerBool;       ///< This defines Diagonalizer with \f$\Z_2\f$ coefficients.
+typedef DiagonalizerField<MatrixQCSS> DiagonalizerQCSS;       ///< This defines Diagonalizer with \f$\mathbb Q\f$ coefficients and CSS matrices.
+typedef DiagonalizerField<MatrixZmCSS> DiagonalizerZmCSS;     ///< This defines Diagonalizer with \f$\mathbb Z_m\f$ coefficients and CSS matrices.
+typedef DiagonalizerField<MatrixBoolCSS> DiagonalizerBoolCSS; ///< This defines Diagonalizer with \f$\Z_2\f$ coefficients and CSS matrices.
+
+//Chaincomplexes
+typedef ChainComplex<int32_t, MatrixZDontDiagonalize, DiagonalizerDummy<MatrixZDontDiagonalize>, HomologyDummy> ChainComplexZStorageOnly;
 typedef ChainComplex<Q, MatrixQ, DiagonalizerField<MatrixQ>, HomologyField> ChainComplexQ;
 typedef ChainComplex<Zm, MatrixZm, DiagonalizerField<MatrixZm>, HomologyField> ChainComplexZm;
-typedef ChainComplex<int32_t, MatrixZDontDiagonalize, DiagonalizerDummy<MatrixZDontDiagonalize>, HomologyDummy> ChainComplexZStorageOnly;
-typedef ChainComplex<bool, MatrixBool, DiagonalizerField<MatrixBool>, HomologyField> ChainComplexBool;
-typedef ChainComplex<Q, MatrixCSSQ, DiagonalizerField<MatrixCSSQ>, HomologyField> ChainComplexQCSS;
-typedef ChainComplex<Zm, MatrixCSSZm, DiagonalizerField<MatrixCSSZm>, HomologyField> ChainComplexZmCSS;
+typedef ChainComplex<bool, MatrixBool, DiagonalizerBool, HomologyField> ChainComplexBool;
+typedef ChainComplex<Q, MatrixQCSS, DiagonalizerField<MatrixQCSS>, HomologyField> ChainComplexQCSS;
+typedef ChainComplex<Zm, MatrixZmCSS, DiagonalizerField<MatrixZmCSS>, HomologyField> ChainComplexZmCSS;
 typedef ChainComplex<bool, MatrixBoolCSS, DiagonalizerField<MatrixBoolCSS>, HomologyField> ChainComplexBoolCSS;
-
 
 #endif // HOMOLOGY_HPP

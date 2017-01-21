@@ -16,7 +16,6 @@
 #include <vector>
 
 #include "homology_field.hpp"
-#include "matrix_field.hpp"
 #include "parallelization.hpp"
 #include "thread.hpp"
 #include "vector_field.hpp"
@@ -294,7 +293,5 @@ public:
         std::vector<size_t> new_remaining_rows;
     };
 };
-
-#include "diagonalizer_field.ipp"
 
 #endif // DIAGONALIZER_FIELD_HPP

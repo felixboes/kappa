@@ -1,17 +1,20 @@
 #include "matrix_field.hpp"
 #include "matrix_field_impl.ipp"
 
-/* Force template instanciation of used types */
+#include "homology.hpp"
 
-template class MatrixField<Q>;
-template std::ostream& operator<< ( std::ostream& stream, const MatrixField<Q> & matrix );
-template class MatrixField<Zm>;
-template std::ostream& operator<< ( std::ostream& stream, const MatrixField<Zm> & matrix );
-template class MatrixFieldCSS<Q>;
-template std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<Q> & matrix );
-template class MatrixFieldCSS<Zm>;
-template std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<Zm> & matrix );
+/* Force template instantiation for used types */
 
+#define force_template_instanciation(Coeff) \
+    template class MatrixField<Coeff>;\
+    template std::ostream& operator<< ( std::ostream& stream, const MatrixField<Coeff> & matrix );\
+    template class MatrixFieldCSS<Coeff>;\
+    template std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<Coeff> & matrix );\
+
+force_template_instanciation(Q)
+force_template_instanciation(Zm)
+
+#undef force_template_instanciation
 
 
 
@@ -605,6 +608,17 @@ void MatrixBoolCSS::sec_clear()
             row[j] = 0;
         }
     }
+}
+
+void MatrixBoolCSS::swap( ThisType& m )
+{
+    data.swap( m.data );
+    sec_data.swap( m.sec_data );
+    std::swap( num_rows, m.num_rows );
+    std::swap( sec_num_rows, m.sec_num_rows );
+    std::swap( num_cols, m.num_cols );
+    std::swap( sec_num_cols, m.sec_num_cols );
+    std::swap( diagonal, m.diagonal );
 }
 
 std::ostream& operator<< ( std::ostream& stream, const MatrixBoolCSS & matrix )

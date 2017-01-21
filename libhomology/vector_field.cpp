@@ -1,4 +1,23 @@
 #include "vector_field.hpp"
+#include "vector_field_impl.ipp"
+
+#include "homology.hpp"
+
+/* Force template instantiation for used types */
+
+#define force_template_instanciation( Coeff )\
+    template class VectorField<Coeff>;\
+    template std::ostream& operator<< ( std::ostream& stream, const VectorField<Coeff> & vector);\
+    template void apply_base_changes_kernel( const MatrixField<Coeff>& m, VectorField<Coeff>& v );\
+    template void apply_base_changes_image ( const MatrixField<Coeff>& m, VectorField<Coeff>& v );\
+    template std::vector< VectorField<Coeff> > compute_base_of_kernel( const MatrixField<Coeff>& m );\
+    template VectorField<Coeff> matrix_vector_product( const MatrixField<Coeff>& m, const VectorField<Coeff>& v );\
+    bool matrix_vector_product_vanishes( const MatrixField<Coeff>& m, const VectorField<Coeff>& v );
+
+force_template_instanciation(Q)
+force_template_instanciation(Zm)
+
+#undef force_template_instanciation
 
 VectorBool::VectorBool() : data(), dim(0)
 {

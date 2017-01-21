@@ -95,6 +95,4 @@ template < typename base_type = int8_t > ZmBase<base_type> mod(const ZmBase<base
 template < typename base_type = int8_t > ZmBase<base_type> gcd(const ZmBase<base_type>&, const ZmBase<base_type>&);
 template < typename base_type = int8_t > std::pair<ZmBase<base_type>, ZmBase<base_type> >bezout(const ZmBase<base_type>&, const ZmBase<base_type>&);
 
-typedef ZmBase<> Zm;
-
 #endif // ENDIF FIELD_COEFFICIENTS_HPP
