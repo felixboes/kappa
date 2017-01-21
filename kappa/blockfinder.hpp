@@ -52,6 +52,4 @@ protected:
     BlockPartition _block_part; ///< stores a block partition of the given matrix
 };
 
-#include "blockfinder.ipp"
-
 #endif // BLOCKFINDER_HPP

@@ -14,7 +14,7 @@ void add_incident_cols(int                 row,
     int num_cols = matrix.size2();
     for ( int col = 0; col < num_cols; ++col )
     {
-        if ( (matrix(row, col) != 0) && (visited_cols[col] == false) )
+        if ( (bool)(matrix(row, col) ) && (visited_cols[col] == false) )
         {
             stack_cols.push(col);
             visited_cols[col] = true;
@@ -35,7 +35,7 @@ void add_incident_rows(int                 col,
     int num_rows = matrix.size1();
     for ( int row = 0; row < num_rows; ++row )
     {
-        if ( (matrix(row, col) != 0) && (visited_rows[row] == false) )
+        if ( (bool)(matrix(row, col) ) && (visited_rows[row] == false) )
         {
             stack_rows.push(row);
             visited_rows[row] = true;
