@@ -12,7 +12,7 @@
     template void apply_base_changes_image ( const MatrixField<Coeff>& m, VectorField<Coeff>& v );\
     template std::vector< VectorField<Coeff> > compute_base_of_kernel( const MatrixField<Coeff>& m );\
     template VectorField<Coeff> matrix_vector_product( const MatrixField<Coeff>& m, const VectorField<Coeff>& v );\
-    bool matrix_vector_product_vanishes( const MatrixField<Coeff>& m, const VectorField<Coeff>& v );
+    template bool matrix_vector_product_vanishes( const MatrixField<Coeff>& m, const VectorField<Coeff>& v );
 
 force_template_instantiation(Q)
 force_template_instantiation(Zm)

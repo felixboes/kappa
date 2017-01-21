@@ -467,10 +467,10 @@ int main(int argc, char** argv)
     {
         compute_css< ClusterSpectralSequenceQ >( conf, argc, argv );
     }
-    else if (conf.prime == 2)
-    {
-        compute_css< ClusterSpectralSequenceBool > ( conf, argc, argv );
-    }
+//    else if (conf.prime == 2)
+//    {
+//        compute_css< ClusterSpectralSequenceBool > ( conf, argc, argv );
+//    }
     else
     {
         compute_css< ClusterSpectralSequenceZm >( conf, argc, argv );

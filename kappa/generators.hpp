@@ -4,7 +4,9 @@
 #include <string>
 
 #include "monocomplex.hpp"
+#include "monocochain_field.hpp"
 #include "operationtester.hpp"
+
 
 enum Generator
 {
@@ -37,7 +39,5 @@ enum Generator
 
 template< class CoefficientT >
 MonoCochainField< CoefficientT > create_cochain( const Generator& );
-
-#include "generators.ipp"
 
 #endif // GENERATORS_HPP

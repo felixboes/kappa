@@ -288,64 +288,64 @@ bool OperationTester< MatrixComplex, VectorT > :: vector_is_cycle( const MonoInd
     return matrix_vector_product_vanishes( triangular[idx], v );
 }
 
-template< class MatrixComplex, class VectorT >
-typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< MatrixComplex, VectorT > :: vector_homology_class( const MonoIndex& idx, const VectorType& v )
-{
-    size_t dim = v.size();
+//template< class MatrixComplex, class VectorT >
+//typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< MatrixComplex, VectorT > :: vector_homology_class( const MonoIndex& idx, const VectorType& v )
+//{
+//    size_t dim = v.size();
     
-    if( vector_is_valid(idx, v) == false )
-    {
-        std::cout << "Vector " << v << " is not valid." << std::endl;
-        return VectorT();
-    }
-    if( base_changes.count( idx ) == 0 )
-    {
-        std::cout << "Bases change " << idx << " is not yet loaded. Trying to load.";
-        if( load_base_changes( idx, false ) == false )
-        {
-            std::cout << " Failure." << std::endl;
-            return VectorT();
-        }
-        std::cout << " Success." << std::endl;
-    }
+//    if( vector_is_valid(idx, v) == false )
+//    {
+//        std::cout << "Vector " << v << " is not valid." << std::endl;
+//        return VectorT();
+//    }
+//    if( base_changes.count( idx ) == 0 )
+//    {
+//        std::cout << "Bases change " << idx << " is not yet loaded. Trying to load.";
+//        if( load_base_changes( idx, false ) == false )
+//        {
+//            std::cout << " Failure." << std::endl;
+//            return VectorT();
+//        }
+//        std::cout << " Success." << std::endl;
+//    }
     
-    if( diagonal.count( idx ) == 0 )
-    {
-        std::cout << "Diagonal " << idx << " is not yet loaded. Trying to load.";
-        if( load_diagonal( idx, false ) == false )
-        {
-            std::cout << " Failure." << std::endl;
-            return VectorT();
-        }
-        std::cout << " Success." << std::endl;
-    }
+//    if( diagonal.count( idx ) == 0 )
+//    {
+//        std::cout << "Diagonal " << idx << " is not yet loaded. Trying to load.";
+//        if( load_diagonal( idx, false ) == false )
+//        {
+//            std::cout << " Failure." << std::endl;
+//            return VectorT();
+//        }
+//        std::cout << " Success." << std::endl;
+//    }
     
-    // apply base changes.
-    VectorT intermediate_homology_class = v;
-    apply_base_changes( base_changes[idx], intermediate_homology_class );
+//    // apply base changes.
+//    VectorT intermediate_homology_class = v;
+//    apply_base_changes( base_changes[idx], intermediate_homology_class );
     
-    // compute betti number.
-    size_t betti_number = dim;
-    std::vector< bool > diagonal_entry_occures_in_row ( dim, false );
-    for( const auto& diag_entry : diagonal[idx] )
-    {
-        diagonal_entry_occures_in_row[diag_entry.first] = true;
-        --betti_number;
-    }
+//    // compute betti number.
+//    size_t betti_number = dim;
+//    std::vector< bool > diagonal_entry_occures_in_row ( dim, false );
+//    for( const auto& diag_entry : diagonal[idx] )
+//    {
+//        diagonal_entry_occures_in_row[diag_entry.first] = true;
+//        --betti_number;
+//    }
     
-    // project onto homology modules.
-    VectorT homology_class(betti_number);
-    size_t current_dim = 0;
-    for( size_t i = 0; i < dim; ++i )
-    {
-        if( diagonal_entry_occures_in_row.at(i) == false )
-        {
-            homology_class(current_dim) = intermediate_homology_class(i);
-            ++current_dim;
-        }
-    }
-    return homology_class;
-}
+//    // project onto homology modules.
+//    VectorT homology_class(betti_number);
+//    size_t current_dim = 0;
+//    for( size_t i = 0; i < dim; ++i )
+//    {
+//        if( diagonal_entry_occures_in_row.at(i) == false )
+//        {
+//            homology_class(current_dim) = intermediate_homology_class(i);
+//            ++current_dim;
+//        }
+//    }
+//    return homology_class;
+//}
 
 
 template< class MatrixComplex, class VectorT >
@@ -402,50 +402,50 @@ typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< 
     return vect_prod;
 }
 
-template< class MatrixComplex, class VectorT >
-typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< MatrixComplex, VectorT > :: Q(
-    const MonoIndex& idx,
-    const VectorType& v )
-{
-    const uint32_t& g = std::get<1>(idx);
-    const uint32_t& m = std::get<2>(idx);
-    const int32_t& p = std::get<3>(idx);
+//template< class MatrixComplex, class VectorT >
+//typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< MatrixComplex, VectorT > :: Q(
+//    const MonoIndex& idx,
+//    const VectorType& v )
+//{
+//    const uint32_t& g = std::get<1>(idx);
+//    const uint32_t& m = std::get<2>(idx);
+//    const int32_t& p = std::get<3>(idx);
     
-    MonoIndex idx_res( std::get<0>(idx), 2 * g, 2 * m, 2 * p - 1 );
-    load_basis(idx_res, false);
-    load_basis(idx, false);
-    size_t dim_res = dim(idx_res);
-    VectorType res( dim_res );
-    const CoefficientType zero(0);
-    const auto& basis_v  ( basis.at( idx ) );
-    const auto& basis_res( basis.at( idx_res ) );
+//    MonoIndex idx_res( std::get<0>(idx), 2 * g, 2 * m, 2 * p - 1 );
+//    load_basis(idx_res, false);
+//    load_basis(idx, false);
+//    size_t dim_res = dim(idx_res);
+//    VectorType res( dim_res );
+//    const CoefficientType zero(0);
+//    const auto& basis_v  ( basis.at( idx ) );
+//    const auto& basis_res( basis.at( idx_res ) );
     
-    for( const auto& basis_element : basis_v.basis )
-    {
-        const auto& c = v( basis_v.id_of( basis_element ) );
-        if( c != zero )
-        {
-            compute_and_add_Q( c, basis_element, basis_res, res);
-        }
-    }
+//    for( const auto& basis_element : basis_v.basis )
+//    {
+//        const auto& c = v( basis_v.id_of( basis_element ) );
+//        if( c != zero )
+//        {
+//            compute_and_add_Q( c, basis_element, basis_res, res);
+//        }
+//    }
     
-}
+//}
 
-template< class MatrixComplex, class VectorT >
-void OperationTester< MatrixComplex, VectorT > :: compute_and_add_Q(
-    const CoefficientType& c,
-    const Tuple& t,
-    const MonoBasis& b,
-    VectorType v )
-{
-    const auto slits = t.shuffle_positions();
+//template< class MatrixComplex, class VectorT >
+//void OperationTester< MatrixComplex, VectorT > :: compute_and_add_Q(
+//    const CoefficientType& c,
+//    const Tuple& t,
+//    const MonoBasis& b,
+//    VectorType v )
+//{
+//    const auto slits = t.shuffle_positions();
     
-    for( const auto& it : slits )
-    {
-        std::cout << it << " ";
-    }
-    std::cout << std::endl;
-}
+//    for( const auto& it : slits )
+//    {
+//        std::cout << it << " ";
+//    }
+//    std::cout << std::endl;
+//}
 
 template< class VectorT, class CoefficientT >
 VectorT kappa_dual( const CoefficientT& c, const Tuple& t, const MonoBasis& b)

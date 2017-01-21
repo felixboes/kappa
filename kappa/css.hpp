@@ -111,11 +111,4 @@ void css_work_1(ClusterSpectralSequence< ChainComplexBoolCSS >& css,
               const std::vector< size_t >& offset
               );
 
-typedef ClusterSpectralSequence<ChainComplexQCSS> ClusterSpectralSequenceQ;
-typedef ClusterSpectralSequence<ChainComplexZmCSS> ClusterSpectralSequenceZm;
-typedef ClusterSpectralSequence<ChainComplexBoolCSS> ClusterSpectralSequenceBool;
-typedef ClusterSpectralSequence<ChainComplexZStorageOnly> ClusterSpectralSequenceZStorageOnly;
-
-#include "css.ipp"
-
-#endif // CSS_HP
+#endif // CSS_HPP

@@ -6,10 +6,12 @@
 
 #include <boost/range/adaptor/reversed.hpp>
 
+#include <libhomology/homology.hpp>
+
+#include "factorial.hpp"
+#include "misc.hpp"
 #include "monobasis.hpp"
 #include "cssbasis.hpp"
-#include "libhomology/homology.hpp"
-
 
 template< class MatrixComplex, class VectorT >
 class OperationTester
@@ -131,11 +133,11 @@ public:
      */
     bool vector_is_cycle( const MonoIndex& idx, const VectorType& v );
     
-    /**
-     *  @returns the given homology class of the vector v.
-     *  @warning We assert, that p >= 2 and v is valid cycle.
-     */
-    VectorType vector_homology_class( const MonoIndex& idx, const VectorType& v );
+//    /**
+//     *  @returns the given homology class of the vector v.
+//     *  @warning We assert, that p >= 2 and v is valid cycle.
+//     */
+//    VectorType vector_homology_class( const MonoIndex& idx, const VectorType& v );
     
     /**
      *  @returns the index of the associated moduli space.
@@ -147,15 +149,15 @@ public:
      */
     VectorType product( const MonoIndex& idx_v, const VectorType& v, const MonoIndex& idx_w, const VectorType& w );
     
-    /**
-     *  @returns Q(v).
-    **/
-    VectorType Q( const MonoIndex& idx_v, const VectorType& v );
+//    /**
+//     *  @returns Q(v).
+//    **/
+//    VectorType Q( const MonoIndex& idx_v, const VectorType& v );
     
-    /**
-     *  compute and add Q of a single tuple to a given vector.
-    **/
-    void compute_and_add_Q( const CoefficientType& c, const Tuple& t, const MonoBasis& b, VectorType v );
+//    /**
+//     *  compute and add Q of a single tuple to a given vector.
+//    **/
+//    void compute_and_add_Q( const CoefficientType& c, const Tuple& t, const MonoBasis& b, VectorType v );
 
 //protected:
     std::string coefficient_prefix;
@@ -238,12 +240,5 @@ protected:
     std::map< CSSIndex, CSSBasis > basis;
     std::map< CSSIndex, MatrixType > diff;
 };
-
-typedef OperationTester< ChainComplexQ,  VectorQ  > OperationTesterQ;
-typedef OperationTester< ChainComplexZm, VectorZm > OperationTesterZm;
-typedef OperationTesterCSS< ChainComplexQCSS,  VectorQ  > OperationTesterQCSS;
-typedef OperationTesterCSS< ChainComplexZmCSS, VectorZm > OperationTesterZmCSS;
-
-#include "operationtester.ipp"
 
 #endif // OPERATIONTESTER_HPP

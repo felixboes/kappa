@@ -30,6 +30,7 @@ public:
     bool transp;
     uint32_t num_working_threads;
     uint32_t num_remaining_threads;
+    atomic_uint current_rank;
 };
 
 #endif // DIAGONALIZER_DUMMY_HPP

@@ -1,4 +1,6 @@
 #include "css.hpp"
+#include "css_impl.ipp"
+#include "monocomplex_impl.ipp"
 
 template<>
 void ClusterSpectralSequence< ChainComplexBoolCSS >::gen_d1_apply_operations( MatrixType& row )
@@ -37,3 +39,15 @@ void css_work_1(ClusterSpectralSequence< ChainComplexBoolCSS >& css,
         }
     }
 }
+
+#define force_template_instantiation( MatrixComplex )\
+    template class ClusterSpectralSequence<MatrixComplex>;\
+    template void update_differential(MatrixComplex &differential, const size_t row, const size_t column, const int32_t, const int8_t, const int8_t, const SignConvention &);\
+    template void monocomplex_work(MonoComplex<MatrixComplex> & monocomplex, MonocomplexWork & work, const uint32_t p, MatrixComplex::MatrixType & differential);\
+    template void css_work_0(ClusterSpectralSequence< MatrixComplex > & css, CSSWork & work, const int32_t p, const int32_t l, typename MatrixComplex::MatrixType & differential );\
+    template void css_work_1(ClusterSpectralSequence< MatrixComplex > & css, CSSWork & work, const int32_t p, const int32_t l, typename MatrixComplex::MatrixType & differential, const size_t num_cols, const std::vector< size_t >& offset );
+
+force_template_instantiation( ChainComplexQCSS )
+force_template_instantiation( ChainComplexZmCSS )
+
+#undef force_template_instantiation

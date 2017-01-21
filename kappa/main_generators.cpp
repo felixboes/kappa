@@ -1,14 +1,15 @@
 #include "kappa.hpp"
 
 template< class CoefficientT >
-VectorField< CoefficientT > cohomology_class( const uint32_t g, const uint32_t m, const int32_t p, const VectorField< CoefficientT > v )
+VectorField< CoefficientT > cohomology_class( const uint32_t g, const uint32_t m, const int32_t p, const VectorField< CoefficientT >& v )
 {         
     MatrixField< CoefficientT > image  = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p-1) + "_base_changes", false );
     MatrixField< CoefficientT > kernel = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
 //    std::cout << "Image:" << std::endl << image << std::endl << std::endl;
 //    std::cout << "Kernel:" << std::endl << kernel << std::endl << std::endl;
 //    std::cout << "Diagonal:" << std::endl << diagonal << std::endl << std::endl;
-    const bool v_is_a_cocycle = matrix_vector_product_vanishes(load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false ), v);
+    const MatrixField< CoefficientT > M = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
+    const bool v_is_a_cocycle = matrix_vector_product_vanishes(M, (VectorField<CoefficientT>)v);
     if( v_is_a_cocycle )
     {
         std::cout << "This cochain is indeed a cocycle." << std::endl;

@@ -239,63 +239,6 @@ void MonoComplex<MatrixComplex>::compute_boundary( Tuple & tuple, const uint32_t
 }
 
 template< class MatrixComplex >
-void MonoComplex<MatrixComplex>::compute_boundary_sage( Tuple & tuple, const uint32_t p, SagemathInterface& sage )
-{
-    int32_t parity = 0;
-    Tuple boundary;
-    uint32_t s_q;
-    MatrixType row( 1, basis_complex[p-1].size() );
-    for( uint32_t k = 0; k < factorial(h); k++ )
-    // in each iteration we enumerate one sequence of indices according to the above formula
-    {
-        Tuple current_basis = tuple;
-        bool norm_preserved = true;
-
-        // parity of the exponent of the sign of the current summand of the differential
-        if( sign_conv != no_signs )
-        {
-            parity = ((h*(h+1))/2) % 2;
-        }
-
-        // Calculate phi_{(s_h, ..., s_1)}( Sigma )
-        for( uint32_t q = 1; q <= h; q++ )
-        {
-            s_q = 1 + ( ( k / factorial(q-1)) % q );
-            if( sign_conv != no_signs )
-            {
-                parity += s_q;
-            }
-            if( current_basis.phi(q, s_q) == false )
-            {
-                norm_preserved = false;
-                break;
-            }
-        }
-
-        // If phi_{(s_h, ..., s_1)}( Sigma ) is non-degenerate, we calculate the horizontal differential in .... and project back onto ....
-        if( norm_preserved )   // Compute all horizontal boundaries.
-        {
-            std::map< uint8_t, int8_t > or_sign;
-            if( sign_conv == all_signs )
-            {
-                or_sign.operator =( std::move(current_basis.orientation_sign()) );
-            }
-
-            for( uint32_t i = Tuple::get_min_boundary_offset(); i <= p - Tuple::get_max_boundary_offset(); i++ )
-            {
-                if( (boundary = current_basis.d_hor_reduced(i)) )
-                {
-                    boundary.id = basis_complex[p-1].id_of(boundary);
-                    update_differential<MatrixType>(row, 0, boundary.id,
-                                            parity, i, or_sign[i], sign_conv);
-                }
-            }
-        }
-    }
-    sage.update_row( tuple.id, row );
-}
-
-template< class MatrixComplex >
 void monocomplex_work(
         MonoComplex<MatrixComplex> &            monocomplex,
         MonocomplexWork &                       work,
@@ -379,22 +322,6 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: gen_differential_sage( const int32_t p, SagemathInterface& sage )
-{
-    if( ( basis_complex.count(p) != 0 ? basis_complex.at(p).size() : 0 ) == 0 || ( basis_complex.count(p-1) != 0 ? basis_complex.at(p-1).size() : 0 ) == 0 )
-    {
-        return;
-    }
-
-    sage.create_matrix<CoefficientType>( basis_complex.at(p).size(), basis_complex.at(p-1).size() );
-
-    for ( auto it : basis_complex.at(p).basis )
-    {
-        compute_boundary_sage(it, p, sage);
-    }
-}
-
-template< class MatrixComplex >
 void MonoComplex< MatrixComplex > :: apply_base_changes()
 {
     diff_complex.apply_base_changes();
@@ -432,7 +359,7 @@ void MonoComplex< MatrixComplex > :: homchain(int32_t p, bool homology, int32_t 
             homchain_cohomology_file << "   boundary a" << (int)(i + 1) << " = ";
             for( size_t j = 0; j < num_cols; ++j)
             {
-                if( (coeff = mat(i,j)) != 0 )
+                if( (bool)(coeff = mat(i,j)) )
                 {
                     non_zero_column = true;
                     if( coeff > 0 )
@@ -476,7 +403,7 @@ void MonoComplex< MatrixComplex > :: homchain(int32_t p, bool homology, int32_t 
             homchain_homology_file << "   boundary a" << (int)(j + 1) << " = ";
             for( size_t i = 0; i < num_rows; ++i)
             {
-                if( (coeff = mat(i,j)) != 0 )
+                if( (bool)(coeff = mat(i,j)) )
                 {
                     non_zero_column = true;
                     if( coeff > 0 )
@@ -513,7 +440,7 @@ typename MonoComplex< MatrixComplex >::HomologyType MonoComplex< MatrixComplex >
     ThisType* this_object = this;   // The C++ standard allows us to pass the this-pointer to the lambda function. Unfortunately, this may result a compiler bug....
     
     // Diagonalzing thread.
-    auto partial_homology_thread = std::async( std::launch::async, [&]() -> HomologyField
+    auto partial_homology_thread = std::async( std::launch::async, [&]() -> HomologyType
     {
         // Always use one thread for diagonalizing at the moment!
         HomologyType ret = this_object->compute_current_kernel_and_torsion( p );

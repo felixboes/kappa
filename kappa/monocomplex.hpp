@@ -100,13 +100,11 @@ public:
      *  computes the boundary of a given Tuple and saves the result in the differential.
      */ 
     void compute_boundary( Tuple & tuple, const uint32_t p, MatrixType & differential);
-    void compute_boundary_sage( Tuple & tuple, const uint32_t p, SagemathInterface& sage);
     
     /**
      *  Generates the p-th differential.
      */
     void gen_differential( const int32_t p );
-    void gen_differential_sage( const int32_t p, SagemathInterface& sage);
     
     /**
      *  Apply base changes.
@@ -193,127 +191,5 @@ int32_t sign(const int32_t          parity,
              const int8_t           i,
              const int8_t           or_sign,
              const SignConvention & sign_conv );
-
-template< class CoefficientT >
-class MonoCochainField : public VectorField< CoefficientT >
-{
-public:    
-    typedef CoefficientT CoefficientType;
-    typedef MonoCochainField< CoefficientType > ThisType;
-    typedef typename VectorField< CoefficientType > :: ThisType VectorType;
-    typedef typename VectorField< CoefficientType > :: VectorStorageType VectorStorageType;
-
-    MonoCochainField( uint32_t genus, uint32_t num_punct, uint32_t cohom_deg ) :
-        VectorType(), g(genus), m(num_punct), p(cohom_deg)
-    {
-        basis = load_parallel_mono_basis(g, m, p);
-        VectorType::resize( basis.size() );
-    }
-    
-    CoefficientType & operator()( const Tuple& t )
-    {
-        const auto res = basis.id_of(t);
-        if( res == -1 )
-        {
-            std::cout << "Error: " << t << " is no basis element." << std::endl;
-        }
-        return VectorType::operator()( res );
-    }
-
-    const CoefficientType& at( const Tuple& t ) const
-    {
-        return VectorType::at( basis.id_of(t) );
-    }
-    
-    std::string set_name( const std::string& new_name )
-    {
-        return name = new_name;
-    } 
-    
-    void add_kappa_dual( const CoefficientType& c, const Tuple& t )
-    {
-        VectorType::operator+=( kappa_dual< VectorType >( c, t, basis ) );
-    } 
-    
-    template< class T >
-    friend ThisType operator*( const ThisType&, const ThisType& );
-    
-    uint32_t get_g() const
-    {
-        return g;
-    }
-    
-    uint32_t get_m() const
-    {
-        return m;
-    }
-        
-    uint32_t get_p() const
-    {
-        return p;
-    }
-    
-    std::string get_name() const
-    {
-        return name;
-    }
-    
-    const MonoBasis& get_basis_reference() const
-    {
-        return basis;
-    }
-    
-    // grant std::ostream access in order to print matrices to ostreams.
-    template< class T >
-    friend std::ostream& operator<< ( std::ostream& stream, const MonoCochainField<T> & cochain );
-    
-protected:
-    MonoBasis basis;
-    uint32_t g;
-    uint32_t m;
-    uint32_t p;
-    std::string name;
-};
-
-template< class CoefficientT >
-MonoCochainField< CoefficientT > operator*( const MonoCochainField< CoefficientT >&  x, const MonoCochainField< CoefficientT >& y )
-{
-    typedef MonoCochainField< CoefficientT > CochainType;
-    CochainType res( x.get_g() + y.get_g(), x.get_m() + y.get_m(), x.get_p() + y.get_p() );
-    
-    res.set_name( x.get_name() + y.get_name() );
-    
-    for( const auto cell_x : x.get_basis_reference().basis )
-    {
-        const CoefficientT& coeff_x = x.at( cell_x );
-        if( coeff_x != CoefficientT(0) )
-        {
-            for( const auto cell_y : y.get_basis_reference().basis )
-            {
-                const CoefficientT& coeff_y = y.at( cell_y );
-                if( coeff_y != CoefficientT(0) )
-                {
-                    res( cell_x * cell_y ) = coeff_x * coeff_y;
-                }
-            }
-        }
-    }
-    
-    return res;
-}
-
-template< class CoefficientT >
-std::ostream& operator<< ( std::ostream& stream, const MonoCochainField< CoefficientT > & cochain )
-{
-    return stream
-        << "name = " << cochain.name
-        << ", g = " << cochain.g
-        << ", m = " << cochain.m
-        << ", p = " << cochain.p
-        << ", representing vector = "
-        << static_cast< const typename MonoCochainField< CoefficientT >::VectorType & >(cochain);
-}
-
-#include "monocomplex.ipp"
 
 #endif // MONOCOMPLEX_H

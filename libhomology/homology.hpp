@@ -18,7 +18,6 @@
 #include "matrix_field.hpp"
 #include "matrix_z_dont_diagonalize.hpp"
 #include "parallelization.hpp"
-#include "sagemath.hpp"
 #include "serialization.hpp"
 #include "thread.hpp"
 #include "vector_field.hpp"

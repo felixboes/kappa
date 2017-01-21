@@ -142,6 +142,4 @@ typedef std::vector<HighCell> DoubleComplexWork;
 template< class MatrixComplex >
 void doublecomplex_work(DoubleComplex<MatrixComplex> & doublecomplex, DoubleComplexWork & work, const uint32_t p, typename MatrixComplex::MatrixType & differential);
 
-#include "doublecomplex.ipp"
-
 #endif
