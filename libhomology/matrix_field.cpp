@@ -5,16 +5,16 @@
 
 /* Force template instantiation for used types */
 
-#define force_template_instanciation(Coeff) \
+#define force_template_instantiation(Coeff) \
     template class MatrixField<Coeff>;\
     template std::ostream& operator<< ( std::ostream& stream, const MatrixField<Coeff> & matrix );\
     template class MatrixFieldCSS<Coeff>;\
     template std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<Coeff> & matrix );\
 
-force_template_instanciation(Q)
-force_template_instanciation(Zm)
+force_template_instantiation(Q)
+force_template_instantiation(Zm)
 
-#undef force_template_instanciation
+#undef force_template_instantiation
 
 
 

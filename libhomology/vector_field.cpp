@@ -5,7 +5,7 @@
 
 /* Force template instantiation for used types */
 
-#define force_template_instanciation( Coeff )\
+#define force_template_instantiation( Coeff )\
     template class VectorField<Coeff>;\
     template std::ostream& operator<< ( std::ostream& stream, const VectorField<Coeff> & vector);\
     template void apply_base_changes_kernel( const MatrixField<Coeff>& m, VectorField<Coeff>& v );\
@@ -14,10 +14,10 @@
     template VectorField<Coeff> matrix_vector_product( const MatrixField<Coeff>& m, const VectorField<Coeff>& v );\
     bool matrix_vector_product_vanishes( const MatrixField<Coeff>& m, const VectorField<Coeff>& v );
 
-force_template_instanciation(Q)
-force_template_instanciation(Zm)
+force_template_instantiation(Q)
+force_template_instantiation(Zm)
 
-#undef force_template_instanciation
+#undef force_template_instantiation
 
 VectorBool::VectorBool() : data(), dim(0)
 {

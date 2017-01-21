@@ -19,15 +19,15 @@ void DiagonalizerField< MatrixBoolCSS >::apply_base_changes( MatrixType& differe
 }
 
 
-#define force_template_instanciation(MatrixType)\
+#define force_template_instantiation(MatrixType)\
     template class DiagonalizerField<MatrixType>;
 
-force_template_instanciation(MatrixQ)
-force_template_instanciation(MatrixZm)
-force_template_instanciation(MatrixBool)
-force_template_instanciation(MatrixQCSS)
-force_template_instanciation(MatrixZmCSS)
-force_template_instanciation(MatrixBoolCSS)
+force_template_instantiation(MatrixQ)
+force_template_instantiation(MatrixZm)
+force_template_instantiation(MatrixBool)
+force_template_instantiation(MatrixQCSS)
+force_template_instantiation(MatrixZmCSS)
+force_template_instantiation(MatrixBoolCSS)
 
-#undef force_template_instanciation
+#undef force_template_instantiation
 
