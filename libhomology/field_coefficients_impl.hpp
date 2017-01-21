@@ -28,7 +28,7 @@ class ZmBase{
 public:
     typedef base_type BaseType;
     typedef ZmBase< BaseType > ThisType;
-
+    
     ZmBase(const BaseType m = 0);    ///< The default constructor creates a coefficient with value zero.
     static void set_modulus(const BaseType prime, const BaseType expo = 1);    ///< Befor using ZmBase coefficients, you must define the modulus i.e. m = p^e.
     static BaseType get_prime();
@@ -39,7 +39,7 @@ public:
     ThisType inverse() const;         ///< @returns the inverse of a given coefficient. If the coefficient is not invertible the value zero is returned.
     static void clean_up();     ///< Clean up all static data e.g. the table of invertible elements.
     static bool is_field();     ///< @returns true iff m = p^e is a prime number. @todo: primeness of p is not yet verified.
-
+    
     // arithmetic operators
     bool operator==(const BaseType) const;  ///< compare a ZmBase with an int8_t
     bool operator==(const ThisType&) const;  ///< compare a ZmBase with another ZmBase.
@@ -50,16 +50,16 @@ public:
     ThisType& operator/=(const ThisType&);   ///< Dividing. @todo: throw exeption if necessary.
     ThisType operator-() const;             ///< Inverting additively.
     operator bool() const;          ///< @returns false iff the coefficient is zero.
-
+    
     ThisType& di (const ThisType&);
     ThisType& mod(const ThisType&);
-
+    
     /**
      *  grant std::ostream access in order to print coefficients to ostreams like 'std::cout << ZmBase(44) << std::endl;'
      */
     template < typename T >
     friend std::ostream& operator<< (std::ostream& stream, const ZmBase<T>& coeff);
-
+    
 protected:
     BaseType n;    ///< This integer stores a representative of the residue class \f$ c = [n] in \mathbb{Z}/m\mathbb{Z} \f$.
     static BaseType prim;    ///< We store the number m = p^e for all coeffients at once. Therefore we have to use set_modulus befor working with such coefficients.
@@ -68,10 +68,10 @@ protected:
     static std::vector<BaseType> inv; ///< This vector stores the table of inverse elements.
     operator int() const;       ///< In order to cast a ZmBase coefficient \f$c\f$ to an integer we pick a representative \f$ 0 \le c < base\f$.
     operator unsigned() const;  ///< In order to cast a ZmBase coefficient \f$c\f$ to an unsigned integer we pick a representative \f$ 0 \le c < base\f$.
-
+    
     // In order to save ZmBase coefficients we have to grad boost::serialization::access access.
     friend class boost::serialization::access;
-
+    
     template < class Archive >
     void serialize( Archive &ar, const unsigned int ) ///< Implements the serialization of a coefficient.
     {
@@ -95,6 +95,6 @@ template < typename base_type = int8_t > ZmBase<base_type> mod(const ZmBase<base
 template < typename base_type = int8_t > ZmBase<base_type> gcd(const ZmBase<base_type>&, const ZmBase<base_type>&);
 template < typename base_type = int8_t > std::pair<ZmBase<base_type>, ZmBase<base_type> >bezout(const ZmBase<base_type>&, const ZmBase<base_type>&);
 
-typedef ZmBase<> Zm;
+#include "field_coefficients_impl.ipp"
 
 #endif // ENDIF FIELD_COEFFICIENTS_HPP

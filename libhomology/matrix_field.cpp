@@ -1,4 +1,19 @@
 #include "matrix_field.hpp"
+#include "matrix_field_impl.ipp"
+
+/* Force template instanciation of used types */
+
+template class MatrixField<Q>;
+template std::ostream& operator<< ( std::ostream& stream, const MatrixField<Q> & matrix );
+template class MatrixField<Zm>;
+template std::ostream& operator<< ( std::ostream& stream, const MatrixField<Zm> & matrix );
+template class MatrixFieldCSS<Q>;
+template std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<Q> & matrix );
+template class MatrixFieldCSS<Zm>;
+template std::ostream& operator<< ( std::ostream& stream, const MatrixFieldCSS<Zm> & matrix );
+
+
+
 
 template<>
 void save_to_file_bz2( const MatrixField<Q>& matrix, std::string filename, const bool print_duration )

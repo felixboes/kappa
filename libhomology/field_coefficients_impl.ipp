@@ -1,4 +1,4 @@
-#include "field_coefficients.hpp"
+#include "field_coefficients_impl.hpp"
 
 // Initialize static memebers
 template < typename base_type >
