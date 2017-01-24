@@ -15,7 +15,9 @@ enum Generator
     c,
     d,
     e,
-    u,
+    f,
+    E_1_f,
+    E_2_f,
     Qb,
     Qc,
     Qd, ///< This is soley defined for coefficients with 2 = 0.

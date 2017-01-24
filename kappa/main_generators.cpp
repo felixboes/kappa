@@ -342,7 +342,7 @@ void verify_known_generators()
      test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) );
      test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::e ) );
      test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
-     test_( create_cochain<Zm>( Generator::u ) );
+     test_( create_cochain<Zm>( Generator::f ) );
      test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Eb ) );
      // m = 3:
      test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) );
@@ -434,12 +434,19 @@ int main( int argc, char** argv )
     std::cout << "Rational computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
 
-    test_( create_cochain<Q>( Generator::R_alpha_inv_alpha_inv_c_d ) );
-    test_( create_cochain<Q>( Generator::u) );
+
+    //test_( create_cochain<Q>( Generator::R_alpha_inv_alpha_inv_c_d ) );
+//    test_( create_cochain<Q>( Generator::a) );
+//    test_( create_cochain<Q>( Generator::a) * create_cochain<Q>( Generator::a ) );
+//    test_( create_cochain<Q>( Generator::a) * create_cochain<Q>( Generator::a ) * create_cochain<Q>( Generator::a ) );
+//    test_( create_cochain<Q>( Generator::f) );
+//    test_( create_cochain<Q>( Generator::t) );
 
     std::cout << "Mod 2 computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;
     Zm::set_modulus(2);
+
+    test_( create_cochain<Zm>( Generator::E_1_f ) );
 
     // Moreover:
 //    test_( create_cochain<Zm>( Generator::Qc ) );
@@ -462,8 +469,8 @@ int main( int argc, char** argv )
     
 //     test_( create_cochain<Zm>( Generator::R_a_e) );
     
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Eb ) );
-    test_( create_cochain<Zm>( Generator::u) );
+//    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Eb ) );
+//    test_( create_cochain<Zm>( Generator::f) );
     
     std::cout << "Mod 5 computations." << std::endl;
     std::cout << "--------------------------------" << std::endl;

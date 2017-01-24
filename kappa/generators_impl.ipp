@@ -42,10 +42,10 @@ MonoCochainField< CoefficientT > create_cochain( const Generator& name )
         cochain.add_kappa_dual( CoefficientT(1),  create_cell(3, 3, 1, 4, 3, 2, 1) );
         return cochain;
     }
-    case u:
+    case f:
     {
         CochainType cochain(1, 2, 5);
-        cochain.set_name("u");
+        cochain.set_name("f");
         
         cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 5, 4, 3, 1, 4, 3, 2, 1 ) );
         cochain.add_kappa_dual( CoefficientT(-1), create_cell(4, 5, 3, 4, 1, 5, 4, 2, 1 ) );
@@ -53,7 +53,50 @@ MonoCochainField< CoefficientT > create_cochain( const Generator& name )
         cochain.add_kappa_dual( CoefficientT(-1), create_cell(4, 4, 1, 5, 4, 2, 1, 4, 3 ) );
         cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 3, 1, 5, 3, 2, 1, 5, 4 ) );
         
-        
+        return cochain;
+    }
+    case E_1_f:
+    {
+        CochainType cochain(2, 1, 6);
+        cochain.set_name("E_1(f)");
+
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 5, 4, 6, 5, 3, 1, 5, 3, 2, 1 ) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 5, 3, 6, 5, 4, 1, 5, 3, 2, 1 ) );
+
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 5, 3, 6, 3, 4, 1, 6, 4, 2, 1 ) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 4, 3, 6, 3, 5, 1, 6, 4, 2, 1 ) );
+
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 5, 3, 4, 1, 6, 4, 2, 1, 4, 3 ) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 4, 3, 5, 1, 6, 4, 2, 1, 4, 3 ) );
+
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 5, 4, 3, 1, 6, 3, 2, 1, 5, 4 ) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 4, 3, 5, 1, 6, 3, 2, 1, 5, 4 ) );
+
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 5, 4, 3, 1, 6, 3, 2, 1, 6, 5 ) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 5, 3, 4, 1, 6, 3, 2, 1, 6, 5 ) );
+
+        return cochain;
+    }
+    case E_2_f:
+    {
+        CochainType cochain(2, 1, 6);
+        cochain.set_name("E_2(f)");
+
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 5, 3, 6, 4, 3, 1, 4, 3, 2, 1 ) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 5, 1, 6, 4, 3, 1, 4, 3, 2, 1 ) );
+
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 5, 4, 6, 3, 4, 1, 5, 4, 2, 1 ) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 5, 1, 6, 3, 4, 1, 5, 4, 2, 1 ) );
+
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 5, 4, 6, 3, 5, 1, 6, 5, 2, 1 ) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 4, 1, 6, 3, 5, 1, 6, 5, 2, 1 ) );
+
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 5, 4, 5, 1, 6, 5, 2, 1, 5, 3 ) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 4, 1, 5, 1, 6, 5, 2, 1, 5, 3 ) );
+
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 5, 3, 3, 1, 6, 3, 2, 1, 6, 4 ) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(5, 5, 1, 3, 1, 6, 3, 2, 1, 6, 4 ) );
+
         return cochain;
     }
     case Qb:
