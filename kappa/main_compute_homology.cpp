@@ -58,6 +58,9 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     
     if( conf.create_cache == true ) // Save all bases elements
     {
+        std::cout << "-------- Caching bases --------" << std::endl;
+        ofs       << "-------- Caching bases --------" << std::endl;
+
         std::string path_prefix = 
             std::string("./cache/bases_") + std::string( (conf.parallel == true ? "parallel" : "radial") ) + std::string("/") + 
             std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
@@ -114,6 +117,9 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
                 save_to_file_bz2( d, path_prefix_diff + std::to_string(p) + std::string("_diagonal") );
             }
         }
+
+        std::cout << std::endl;
+        ofs       << std::endl;
     }
 
     std::cout << "-------- Computing Homology --------" << std::endl;
@@ -122,19 +128,19 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     // Compute all differentials and homology consecutively.
     for( auto& it : boost::adaptors::reverse( monocomplex.basis_complex ) )
     {
-        int32_t p = it.first+1;
+        int32_t p = it.first;
         if ( p < conf.start_p || p > conf.end_p + 2 )
         {
             continue;
         }
 
         // Generate a single differential.
-        std::cout << "Constructing the " << p << "-th differential of size " << ( monocomplex.basis_complex.count(p) ? monocomplex.basis_complex.at(p).size() : 0 ) << " x " << ( monocomplex.basis_complex.count(p-1) ? monocomplex.basis_complex.at(p-1).size() : 0 );
+        std::cout << "Constructing the " << p << "-th differential of size " << ( monocomplex.basis_complex.count(p+1) ? monocomplex.basis_complex.at(p+1).size() : 0 ) << " x " << ( monocomplex.basis_complex.count(p) ? monocomplex.basis_complex.at(p).size() : 0 );
         std::cout.flush();
-        ofs << "Constructing the " << p << "-th differential of size " << ( monocomplex.basis_complex.count(p) ? monocomplex.basis_complex.at(p).size() : 0 ) << " x " << ( monocomplex.basis_complex.count(p-1) ? monocomplex.basis_complex.at(p-1).size() : 0 );
+        ofs << "Constructing the " << p << "-th differential of size " << ( monocomplex.basis_complex.count(p+1) ? monocomplex.basis_complex.at(p+1).size() : 0 ) << " x " << ( monocomplex.basis_complex.count(p) ? monocomplex.basis_complex.at(p).size() : 0 );
 
         measure_duration = Clock();
-        monocomplex.gen_differential(p);
+        monocomplex.gen_differential(p+1);
         std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         if( conf.apply_base_changes == true )
@@ -153,9 +159,9 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         // Diagoanlize differetnial and save results.
         measure_duration = Clock();
         uint32_t max_possible_rank( std::min( monocomplex.num_rows(), monocomplex.num_cols() ) );
-        if( (uint32_t)homology.get_kern(p) > 0 )
+        if( (uint32_t)homology.get_kern(p+1) > 0 )
         {
-            max_possible_rank = std::min( max_possible_rank, (uint32_t)homology.get_kern(p) );
+            max_possible_rank = std::min( max_possible_rank, (uint32_t)homology.get_kern(p+1) );
         }
         auto partial_homology = monocomplex.diagonalize_current_differential( p, max_possible_rank, true );
         homology.set_kern( p, partial_homology.get_kern(p) );
