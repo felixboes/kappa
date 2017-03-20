@@ -36,7 +36,8 @@ enum Generator
     R_alpha_inv_gamma_c_d,
     R_alpha_inv_beta_inv_c_d,
     R_alpha_inv_alpha_inv_c_d,
-    R_alpha_inv_beta_c_c
+    R_alpha_inv_beta_c_c,
+    R_a_Te
 };
 
 template< class CoefficientT >
