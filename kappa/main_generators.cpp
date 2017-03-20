@@ -446,7 +446,7 @@ int main( int argc, char** argv )
     std::cout << "--------------------------------" << std::endl;
     Zm::set_modulus(2);
 
-    test_( create_cochain<Zm>( Generator::E_1_f ) );
+    test_( create_cochain<Zm>( Generator::R_a_Te ) );
 
     // Moreover:
 //    test_( create_cochain<Zm>( Generator::Qc ) );

@@ -518,6 +518,8 @@ MonoCochainField< CoefficientT > create_cochain( const Generator& name )
         cochain.add_kappa_dual( CoefficientT(1), create_cell( 5, 6, 1, 3, 1, 4, 3, 2, 1, 6, 5 ) );
 
         // Now vertical movement.
+
+        return cochain;
     }
     
     }
