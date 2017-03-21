@@ -41,6 +41,7 @@ enum Generator
 
     radial_a,
     radial_b,
+    radial_Srad_Te,
 };
 
 template< class CoefficientT >

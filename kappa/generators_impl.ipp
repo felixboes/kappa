@@ -537,6 +537,24 @@ MonoCochainField< CoefficientT > create_cochain( const Generator& name )
 
         return cochain;
     }
+    case radial_Srad_Te:
+    {
+        CochainType cochain(2, 1, 4, true, "S(rad(T(e))");
+
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 4, 0, 2, 0, 3, 2, 1, 0) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 4, 3, 4, 1, 2, 1, 4, 0) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 3, 2, 3, 0, 1, 0, 4, 3) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 2, 1, 4, 2, 4, 0, 3, 2) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 1, 0, 3, 1, 4, 3, 2, 1) );
+
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 4, 2, 2, 0, 3, 2, 1, 0) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 3, 1, 4, 1, 2, 1, 4, 0) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 2, 0, 3, 0, 1, 0, 4, 3) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 4, 1, 4, 2, 4, 0, 3, 2) );
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 3, 0, 3, 1, 4, 3, 2, 1) );
+
+        return cochain;
+    }
     
     }
     

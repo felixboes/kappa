@@ -253,6 +253,7 @@ int main( int argc, char** argv )
 
     test_( create_cochain<Zm>( Generator::radial_a ) );
     test_( create_cochain<Zm>( Generator::radial_b ) );
+    test_( create_cochain<Zm>( Generator::radial_Srad_Te) );
 
     // Moreover:
 //    test_( create_cochain<Zm>( Generator::R_a_Te ) );
