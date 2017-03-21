@@ -127,7 +127,7 @@ Name                  = bd
 This cochain is indeed a cocycle.
 Cohomology class      = [  1,  0,  0]
 
-Name                  = u
+Name                  = f
 (g,m,p)               = (1,2,3)
 This cochain is indeed a cocycle.
 Cohomology class      = [  1,  0,  0]
@@ -361,6 +361,26 @@ Name                  = aT(E(b))
 (g,m,p)               = (2,1,4)
 This cochain is indeed a cocycle.
 Cohomology class      = [  0,  0,  1,  0]
+
+Name                  = T_1(f)
+(g,m,p)               = (2,1,4)
+This cochain is indeed a cocycle.
+Cohomology class      = [  0,  0,  0,  0]
+
+Name                  = T_2(f)
+(g,m,p)               = (2,1,4)
+This cochain is indeed a cocycle.
+Cohomology class      = [  0,  0,  0,  0]
+
+Name                  = R(a,T(e))
+(g,m,p)               = (2,1,4)
+This cochain is indeed a cocycle.
+Cohomology class      = [  0,  0,  0,  0]
+
+Name                  = S(rad(T(e)) <----- Radial class
+(g,m,p)               = (2,1,6)
+This cochain is indeed a cocycle.
+Cohomology class      = [  0,  0,  0,  0]
 
 Name                  = dE(b)
 (g,m,p)               = (2,1,4)

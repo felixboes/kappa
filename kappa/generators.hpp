@@ -38,6 +38,8 @@ enum Generator
     R_alpha_inv_alpha_inv_c_d,
     R_alpha_inv_beta_c_c,
     R_a_Te, ///< at the moment, it's only defined up to signs. However it is 0 mod 2.
+    T_1_f, ///< at the moment, it's only defined up to signs. However it is 0 mod 2.
+    T_2_f, ///< at the moment, it's only defined up to signs. However it is 0 mod 2.
 
     radial_a,
     radial_b,
