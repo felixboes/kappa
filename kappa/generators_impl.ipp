@@ -521,11 +521,27 @@ MonoCochainField< CoefficientT > create_cochain( const Generator& name )
 
         return cochain;
     }
+    case radial_a:
+    {
+        CochainType cochain(0, 2, 2, true, "a");
+
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(1, 2, 1) );
+
+        return cochain;
+    }
+    case radial_b:
+    {
+        CochainType cochain(0, 2, 1, true, "b");
+
+        cochain.add_kappa_dual( CoefficientT(1), create_cell(1, 1, 0) );
+
+        return cochain;
+    }
     
     }
     
     
-    return CochainType(0,1,2);
+    return CochainType(0,1,2, false, "No Cochain loaded. Did you forget the return statement in generators_impl.hpp?");
 }
 
 

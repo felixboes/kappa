@@ -69,7 +69,7 @@ struct MonoBasis
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
-MonoBasis load_parallel_mono_basis( const uint32_t g, const uint32_t m, const int32_t p );
+MonoBasis load_mono_basis( const uint32_t g, const uint32_t m, const int32_t p, const bool radial );
 
 std::ostream& operator<< (std::ostream& stream, const MonoBasis& basis);
 

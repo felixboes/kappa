@@ -1,10 +1,24 @@
 #include "monocochain_field.hpp"
 
+// Delegate Constructur
 template< typename CoefficientT >
-MonoCochainField< CoefficientT >::MonoCochainField( uint32_t genus, uint32_t num_punct, uint32_t cohom_deg ) :
-        VectorType(), g(genus), m(num_punct), p(cohom_deg)
+MonoCochainField< CoefficientT >::MonoCochainField( const uint32_t genus, const uint32_t num_punct, const uint32_t cohom_deg ) :
+        MonoCochainField< CoefficientT >(genus, num_punct, cohom_deg, false, "")
 {
-    basis = load_parallel_mono_basis(g, m, p);
+}
+
+// Delegate Constructur
+template< typename CoefficientT >
+MonoCochainField< CoefficientT >::MonoCochainField( const uint32_t genus, const uint32_t num_punct, const uint32_t cohom_deg, const bool radial_model_used ) :
+        MonoCochainField< CoefficientT >(genus, num_punct, cohom_deg, radial_model_used, "")
+{
+}
+
+template< typename CoefficientT >
+MonoCochainField< CoefficientT >::MonoCochainField( const uint32_t genus, const uint32_t num_punct, const uint32_t cohom_deg, const bool radial_model_used, const std::string& the_name ) :
+        VectorType(), g(genus), m(num_punct), p(cohom_deg), radial(radial_model_used), name(the_name)
+{
+    basis = load_mono_basis(g, m, p, radial);
     VectorType::resize( basis.size() );
 }
 
@@ -56,6 +70,12 @@ uint32_t MonoCochainField< CoefficientT >::get_p() const
 }
 
 template< typename CoefficientT >
+bool MonoCochainField< CoefficientT >::get_radial() const
+{
+    return radial;
+}
+
+template< typename CoefficientT >
 std::string MonoCochainField< CoefficientT >::get_name() const
 {
     return name;
@@ -102,6 +122,7 @@ std::ostream& operator<< ( std::ostream& stream, const MonoCochainField< Coeffic
         << ", g = " << cochain.g
         << ", m = " << cochain.m
         << ", p = " << cochain.p
+        << ", " << (cochain.radial == true ? "radial" : "parallel" ) << " version"
         << ", representing vector = "
         << static_cast< const typename MonoCochainField< CoefficientT >::VectorType & >(cochain);
 }

@@ -43,14 +43,14 @@ int64_t MonoBasis :: id_of(const Tuple &t) const
     }
 }
 
-MonoBasis load_parallel_mono_basis( const uint32_t g, const uint32_t m, const int32_t p )
+MonoBasis load_mono_basis( const uint32_t g, const uint32_t m, const int32_t p, const bool radial )
 {
     std::string filename =
-            "./cache/bases_parallel/" +
+            "./cache/bases_" + std::string(radial == true ? "radial" : "parallel") + "/" +
             std::to_string(g) + "_" +
             std::to_string(m) + "_" +
             std::to_string(p);
-    
+
     return load_from_file_bz2< MonoBasis >( filename, false );
 }
 

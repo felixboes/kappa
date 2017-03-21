@@ -16,7 +16,9 @@ public:
     typedef typename VectorField< CoefficientType > :: ThisType VectorType;
     typedef typename VectorField< CoefficientType > :: VectorStorageType VectorStorageType;
 
-    MonoCochainField( uint32_t genus, uint32_t num_punct, uint32_t cohom_deg );
+    MonoCochainField( const uint32_t genus, const uint32_t num_punct, const uint32_t cohom_deg );
+    MonoCochainField( const uint32_t genus, const uint32_t num_punct, const uint32_t cohom_deg, const bool radial_model_used );
+    MonoCochainField( const uint32_t genus, const uint32_t num_punct, const uint32_t cohom_deg, const bool radial_model_used, const std::string& the_name );
 
     CoefficientType & operator()( const Tuple& t );
 
@@ -35,6 +37,8 @@ public:
 
     uint32_t get_p() const;
 
+    bool get_radial() const;
+
     std::string get_name() const;
 
     const MonoBasis& get_basis_reference() const;
@@ -48,6 +52,7 @@ protected:
     uint32_t g;
     uint32_t m;
     uint32_t p;
+    bool radial;
     std::string name;
 };
 
