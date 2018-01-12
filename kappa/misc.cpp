@@ -356,39 +356,6 @@ std::string tex_cell( const std::list<Tuple>& cells )
     return tex.str();
 }
 
-std::string tex_cell( const HighCell& cell )
-{
-    const int32_t norm = cell.norm();
-    const int32_t q = norm - (cell.is_redundant() == false ? 0 : 1);
-    const int32_t p = cell.p;
-    const int32_t redundancy_index = cell.redundancy_index;
-    
-    std::stringstream tex;
-    tex << "\\tikz[baseline={([yshift=-2.5pt]current bounding box.center)}, x=15pt, y=7pt, every node/.style={shape=circle, fill=black, inner sep=.8pt}]{" << std::endl
-        << "    \\foreach \\y in {1,...," << p <<"}" << std::endl
-        << "    {" << std::endl
-        << "        \\draw (-0.5, \\y) -- (" << q-1 << ".5, \\y);" << std::endl
-        << "    }" << std::endl
-        << "    \\draw[color=black!50] (-0.5,.7) -- (" << q-1 << ".5,.7) -- ("<< q-1 << ".5, "<< p << ".3) -- (-0.5, " << p << ".3) -- (-0.5, .7);" << std::endl;
-    int32_t i = 0;
-    for( i = 1; i != redundancy_index && i <= q; ++i )
-    {
-    tex << "    \\draw (" << q-i << "," << (int32_t)cell.at(i).first << ") node {} -- (" << q-i << "," << (int32_t)cell.at(i).second << ") node {};" << std::endl;
-    }
-    if( i <= q )
-    {
-        tex << "    \\draw (" << std::setprecision(2) << q-i+0.05 << "," << (int32_t)cell.at(i).first   << ") node {} -- (" << q-i+0.05 << "," << (int32_t)cell.at(i).second   << ") node {};" << std::endl;
-        tex << "    \\draw (" << std::setprecision(2) << q-i-0.05 << "," << (int32_t)cell.at(i+1).first << ") node {} -- (" << q-i-0.05 << "," << (int32_t)cell.at(i+1).second << ") node {};" << std::endl;
-        for( i+=2; i <= norm; ++i )
-        {
-        tex << "    \\draw (" << q+1-i << "," << (int32_t)cell.at(i).first << ") node {} -- (" << q+1-i << "," << (int32_t)cell.at(i).second << ") node {};" << std::endl;
-        }
-    }
-    tex << "}" << std::endl;
-    
-    return tex.str();
-}
-
 std::string tex_end()
 {
     std::stringstream tex;

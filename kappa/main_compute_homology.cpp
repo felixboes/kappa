@@ -85,7 +85,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
                 touch( check_writable_prefix + std::to_string(p) );
             }
         }
-        // Store empty onjects which are going to be used by OperationTester.
+        // Store empty onjects which are going to be used by testing possible generators.
         std::string path_prefix_diff =
             "./cache/differentials_" + std::string( ( conf.parallel == true ? "parallel" : "radial") ) + std::string("/") +
             (conf.rational == true ? std::string("q") : std::string("s") + std::to_string(conf.prime) ) + std::string("_") +

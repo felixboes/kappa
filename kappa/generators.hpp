@@ -5,8 +5,6 @@
 
 #include "monocomplex.hpp"
 #include "monocochain_field.hpp"
-#include "operationtester.hpp"
-
 
 enum Generator
 {

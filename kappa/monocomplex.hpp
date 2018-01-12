@@ -16,7 +16,6 @@
 #include "factorial.hpp"
 #include "misc.hpp"
 #include "monobasis.hpp"
-#include "operationtester.hpp"
 #include "sessionconfig.hpp"
 #include "tuple.hpp"
 

@@ -113,18 +113,6 @@ void test_( const std::string& name, const uint32_t g, const uint32_t m, const u
     test_< CoefficientT >(name, g, m, homological_p, cochain);
 }
 
-template< class CoefficientT >
-void test_tilde_d()
-{
-    MonoCochainField< CoefficientT > cochain(2, 0, 5);
-    cochain.set_name("tilde d");
-    cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 5, 4, 5, 4, 3, 1, 2, 1) );
-    cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 5, 3, 4, 3, 2, 1, 2, 1) );
-    cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 4, 3, 5, 4, 2, 1, 2, 1) );
-    cochain.add_kappa_dual( CoefficientT(1), create_cell(4, 5, 4, 5, 4, 2, 1, 3, 2) );
-    test_( cochain );
-}
-
 void verify_known_generators()
 {
     std::cout << "Mod 2 computations." << std::endl;
