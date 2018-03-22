@@ -32,83 +32,8 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
 
-/**
- *  A Transposition is represented by a pair of uint8_t.
- */
-typedef std::pair< uint8_t, uint8_t > Transposition;
-
-/**
- * @brief Class representing a permutation
- *
- * The permutation is stored in a vector of a given size, say s,
- * whereby the permutation acts on a subset of the numbers 0, ..., s-1.
- * For each symbol 0 <= i < s, its entry in the vector tells its image under the permutation.
- * Per default, each value i maps to s, marking that i does not actually belong to the permutation.
- * 
- */
-class Permutation
-{
-public:
-    /**
-     * Constructs an empty permutation.
-     */
-    Permutation();
-
-    /**
-     * Constructs a permutation of the given size and initializes each entry with the default value size.
-     */
-    Permutation(const uint8_t size);
-
-    /**
-     * Copy constructor copying the data vector from other.
-     */
-    Permutation(const Permutation & other);
-
-    /**
-     * Returns the data vector of this Permutation.
-     */
-    std::vector<uint8_t> operator()() const;
-
-    /**
-     * Returns the element the symbol i is mapped to by this Permutation.
-     */
-    uint8_t & operator[](const uint8_t i);
-    
-    /**
-     * Returns the element the symbol i is mapped to by this Permutation.
-     */
-    const uint8_t & at(const uint8_t i) const;
-
-    /**
-     * Returns the number of elements of this permutation.
-     */
-    uint8_t size() const;
-    
-    /**
-     *  @brief Determines the decompositions of the permutation into cycles including fix points.
-     *  @return A map consisting of all cycles of pi with their smallest element as key
-     */
-    std::map< uint8_t, Permutation > cycle_decomposition () const;
-    
-    /**
-     * Returns true iff the symbol i is contained in this Permutation.
-     */
-    bool is_contained(const uint8_t i) const;
-
-    /**
-     * Returns true iff the symbol i is a fix point of this Permutation.
-     */
-    bool is_fix_point(const uint8_t i) const;
-
-    /** 
-     *  output stream
-     */
-    friend std::ostream& operator<< (std::ostream& stream, const Permutation& permutation);
-
-protected:
-    std::vector<uint8_t> data; ///< stores the Permutation
-    operator size_t() = delete;
-};
+#include "permutation.hpp"
+#include "permutation_manager.hpp"
 
 /**
  *  A Tuple of Transpositions \f$ ( \tau_h \mid \ldots \mid \tau_1 ) \f$.
@@ -144,7 +69,7 @@ public:
     Tuple(const uint32_t p, const size_t h);
 
     /**
-     *  Access the \f$ i \f$-th Transposition of the Tuple.
+     *  Access the \f$ i \f$-th Transposition of the Tuple. No bounds checked.
      */
     Transposition& operator[](const size_t n);
 
@@ -184,7 +109,8 @@ public:
     friend std::ostream& operator<< (std::ostream& stream, const Tuple& tuple);
     
     /**
-     *  Tells the number of cycles of the permutation \f$ \tau_h \cdot \ldots \cdot \tau_1 \cdot (1,2,\ldots,p) \f$.
+     *  Tells the number of cycles of the permutation
+     *    \f$ \sigma_h = \tau_h \cdot \ldots \cdot \tau_1 \cdot (1,2,\ldots,p) \f$.
      * \param[in] min_symbol Minimum symbol that may be used in this tuple. The default value
      * is 1 since this is the case for parallel cells. Radial cells may also use the
      * symbol 0.
@@ -300,12 +226,14 @@ public:
     static uint32_t get_min_symbol();
     
     /**
-     *  @returns the minimal face index of a possibly non-degenerate cell, i.e. 1 in the parallel case and 0 in the radial case.
+     *  @returns the minimal face index of a possibly non-degenerate cell, i.e. 1 in the parallel case and 0 in the
+     *  radial case.
      */ 
     static uint32_t get_min_boundary_offset();
     
     /**
-     *  @returns the maximal face index of a possibly non-degenerate cell, i.e. p-1 in the parallel case and p in the radial case.
+     *  @returns the difference between p and the maximal face index of a possibly non-degenerate cell,
+     *  i.e. 1 in the parallel case and 0 in the radial case.
      */ 
     static uint32_t get_max_boundary_offset();
     
@@ -319,17 +247,17 @@ public:
     **/
     const std::vector< Transposition >& get_data_rep() const;
     
-    uint32_t p; ///< The number of symbols \f$ 1 \le p \f$ to be permuted.
+    uint32_t p; ///< The maximum of the symbols \f$ min_symbol \le p \f$ to be permuted.
     size_t id;  ///< The index of this Tuple in the basis of the MonoComplex.
 
 protected:
     /**
-     *  @returns the cycle 1 -> 2 -> ... -> p-1 -> p -> 1.
+     *  @returns the cycle 0 -> 1 -> ... -> p-1 -> p -> 0.
      */
     Permutation long_cycle() const;
     
     /**
-     *  @returns the cycle 1 -> p -> p-2 -> ... -> 2 -> 1.
+     *  @returns the cycle 0 -> p -> p-2 -> ... -> 1 -> 0.
      */
     Permutation long_cycle_inv() const;
     
@@ -337,6 +265,12 @@ protected:
      *  @returns the permutation \f$ \sigma_h = \tau_h \cdots \tau_1 \sigma_0 \f$.
      */
     Permutation sigma_h() const;
+
+    /**
+     * @returns the inverse permutation of sigma_h.
+     *  Note: this is easier to compute than sigma_h.
+     */
+    Permutation sigma_h_inv() const;
     
     //    DATA MEMBERS
     std::vector< Transposition > rep;   ///< Representation of a tuple of transpositions \tau_1, ..., \tau_1.

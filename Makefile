@@ -25,7 +25,7 @@ CXXFLAGS      := -O3 -std=c++11 -D_GLIBCXX_USE_NANOSLEEP \
 INCL          := -I.
 BUILDDIR      := build
 EXT           := cpp
-SRCDIRS       := kappa libhomology
+SRCDIRS       := kappa libhomology unit-tests-kappa
 EXCLUDE       := test_ version
 .DEFAULT_GOAL := compute_css
 
@@ -45,7 +45,7 @@ endif
 
 LIBS          += -lboost_filesystem -lboost_system -lboost_iostreams \
                  -lboost_serialization -lboost_program_options \
-                 -lboost_date_time -lgmpxx -lgmp
+                 -lboost_date_time -lgmpxx -lgmp -lboost_unit_test_framework
 
 ifdef ENABLE_KAPPA_DEBUG
 CXXFLAGS      += -g

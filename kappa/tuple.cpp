@@ -20,100 +20,6 @@
 
 #include "tuple.hpp"
 
-Permutation::Permutation()
-    : data()
-{
-    // intentionally do nothing
-}
-
-Permutation::Permutation(const uint8_t size)
-    : data(size, size)
-{
-    // intentionally do nothing
-}
-
-Permutation::Permutation(const Permutation & other)
-    :
-      data(other())
-{
-    // intentionally do nothing
-}
-
-std::vector<uint8_t> Permutation::operator()() const
-{
-    return data;
-}
-
-uint8_t & Permutation::operator[](const uint8_t i)
-{
-    return data[i];
-}
-
-uint8_t const & Permutation::at(const uint8_t i) const
-{
-    return data.at(i);
-}
-
-uint8_t Permutation::size() const
-{
-    return data.size();
-}
-
-std::map< uint8_t, Permutation > Permutation::cycle_decomposition () const
-{
-    const uint8_t p = this->size() - 1;
-    std::map< uint8_t, Permutation > cycle_decomp;
-    std::vector< bool > visited( p+1, false );
-    for( uint8_t i = 0; i <= p; ) // We iterate through all cycles and mark the used symbols.
-    {
-        // determine the cycle of i.
-        Permutation cycle(p+1);
-        
-        uint8_t prev;     // previous symbol
-        uint8_t cur = i; // current symbol
-
-        do // mark all symbols in this cycle
-        {
-            visited[cur] = true;
-            prev = cur;
-            cur = this->at(prev);
-            cycle[prev] = cur;
-        }while( cur != i );
-        // note that since the for-loop runs ascendingly, the smallest element of the cycle
-        // is i
-        cycle_decomp[i] = cycle;
-        // find the next unvisited cycle
-        for( ++i; i <= p && visited[i]; ++i )
-        {
-        }
-    }
-    return cycle_decomp;
-}
-
-bool Permutation::is_contained(const uint8_t i) const
-{
-    return (data[i] != data.size());
-}
-
-bool Permutation::is_fix_point(const uint8_t i) const
-{
-    return (data[i] == i);
-}
-
-std::ostream& operator<< (std::ostream& stream, const Permutation& permutation)
-{
-    stream << "permutation: " << std::endl;
-    for (uint8_t i = 0; i < permutation.size(); ++i)
-    {
-        if (permutation.is_contained(i))
-        {
-            stream << (size_t) i << " maps to " << (size_t) permutation.at(i) << std::endl;
-        }
-    }
-    return stream;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool Tuple::radial = false;
 uint32_t Tuple::min_symbol = 1;
 uint32_t Tuple::min_boundary_offset = 1;
@@ -190,14 +96,7 @@ Transposition& Tuple :: operator[](const size_t n)
 
 int32_t Tuple :: norm() const
 {
-    if( this->operator bool() == true )
-    {
-        return rep.size();
-    }
-    else // The Tuple is not valid.
-    {
-        return 0;
-    }
+    return rep.size();
 }
 
 bool Tuple :: operator==(const Tuple& t) const
@@ -257,39 +156,8 @@ bool Tuple :: is_multiple_of_a() const
 
 uint32_t Tuple :: num_cycles() const
 {
-    // Since the t_i are transpositions, one can instead count the number of cycles of (p p-1 ... 1) t_1 ... t_h.
-    uint32_t num_cycles = 0;
-    Permutation sigma_inv = long_cycle_inv();
-
-     // multiply with t_1, ..., t_h
-    for( int32_t i = 1; i <= norm(); i++ )
-    {
-        uint8_t k = at(i).first;
-        uint8_t l = at(i).second;
-        std::swap( sigma_inv[ k ], sigma_inv[ l ] );
-    }
-
-    // count the cycles
-    std::vector<bool> visited( p+1, false );    // visited[0] is not used
-    for( uint8_t i = min_symbol; i <= p; ) // We iterate through all cycles and mark the used symbols.
-    {
-        // consider the next cycle
-        num_cycles += 1;
-        visited[i] = true;
-        uint8_t j = sigma_inv[i];
-        
-        while( j != i ) // mark all symbols in this cycle
-        {
-            visited[j] = true;
-            j = sigma_inv[j];
-        }
-
-        // find the next unvisited cycle
-        for( ++i; i <= p && visited[i]; ++i )
-        {
-        }
-    }
-    return num_cycles;
+    // count instead the number of cycles of sigma_h_inv
+    return PermutationManager::num_cycles(sigma_h_inv());
 }
 
 Tuple::ConnectedComponents Tuple::connected_components() const
@@ -778,140 +646,36 @@ Tuple Tuple :: d_hor_double_complex( const uint8_t k ) const
     return boundary;
 }
 
-Permutation Tuple::sigma_h() const
+Permutation Tuple::sigma_h_inv() const
 {
-    // initialize with sigma_0
     Permutation sigma_inv = long_cycle_inv();
 
-    for (uint8_t i = 1; i <= norm(); ++i)
-    {
-        // write tau_i = (a, b)
-        const uint8_t& a = at(i).first;
-        const uint8_t& b = at(i).second;
-        
-        // compute sigma_i^{-1}
-        std::swap( sigma_inv[ a ], sigma_inv[ b ] );
+    for (uint8_t i = 1; i <= norm(); ++i) {
+        PermutationManager::multiply(sigma_inv, at(i));
     }
-    
-    // compute sigma
-    Permutation sigma(p+1);
-    for( uint8_t i = 0; i <= p; ++i )
-    {
-        sigma[sigma_inv[i]] = i;
-    }
-    
-    return sigma;
+
+    return sigma_inv;
+}
+
+Permutation Tuple::sigma_h() const
+{
+    return PermutationManager::inverse(sigma_h_inv());
 }
 
 std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
 {
     Permutation sigma = sigma_h();
-    std::map< uint8_t, Permutation > cycle_decomp = sigma.cycle_decomposition();    
-    std::map< uint8_t, int8_t > sign;
-    
-    uint8_t i = 1; // counter of cycles
-    for ( auto it_1 = cycle_decomp.begin(); it_1 != cycle_decomp.end(); ++it_1 )
-    {
-        Permutation cycle = it_1->second;
-        uint8_t min_symbol = it_1->first;
-        // if the cycle is a fixpoint (a), we set sign(a) = 0 for the sake of completeness.
-        if (cycle.is_fix_point(min_symbol))
-        {
-            sign[min_symbol] = 0;
-            ++i;
-            continue;
-        }
-        uint8_t second_min_symbol = 0;
-        // determine the second min symbol of the cycle
-        for (size_t m = 1; m < cycle.size(); ++m)
-        {
-            if (cycle.is_contained(m) && m != min_symbol)
-            {
-                second_min_symbol = m;
-                break;
-            }
-        }
-        // Find k.
-        // note that
-        //   a_{1,1} < ... < a_{i,1} < b ,
-        // hence
-        //   a_{i-l,1} < b    for    l >= 0
-        // is impossible and we can start to search at the position k = i.
-        uint8_t k = i;
-        
-        // note that since we exclude the case that second_min_sybols will be sorted in at the end,
-        // min_symbol can be sorted in between the cycles and this loop will never reach the liniel.
-        
-        // note that initially (for k = i) it_2.first = a_{k,1} < b and we found our position k iff the first time b < a_{k+1,1}
-        // in the other case we have again a_{k+1,1} < b. Induction.
-        for ( auto it_2 = (std::next(it_1)); it_2 != cycle_decomp.end(); ++it_2 )
-        {
-            uint8_t next_min_symbol = it_2->first;
-            if ( second_min_symbol < next_min_symbol )
-            {
-                if ( ((k - i) % 2) == 0 )
-                {
-                    sign[min_symbol] = 1;
-                }
-                else
-                {
-                    sign[min_symbol] = -1;
-                }
-                break;
-            }
-            ++k;
-        }
-        // If b > a_{m, 1}, we still need to determine the sign of min_symbol.
-        if (k == cycle_decomp.size())
-        {
-            if ( ((k - i) % 2) == 0 )
-            {
-                sign[min_symbol] = 1;
-            }
-            else
-            {
-                sign[min_symbol] = -1;
-            }
-        }
-        
-        // for all other symbols of the cycle, we set the sign to 1
-        for (size_t c = 0; c < cycle.size(); ++c)
-        {
-            if (cycle.is_contained(c) and c != min_symbol)
-            {
-                sign[c] = 1;
-            }
-        }
-        ++i;
-    }
-    return sign;
+    return PermutationManager::orientation_sign_for_ehrenfried(sigma);
 }
 
 Permutation Tuple::long_cycle() const
 {
-    Permutation sigma(p+1);
-    for(uint8_t k = 0; k < p; ++k)
-    {
-        sigma[k] = k+1;
-    }
-    sigma[p] = 0;
-    return sigma;
+    return Permutation::long_cycle(p);
 }
 
 Permutation Tuple::long_cycle_inv() const
 {
-    Permutation sigma(p+1);
-    for(uint8_t k = 1; k <= p; ++k)
-    {
-        sigma[k] = k-1;
-    }
-    sigma[0] = p;
-    return sigma;
-}
-
-const std::vector< Transposition >& Tuple::get_data_rep() const
-{
-    return rep;
+    return Permutation::long_cycle_inv(p);
 }
 
 Tuple create_cell( const size_t h, ... )
