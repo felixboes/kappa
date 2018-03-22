@@ -26,7 +26,7 @@
 
 #include "libhomology/serialization.hpp"
 
-#include "tuple.hpp"
+#include "sym_grp_tuple.hpp"
 
 /**
     The CSSBasis keeps track of the basis elements of a module in the cluster spectral sequence.

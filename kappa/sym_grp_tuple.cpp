@@ -18,7 +18,7 @@
 // along with kappa.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "tuple.hpp"
+#include "sym_grp_tuple.hpp"
 
 bool Tuple::radial = false;
 uint32_t Tuple::min_symbol = 1;

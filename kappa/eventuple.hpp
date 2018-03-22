@@ -2,7 +2,7 @@
 #define KAPPA_EVENTUPLE_HPP
 
 #include <algorithm>
-#include "tuple.hpp"
+#include "sym_grp_tuple.hpp"
 
 /**
  *  A tuple of Norm2Permutations \f$ ( \tau_{h_halves} \mid \ldots \mid \tau_1 ) \f$.

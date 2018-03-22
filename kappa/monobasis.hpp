@@ -27,7 +27,7 @@
 
 #include "libhomology/serialization.hpp"
 
-#include "tuple.hpp"
+#include "sym_grp_tuple.hpp"
 
 /**
     The MonoBasis keeps track of the basis elements of a module in a MonoComplex.

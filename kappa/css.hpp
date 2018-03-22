@@ -36,7 +36,7 @@
 #include "factorial.hpp"
 #include "monocomplex.hpp"
 #include "sessionconfig.hpp"
-#include "tuple.hpp"
+#include "sym_grp_tuple.hpp"
 
 
 /**

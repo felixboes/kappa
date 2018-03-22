@@ -23,7 +23,7 @@
 
 #include <libhomology/homology.hpp>
 
-#include "tuple.hpp"
+#include "sym_grp_tuple.hpp"
 #include "monobasis.hpp"
 #include "operationtester.hpp"
 

@@ -32,7 +32,7 @@
 #include "monocomplex.hpp"
 #include "monocochain_field.hpp"
 #include "sessionconfig.hpp"
-#include "tuple.hpp"
+#include "sym_grp_tuple.hpp"
 
 // In order to use chain complexes with rational and Zm coefficients in other projects,
 // we have to use instanciate the templates explicitly.

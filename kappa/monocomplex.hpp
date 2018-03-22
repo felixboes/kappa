@@ -37,7 +37,7 @@
 #include "misc.hpp"
 #include "monobasis.hpp"
 #include "sessionconfig.hpp"
-#include "tuple.hpp"
+#include "sym_grp_tuple.hpp"
 
 
 /**
