@@ -43,7 +43,7 @@ MonoCochainField< CoefficientT >::MonoCochainField( const uint32_t genus, const 
 }
 
 template< typename CoefficientT >
-typename MonoCochainField< CoefficientT >::CoefficientType & MonoCochainField< CoefficientT >::operator()( const Tuple& t )
+typename MonoCochainField< CoefficientT >::CoefficientType & MonoCochainField< CoefficientT >::operator()( const SymGrpTuple& t )
 {
     const auto res = basis.id_of(t);
     if( res == -1 )
@@ -54,7 +54,7 @@ typename MonoCochainField< CoefficientT >::CoefficientType & MonoCochainField< C
 }
 
 template< typename CoefficientT >
-const typename MonoCochainField< CoefficientT >::CoefficientType& MonoCochainField< CoefficientT > :: at( const Tuple& t ) const
+const typename MonoCochainField< CoefficientT >::CoefficientType& MonoCochainField< CoefficientT > :: at( const SymGrpTuple& t ) const
 {
     return VectorType::at( basis.id_of(t) );
 }
@@ -66,7 +66,7 @@ std::string MonoCochainField< CoefficientT >::set_name( const std::string& new_n
 }
 
 template< typename CoefficientT >
-void MonoCochainField< CoefficientT >::add_kappa_dual( const CoefficientType& c, const Tuple& t )
+void MonoCochainField< CoefficientT >::add_kappa_dual( const CoefficientType& c, const SymGrpTuple& t )
 {
     VectorType::operator+=( kappa_dual< VectorType >( c, t, basis ) );
 }

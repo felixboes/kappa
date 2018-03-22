@@ -113,12 +113,12 @@ public:
         the case, we add it to the basis in degree p. Thereby, basis elements are sorted according to the number
         of clusters.
     **/
-    void gen_bases( const uint32_t l, const uint32_t p, const uint32_t start_symbol, Tuple& tuple);
+    void gen_bases( const uint32_t l, const uint32_t p, const uint32_t start_symbol, SymGrpTuple& tuple);
     
     /**
      *  computes the boundary of a given Tuple and saves the result in the differential.
      */ 
-    void compute_boundary( Tuple & tuple, const uint32_t p, MatrixType & differential);
+    void compute_boundary( SymGrpTuple & tuple, const uint32_t p, MatrixType & differential);
     
     /**
      *  Generates the p-th differential.
@@ -198,7 +198,7 @@ public:
     std::ofstream homchain_cohomology_file;
 };
 
-typedef std::vector<Tuple> MonocomplexWork;
+typedef std::vector<SymGrpTuple> MonocomplexWork;
 
 template< class MatrixComplex >
 void monocomplex_work(MonoComplex<MatrixComplex> & monocomplex, MonocomplexWork & work, const uint32_t p, typename MatrixComplex::MatrixType & differential);

@@ -1,8 +1,8 @@
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
-#include "../kappa/eventuple.hpp"
+#include "kappa/alt_grp_tuple.hpp"
 
-BOOST_AUTO_TEST_SUITE(test_suit_eventuple)
+BOOST_AUTO_TEST_SUITE(test_suit_alt_grp_tuple)
 
     class TestNorm2Permutations{
         public:
@@ -40,27 +40,27 @@ BOOST_AUTO_TEST_SUITE(test_suit_eventuple)
             Norm2Permutation s9 = Norm2Permutation(Transposition(3,2),Transposition(4,2));
     };
 
-    BOOST_FIXTURE_TEST_CASE(test_access_eventuples_and_check_norm, TestNorm2Permutations)
+    BOOST_FIXTURE_TEST_CASE(test_access_and_check_norm, TestNorm2Permutations)
     {
-        EvenTuple::parallel_case();
-        BOOST_CHECK(!EvenTuple::is_radial());
+        AltGrpTuple::parallel_case();
+        BOOST_CHECK(!AltGrpTuple::is_radial());
 
-        EvenTuple T(6,3);
-        BOOST_CHECK(T.num_norm2permutations()==3);
+        AltGrpTuple T(6,3);
+        BOOST_CHECK(T.num_entries()==3);
 
         T.at(1)=t1;
         T.at(2)=t2;
         T[3]=t3;
-        BOOST_CHECK(T.num_norm2permutations()==3);
+        BOOST_CHECK(T.num_entries()==3);
         BOOST_CHECK(T.has_correct_norm());
 
         T.at(3)=t4;
         BOOST_CHECK(!T.has_correct_norm());
     }
 
-    BOOST_FIXTURE_TEST_CASE(test_eventuple_norm2notation, TestNorm2Permutations)
+    BOOST_FIXTURE_TEST_CASE(test_norm2notation, TestNorm2Permutations)
     {
-        EvenTuple T(6,3);
+        AltGrpTuple T(6,3);
         T.at(1)=t1;
         T.at(2)=t2;
         T.at(3)=t3;
@@ -74,52 +74,52 @@ BOOST_AUTO_TEST_SUITE(test_suit_eventuple)
         BOOST_CHECK(!T.write_in_Norm2Notation());
     }
 
-    BOOST_FIXTURE_TEST_CASE(test_monotone_eventuple_parallelcase, TestNorm2Permutations)
+    BOOST_FIXTURE_TEST_CASE(test_fully_unstable_parallelcase, TestNorm2Permutations)
     {
-        EvenTuple::parallel_case();
-        EvenTuple S1(6,3), S2(6,3), S3(6,3);
+        AltGrpTuple::parallel_case();
+        AltGrpTuple S1(6,3), S2(6,3), S3(6,3);
 
         S1.at(1)=t1;
         S1.at(2)=t5;
         S1.at(3)=t3;
-        BOOST_CHECK(S1.monotone());
+        BOOST_CHECK(S1.fully_unstable());
 
         S2.at(1)=t1;
         S2.at(2)=t3;
         S2.at(3)=t5;
-        BOOST_CHECK(S2.monotone());
+        BOOST_CHECK(S2.fully_unstable());
 
         S3.at(1)=t5;
         S3.at(2)=t1;
         S3.at(3)=t3;
-        BOOST_CHECK(!S3.monotone());
+        BOOST_CHECK(!S3.fully_unstable());
     }
 
-    BOOST_FIXTURE_TEST_CASE(test_monotone_eventuple_radialcase, TestNorm2Permutations)
+    BOOST_FIXTURE_TEST_CASE(test_fully_unstable_radialcase, TestNorm2Permutations)
     {
-        EvenTuple::radial_case();
-        EvenTuple S1(6,3), S2(6,3), S3(6,3);
+        AltGrpTuple::radial_case();
+        AltGrpTuple S1(6,3), S2(6,3), S3(6,3);
 
         S1.at(1)=t0;
         S1.at(2)=t5;
         S1.at(3)=t6;
-        BOOST_CHECK(S1.monotone());
+        BOOST_CHECK(S1.fully_unstable());
 
         S2.at(1)=t0;
         S2.at(2)=t6;
         S2.at(3)=t5;
-        BOOST_CHECK(S2.monotone());
+        BOOST_CHECK(S2.fully_unstable());
 
         S3.at(1)=t5;
         S3.at(2)=t0;
         S3.at(3)=t6;
-        BOOST_CHECK(not S3.monotone());
+        BOOST_CHECK(not S3.fully_unstable());
     }
 
-    BOOST_FIXTURE_TEST_CASE(test_f_for_eventuples_parallelcase, TestNorm2Permutations)
+    BOOST_FIXTURE_TEST_CASE(test_f_parallelcase, TestNorm2Permutations)
     {
-        EvenTuple::parallel_case();
-        EvenTuple S1(6,3), S2(6,3), S3(8,2), S4(6,2);
+        AltGrpTuple::parallel_case();
+        AltGrpTuple S1(6,3), S2(6,3), S3(8,2), S4(6,2);
 
         S1.at(1)=t1;
         S1.at(2)=t5;
@@ -148,11 +148,11 @@ BOOST_AUTO_TEST_SUITE(test_suit_eventuple)
         BOOST_CHECK(!S4.f(1));
     }
 
-    BOOST_FIXTURE_TEST_CASE(test_f_for_eventuples_radialcase, TestNorm2Permutations)
+    BOOST_FIXTURE_TEST_CASE(test_f_radialcase, TestNorm2Permutations)
     {
-        EvenTuple::radial_case();
-        BOOST_CHECK(EvenTuple::is_radial());
-        EvenTuple S1(6,3), S2(6,3), S3(8,2), S4(6,2);
+        AltGrpTuple::radial_case();
+        BOOST_CHECK(AltGrpTuple::is_radial());
+        AltGrpTuple S1(6,3), S2(6,3), S3(8,2), S4(6,2);
         Norm2Permutation t7(Transposition(4,2),Transposition(7,8));
 
         S1.at(1)=t0;
@@ -182,10 +182,10 @@ BOOST_AUTO_TEST_SUITE(test_suit_eventuple)
         BOOST_CHECK(!S4.f(1));
     }
 
-    BOOST_FIXTURE_TEST_CASE(test_phi_for_eventuples_parallelcase, TestNorm2Permutations)
+    BOOST_FIXTURE_TEST_CASE(test_phi_parallelcase, TestNorm2Permutations)
     {
-        EvenTuple::parallel_case();
-        EvenTuple S(6,3), S11(6,3), S21(6,3), S32(6,3), S13(6,3), T(6,3), N(6,3);
+        AltGrpTuple::parallel_case();
+        AltGrpTuple S(6,3), S11(6,3), S21(6,3), S32(6,3), S13(6,3), T(6,3), N(6,3);
 
         S.at(1)=t1;
         S.at(2)=t5;
@@ -226,10 +226,10 @@ BOOST_AUTO_TEST_SUITE(test_suit_eventuple)
         BOOST_CHECK(!T.phi(3,1));
     }
 
-    BOOST_FIXTURE_TEST_CASE(test_phi_for_eventuples_radialcase, TestNorm2Permutations)
+    BOOST_FIXTURE_TEST_CASE(test_phi_radialcase, TestNorm2Permutations)
     {
-        EvenTuple::radial_case();
-        EvenTuple S(6,3), S11(6,3), S21(6,3), S32(6,3), S13(6,3), T(6,3), N(6,3);
+        AltGrpTuple::radial_case();
+        AltGrpTuple S(6,3), S11(6,3), S21(6,3), S32(6,3), S13(6,3), T(6,3), N(6,3);
 
         S.at(1)=t0;
         S.at(2)=t5;
@@ -270,11 +270,11 @@ BOOST_AUTO_TEST_SUITE(test_suit_eventuple)
         BOOST_CHECK(!T.phi(3,1));
     }
 
-    BOOST_FIXTURE_TEST_CASE(test_d_hor_eventuple_parallelcase, TestNorm2Permutations)
+    BOOST_FIXTURE_TEST_CASE(test_d_hor_parallelcase, TestNorm2Permutations)
     {
-        EvenTuple::parallel_case();
-        EvenTuple T(6,3);
-        EvenTuple boundary1, boundary2, boundary3, boundary4, boundary5;
+        AltGrpTuple::parallel_case();
+        AltGrpTuple T(6,3);
+        AltGrpTuple boundary1, boundary2, boundary3, boundary4, boundary5;
         T.at(1)=t3;
         T.at(2)=t2;
         T.at(3)=t1;
@@ -284,43 +284,43 @@ BOOST_AUTO_TEST_SUITE(test_suit_eventuple)
         boundary3 = T.d_hor_double_complex(3);
         boundary4 = T.d_hor_double_complex(4);
         boundary5 = T.d_hor_double_complex(5);
-        BOOST_CHECK(boundary1 == EvenTuple());
-        BOOST_CHECK(boundary2 != EvenTuple());
+        BOOST_CHECK(boundary1 == AltGrpTuple());
+        BOOST_CHECK(boundary2 != AltGrpTuple());
         BOOST_CHECK(boundary2.at(1)== Norm2Permutation(Transposition(4,2),Transposition(5,1)));
         BOOST_CHECK(boundary2.at(2)== Norm2Permutation(Transposition(3,2),Transposition(4,1)));
         BOOST_CHECK(boundary2.at(3)== Norm2Permutation(Transposition(2,1),Transposition(4,2)));
-        BOOST_CHECK(boundary3 == EvenTuple());
-        BOOST_CHECK(boundary4 == EvenTuple());
-        BOOST_CHECK(boundary5 != EvenTuple());
+        BOOST_CHECK(boundary3 == AltGrpTuple());
+        BOOST_CHECK(boundary4 == AltGrpTuple());
+        BOOST_CHECK(boundary5 != AltGrpTuple());
         BOOST_CHECK(boundary5.at(1)== Norm2Permutation(Transposition(3,1),Transposition(5,1)));
         BOOST_CHECK(boundary5.at(2)== s2);
         BOOST_CHECK(boundary5.at(3)== s1);
 
         boundary2 =T.d_hor(2);
         boundary5 =T.d_hor(5);
-        BOOST_CHECK(boundary2 != EvenTuple());
+        BOOST_CHECK(boundary2 != AltGrpTuple());
         BOOST_CHECK(boundary2.at(1)== Norm2Permutation(Transposition(4,2),Transposition(5,1)));
         BOOST_CHECK(boundary2.at(2)== Norm2Permutation(Transposition(3,2),Transposition(4,1)));
         BOOST_CHECK(boundary2.at(3)== Norm2Permutation(Transposition(2,1),Transposition(4,2)));
-        BOOST_CHECK(boundary5 != EvenTuple());
+        BOOST_CHECK(boundary5 != AltGrpTuple());
         BOOST_CHECK(boundary5.at(1)== Norm2Permutation(Transposition(3,1),Transposition(5,1)));
         BOOST_CHECK(boundary5.at(2)== s2);
         BOOST_CHECK(boundary5.at(3)== s1 );
 
 
-        EvenTuple S(6,1), boundary;
+        AltGrpTuple S(6,1), boundary;
         S.at(1) = Norm2Permutation(Transposition(2,1),Transposition(3,2));
         boundary = S.d_hor_double_complex(1);
-        BOOST_CHECK(boundary == EvenTuple());
+        BOOST_CHECK(boundary == AltGrpTuple());
         boundary = S.d_hor(1);
-        BOOST_CHECK(boundary == EvenTuple());
+        BOOST_CHECK(boundary == AltGrpTuple());
     }
 
-    BOOST_FIXTURE_TEST_CASE(test_d_hor_eventuple_radialcase, TestNorm2Permutations)
+    BOOST_FIXTURE_TEST_CASE(test_d_hor_radialcase, TestNorm2Permutations)
     {
-        EvenTuple::radial_case();
-        EvenTuple T(6,3);
-        EvenTuple boundary0, boundary1, boundary2, boundary3, boundary4, boundary5, boundary6;
+        AltGrpTuple::radial_case();
+        AltGrpTuple T(6,3);
+        AltGrpTuple boundary0, boundary1, boundary2, boundary3, boundary4, boundary5, boundary6;
         T.at(1)=t3;
         T.at(2)=t2;
         T.at(3)=t1;
@@ -332,43 +332,43 @@ BOOST_AUTO_TEST_SUITE(test_suit_eventuple)
         boundary4 = T.d_hor_double_complex(4);
         boundary5 = T.d_hor_double_complex(5);
         boundary6 = T.d_hor_double_complex(6);
-        BOOST_CHECK(boundary0 != EvenTuple());
+        BOOST_CHECK(boundary0 != AltGrpTuple());
         BOOST_CHECK(boundary0.at(1)== Norm2Permutation(Transposition(4,2),Transposition(5,0)));
         BOOST_CHECK(boundary0.at(2)== Norm2Permutation(Transposition(1,0),Transposition(3,2)));
         BOOST_CHECK(boundary0.at(3)== Norm2Permutation(Transposition(1,0),Transposition(2,0)));
-        BOOST_CHECK(boundary1 == EvenTuple());
-        BOOST_CHECK(boundary2 != EvenTuple());
+        BOOST_CHECK(boundary1 == AltGrpTuple());
+        BOOST_CHECK(boundary2 != AltGrpTuple());
         BOOST_CHECK(boundary2.at(1)== Norm2Permutation(Transposition(4,2),Transposition(5,1)));
         BOOST_CHECK(boundary2.at(2)== Norm2Permutation(Transposition(3,2),Transposition(4,1)));
         BOOST_CHECK(boundary2.at(3)== Norm2Permutation(Transposition(2,1),Transposition(4,2)));
-        BOOST_CHECK(boundary3 == EvenTuple());
-        BOOST_CHECK(boundary4 == EvenTuple());
-        BOOST_CHECK(boundary5 != EvenTuple());
+        BOOST_CHECK(boundary3 == AltGrpTuple());
+        BOOST_CHECK(boundary4 == AltGrpTuple());
+        BOOST_CHECK(boundary5 != AltGrpTuple());
         BOOST_CHECK(boundary5.at(1)== Norm2Permutation(Transposition(3,1),Transposition(5,1)));
         BOOST_CHECK(boundary5.at(2)== s2);
         BOOST_CHECK(boundary5.at(3)== s1);
-        BOOST_CHECK(boundary6 != EvenTuple());
+        BOOST_CHECK(boundary6 != AltGrpTuple());
         BOOST_CHECK(boundary6.at(1)== Norm2Permutation(Transposition(1,0),Transposition(5,3)));
         BOOST_CHECK(boundary6.at(2)== s2);
         BOOST_CHECK(boundary6.at(3)== s1 );
     }
 
-    BOOST_FIXTURE_TEST_CASE(test_sigma_h_halves_of_eventuple, TestNorm2Permutations)
+    BOOST_FIXTURE_TEST_CASE(test_sigma_out, TestNorm2Permutations)
     {
-        EvenTuple::parallel_case();
-        EvenTuple T(6,3);
+        AltGrpTuple::parallel_case();
+        AltGrpTuple T(6,3);
         T.at(1)=t1;
         T.at(2)=t2;
         T.at(3)=t3;
 
-        Permutation sigma = T.sigma_h_halves();
+        Permutation sigma = T.sigma_out();
         BOOST_CHECK(sigma[0]==4 and sigma[4]==3 and sigma[3]==5 and sigma[5]==1
                     and sigma[1]==2 and sigma[2]==6 and sigma[6]==0);
 
         BOOST_CHECK(T.num_cycles()==1);
         BOOST_CHECK(T.has_correct_num_cycles(0));
 
-        EvenTuple::radial_case();
+        AltGrpTuple::radial_case();
         BOOST_CHECK(T.has_correct_num_cycles(1));
     }
 

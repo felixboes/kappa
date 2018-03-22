@@ -135,11 +135,11 @@ int main(int argc, char** argv)
 
     if (conf.parallel == true)
     {
-        Tuple::parallel_case();
+        SymGrpTuple::parallel_case();
     }
     else
     {
-        Tuple::radial_case();
+        SymGrpTuple::radial_case();
     }
 
     create_working_directories();

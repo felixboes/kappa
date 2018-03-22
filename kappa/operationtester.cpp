@@ -23,8 +23,8 @@
 
 #define force_template_instantiation( CoefficientType, MatrixComplex, VectorType  )\
     template class OperationTester< MatrixComplex,  VectorType  >;\
-    template VectorType kappa_dual( const CoefficientType& c, const Tuple& t, const MonoBasis& b );\
-    template void compute_and_add_kappa_dual_rec( const CoefficientType& c, const Tuple& t, const MonoBasis& b, VectorType& v, const std::vector<size_t> s, const size_t i );
+    template VectorType kappa_dual( const CoefficientType& c, const SymGrpTuple& t, const MonoBasis& b );\
+    template void compute_and_add_kappa_dual_rec( const CoefficientType& c, const SymGrpTuple& t, const MonoBasis& b, VectorType& v, const std::vector<size_t> s, const size_t i );
 
 
 force_template_instantiation(Q, ChainComplexQ, VectorQ)

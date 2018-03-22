@@ -24,7 +24,7 @@ MonoBasis::MonoBasis() : basis()
 {
 }
  
-uint32_t MonoBasis :: add_basis_element ( Tuple t )
+uint32_t MonoBasis :: add_basis_element ( SymGrpTuple t )
 {
     uint32_t id = basis.size();
     t.id = id;
@@ -33,7 +33,7 @@ uint32_t MonoBasis :: add_basis_element ( Tuple t )
     return id;
 }
 
-uint MonoBasis :: add_basis_element_reduced( Tuple t )
+uint MonoBasis :: add_basis_element_reduced( SymGrpTuple t )
 {
     if( t.is_multiple_of_a() )
     {
@@ -50,7 +50,7 @@ uint64_t MonoBasis :: size() const
     return basis.size();
 }
 
-int64_t MonoBasis :: id_of(const Tuple &t) const
+int64_t MonoBasis :: id_of(const SymGrpTuple &t) const
 {
     auto it = basis.find(t);
     if( it == basis.end() )

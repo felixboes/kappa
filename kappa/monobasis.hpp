@@ -37,10 +37,10 @@ struct MonoBasis
     MonoBasis();
     
     /// Add a basis element.
-    uint32_t add_basis_element ( Tuple t );
+    uint32_t add_basis_element ( SymGrpTuple t );
 
     /// Add a basis element that is not a multiple of a.
-    uint32_t add_basis_element_reduced ( Tuple t );
+    uint32_t add_basis_element_reduced ( SymGrpTuple t );
     
     /// output stream
     friend std::ostream& operator<< (std::ostream& stream, const MonoBasis& mb);
@@ -49,10 +49,10 @@ struct MonoBasis
     uint64_t size() const;
 
     /// Returns the index of the Tuple that is stored in the MonoBasis or -1.
-    int64_t id_of( const Tuple& t ) const;
+    int64_t id_of( const SymGrpTuple& t ) const;
     
     /// Stores the orderd basis.
-    std::unordered_set< Tuple, HashTuple > basis;
+    std::unordered_set< SymGrpTuple, HashSymGrpTuple > basis;
     
     friend class boost::serialization::access;
     
@@ -75,7 +75,7 @@ struct MonoBasis
     void load(Archive & ar, const unsigned int)
     {
         size_t size;
-        Tuple t;
+        SymGrpTuple t;
         
         ar & size;
         for( size_t i = 0; i < size; ++i )

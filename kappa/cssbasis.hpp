@@ -34,13 +34,13 @@
 struct CSSBasis
 {
     /// Stores the orderd basis where every cell has the same number l of cluster.
-    typedef std::unordered_set< Tuple, HashTuple > LBasisType;
+    typedef std::unordered_set< SymGrpTuple, HashSymGrpTuple > LBasisType;
     
     /// Stores the orderd basis, sorted by cluster sizes.
     typedef std::map< int32_t , LBasisType > BasisType;
     
     /// Add a basis element.
-    int32_t add_basis_element ( Tuple t );
+    int32_t add_basis_element ( SymGrpTuple t );
     
     /// output stream
     friend std::ostream& operator<< (std::ostream& stream, const CSSBasis& cssb);
@@ -52,10 +52,10 @@ struct CSSBasis
     int32_t total_size() const;
 
     /// Returns the relative (i.e. the cluster-) index of the Tuple that is stored in the CSSBasis or -1.
-    int32_t id_of( Tuple& t ) const;
+    int32_t id_of( SymGrpTuple& t ) const;
     
     /// Returns the total index of the Tuple that is stored in the CSSBasis or -1.
-    int32_t total_id_of( Tuple& t ) const;
+    int32_t total_id_of( SymGrpTuple& t ) const;
     
     BasisType basis;
     
@@ -91,7 +91,7 @@ struct CSSBasis
         {
             size_t l;
             ar & l;
-            Tuple t;
+            SymGrpTuple t;
             for( size_t j = 0; j < l; ++l )
             {
                 ar & t;

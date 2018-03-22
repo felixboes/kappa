@@ -69,15 +69,15 @@ public:
         the case, we add it to the basis in degree p. Thereby, basis elements are sorted according to the number
         of clusters.
     **/
-    void gen_bases( const uint32_t l, const uint32_t p, const uint32_t start_symbol, Tuple& tuple);
+    void gen_bases( const uint32_t l, const uint32_t p, const uint32_t start_symbol, SymGrpTuple& tuple);
     void gen_d0( int32_t p, int32_t l );
-    void gen_d0_boundary(const Tuple & tuple,
+    void gen_d0_boundary(const SymGrpTuple & tuple,
                          const int32_t p,
                          const int32_t l,
                          typename MatrixComplex::MatrixType & differential);
     
     void gen_d1_stage_1( const int32_t p, const int32_t l );
-    MatrixType gen_d1_row( const int32_t, const int32_t l, const Tuple& basis_element );
+    MatrixType gen_d1_row( const int32_t, const int32_t l, const SymGrpTuple& basis_element );
     void gen_d1_apply_operations( MatrixType& row );
     void prepare_d1_diag();
     void erase_d0();
@@ -97,7 +97,7 @@ public:
     
 };
 
-typedef std::vector<Tuple> CSSWork;
+typedef std::vector<SymGrpTuple> CSSWork;
 
 template< class MatrixComplex >
 void css_work_0(ClusterSpectralSequence<MatrixComplex> & css,

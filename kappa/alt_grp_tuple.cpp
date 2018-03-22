@@ -1,53 +1,53 @@
-#include "eventuple.hpp"
+#include "alt_grp_tuple.hpp"
 
-bool EvenTuple::radial = false;
-uint8_t EvenTuple::min_symbol = 1;
-uint8_t EvenTuple::min_boundary_offset = 1;
-uint8_t EvenTuple::max_boundary_offset = 1;
+bool AltGrpTuple::radial = false;
+uint8_t AltGrpTuple::min_symbol = 1;
+uint8_t AltGrpTuple::min_boundary_offset = 1;
+uint8_t AltGrpTuple::max_boundary_offset = 1;
 
 Norm2Permutation initialNorm2Permutation(Transposition(0, 0), Transposition(0, 0));
 
-EvenTuple::EvenTuple() :
+AltGrpTuple::AltGrpTuple() :
     p(0),
     rep()
 {
 }
 
-EvenTuple::EvenTuple(const size_t h_halves) :
+AltGrpTuple::AltGrpTuple(const size_t num_entries) :
     p(0),
-    rep(h_halves, initialNorm2Permutation)
+    rep(num_entries, initialNorm2Permutation)
 {
 }
 
-EvenTuple::EvenTuple(const uint8_t symbols, const size_t h_halves) :
+AltGrpTuple::AltGrpTuple(const uint8_t symbols, const size_t num_entries) :
     p(symbols),
-    rep(h_halves, initialNorm2Permutation)
+    rep(num_entries, initialNorm2Permutation)
 {
 }
 
-Norm2Permutation &EvenTuple::operator[](const size_t n)
+Norm2Permutation &AltGrpTuple::operator[](const size_t n)
 {
     return rep[n-1];
 }
 
-Norm2Permutation &EvenTuple::at(const size_t n)
+Norm2Permutation &AltGrpTuple::at(const size_t n)
 {
     return rep.at(n-1);
 }
 
-const Norm2Permutation &EvenTuple::at(const size_t n) const
+const Norm2Permutation &AltGrpTuple::at(const size_t n) const
 {
     return rep.at(n-1);
 }
 
-size_t EvenTuple::num_norm2permutations() const
+size_t AltGrpTuple::num_entries() const
 {
     return rep.size();
 }
 
-bool EvenTuple::has_correct_norm() const
+bool AltGrpTuple::has_correct_norm() const
 {
-    for(size_t i=1; i<= num_norm2permutations(); i++)
+    for(size_t i=1; i<= num_entries(); i++)
     {
         if( !PermutationManager::has_norm_two( at(i) ) )
         {
@@ -57,7 +57,7 @@ bool EvenTuple::has_correct_norm() const
     return true;
 }
 
-bool EvenTuple::operator==(const EvenTuple &t) const
+bool AltGrpTuple::operator==(const AltGrpTuple &t) const
 {
     // Observe how two vectors are compared
     // Operations == and != are performed by first comparing sizes, and if they match, the elements are compared
@@ -66,7 +66,7 @@ bool EvenTuple::operator==(const EvenTuple &t) const
     return (this->rep == t.rep);
 }
 
-bool EvenTuple::operator!=(const EvenTuple &t) const
+bool AltGrpTuple::operator!=(const AltGrpTuple &t) const
 {
     // Observe how two vectors are compared
     // Operations == and != are performed by first comparing sizes, and if they match, the elements are compared sequentially
@@ -75,7 +75,7 @@ bool EvenTuple::operator!=(const EvenTuple &t) const
     return (this->rep != t.rep);
 }
 
-void EvenTuple::radial_case()
+void AltGrpTuple::radial_case()
 {
     radial = true;
     min_symbol = 0;
@@ -83,7 +83,7 @@ void EvenTuple::radial_case()
     max_boundary_offset = 0;
 }
 
-void EvenTuple::parallel_case()
+void AltGrpTuple::parallel_case()
 {
     radial = false;
     min_symbol = 1;
@@ -91,30 +91,30 @@ void EvenTuple::parallel_case()
     max_boundary_offset = 1;
 }
 
-bool EvenTuple::is_radial()
+bool AltGrpTuple::is_radial()
 {
     return radial;
 }
 
-uint8_t EvenTuple::get_min_symbol()
+uint8_t AltGrpTuple::get_min_symbol()
 {
     return min_symbol;
 }
 
-uint8_t EvenTuple::get_min_boundary_offset()
+uint8_t AltGrpTuple::get_min_boundary_offset()
 {
     return min_boundary_offset;
 }
 
-uint8_t EvenTuple::get_max_boundary_offset()
+uint8_t AltGrpTuple::get_max_boundary_offset()
 {
     return max_boundary_offset;
 }
 
-std::ostream& operator<< (std::ostream& stream, const EvenTuple& eventuple)
+std::ostream& operator<< (std::ostream& stream, const AltGrpTuple& tuple)
 {
     stream << "( ";
-    for( auto it = eventuple.rep.crbegin(); it != eventuple.rep.crend(); ++it )
+    for( auto it = tuple.rep.crbegin(); it != tuple.rep.crend(); ++it )
     {
         stream << "(" << (uint8_t)it->first.first << "," <<  (uint8_t)it->first.second << ")"
                << "(" << (uint8_t)it->second.first << "," <<  (uint8_t)it->second.second << ")";
@@ -123,21 +123,21 @@ std::ostream& operator<< (std::ostream& stream, const EvenTuple& eventuple)
     return stream;
 }
 
-uint8_t EvenTuple :: num_cycles() const
+uint8_t AltGrpTuple :: num_cycles() const
 {
-    // count instead the number of cycles of sigma_h_halves_inv() as this is easier to compute than sigma_h_halves.
-    return PermutationManager::num_cycles(sigma_h_halves_inv());
+    // count instead the number of cycles of sigma_out_inv() as this is easier to compute than sigma_out.
+    return PermutationManager::num_cycles(sigma_out_inv());
 }
 
-bool EvenTuple :: has_correct_num_cycles(const size_t m) const
+bool AltGrpTuple :: has_correct_num_cycles(const size_t m) const
 {
     // min_symbol = 1 iff radial = false iff num_components = m + 'exactly one boundary component of the surface'
     return num_cycles() == m + min_symbol;
 }
 
-bool EvenTuple::write_in_Norm2Notation()
+bool AltGrpTuple::write_in_Norm2Notation()
 {
-    for( size_t i = 1; i <= num_norm2permutations(); i++ )
+    for( size_t i = 1; i <= num_entries(); i++ )
     {
         if( !PermutationManager::write_in_norm2notation(at(i)) )
         {
@@ -147,15 +147,15 @@ bool EvenTuple::write_in_Norm2Notation()
     return true;
 }
 
-bool EvenTuple::monotone()
+bool AltGrpTuple::fully_unstable()
 {
     if (!write_in_Norm2Notation())
     {
-        std::cerr << "Error in 'bool EvenTuple::monotone() -> "
-                  << "Some Norm2Permutation in the EvenTuple does not have norm two." << std::endl;
+        std::cerr << "Error in 'bool AltGrpTuple::fully_unstable() -> "
+                  << "Some Norm2Permutation in the AltGrpTuple does not have norm two." << std::endl;
         return false;
     }
-    for( size_t i = 1; i <= num_norm2permutations() - 1; i++ )
+    for( size_t i = 1; i <= num_entries() - 1; i++ )
     {
         if( at(i+1).second.first < at(i).first.first )
         {
@@ -165,12 +165,12 @@ bool EvenTuple::monotone()
     return true;
 }
 
-bool EvenTuple::f(uint8_t i)
+bool AltGrpTuple::f(uint8_t i)
 {
-    if( i == 0 or i >= num_norm2permutations())
+    if( i == 0 or i >= num_entries())
     {
-        std::cerr << "Error in 'bool EvenTuple::f( uint8_t i)' -> i="
-                  << std::to_string(i) << " and num_norm2permutations=" << std::to_string(num_norm2permutations())
+        std::cerr << "Error in 'bool AltGrpTuple::f( uint8_t i)' -> i="
+                  << std::to_string(i) << " and num_entries=" << std::to_string(num_entries())
                   << std::endl;
         return false;
     }
@@ -243,18 +243,18 @@ bool EvenTuple::f(uint8_t i)
         return true;
     }
 
-    std::cerr << "Error in 'bool EvenTuple::f(size_t i)' -> Reached impossible case." << std::endl;
+    std::cerr << "Error in 'bool AltGrpTuple::f(size_t i)' -> Reached impossible case." << std::endl;
 
     return false;
 }
 
-bool EvenTuple::phi(uint8_t q, uint8_t i)
+bool AltGrpTuple::phi(uint8_t q, uint8_t i)
 {
-    if( i == 0 or i > q or q>num_norm2permutations())
+    if( i == 0 or i > q or q> num_entries())
     {
-        std::cerr << "Error in 'bool EvenTuple::phi( uint8_t q, uint8_t i)' -> q=" << std::to_string(q)
-                  << " and i=" << std::to_string(i) << " and num_norm2permutations="
-                  << std::to_string(num_norm2permutations()) << std::endl;
+        std::cerr << "Error in 'bool AltGrpTuple::phi( uint8_t q, uint8_t i)' -> q=" << std::to_string(q)
+                  << " and i=" << std::to_string(i) << " and num_entries="
+                  << std::to_string(num_entries()) << std::endl;
         return false;
     }
 
@@ -269,22 +269,22 @@ bool EvenTuple::phi(uint8_t q, uint8_t i)
     return true;
 }
 
-EvenTuple EvenTuple::d_hor_double_complex(uint8_t j) const
+AltGrpTuple AltGrpTuple::d_hor_double_complex(uint8_t j) const
 {
     if(not is_radial() and (j==0 or j >= this->p))
     {
-        std::cerr << "Error in 'EvenTuple EvenTuple::d_hor_double_complex(uint8_t j) const': parallel case with "
+        std::cerr << "Error in 'AltGrpTuple AltGrpTuple::d_hor_double_complex(uint8_t j) const': parallel case with "
                   << "p=" << std::to_string(this->p) << " but j=" << std::to_string(j) << std::endl;
-        return EvenTuple();
+        return AltGrpTuple();
     }
     else if(is_radial() and j > this->p)
     {
-        std::cerr << "Error in 'EvenTuple EvenTuple::d_hor_double_complex(uint8_t j) const': radial case with "
+        std::cerr << "Error in 'AltGrpTuple AltGrpTuple::d_hor_double_complex(uint8_t j) const': radial case with "
                   << "p=" << std::to_string(this->p) << " but j=" << std::to_string(j) << std::endl;
-        return EvenTuple();
+        return AltGrpTuple();
     }
 
-    EvenTuple boundary = *this;
+    AltGrpTuple boundary = *this;
     // initialize sigma_qminus1_at_j for q=1 with sigma_0_at_j
     uint8_t sigma_qminus1_at_j = j+1;
     if(j==this->p)
@@ -292,7 +292,7 @@ EvenTuple EvenTuple::d_hor_double_complex(uint8_t j) const
         sigma_qminus1_at_j = 0;
     }
 
-    for(uint8_t q = 1; q <= boundary.num_norm2permutations(); ++q)
+    for(uint8_t q = 1; q <= boundary.num_entries(); ++q)
     {
         Norm2Permutation tau_q = this->at(q);
         uint8_t sigma_q_at_j = PermutationManager::value_at(tau_q, sigma_qminus1_at_j);
@@ -304,7 +304,7 @@ EvenTuple EvenTuple::d_hor_double_complex(uint8_t j) const
         else if(sigma_qminus1_at_j==j or sigma_q_at_j==j
                 or (sigma_qminus1_at_j!= sigma_q_at_j and tau_q_at_j==sigma_qminus1_at_j) )   //degenerate case
         {
-            return EvenTuple();
+            return AltGrpTuple();
         }
         else if(sigma_qminus1_at_j == sigma_q_at_j)
         {
@@ -317,16 +317,16 @@ EvenTuple EvenTuple::d_hor_double_complex(uint8_t j) const
         }
         else
         {
-            std::cerr << "Error in 'EvenTuple EvenTuple::d_hor_double_complex(uint8_t j) const': "
+            std::cerr << "Error in 'AltGrpTuple AltGrpTuple::d_hor_double_complex(uint8_t j) const': "
                   << "reached impossible case" << std::endl;
-            return EvenTuple();
+            return AltGrpTuple();
         }
 
         sigma_qminus1_at_j = sigma_q_at_j;
     }
 
     //renormalize boundary by dropping the new fixed point j
-    for(uint8_t q = 1; q <= boundary.num_norm2permutations(); ++q)
+    for(uint8_t q = 1; q <= boundary.num_entries(); ++q)
     {
         PermutationManager::drop_fixed_point(boundary.at(q), j);
         PermutationManager::write_in_norm2notation(boundary.at(q));
@@ -336,37 +336,37 @@ EvenTuple EvenTuple::d_hor_double_complex(uint8_t j) const
     return boundary;
 }
 
-EvenTuple EvenTuple::d_hor(uint8_t j) const
+AltGrpTuple AltGrpTuple::d_hor(uint8_t j) const
 {
-    EvenTuple boundary = d_hor_double_complex(j);
-    if (boundary==EvenTuple() or not boundary.monotone())
+    AltGrpTuple boundary = d_hor_double_complex(j);
+    if (boundary==AltGrpTuple() or not boundary.fully_unstable())
     {
-        return EvenTuple();
+        return AltGrpTuple();
     }
     return boundary;
 }
 
-std::map<uint8_t, int8_t> EvenTuple::orientation_sign() const
+std::map<uint8_t, int8_t> AltGrpTuple::orientation_sign() const
 {
-    Permutation sigma = sigma_h_halves();
+    Permutation sigma = sigma_out();
     return PermutationManager::orientation_sign_for_ehrenfried(sigma);
 }
 
-Permutation EvenTuple::long_cycle() const
+Permutation AltGrpTuple::long_cycle() const
 {
     return Permutation::long_cycle(p);
 }
 
-Permutation EvenTuple::long_cycle_inv() const
+Permutation AltGrpTuple::long_cycle_inv() const
 {
     return Permutation::long_cycle_inv(p);
 }
 
-Permutation EvenTuple::sigma_h_halves_inv() const
+Permutation AltGrpTuple::sigma_out_inv() const
 {
     Permutation sigma_inv = long_cycle_inv();
 
-    for (uint8_t i = 1; i <= num_norm2permutations(); ++i)
+    for (uint8_t i = 1; i <= num_entries(); ++i)
     {
         PermutationManager::multiply(sigma_inv, at(i).second);
         PermutationManager::multiply(sigma_inv, at(i).first);
@@ -375,16 +375,16 @@ Permutation EvenTuple::sigma_h_halves_inv() const
     return sigma_inv;
 }
 
-Permutation EvenTuple::sigma_h_halves() const
+Permutation AltGrpTuple::sigma_out() const
 {
-    return PermutationManager::inverse(sigma_h_halves_inv());
+    return PermutationManager::inverse(sigma_out_inv());
 }
 
-size_t HashEvenTuple :: operator ()( const EvenTuple &eventuple ) const
+size_t HashAltGrpTuple :: operator ()( const AltGrpTuple &tuple ) const
 {
     size_t hashvalue = 0;
     size_t offset = 2;
-    for( const auto& cit : eventuple.rep )
+    for( const auto& cit : tuple.rep )
     {
         hashvalue += offset*(cit.first.first + 4*cit.first.second + 16*cit.second.first + 64*cit.second.second);
         offset *= 256;

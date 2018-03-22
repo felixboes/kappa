@@ -18,8 +18,8 @@
 // along with kappa.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef TUPLE_HPP
-#define TUPLE_HPP
+#ifndef SYM_GRP_TUPLE_HPP
+#define SYM_GRP_TUPLE_HPP
 
 #include <cinttypes>
 #include <cstdarg>
@@ -36,15 +36,19 @@
 #include "permutation_manager.hpp"
 
 /**
- *  A Tuple of Transpositions \f$ ( \tau_h \mid \ldots \mid \tau_1 ) \f$.
+ *  A Tuple of Transpositions \f$ ( \tau_{num_entries} \mid \ldots \mid \tau_1 ) \f$.
  *
- *  Convention: We want an easy-to-check condition to test if a Tuple is in a bad state.
- *  We require that bad Tuples don't contain any transposition.
+ *  Note: usually (eg. whenever the SymGrpTuple is a generator in the Ehrenfried complex) we are only interested in the
+ *  case num_entries = h, where h is 2*g+m resp. 2*g+m-1 in the parallel resp. radial case. The class can be used for
+ *  arbitrary num_entries anyways.
+ *
+ *  Convention: We want an easy-to-check condition to test if a SymGrpTuple is in a bad state.
+ *  We require that bad SymGrpTuples don't contain any transposition.
 **/
-class Tuple
+class SymGrpTuple
 {
 public:
-    friend class HashTuple;
+    friend class HashSymGrpTuple;
     
     /**
      *  Data structure to store the connected components.
@@ -54,27 +58,27 @@ public:
     typedef std::vector<int32_t> ConnectedComponents;
 
     /**
-     *  Construct a Tuple of norm zero.
+     *  Construct a SymGrpTuple with zero entries.
      */
-    Tuple();
+    SymGrpTuple();
 
     /**
-     *  Construct a Tuple of norm h which has to be filled.
+     *  Construct a SymGrpTuple of norm num_entries which has to be filled.
      */
-    Tuple(const size_t h);
+    SymGrpTuple(const size_t num_entries);
     
     /**
-     *  Construct a Tuple of norm h on p symbols which has to be filled.
+     *  Construct a SymGrpTuple of norm num_entries on p symbols which has to be filled.
      */
-    Tuple(const uint32_t p, const size_t h);
+    SymGrpTuple(const uint32_t p, const size_t num_entries);
 
     /**
-     *  Access the \f$ i \f$-th Transposition of the Tuple. No bounds checked.
+     *  Access the \f$ i \f$-th Transposition of the SymGrpTuple. No bounds checked.
      */
     Transposition& operator[](const size_t n);
 
     /**
-     *  Access the \f$ i \f$-th Transposition of the Tuple (const version).
+     *  Access the \f$ i \f$-th Transposition of the SymGrpTuple (const version).
      */
     const Transposition& at(const size_t n) const;
     
@@ -84,50 +88,50 @@ public:
     Transposition& at(const size_t j);
     
     /**
-     *  @return Returns the norm (i.e. the number of transpositions).
+     *  @return Returns the number of entries (i.e. the number of transpositions).
      */
-    int32_t norm() const;
+    int32_t num_entries() const;
     
     /**
-     *  @return Returns true iff both Tuples are elementwise equal.
+     *  @return Returns true iff both SymGrpTuples are elementwise equal.
      */
-    bool operator==(const Tuple& t) const;
+    bool operator==(const SymGrpTuple& t) const;
     
     /**
-     *  @return Returns false iff both Tuples are elementwise equal.
+     *  @return Returns false iff both SymGrpTuples are elementwise equal.
      */
-    bool operator!=(const Tuple& t) const;
+    bool operator!=(const SymGrpTuple& t) const;
     
     /**
-     *  @return Returns true iff the tuple is not marked as degenerate.
+     *  @return Returns true iff the SymGrpTuple is not marked as degenerate.
      */
     operator bool() const;
 
     /** 
      *  output stream
      */
-    friend std::ostream& operator<< (std::ostream& stream, const Tuple& tuple);
+    friend std::ostream& operator<< (std::ostream& stream, const SymGrpTuple& tuple);
     
     /**
      *  Tells the number of cycles of the permutation
-     *    \f$ \sigma_h = \tau_h \cdot \ldots \cdot \tau_1 \cdot (1,2,\ldots,p) \f$.
-     * \param[in] min_symbol Minimum symbol that may be used in this tuple. The default value
+     *    \f$ \sigma_{num_entries} = \tau_{num_entries} \cdot \ldots \cdot \tau_1 \cdot (1,2,\ldots,p) \f$.
+     * \param[in] min_symbol Minimum symbol that may be used in this SymGrpTuple. The default value
      * is 1 since this is the case for parallel cells. Radial cells may also use the
      * symbol 0.
      */
     uint32_t num_cycles() const;
 
     /*!
-     * \brief Determines whether this Tuple has the correct number of cycles.
+     * \brief Determines whether this SymGrpTuple has the correct number of cycles.
      * \param m number of punctures
-     * \param radial true iff this Tuple represents a radial cell
+     * \param radial true iff this SymGrpTuple represents a radial cell
      * \return In the parallel case: true iff the number of cycles equals m + 1;
      *         in the radial case: true iff the number of cycles equals m.
      */
     bool has_correct_num_cycles(const size_t m) const;
 
     /*!
-     * \brief Determines wether this Tuple is in the product of the cocycle a with something else.
+     * \brief Determines wether this SymGrpTuple is in the product of the cocycle a with something else.
      * \returns In the parallel case: true iff it is the product.
      *          in the radial case: not yet implemented correctly.
      */
@@ -166,15 +170,17 @@ public:
     /**
      * @brief generates a single term of Q with respect to the given data.
     **/
-    Tuple Q_term( const std::vector< size_t >& shuffle_slit_conf, const size_t num_shuffle_pos, const size_t fuse_pos ) const;
+    SymGrpTuple Q_term( const std::vector< size_t >& shuffle_slit_conf, const size_t num_shuffle_pos, const size_t fuse_pos ) const;
     
     /**
-     *  @returns true iff the tuple is monotone.
+     *  @returns true iff the SymGrpTuple is fully unstable wrt. mueta
+     *  Note: also called 'monotone', as the SymGrpTuple is fully unstable iff the sequence of the heights of the
+     *  transpositions is monotone.
      */
-    bool monotone() const;
+    bool fully_unstable() const;
     
     /**
-     *  Applies the function \f$ f_i \f$ for \f$ 1 \le i < h \f$ and returns true iff the norm is preserved thereby.
+     *  Applies the function \f$ f_i \f$ for \f$ 1 \le i < num_entries() \f$ and returns true iff the norm is preserved thereby.
      */
     bool f(const uint32_t i);
     
@@ -184,21 +190,23 @@ public:
     bool phi( const uint32_t q, const uint32_t i);
     
     /** Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} and the projection on the monotonous cells.
-     *  Returns an empty tuple if the boundary is degenerate (with respect to the Ehrenfriedcomplex), the boundary tuple otherwise.
+     *  Returns an empty SymGrpTuple if the boundary is degenerate (with respect to the Ehrenfriedcomplex), the boundary
+     *  SymGrpTuple otherwise.
      *  \note The parameter i has to fulfill 0 < i < p.
      */
-    Tuple d_hor( const uint8_t i ) const;
+    SymGrpTuple d_hor( const uint8_t i ) const;
     
     /**
      *  Computes the boundary mod multiples of a.
      */
-    Tuple d_hor_reduced( const uint8_t i ) const;
+    SymGrpTuple d_hor_reduced( const uint8_t i ) const;
 
     /** Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} without the projection on the monotonous cells.
-     *  Returns an empty tuple if the boundary is degenerate (with respect to the double complex), the boundary tuple otherwise.
+     *  Returns an empty SymGrpTuple if the boundary is degenerate (with respect to the double complex), the boundary
+     *  SymGrpTuple otherwise.
      *  \note The parameter i has to fulfill 0 < i < p.
      */
-    Tuple d_hor_double_complex( const uint8_t i ) const;
+    SymGrpTuple d_hor_double_complex( const uint8_t i ) const;
     
     /**
      *  @returns the orientation signs \f$ \varepsilon_0, \ldots, \varepsilon_p \f$.
@@ -206,22 +214,22 @@ public:
     std::map< uint8_t, int8_t > orientation_sign() const;
     
     /**
-     *  Consider a Tuple as radial cell.
+     *  Consider a SymGrpTuple as radial cell.
      */ 
     static void radial_case();
     
     /**
-     *  Consider a Tuple as parallel cell.
+     *  Consider a SymGrpTuple as parallel cell.
      */ 
     static void parallel_case();
     
     /**
-     *  @returns true iff we consider a Tuple as radial cell.
+     *  @returns true iff we consider a SymGrpTuple as radial cell.
      */ 
-    static bool get_radial();
+    static bool is_radial();
     
     /**
-     *  @returns the minimal symbol allowed in a Tuple, i.e. 1 in the parallel case and 0 in the radial case.
+     *  @returns the minimal symbol allowed in a SymGrpTuple, i.e. 1 in the parallel case and 0 in the radial case.
      */ 
     static uint32_t get_min_symbol();
     
@@ -238,9 +246,9 @@ public:
     static uint32_t get_max_boundary_offset();
     
     /**
-     *  @returns the product of two tuples in the sense of the product of two slit domains.
+     *  @returns the product of two SymGrpTuples in the sense of the product of two slit domains.
      */
-    friend Tuple operator*( const Tuple& v_2, const Tuple& v_1 );
+    friend SymGrpTuple operator*( const SymGrpTuple& v_2, const SymGrpTuple& v_1 );
     
     /**
      *  @returns the data representation.
@@ -248,7 +256,7 @@ public:
     const std::vector< Transposition >& get_data_rep() const;
     
     uint32_t p; ///< The maximum of the symbols \f$ min_symbol \le p \f$ to be permuted.
-    size_t id;  ///< The index of this Tuple in the basis of the MonoComplex.
+    size_t id;  ///< The index of this SymGrpTuple in the basis of the MonoComplex.
 
 protected:
     /**
@@ -262,50 +270,51 @@ protected:
     Permutation long_cycle_inv() const;
     
     /**
-     *  @returns the permutation \f$ \sigma_h = \tau_h \cdots \tau_1 \sigma_0 \f$.
+     *  @returns the permutation sigma_out = \f$ \sigma_{num_entries} = \tau_{num_entries} \cdots \tau_1 \sigma_0 \f$,
+     *  that is the permutation of the outgoing boundary curve of the (radial) slit domain.
      */
-    Permutation sigma_h() const;
+    Permutation sigma_out() const;
 
     /**
-     * @returns the inverse permutation of sigma_h.
-     *  Note: this is easier to compute than sigma_h.
+     * @returns the inverse permutation of sigma_out.
+     *  Note: this is easier to compute than sigma_out.
      */
-    Permutation sigma_h_inv() const;
+    Permutation sigma_out_inv() const;
     
     //    DATA MEMBERS
-    std::vector< Transposition > rep;   ///< Representation of a tuple of transpositions \tau_1, ..., \tau_1.
-    static bool radial;                 ///< true iff we consider a Tuple as radial cell.
+    std::vector< Transposition > rep;   ///< Representation of a SymGrpTuple of transpositions \tau_1, ..., \tau_1.
+    static bool radial;                 ///< true iff we consider a SymGrpTuple as radial cell.
     static uint32_t min_symbol;         ///< is set by radial_case and parallel_case accordingly.
     static uint32_t min_boundary_offset;    ///< is set by radial_case and parallel_case accordingly.
     static uint32_t max_boundary_offset;    ///< is set by radial_case and parallel_case accordingly.
 
     friend class boost::serialization::access;
-    template <class Archive> void serialize(Archive &ar, const unsigned int) ///< Implements the serialization of Tuple.
+    template <class Archive> void serialize(Archive &ar, const unsigned int) ///< Implements the serialization of SymGrpTuple.
     {
         ar & p & id & rep;
     }
 };
 
 /**
- *  Create a tuple consisting of h transpositions \f$\tau_h \ldots \tau_1\f$.
+ *  Create a SymGrpTuple consisting of num_entries transpositions \f$\tau_{num_entries} \ldots \tau_1\f$.
  */
-Tuple create_cell( const size_t h, ... );
+SymGrpTuple create_cell( const size_t num_entries, ... );
 
 // output stream
-std::ostream& operator<< (std::ostream& stream, const Tuple& tuple);
+std::ostream& operator<< (std::ostream& stream, const SymGrpTuple& tuple);
 
 /**
- *  @returns the product of two tuples in the sense of the product of two slit domains.
+ *  @returns the product of two SymGrpTuples in the sense of the product of two slit domains.
  */
-Tuple operator*( const Tuple& v_2, const Tuple& v_1 );
+SymGrpTuple operator*( const SymGrpTuple& v_2, const SymGrpTuple& v_1 );
 
 /**
- *  In order to save Tuples in a hash table (e.g. in MonoBasis) we need a function object, that hashes Tuples.
+ *  In order to save SymGrpTuples in a hash table (e.g. in MonoBasis) we need a function object, that hashes SymGrpTuples.
  */ 
-class HashTuple
+class HashSymGrpTuple
 {
 public:
-    size_t operator()( const Tuple& ) const;
+    size_t operator()( const SymGrpTuple& ) const;
     
     friend class boost::serialization::access;
     
@@ -315,4 +324,4 @@ public:
     }
 };
 
-#endif // TUPLE_HPP
+#endif // SYM_GRP_TUPLE_HPP

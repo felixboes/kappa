@@ -45,7 +45,7 @@ MonoComplex< MatrixComplex > :: MonoComplex(
     diago.num_remaining_threads = number_remaining_threads;
 
     // Get parameter right.
-    if ( Tuple::get_radial() ) // For radial cells, we have h = 2g + m - 1.
+    if (SymGrpTuple::is_radial() ) // For radial cells, we have h = 2g + m - 1.
     {
         --h;
     }
@@ -56,15 +56,15 @@ MonoComplex< MatrixComplex > :: MonoComplex(
 
     // Generate all tuples with h transpositions containing the symbols 1, ..., p,
     // each at least once, with the correct number of cycles.
-    Tuple tuple(h);
+    SymGrpTuple tuple(h);
     tuple[1] = Transposition(2, 1);
     tuple.p = 2;
     gen_bases(1, 2, 1, tuple);  // We start with the transposition ... (2 1).
     // In the radial case, we also generate all tuples as above, but also containing
     // the symbol 0.
-    if ( Tuple::get_radial() )
+    if (SymGrpTuple::is_radial() )
     {
-        Tuple radial_tuple(h);
+        SymGrpTuple radial_tuple(h);
         radial_tuple.p = 1;
         radial_tuple[1] = Transposition(1, 0);
         gen_bases(1, 1, 0, radial_tuple);
@@ -90,7 +90,7 @@ void MonoComplex< MatrixComplex > :: show_basis( const int32_t p ) const
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t s, const uint32_t p, const uint32_t start_symbol, Tuple& tuple )
+void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t s, const uint32_t p, const uint32_t start_symbol, SymGrpTuple& tuple )
 {
     /* Up to now we have determined all monotonic tuples of s transpositions containing the
        symbols 1, ..., p, each at least once. We now add an (s+1)-th transposition and continue
@@ -127,7 +127,7 @@ void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t s, const uint32_t
                    i = 1, ..., p. Thus all indices i+1, ..., p are shifted up by one. */
         for(uint32_t i = start_symbol; i <= p; ++i)
         {
-            Tuple tmp = tuple;
+            SymGrpTuple tmp = tuple;
             for( uint32_t j = s; j >= 1; --j )
             {
                 if( tmp[j].first >= i )
@@ -157,7 +157,7 @@ void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t s, const uint32_t
         tuple.p = p+2;
         for( uint32_t i = start_symbol; i <= p + 1; ++i)
         {
-            Tuple tmp = tuple;
+            SymGrpTuple tmp = tuple;
             for( uint32_t j = s; j >= 1; j-- )
             {
                 if( tmp[j].first >= i )
@@ -204,15 +204,15 @@ void update_differential(MatrixType &           differential,
 }
 
 template< class MatrixComplex >
-void MonoComplex<MatrixComplex>::compute_boundary( Tuple & tuple, const uint32_t p, typename MatrixComplex::MatrixType & differential )
+void MonoComplex<MatrixComplex>::compute_boundary( SymGrpTuple & tuple, const uint32_t p, typename MatrixComplex::MatrixType & differential )
 {
     int32_t parity = 0;
-    Tuple boundary;
+    SymGrpTuple boundary;
     uint32_t s_q;
     for( uint32_t k = 0; k < factorial(h); k++ )
     // in each iteration we enumerate one sequence of indices according to the above formula
     {
-        Tuple current_basis = tuple;
+        SymGrpTuple current_basis = tuple;
         bool norm_preserved = true;
 
         // parity of the exponent of the sign of the current summand of the differential
@@ -245,7 +245,7 @@ void MonoComplex<MatrixComplex>::compute_boundary( Tuple & tuple, const uint32_t
                 or_sign.operator =( std::move(current_basis.orientation_sign()) );
             }
 
-            for( uint32_t i = Tuple::get_min_boundary_offset(); i <= p - Tuple::get_max_boundary_offset(); i++ )
+            for( uint32_t i = SymGrpTuple::get_min_boundary_offset(); i <= p - SymGrpTuple::get_max_boundary_offset(); i++ )
             {
                 if( (boundary = current_basis.d_hor(i)) )
                 {

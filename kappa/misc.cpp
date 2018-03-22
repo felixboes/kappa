@@ -344,9 +344,9 @@ std::string tex_preamble()
     return tex.str();
 }
 
-std::string tex_cell( const Tuple& cell )
+std::string tex_cell( const SymGrpTuple& cell )
 {
-    const int32_t h = cell.norm();
+    const int32_t h = cell.num_entries();
     const int32_t p = cell.p;
     
     std::stringstream tex;
@@ -365,7 +365,7 @@ std::string tex_cell( const Tuple& cell )
     return tex.str();
 }
 
-std::string tex_cell( const std::list<Tuple>& cells )
+std::string tex_cell( const std::list<SymGrpTuple>& cells )
 {
     std::stringstream tex;
     for( const auto& it : cells )

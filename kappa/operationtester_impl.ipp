@@ -454,7 +454,7 @@ typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< 
 //template< class MatrixComplex, class VectorT >
 //void OperationTester< MatrixComplex, VectorT > :: compute_and_add_Q(
 //    const CoefficientType& c,
-//    const Tuple& t,
+//    const SymGrpTuple& t,
 //    const MonoBasis& b,
 //    VectorType v )
 //{
@@ -468,7 +468,7 @@ typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< 
 //}
 
 template< class VectorT, class CoefficientT >
-VectorT kappa_dual( const CoefficientT& c, const Tuple& t, const MonoBasis& b)
+VectorT kappa_dual( const CoefficientT& c, const SymGrpTuple& t, const MonoBasis& b)
 {
     if( c == CoefficientT(0) )
     {
@@ -484,7 +484,7 @@ VectorT kappa_dual( const CoefficientT& c, const Tuple& t, const MonoBasis& b)
     //   k \mapsto (s_q)_q   where   s_q = ( |_  k/(q-1)!  _| (mod q) )
     VectorT v( b.size() );
     
-    const size_t h = t.norm();
+    const size_t h = t.num_entries();
     for( size_t k = 0; k < factorial(h); ++k )
     {
         std::vector< size_t > kappa_dual_seq;
@@ -513,7 +513,7 @@ VectorT kappa_dual( const CoefficientT& c, const Tuple& t, const MonoBasis& b)
 template< class VectorT, class CoefficientT >
 void compute_and_add_kappa_dual_rec(
     const CoefficientT& c,
-    const Tuple& t,
+    const SymGrpTuple& t,
     const MonoBasis& b,
     VectorT& v,
     const std::vector<size_t> s,
@@ -522,7 +522,7 @@ void compute_and_add_kappa_dual_rec(
     // End of kappa^\ast sequence.
     if( i == s.size() )
     {
-        if( t.monotone() == true )
+        if(t.fully_unstable() == true )
         {
             const auto j = b.id_of(t);
             if( j < 0 )
@@ -557,7 +557,7 @@ void compute_and_add_kappa_dual_rec(
     {
         compute_and_add_kappa_dual_rec( c, t, b, v, s, i+1);
         
-        Tuple tmp = t;
+        SymGrpTuple tmp = t;
         std::swap( tmp[ s_i + 1 ], tmp[ s_i ] );
         compute_and_add_kappa_dual_rec( c, tmp, b, v, s, i+1);
     }
@@ -566,7 +566,7 @@ void compute_and_add_kappa_dual_rec(
     {
         compute_and_add_kappa_dual_rec( c, t, b, v, s, i+1);
         
-        Tuple tmp = t;
+        SymGrpTuple tmp = t;
         tmp[ s_i + 1 ] = t.at( s_i );
         tmp[ s_i ] = Transposition( t.at(s_i).first, t.at(s_i + 1).second );
         compute_and_add_kappa_dual_rec( c, tmp, b, v, s, i+1);
@@ -580,7 +580,7 @@ void compute_and_add_kappa_dual_rec(
     {
         compute_and_add_kappa_dual_rec( c, t, b, v, s, i+1);
         
-        Tuple tmp = t;
+        SymGrpTuple tmp = t;
         tmp[ s_i + 1 ] = Transposition( t.at(s_i).first, t.at(s_i + 1).first );
         tmp[ s_i ] = t.at( s_i + 1 );
         compute_and_add_kappa_dual_rec( c, tmp, b, v, s, i+1);

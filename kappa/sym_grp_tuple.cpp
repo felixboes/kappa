@@ -1,7 +1,7 @@
 // The software kappa is a collection of programs to compute the homology of
 // the moduli space of surfaces using the radial model.
 // Copyright (C) 2013 - 2018  Felix Boes and Anna Hermann
-// 
+//
 // This file is part of kappa.
 // 
 // kappa is free software: you can redistribute it and/or modify
@@ -20,30 +20,30 @@
 
 #include "sym_grp_tuple.hpp"
 
-bool Tuple::radial = false;
-uint32_t Tuple::min_symbol = 1;
-uint32_t Tuple::min_boundary_offset = 1;
-uint32_t Tuple::max_boundary_offset = 1;
+bool SymGrpTuple::radial = false;
+uint32_t SymGrpTuple::min_symbol = 1;
+uint32_t SymGrpTuple::min_boundary_offset = 1;
+uint32_t SymGrpTuple::max_boundary_offset = 1;
 
-Tuple :: Tuple() :
+SymGrpTuple :: SymGrpTuple() :
     p(0),
     rep()
 {
 }
 
-Tuple :: Tuple(const size_t h) :
+SymGrpTuple :: SymGrpTuple(const size_t num_entries) :
     p(0),
-    rep( h, Transposition(0, 0) )
+    rep( num_entries, Transposition(0, 0) )
 {
 }
 
-Tuple :: Tuple(const uint32_t symbols, const size_t h) :
+SymGrpTuple :: SymGrpTuple(const uint32_t symbols, const size_t num_entries) :
     p(symbols),
-    rep( h, Transposition(0, 0) )
+    rep( num_entries, Transposition(0, 0) )
 {
 }
 
-void Tuple::parallel_case()
+void SymGrpTuple::parallel_case()
 {
     radial = false;
     min_symbol = 1;
@@ -51,7 +51,7 @@ void Tuple::parallel_case()
     max_boundary_offset = 1;
 }
 
-void Tuple::radial_case()
+void SymGrpTuple::radial_case()
 {
     radial = true;
     min_symbol = 0;
@@ -59,47 +59,47 @@ void Tuple::radial_case()
     max_boundary_offset = 0;
 }
 
-bool Tuple::get_radial()
+bool SymGrpTuple::is_radial()
 {
     return radial;
 }
 
-uint32_t Tuple::get_min_symbol()
+uint32_t SymGrpTuple::get_min_symbol()
 {
     return min_symbol;
 }
 
-uint32_t Tuple::get_min_boundary_offset()
+uint32_t SymGrpTuple::get_min_boundary_offset()
 {
     return min_boundary_offset;
 }
 
-uint32_t Tuple::get_max_boundary_offset()
+uint32_t SymGrpTuple::get_max_boundary_offset()
 {
     return max_boundary_offset;
 }
 
-Transposition & Tuple :: at(const size_t n)
+Transposition & SymGrpTuple :: at(const size_t n)
 {
     return rep.at(n-1);
 }
 
-const Transposition & Tuple :: at(const size_t n) const
+const Transposition & SymGrpTuple :: at(const size_t n) const
 {
     return rep.at(n-1);
 }
 
-Transposition& Tuple :: operator[](const size_t n)
+Transposition& SymGrpTuple :: operator[](const size_t n)
 {
     return rep[n-1];
 }
 
-int32_t Tuple :: norm() const
+int32_t SymGrpTuple :: num_entries() const
 {
     return rep.size();
 }
 
-bool Tuple :: operator==(const Tuple& t) const
+bool SymGrpTuple :: operator==(const SymGrpTuple& t) const
 {
     // Observe how two vectors are compared
     // Operations == and != are performed by first comparing sizes, and if they match, the elements are compared sequentially
@@ -108,7 +108,7 @@ bool Tuple :: operator==(const Tuple& t) const
     return (this->rep == t.rep);
 }
 
-bool Tuple :: operator!=(const Tuple& t) const
+bool SymGrpTuple :: operator!=(const SymGrpTuple& t) const
 {
     // Observe how two vectors are compared
     // Operations == and != are performed by first comparing sizes, and if they match, the elements are compared sequentially
@@ -117,7 +117,7 @@ bool Tuple :: operator!=(const Tuple& t) const
     return (this->rep != t.rep);
 }
 
-Tuple :: operator bool() const
+SymGrpTuple :: operator bool() const
 {
     if (rep.size() == 0)
     {
@@ -126,13 +126,13 @@ Tuple :: operator bool() const
     return true;
 }
 
-bool Tuple :: has_correct_num_cycles(const size_t m) const
+bool SymGrpTuple :: has_correct_num_cycles(const size_t m) const
 {
     // min_symbol = 1 iff radial = false iff num_components = m + 'exactly one boundary component of the surface'
     return num_cycles() == m + min_symbol;
 }
 
-bool Tuple :: is_multiple_of_a() const
+bool SymGrpTuple :: is_multiple_of_a() const
 {
     if( this->operator bool() == true )
     {
@@ -154,13 +154,13 @@ bool Tuple :: is_multiple_of_a() const
     return false;
 }
 
-uint32_t Tuple :: num_cycles() const
+uint32_t SymGrpTuple :: num_cycles() const
 {
-    // count instead the number of cycles of sigma_h_inv
-    return PermutationManager::num_cycles(sigma_h_inv());
+    // count instead the number of cycles of sigma_out_inv
+    return PermutationManager::num_cycles(sigma_out_inv());
 }
 
-Tuple::ConnectedComponents Tuple::connected_components() const
+SymGrpTuple::ConnectedComponents SymGrpTuple::connected_components() const
 {
     // TODO Adapt for radial case
     // Compare http://www.boost.org/doc/libs/1_49_0/libs/graph/example/connected_components.cpp
@@ -181,10 +181,10 @@ Tuple::ConnectedComponents Tuple::connected_components() const
 }
 
 /*
-std::vector< size_t > Tuple::shuffle_positions() const
+std::vector< size_t > SymGrpTuple::shuffle_positions() const
 {
     std::vector< size_t > slits;
-    const size_t h = norm();
+    const size_t h = num_entries();
     size_t k = 2*h;
     slits.push_back(k);
     
@@ -248,10 +248,10 @@ std::vector< size_t > Tuple::shuffle_positions() const
     return slits;
 }
 
-std::vector< size_t > Tuple::slits() const
+std::vector< size_t > SymGrpTuple::slits() const
 {
     std::vector< size_t > the_slits;
-    size_t h = norm();
+    size_t h = num_entries();
     
     for( size_t i = 1; i <= p; ++i )
     {
@@ -271,10 +271,10 @@ std::vector< size_t > Tuple::slits() const
     return the_slits;
 }
 
-Tuple Tuple::Q_term( const std::vector< size_t >& shuffle_slit_conf, const size_t num_shuffle_pos, const size_t fuse_pos ) const
+SymGrpTuple SymGrpTuple::Q_term( const std::vector< size_t >& shuffle_slit_conf, const size_t num_shuffle_pos, const size_t fuse_pos ) const
 {
-    const size_t h = norm();
-    Tuple res(2*p, 2*norm()); // We reduce p later.
+    const size_t h = num_entries();
+    SymGrpTuple res(2*p, 2*num_entries()); // We reduce p later.
     const auto the_slits = slits();
     const auto the_shuffles = shuffle_positions();
     
@@ -287,7 +287,7 @@ Tuple Tuple::Q_term( const std::vector< size_t >& shuffle_slit_conf, const size_
 }
 */
 
-int32_t Tuple::num_clusters() const
+int32_t SymGrpTuple::num_clusters() const
 {
     typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS> Graph;
 
@@ -305,10 +305,10 @@ int32_t Tuple::num_clusters() const
     return boost::connected_components(G, &components[0]) - min_symbol;
 }
 
-bool Tuple :: monotone() const
+bool SymGrpTuple :: fully_unstable() const
 {
-    // A tuple is monotone iff the sequence of all at(i) is monotone.
-    for( int32_t i = 1; i <= norm() - 1; i++ )
+    // A SymGrpTuple is fully unstable iff the sequence of all at(i) is monotone.
+    for( int32_t i = 1; i <= num_entries() - 1; i++ )
     {
         if( at(i+1).first < at(i).first )
         {
@@ -318,7 +318,7 @@ bool Tuple :: monotone() const
     return true;
 }
 
-bool Tuple :: f(const uint32_t i)
+bool SymGrpTuple :: f(const uint32_t i)
 {
     // Denote g_{i+1} | g_i by (ab)(cd).
     uint8_t a = at(i+1).first;
@@ -415,15 +415,15 @@ bool Tuple :: f(const uint32_t i)
             return true;
         }
     }
-    std::cerr << "Error in 'bool Tuple::f(uint32_t i)' -> Reached impossible case." << std::endl;
+    std::cerr << "Error in 'bool SymGrpTuple::f(uint32_t i)' -> Reached impossible case." << std::endl;
     return false;
 }
                  
-bool Tuple :: phi( const uint32_t q, const uint32_t i )
+bool SymGrpTuple :: phi( const uint32_t q, const uint32_t i )
 {
     if( i == 0 || i > q )
     {
-        std::cerr << "Error in 'bool Tuple::phi( uint32_t q, uint32_t i)' -> q=" << q << " and i=" << i << std::endl;
+        std::cerr << "Error in 'bool SymGrpTuple::phi( uint32_t q, uint32_t i)' -> q=" << q << " and i=" << i << std::endl;
         return false;
     }
 
@@ -437,15 +437,15 @@ bool Tuple :: phi( const uint32_t q, const uint32_t i )
     return true;
 }
 
-Tuple Tuple :: d_hor( const uint8_t k ) const
+SymGrpTuple SymGrpTuple :: d_hor( const uint8_t k ) const
 {
-    Tuple boundary = *this;
+    SymGrpTuple boundary = *this;
     
     // start with sigma_0.
     Permutation sigma = long_cycle();
     Permutation sigma_inv = long_cycle_inv();
     
-    for(uint8_t q = 1; q <= boundary.norm(); ++q)
+    for(uint8_t q = 1; q <= boundary.num_entries(); ++q)
     {
         // Write tau_q = (a,b)
         auto a = boundary[q].first;
@@ -464,7 +464,7 @@ Tuple Tuple :: d_hor( const uint8_t k ) const
         // k and l are both part of tau_q.
         else if( a == std::max(k, l) and ( b == std::min(k, l) or k == l))
         {
-            return Tuple();
+            return SymGrpTuple();
         }
         // The non degenerate case:
         else
@@ -510,14 +510,15 @@ Tuple Tuple :: d_hor( const uint8_t k ) const
         std::swap( sigma_inv[a], sigma_inv[b] );
     }
 
-    // boundary is monotone iff its renormalization is monotone. Thus we check for monotony now to avoid unnecessary renormalization.
-    if (not boundary.monotone())
+    // boundary is fully_unstable iff its renormalization is fully_unstable. Thus we check for unstability now to avoid
+    // unnecessary renormalization.
+    if (not boundary.fully_unstable())
     {
-        return Tuple();
+        return SymGrpTuple();
     }
     
     // Renormalize all tau'
-    for(uint8_t q = 1; q <= boundary.norm(); ++q)
+    for(uint8_t q = 1; q <= boundary.num_entries(); ++q)
     {
         // Write tau_q = (a,b)
         auto& a = boundary[q].first;
@@ -538,28 +539,28 @@ Tuple Tuple :: d_hor( const uint8_t k ) const
     return boundary;
 }
 
-Tuple Tuple :: d_hor_reduced(const uint8_t i) const
+SymGrpTuple SymGrpTuple :: d_hor_reduced(const uint8_t i) const
 {
-    const Tuple boundary = this->d_hor(i);
+    const SymGrpTuple boundary = this->d_hor(i);
     if( boundary.is_multiple_of_a() == false )
     {
         return boundary;
     }
     else
     {
-        return Tuple();
+        return SymGrpTuple();
     }
 }
 
-Tuple Tuple :: d_hor_double_complex( const uint8_t k ) const
+SymGrpTuple SymGrpTuple :: d_hor_double_complex( const uint8_t k ) const
 {
-    Tuple boundary = *this;
+    SymGrpTuple boundary = *this;
     
     // start with sigma_0.
     Permutation sigma = long_cycle();
     Permutation sigma_inv = long_cycle_inv();
     
-    for(uint8_t q = 1; q <= boundary.norm(); ++q)
+    for(uint8_t q = 1; q <= boundary.num_entries(); ++q)
     {
         // Write tau_q = (a,b)
         auto a = boundary[q].first;
@@ -578,7 +579,7 @@ Tuple Tuple :: d_hor_double_complex( const uint8_t k ) const
         // k and l are both part of tau_q.
         else if( a == std::max(k, l) and ( b == std::min(k, l) or k == l))
         {
-            return Tuple();
+            return SymGrpTuple();
         }
         // The non degenerate case:
         else
@@ -625,7 +626,7 @@ Tuple Tuple :: d_hor_double_complex( const uint8_t k ) const
     }
     
     // Renormalize all tau'
-    for(uint8_t q = 1; q <= boundary.norm(); ++q)
+    for(uint8_t q = 1; q <= boundary.num_entries(); ++q)
     {
         // Write tau_q = (a,b)
         auto& a = boundary[q].first;
@@ -646,46 +647,46 @@ Tuple Tuple :: d_hor_double_complex( const uint8_t k ) const
     return boundary;
 }
 
-Permutation Tuple::sigma_h_inv() const
+Permutation SymGrpTuple::sigma_out_inv() const
 {
     Permutation sigma_inv = long_cycle_inv();
 
-    for (uint8_t i = 1; i <= norm(); ++i) {
+    for (uint8_t i = 1; i <= num_entries(); ++i) {
         PermutationManager::multiply(sigma_inv, at(i));
     }
 
     return sigma_inv;
 }
 
-Permutation Tuple::sigma_h() const
+Permutation SymGrpTuple::sigma_out() const
 {
-    return PermutationManager::inverse(sigma_h_inv());
+    return PermutationManager::inverse(sigma_out_inv());
 }
 
-std::map< uint8_t, int8_t > Tuple::orientation_sign( ) const
+std::map< uint8_t, int8_t > SymGrpTuple::orientation_sign( ) const
 {
-    Permutation sigma = sigma_h();
+    Permutation sigma = sigma_out();
     return PermutationManager::orientation_sign_for_ehrenfried(sigma);
 }
 
-Permutation Tuple::long_cycle() const
+Permutation SymGrpTuple::long_cycle() const
 {
     return Permutation::long_cycle(p);
 }
 
-Permutation Tuple::long_cycle_inv() const
+Permutation SymGrpTuple::long_cycle_inv() const
 {
     return Permutation::long_cycle_inv(p);
 }
 
-Tuple create_cell( const size_t h, ... )
+SymGrpTuple create_cell( const size_t num_entries, ... )
 {
-    Tuple t(h);
+    SymGrpTuple t(num_entries);
     t.p = 0;
     va_list args;
-    va_start(args, h);
+    va_start(args, num_entries);
     
-    for ( size_t i = h; i > 0; --i )
+    for ( size_t i = num_entries; i > 0; --i )
     {
         const uint8_t a = va_arg(args, int);
         const uint8_t b = va_arg(args, int);
@@ -696,7 +697,7 @@ Tuple create_cell( const size_t h, ... )
     return t;
 }
 
-size_t HashTuple :: operator ()( const Tuple &tuple ) const
+size_t HashSymGrpTuple :: operator ()( const SymGrpTuple &tuple ) const
 {
     size_t hashvalue = 0;
     size_t offset = 2;
@@ -708,7 +709,7 @@ size_t HashTuple :: operator ()( const Tuple &tuple ) const
     return hashvalue;
 }
 
-std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
+std::ostream& operator<< (std::ostream& stream, const SymGrpTuple& tuple)
 {
     for( auto it = tuple.rep.crbegin(); it != tuple.rep.crend(); ++it )
     {
@@ -726,15 +727,15 @@ std::ostream& operator<< (std::ostream& stream, const Tuple& tuple)
     return stream;
 }
 
-Tuple operator*( const Tuple& v_2, const Tuple& v_1 )
+SymGrpTuple operator*( const SymGrpTuple& v_2, const SymGrpTuple& v_1 )
 {
     const uint32_t & p_1 = v_1.p;
     const uint32_t & p_2 = v_2.p;
     
-    const size_t h_1 = v_1.norm();
-    const size_t h_2 = v_2.norm();
+    const size_t h_1 = v_1.num_entries();
+    const size_t h_2 = v_2.num_entries();
     const size_t h_prod = h_1 + h_2;
-    Tuple prod;
+    SymGrpTuple prod;
     prod.p = p_1 + p_2;
     prod.id = std::numeric_limits< size_t >::max();
     

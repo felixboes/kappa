@@ -40,13 +40,13 @@ public:
     MonoCochainField( const uint32_t genus, const uint32_t num_punct, const uint32_t cohom_deg, const bool radial_model_used );
     MonoCochainField( const uint32_t genus, const uint32_t num_punct, const uint32_t cohom_deg, const bool radial_model_used, const std::string& the_name );
 
-    CoefficientType & operator()( const Tuple& t );
+    CoefficientType & operator()( const SymGrpTuple& t );
 
-    const CoefficientType& at( const Tuple& t ) const;
+    const CoefficientType& at( const SymGrpTuple& t ) const;
 
     std::string set_name( const std::string& new_name );
 
-    void add_kappa_dual( const CoefficientType& c, const Tuple& t );
+    void add_kappa_dual( const CoefficientType& c, const SymGrpTuple& t );
 
     template< class T >
     friend ThisType operator*( const ThisType&, const ThisType& );

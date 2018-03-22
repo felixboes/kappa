@@ -125,7 +125,7 @@ void test_( const MonoCochainField< CoefficientT >& cochain )
 }
 
 template< class CoefficientT >
-void test_( const std::string& name, const uint32_t g, const uint32_t m, const uint32_t homological_p, const Tuple& cell )
+void test_( const std::string& name, const uint32_t g, const uint32_t m, const uint32_t homological_p, const SymGrpTuple& cell )
 {
     MonoCochainField< CoefficientT > cochain(g, m, 4*g+2*m-homological_p );
     cochain.add_kappa_dual( CoefficientT(1),cell);

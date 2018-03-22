@@ -379,7 +379,7 @@ bool HighCell :: phi( const uint32_t q, const uint32_t i )
 
     for( uint32_t j = q-1; j >= i; j-- ) // The loop terminates due to i > 0.
     {
-        if( f(j) == false ) // The norm of the product falls.
+        if( f(j) == false ) // The num_entries of the product falls.
         {
             return false;
         }

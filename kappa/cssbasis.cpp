@@ -20,7 +20,7 @@
 
 #include "cssbasis.hpp"
 
-int32_t CSSBasis :: add_basis_element ( Tuple t )
+int32_t CSSBasis :: add_basis_element ( SymGrpTuple t )
 {
     uint32_t num_clusters = t.num_clusters();
     LBasisType& l_basis = basis[num_clusters];
@@ -46,7 +46,7 @@ int32_t CSSBasis :: total_size() const
     return size;
 }
 
-int32_t CSSBasis :: id_of( Tuple& t ) const
+int32_t CSSBasis :: id_of( SymGrpTuple& t ) const
 {
     for( auto& l_basis_it : basis )
     {
@@ -60,7 +60,7 @@ int32_t CSSBasis :: id_of( Tuple& t ) const
     return -1;
 }
 
-int32_t CSSBasis :: total_id_of( Tuple& t ) const
+int32_t CSSBasis :: total_id_of( SymGrpTuple& t ) const
 {
     int64_t basis_offset(0);
     

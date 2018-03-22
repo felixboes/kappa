@@ -102,12 +102,12 @@ std::string tex_preamble();
 /**
  *  @returns the tex code for a given cell.
 **/
-std::string tex_cell( const Tuple& cell );
+std::string tex_cell( const SymGrpTuple& cell );
 
 /**
  *  @returns the tex code for a given list of cells.
 **/
-std::string tex_cell( const std::list<Tuple>& cells );
+std::string tex_cell( const std::list<SymGrpTuple>& cells );
 
 /**
  *  @returns the end of the tex file.
