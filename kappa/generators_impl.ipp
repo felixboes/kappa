@@ -21,9 +21,9 @@
 #include "ehr_generators.hpp"
 
 template< class CoefficientT >
-MonoCochainField< CoefficientT > create_cochain( const EhrGenerator& name )
+EhrCochainField< CoefficientT > create_cochain( const EhrGenerator& name )
 {
-    typedef MonoCochainField< CoefficientT > CochainType;
+    typedef EhrCochainField< CoefficientT > CochainType;
     switch( name )
     {
     

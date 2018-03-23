@@ -173,7 +173,7 @@ public:
 
 
     uint8_t p; ///< The maximum of the symbols \f$ min_symbol() \le p \f$ to be permuted.
-    size_t id;  ///< The index of this AltGrpTuple in the basis of the MonoComplex.
+    size_t id;  ///< The index of this AltGrpTuple in the basis of the EhrComplex.
 
 protected:
 
@@ -205,7 +205,7 @@ protected:
 
 
 /**
- *  In order to save AltGrpTuples in a hash table (e.g. in MonoBasis) we need a function object, that hashes
+ *  In order to save AltGrpTuples in a hash table (e.g. in EhrBasis) we need a function object, that hashes
  *  AltGrpTuples.
  */
 class HashAltGrpTuple

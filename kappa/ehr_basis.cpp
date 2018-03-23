@@ -18,13 +18,13 @@
 // along with kappa.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "monobasis.hpp"
+#include "ehr_basis.hpp"
 
-MonoBasis::MonoBasis() : basis()
+EhrBasis::EhrBasis() : basis()
 {
 }
  
-uint32_t MonoBasis :: add_basis_element ( SymGrpTuple t )
+uint32_t EhrBasis :: add_basis_element ( SymGrpTuple t )
 {
     uint32_t id = basis.size();
     t.id = id;
@@ -33,7 +33,7 @@ uint32_t MonoBasis :: add_basis_element ( SymGrpTuple t )
     return id;
 }
 
-uint MonoBasis :: add_basis_element_reduced( SymGrpTuple t )
+uint EhrBasis :: add_basis_element_reduced( SymGrpTuple t )
 {
     if( t.is_multiple_of_a() )
     {
@@ -45,12 +45,12 @@ uint MonoBasis :: add_basis_element_reduced( SymGrpTuple t )
     }
 }
 
-uint64_t MonoBasis :: size() const
+uint64_t EhrBasis :: size() const
 {
     return basis.size();
 }
 
-int64_t MonoBasis :: id_of(const SymGrpTuple &t) const
+int64_t EhrBasis :: id_of(const SymGrpTuple &t) const
 {
     auto it = basis.find(t);
     if( it == basis.end() )
@@ -63,7 +63,7 @@ int64_t MonoBasis :: id_of(const SymGrpTuple &t) const
     }
 }
 
-MonoBasis load_mono_basis( const uint32_t g, const uint32_t m, const int32_t p, const bool radial )
+EhrBasis load_ehr_basis(const uint32_t g, const uint32_t m, const int32_t p, const bool radial)
 {
     std::string filename =
             "./cache/bases_" + std::string(radial == true ? "radial" : "parallel") + "/" +
@@ -71,10 +71,10 @@ MonoBasis load_mono_basis( const uint32_t g, const uint32_t m, const int32_t p, 
             std::to_string(m) + "_" +
             std::to_string(p);
 
-    return load_from_file_bz2< MonoBasis >( filename, false );
+    return load_from_file_bz2< EhrBasis >( filename, false );
 }
 
-std::ostream& operator<< ( std::ostream& os, const MonoBasis& mb )
+std::ostream& operator<< ( std::ostream& os, const EhrBasis& mb )
 {
     for( const auto it : mb.basis )
     {

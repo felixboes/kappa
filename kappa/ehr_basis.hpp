@@ -18,8 +18,8 @@
 // along with kappa.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef MONOBASIS_HPP
-#define MONOBASIS_HPP
+#ifndef EHR_BASIS_HPP
+#define EHR_BASIS_HPP
 
 #include <iostream>
 #include <unordered_set>
@@ -30,11 +30,11 @@
 #include "sym_grp_tuple.hpp"
 
 /**
-    The MonoBasis keeps track of the basis elements of a module in a MonoComplex.
+    The EhrBasis keeps track of the basis elements of a module in a EhrComplex.
 **/
-struct MonoBasis
+struct EhrBasis
 {
-    MonoBasis();
+    EhrBasis();
     
     /// Add a basis element.
     uint32_t add_basis_element ( SymGrpTuple t );
@@ -43,12 +43,12 @@ struct MonoBasis
     uint32_t add_basis_element_reduced ( SymGrpTuple t );
     
     /// output stream
-    friend std::ostream& operator<< (std::ostream& stream, const MonoBasis& mb);
+    friend std::ostream& operator<< (std::ostream& stream, const EhrBasis& mb);
     
     /// Returns the number of basis elements.
     uint64_t size() const;
 
-    /// Returns the index of the Tuple that is stored in the MonoBasis or -1.
+    /// Returns the index of the Tuple that is stored in the EhrBasis or -1.
     int64_t id_of( const SymGrpTuple& t ) const;
     
     /// Stores the orderd basis.
@@ -57,7 +57,7 @@ struct MonoBasis
     friend class boost::serialization::access;
     
     /// @warning The serialization library from boost does not yet support unorderd maps (we use boost in the version 1.49). Therefore we must provide a workaround.
-    /// boost::serialization method that we use to save a MonoBasis to file.
+    /// boost::serialization method that we use to save a EhrBasis to file.
     template<class Archive>
     void save(Archive & ar, const unsigned int) const
     {
@@ -70,7 +70,7 @@ struct MonoBasis
         }
     }
     
-    /// boost::serialization method that we use to load a MonoBasis from file.
+    /// boost::serialization method that we use to load a EhrBasis from file.
     template<class Archive>
     void load(Archive & ar, const unsigned int)
     {
@@ -89,8 +89,8 @@ struct MonoBasis
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
-MonoBasis load_mono_basis( const uint32_t g, const uint32_t m, const int32_t p, const bool radial );
+EhrBasis load_ehr_basis(const uint32_t g, const uint32_t m, const int32_t p, const bool radial);
 
-std::ostream& operator<< (std::ostream& stream, const MonoBasis& basis);
+std::ostream& operator<< (std::ostream& stream, const EhrBasis& basis);
 
-#endif // MONOBASIS_HPP
+#endif // EHR_BASIS_HPP

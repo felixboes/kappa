@@ -26,7 +26,7 @@
 //    MatrixField< CoefficientT > image  = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p-1) + "_base_changes", false );
 //    MatrixField< CoefficientT > kernel = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
 //    MatrixField< CoefficientT > vanishing_test = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
-//    MonoBasis basis = load_parallel_mono_basis( g, m, p );
+//    EhrBasis basis = load_parallel_ehr_basis( g, m, p );
 
 //    auto base = compute_base_of_kernel< MatrixField<CoefficientT>, VectorField<CoefficientT> >( kernel );
 //    for( const auto& v : base )
@@ -58,7 +58,7 @@
 //    MatrixField< CoefficientT > image  = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p-1) + "_base_changes", false );
 //    MatrixField< CoefficientT > kernel = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
 //    MatrixField< CoefficientT > vanishing_test = load_from_file_bz2< MatrixField< CoefficientT > >( filename_prefix_parallel_differentials<CoefficientT>(g,m) + std::to_string(p) + "_triangular", false );
-//    MonoBasis basis = load_parallel_mono_basis( g, m, p );
+//    EhrBasis basis = load_parallel_ehr_basis( g, m, p );
 
 
 //    std::cout << tex_preamble();
@@ -116,7 +116,7 @@ VectorField< CoefficientT > cohomology_class( const uint32_t g, const uint32_t m
 }
 
 template< class CoefficientT >
-void test_( const MonoCochainField< CoefficientT >& cochain )
+void test_( const EhrCochainField< CoefficientT >& cochain )
 {
     std::cout << "Name                  = " << cochain.get_name() << std::endl;
     std::cout << "(g,m,p)               = (" << cochain.get_g() << "," << cochain.get_m() << "," << 4*cochain.get_g() + 2*cochain.get_m() - cochain.get_p() << ")" << std::endl;
@@ -127,7 +127,7 @@ void test_( const MonoCochainField< CoefficientT >& cochain )
 template< class CoefficientT >
 void test_( const std::string& name, const uint32_t g, const uint32_t m, const uint32_t homological_p, const SymGrpTuple& cell )
 {
-    MonoCochainField< CoefficientT > cochain(g, m, 4*g+2*m-homological_p );
+    EhrCochainField< CoefficientT > cochain(g, m, 4*g+2*m-homological_p );
     cochain.add_kappa_dual( CoefficientT(1),cell);
     
     test_< CoefficientT >(name, g, m, homological_p, cochain);

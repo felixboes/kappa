@@ -18,27 +18,27 @@
 // along with kappa.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef MONOCOCHAINFIELD_H
-#define MONOCOCHAINFIELD_H
+#ifndef EHR_COCHAINFIELD_H
+#define EHR_COCHAINFIELD_H
 
 #include <libhomology/homology.hpp>
 
 #include "sym_grp_tuple.hpp"
-#include "monobasis.hpp"
+#include "ehr_basis.hpp"
 #include "operationtester.hpp"
 
 template< class CoefficientT >
-class MonoCochainField : public VectorField< CoefficientT >
+class EhrCochainField : public VectorField< CoefficientT >
 {
 public:
     typedef CoefficientT CoefficientType;
-    typedef MonoCochainField< CoefficientType > ThisType;
+    typedef EhrCochainField< CoefficientType > ThisType;
     typedef typename VectorField< CoefficientType > :: ThisType VectorType;
     typedef typename VectorField< CoefficientType > :: VectorStorageType VectorStorageType;
 
-    MonoCochainField( const uint32_t genus, const uint32_t num_punct, const uint32_t cohom_deg );
-    MonoCochainField( const uint32_t genus, const uint32_t num_punct, const uint32_t cohom_deg, const bool radial_model_used );
-    MonoCochainField( const uint32_t genus, const uint32_t num_punct, const uint32_t cohom_deg, const bool radial_model_used, const std::string& the_name );
+    EhrCochainField( const uint32_t genus, const uint32_t num_punct, const uint32_t cohom_deg );
+    EhrCochainField( const uint32_t genus, const uint32_t num_punct, const uint32_t cohom_deg, const bool radial_model_used );
+    EhrCochainField( const uint32_t genus, const uint32_t num_punct, const uint32_t cohom_deg, const bool radial_model_used, const std::string& the_name );
 
     CoefficientType & operator()( const SymGrpTuple& t );
 
@@ -61,14 +61,14 @@ public:
 
     std::string get_name() const;
 
-    const MonoBasis& get_basis_reference() const;
+    const EhrBasis& get_basis_reference() const;
 
     // grant std::ostream access in order to print matrices to ostreams.
     template< class T >
-    friend std::ostream& operator<< ( std::ostream& stream, const MonoCochainField<T> & cochain );
+    friend std::ostream& operator<< ( std::ostream& stream, const EhrCochainField<T> & cochain );
 
 protected:
-    MonoBasis basis;
+    EhrBasis basis;
     uint32_t g;
     uint32_t m;
     uint32_t p;
@@ -77,6 +77,6 @@ protected:
 };
 
 template< typename CoefficientT >
-MonoCochainField< CoefficientT > operator*( const MonoCochainField< CoefficientT >&  x, const MonoCochainField< CoefficientT >& y );
+EhrCochainField< CoefficientT > operator*( const EhrCochainField< CoefficientT >&  x, const EhrCochainField< CoefficientT >& y );
 
 #endif

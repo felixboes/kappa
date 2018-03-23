@@ -18,8 +18,8 @@
 // along with kappa.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "monocomplex.hpp"
-#include "monocomplex_impl.ipp"
+#include "ehr_complex.hpp"
+#include "ehr_complex_impl.ipp"
 
 
 template<>
@@ -50,16 +50,16 @@ void update_differential(MatrixBoolCSS &        differential,
 
 // We do not store homchains for Zm right now.
 template<>
-void MonoComplex< ChainComplexZm > :: homchain(int32_t p, bool homology, int32_t maxdimension)
+void EhrComplex< ChainComplexZm > :: homchain(int32_t p, bool homology, int32_t maxdimension)
 {
     (void)p;
     (void)homology;
     (void)maxdimension;
 }
 #define force_template_instantiation(MatrixComplex) \
-    template class MonoComplex<MatrixComplex>;\
+    template class EhrComplex<MatrixComplex>;\
     template void update_differential(MatrixComplex &differential, const size_t row, const size_t column, const int32_t, const int8_t, const int8_t, const SignConvention &);\
-    template void monocomplex_work(MonoComplex<MatrixComplex> & monocomplex, MonocomplexWork & work, const uint32_t p, MatrixComplex::MatrixType & differential);
+    template void ehr_complex_work(EhrComplex<MatrixComplex> & ehrcomplex, EhrComplexWork & work, const uint32_t p, MatrixComplex::MatrixType & differential);
 
 force_template_instantiation(ChainComplexQ)
 force_template_instantiation(ChainComplexZm)

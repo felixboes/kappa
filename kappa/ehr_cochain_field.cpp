@@ -18,13 +18,13 @@
 // along with kappa.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "monocochain_field.hpp"
-#include "monocochain_field_impl.ipp"
+#include "ehr_cochain_field.hpp"
+#include "ehr_cochain_field_impl.ipp"
 
 #define force_template_instantiation(Coeff) \
-    template class MonoCochainField<Coeff>;\
-    template std::ostream& operator<< ( std::ostream& stream, const MonoCochainField<Coeff> & cochain );\
-    template MonoCochainField< Coeff > operator*( const MonoCochainField< Coeff >&  x, const MonoCochainField< Coeff >& y );
+    template class EhrCochainField<Coeff>;\
+    template std::ostream& operator<< ( std::ostream& stream, const EhrCochainField<Coeff> & cochain );\
+    template EhrCochainField< Coeff > operator*( const EhrCochainField< Coeff >&  x, const EhrCochainField< Coeff >& y );
 
 force_template_instantiation(Q)
 force_template_instantiation(Zm)

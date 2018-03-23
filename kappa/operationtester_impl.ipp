@@ -27,7 +27,7 @@ OperationTester< MatrixComplex, VectorT >::OperationTester( std::string coeff_pr
 }
 
 template< class MatrixComplex, class VectorT >
-bool OperationTester< MatrixComplex, VectorT >::load_basis( const MonoIndex& idx, bool print_status_messages )
+bool OperationTester< MatrixComplex, VectorT >::load_basis( const EhrIndex& idx, bool print_status_messages )
 {
     std::string filename = 
         std::string("./cache/bases_") + std::string( (std::get<0>(idx) == true ? "parallel" : "radial") ) + std::string("/") + 
@@ -39,7 +39,7 @@ bool OperationTester< MatrixComplex, VectorT >::load_basis( const MonoIndex& idx
     {
         if( basis.count( idx ) == 0 )
         {
-            basis.insert( std::make_pair( idx, load_from_file_bz2< MonoBasis >( filename, print_status_messages ) ) );
+            basis.insert( std::make_pair( idx, load_from_file_bz2< EhrBasis >( filename, print_status_messages ) ) );
         }
         else if( print_status_messages == true )
         {
@@ -60,11 +60,11 @@ bool OperationTester< MatrixComplex, VectorT >::load_basis( const MonoIndex& idx
 template< class MatrixComplex, class VectorT >
 bool OperationTester< MatrixComplex, VectorT > :: load_basis( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p, bool print_status_messages )
 {
-    return load_basis( MonoIndex(radial, genus, num_punctures, p), print_status_messages );
+    return load_basis( EhrIndex(radial, genus, num_punctures, p), print_status_messages );
 }
 
 template< class MatrixComplex, class VectorT >
-size_t OperationTester< MatrixComplex, VectorT > :: dim( const MonoIndex& idx ) const
+size_t OperationTester< MatrixComplex, VectorT > :: dim( const EhrIndex& idx ) const
 {
     if( basis.count( idx ) == 0 )
     {
@@ -79,11 +79,11 @@ size_t OperationTester< MatrixComplex, VectorT > :: dim( const MonoIndex& idx ) 
 template< class MatrixComplex, class VectorT >
 size_t OperationTester< MatrixComplex, VectorT > :: dim( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p ) const
 {
-    return dim( MonoIndex( radial, genus, num_punctures, p ) ) ;
+    return dim( EhrIndex( radial, genus, num_punctures, p ) ) ;
 }
 
 template< class MatrixComplex, class VectorT >
-void OperationTester< MatrixComplex, VectorT > :: forget_basis( const MonoIndex& idx )
+void OperationTester< MatrixComplex, VectorT > :: forget_basis( const EhrIndex& idx )
 {
     basis.erase( idx );
 }
@@ -91,11 +91,11 @@ void OperationTester< MatrixComplex, VectorT > :: forget_basis( const MonoIndex&
 template< class MatrixComplex, class VectorT >
 void OperationTester< MatrixComplex, VectorT > :: forget_basis( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p )
 {
-    forget_basis( MonoIndex( radial, genus, num_punctures, p ) ) ;
+    forget_basis( EhrIndex( radial, genus, num_punctures, p ) ) ;
 }
 
 template< class MatrixComplex, class VectorT >
-bool OperationTester< MatrixComplex, VectorT >::load_base_changes( const MonoIndex& idx, bool print_status_messages )
+bool OperationTester< MatrixComplex, VectorT >::load_base_changes( const EhrIndex& idx, bool print_status_messages )
 {
     std::string filename = 
         std::string("./cache/differentials_") + std::string( (std::get<0>(idx) == true ? "parallel" : "radial") ) + std::string("/") + 
@@ -129,11 +129,11 @@ bool OperationTester< MatrixComplex, VectorT >::load_base_changes( const MonoInd
 template< class MatrixComplex, class VectorT >
 bool OperationTester< MatrixComplex, VectorT > :: load_base_changes( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p, bool print_status_messages )
 {
-    return load_base_changes( MonoIndex(radial, genus, num_punctures, p), print_status_messages );
+    return load_base_changes( EhrIndex(radial, genus, num_punctures, p), print_status_messages );
 }
 
 template< class MatrixComplex, class VectorT >
-void OperationTester< MatrixComplex, VectorT > :: forget_base_changes( const MonoIndex& idx )
+void OperationTester< MatrixComplex, VectorT > :: forget_base_changes( const EhrIndex& idx )
 {
     base_changes.erase( idx );
 }
@@ -141,11 +141,11 @@ void OperationTester< MatrixComplex, VectorT > :: forget_base_changes( const Mon
 template< class MatrixComplex, class VectorT >
 void OperationTester< MatrixComplex, VectorT > :: forget_base_changes( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p )
 {
-    forget_base_changes( MonoIndex( radial, genus, num_punctures, p ) ) ;
+    forget_base_changes( EhrIndex( radial, genus, num_punctures, p ) ) ;
 }
 
 template< class MatrixComplex, class VectorT >
-bool OperationTester< MatrixComplex, VectorT >::load_triangular( const MonoIndex& idx, bool print_status_messages )
+bool OperationTester< MatrixComplex, VectorT >::load_triangular( const EhrIndex& idx, bool print_status_messages )
 {
     std::string filename = 
         std::string("./cache/differentials_") + std::string( (std::get<0>(idx) == true ? "parallel" : "radial") ) + std::string("/") + 
@@ -179,11 +179,11 @@ bool OperationTester< MatrixComplex, VectorT >::load_triangular( const MonoIndex
 template< class MatrixComplex, class VectorT >
 bool OperationTester< MatrixComplex, VectorT > :: load_triangular( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p, bool print_status_messages )
 {
-    return load_triangular( MonoIndex(radial, genus, num_punctures, p), print_status_messages );
+    return load_triangular( EhrIndex(radial, genus, num_punctures, p), print_status_messages );
 }
 
 template< class MatrixComplex, class VectorT >
-void OperationTester< MatrixComplex, VectorT > :: forget_triangular( const MonoIndex& idx )
+void OperationTester< MatrixComplex, VectorT > :: forget_triangular( const EhrIndex& idx )
 {
     triangular.erase( idx );
 }
@@ -191,11 +191,11 @@ void OperationTester< MatrixComplex, VectorT > :: forget_triangular( const MonoI
 template< class MatrixComplex, class VectorT >
 void OperationTester< MatrixComplex, VectorT > :: forget_triangular( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p )
 {
-    forget_triangular( MonoIndex( radial, genus, num_punctures, p ) ) ;
+    forget_triangular( EhrIndex( radial, genus, num_punctures, p ) ) ;
 }
 
 template< class MatrixComplex, class VectorT >
-bool OperationTester< MatrixComplex, VectorT >::load_diagonal( const MonoIndex& idx, bool print_status_messages )
+bool OperationTester< MatrixComplex, VectorT >::load_diagonal( const EhrIndex& idx, bool print_status_messages )
 {
     std::string filename = 
         std::string("./cache/differentials_") + std::string( (std::get<0>(idx) == true ? "parallel" : "radial") ) + std::string("/") + 
@@ -229,11 +229,11 @@ bool OperationTester< MatrixComplex, VectorT >::load_diagonal( const MonoIndex& 
 template< class MatrixComplex, class VectorT >
 bool OperationTester< MatrixComplex, VectorT > :: load_diagonal( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p, bool print_status_messages )
 {
-    return load_diagonal( MonoIndex(radial, genus, num_punctures, p), print_status_messages );
+    return load_diagonal( EhrIndex(radial, genus, num_punctures, p), print_status_messages );
 }
 
 template< class MatrixComplex, class VectorT >
-void OperationTester< MatrixComplex, VectorT > :: forget_diagonal( const MonoIndex& idx )
+void OperationTester< MatrixComplex, VectorT > :: forget_diagonal( const EhrIndex& idx )
 {
     diagonal.erase( idx );
 }
@@ -241,7 +241,7 @@ void OperationTester< MatrixComplex, VectorT > :: forget_diagonal( const MonoInd
 template< class MatrixComplex, class VectorT >
 void OperationTester< MatrixComplex, VectorT > :: forget_diagonal( bool radial, uint32_t genus, uint32_t num_punctures, int32_t p )
 {
-    forget_diagonal( MonoIndex( radial, genus, num_punctures, p ) ) ;
+    forget_diagonal( EhrIndex( radial, genus, num_punctures, p ) ) ;
 }
 
 template< class MatrixComplex, class VectorT >
@@ -280,7 +280,7 @@ void OperationTester< MatrixComplex, VectorT > :: print_cache_status() const
 }
 
 template< class MatrixComplex, class VectorT >
-bool OperationTester< MatrixComplex, VectorT > :: vector_is_valid( const MonoIndex& idx, const VectorType& v ) const
+bool OperationTester< MatrixComplex, VectorT > :: vector_is_valid( const EhrIndex& idx, const VectorType& v ) const
 {
     if( basis.count( idx ) != 0 && basis.at( idx ).size() == v.size() )
     {
@@ -293,7 +293,7 @@ bool OperationTester< MatrixComplex, VectorT > :: vector_is_valid( const MonoInd
 }
 
 template< class MatrixComplex, class VectorT >
-bool OperationTester< MatrixComplex, VectorT > :: vector_is_cycle( const MonoIndex& idx, const VectorType& v )
+bool OperationTester< MatrixComplex, VectorT > :: vector_is_cycle( const EhrIndex& idx, const VectorType& v )
 {
     if( triangular.count( idx ) == 0 )
     {
@@ -309,7 +309,7 @@ bool OperationTester< MatrixComplex, VectorT > :: vector_is_cycle( const MonoInd
 }
 
 //template< class MatrixComplex, class VectorT >
-//typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< MatrixComplex, VectorT > :: vector_homology_class( const MonoIndex& idx, const VectorType& v )
+//typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< MatrixComplex, VectorT > :: vector_homology_class( const EhrIndex& idx, const VectorType& v )
 //{
 //    size_t dim = v.size();
     
@@ -369,24 +369,24 @@ bool OperationTester< MatrixComplex, VectorT > :: vector_is_cycle( const MonoInd
 
 
 template< class MatrixComplex, class VectorT >
-typename OperationTester< MatrixComplex, VectorT >::MonoIndex OperationTester< MatrixComplex, VectorT > :: product (
-    const MonoIndex& idx_v,
-    const MonoIndex& idx_w
+typename OperationTester< MatrixComplex, VectorT >::EhrIndex OperationTester< MatrixComplex, VectorT > :: product (
+    const EhrIndex& idx_v,
+    const EhrIndex& idx_w
 )
 {
     if( std::get<0>(idx_v) != std::get<0>(idx_w) )
     {
-        return MonoIndex(false, 0, 0, 0);
+        return EhrIndex(false, 0, 0, 0);
     }
     
-    return MonoIndex( std::get<0>(idx_v), std::get<1>(idx_v) + std::get<1>(idx_w), std::get<2>(idx_v) + std::get<2>(idx_w), std::get<3>(idx_v) + std::get<3>(idx_w) );
+    return EhrIndex( std::get<0>(idx_v), std::get<1>(idx_v) + std::get<1>(idx_w), std::get<2>(idx_v) + std::get<2>(idx_w), std::get<3>(idx_v) + std::get<3>(idx_w) );
 }
 
 template< class MatrixComplex, class VectorT >
 typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< MatrixComplex, VectorT > :: product(
-    const MonoIndex& idx_v,
+    const EhrIndex& idx_v,
     const VectorType& v,
-    const MonoIndex& idx_w,
+    const EhrIndex& idx_w,
     const VectorType& w )
 {
     if( vector_is_valid(idx_v, v) == false || vector_is_valid(idx_w, w) == false )
@@ -394,7 +394,7 @@ typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< 
         std::cout << "At least one of the given vectors is not valid." << std::endl;
         return VectorType();
     }
-    MonoIndex idx_prod = product( idx_v, idx_w );
+    EhrIndex idx_prod = product( idx_v, idx_w );
     
     if( basis.count(idx_prod) == 0 )
     {
@@ -424,14 +424,14 @@ typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< 
 
 //template< class MatrixComplex, class VectorT >
 //typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< MatrixComplex, VectorT > :: Q(
-//    const MonoIndex& idx,
+//    const EhrIndex& idx,
 //    const VectorType& v )
 //{
 //    const uint32_t& g = std::get<1>(idx);
 //    const uint32_t& m = std::get<2>(idx);
 //    const int32_t& p = std::get<3>(idx);
     
-//    MonoIndex idx_res( std::get<0>(idx), 2 * g, 2 * m, 2 * p - 1 );
+//    EhrIndex idx_res( std::get<0>(idx), 2 * g, 2 * m, 2 * p - 1 );
 //    load_basis(idx_res, false);
 //    load_basis(idx, false);
 //    size_t dim_res = dim(idx_res);
@@ -455,7 +455,7 @@ typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< 
 //void OperationTester< MatrixComplex, VectorT > :: compute_and_add_Q(
 //    const CoefficientType& c,
 //    const SymGrpTuple& t,
-//    const MonoBasis& b,
+//    const EhrBasis& b,
 //    VectorType v )
 //{
 //    const auto slits = t.shuffle_positions();
@@ -468,7 +468,7 @@ typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< 
 //}
 
 template< class VectorT, class CoefficientT >
-VectorT kappa_dual( const CoefficientT& c, const SymGrpTuple& t, const MonoBasis& b)
+VectorT kappa_dual( const CoefficientT& c, const SymGrpTuple& t, const EhrBasis& b)
 {
     if( c == CoefficientT(0) )
     {
@@ -514,7 +514,7 @@ template< class VectorT, class CoefficientT >
 void compute_and_add_kappa_dual_rec(
     const CoefficientT& c,
     const SymGrpTuple& t,
-    const MonoBasis& b,
+    const EhrBasis& b,
     VectorT& v,
     const std::vector<size_t> s,
     const size_t i )

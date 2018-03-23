@@ -28,21 +28,21 @@
 #include "factorial.hpp"
 #include "ehr_generators.hpp"
 #include "misc.hpp"
-#include "monobasis.hpp"
-#include "monocomplex.hpp"
-#include "monocochain_field.hpp"
+#include "ehr_basis.hpp"
+#include "ehr_complex.hpp"
+#include "ehr_cochain_field.hpp"
 #include "sessionconfig.hpp"
 #include "sym_grp_tuple.hpp"
 
 // In order to use chain complexes with rational and Zm coefficients in other projects,
 // we have to use instanciate the templates explicitly.
 
-typedef MonoComplex<ChainComplexQ> MonoComplexQ;
-typedef MonoComplex<ChainComplexZm> MonoComplexZm;
-typedef MonoComplex<ChainComplexZStorageOnly> MonoComplexZStorageOnly;
+typedef EhrComplex<ChainComplexQ> EhrComplexQ;
+typedef EhrComplex<ChainComplexZm> EhrComplexZm;
+typedef EhrComplex<ChainComplexZStorageOnly> EhrComplexZStorageOnly;
 
-typedef MonoCochainField< Q > MonoCochainFieldQ;
-typedef MonoCochainField< Zm > MonoCochainFieldZm;
+typedef EhrCochainField< Q > EhrCochainFieldQ;
+typedef EhrCochainField< Zm > EhrCochainFieldZm;
 
 typedef ClusterSpectralSequence<ChainComplexQCSS> ClusterSpectralSequenceQ;
 typedef ClusterSpectralSequence<ChainComplexZmCSS> ClusterSpectralSequenceZm;

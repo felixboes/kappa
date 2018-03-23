@@ -11,7 +11,7 @@ void print_usage(int, char** argv)
     std::cout << "Usage: " << argv[0] << " -g arg -m arg --first_basis arg --last_basis arg" << std::endl;
 }
 
-void print_basis( MonoBasis& M )
+void print_basis( EhrBasis& M )
 {
     std::cout << "Number of basis elements: " << M.size() << std::endl;
     for( auto tup : M.basis )
@@ -73,10 +73,10 @@ int main(int argc, char** argv)
     for( auto i = std::max<uint32_t>( conf.first_basis, conf.num_punctures+1 ); i <= std::min<uint32_t>( conf.last_basis, 4*conf.genus + 2*conf.num_punctures ); ++i )
     {
         #ifndef WE_USE_AN_OLD_COMPILER_THAT_DOES_NOT_SUPPORT_ALL_CPP_ELEVEN_FEATURES_OR_OPTIMIZATION
-        MonoBasis B = load_from_file_bz2<MonoBasis>("./cache/bases/" + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_" + std::to_string(i) );
+        EhrBasis B = load_from_file_bz2<EhrBasis>("./cache/bases/" + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_" + std::to_string(i) );
         #else
-        MonoBasis B;
-        load_from_file_bz2<MonoBasis>( B, "./cache/bases/" + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_" + std::to_string(i) );
+        EhrBasis B;
+        load_from_file_bz2<EhrBasis>( B, "./cache/bases/" + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_" + std::to_string(i) );
         #endif
     
         print_basis(B);

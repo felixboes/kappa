@@ -65,7 +65,7 @@ void compute_homchain( SessionConfig conf, int argc, char** argv )
     std::cout.flush();
     ofs << "Constructing bases";
 
-    MonoComplexZStorageOnly monocomplex( conf.genus, conf.num_punctures, conf.sgn_conv, conf.num_threads, conf.num_remaining_threads );
+    EhrComplexZStorageOnly monocomplex( conf.genus, conf.num_punctures, conf.sgn_conv, conf.num_threads, conf.num_remaining_threads );
     std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
     std::cout << std::endl;
     std::cout.flush();

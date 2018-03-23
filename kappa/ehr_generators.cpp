@@ -25,5 +25,5 @@
 
 /* Force template instantiation for used types */
 
-template MonoCochainField< Q > create_cochain( const EhrGenerator& );
-template MonoCochainField< Zm > create_cochain( const EhrGenerator& );
+template EhrCochainField< Q > create_cochain( const EhrGenerator& );
+template EhrCochainField< Zm > create_cochain( const EhrGenerator& );

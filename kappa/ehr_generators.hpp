@@ -23,8 +23,8 @@
 
 #include <string>
 
-#include "monocomplex.hpp"
-#include "monocochain_field.hpp"
+#include "ehr_complex.hpp"
+#include "ehr_cochain_field.hpp"
 
 enum EhrGenerator
 {
@@ -65,6 +65,6 @@ enum EhrGenerator
 };
 
 template< class CoefficientT >
-MonoCochainField< CoefficientT > create_cochain( const EhrGenerator& );
+EhrCochainField< CoefficientT > create_cochain( const EhrGenerator& );
 
 #endif // EHR_GENERATORS_HPP

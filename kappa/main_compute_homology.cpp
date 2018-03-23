@@ -31,7 +31,7 @@ void print_usage(int, char** argv)
     std::cout << "Usage: " << argv[0] << " -g arg -m arg (-q|-n arg)" << std::endl;
 }
 
-template< class MonoComplexT >
+template< class EhrComplexT >
 void compute_homology( SessionConfig conf, int argc, char** argv )
 {
     // Prepare status messages.
@@ -68,8 +68,8 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     std::cout.flush();
     ofs << "Constructing bases";
 
-    MonoComplexT monocomplex( conf.genus, conf.num_punctures, conf.sgn_conv, conf.num_threads, conf.num_remaining_threads );
-    typename MonoComplexT::HomologyType homology;
+    EhrComplexT ehrcomplex( conf.genus, conf.num_punctures, conf.sgn_conv, conf.num_threads, conf.num_remaining_threads );
+    typename EhrComplexT::HomologyType homology;
     std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
     std::cout << std::endl;
     std::cout.flush();
@@ -89,7 +89,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             std::string( (conf.parallel == true) ? "parallel_" : "radial_" ) + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
         
         // Store bases.
-        for( const auto& it : monocomplex.basis_complex )
+        for( const auto& it : ehrcomplex.basis_complex )
         {
             const auto& p = it.first;
             
@@ -101,7 +101,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             else
             {
                 // Store the p-th basis.
-                save_to_file_bz2<MonoBasis>(it.second, path_prefix + std::to_string(p));
+                save_to_file_bz2<EhrBasis>(it.second, path_prefix + std::to_string(p));
                 touch( check_writable_prefix + std::to_string(p) );
             }
         }
@@ -114,26 +114,26 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             "./cache/list_of_files_that_should_not_be_overwritten/differentials_" + std::string( ( conf.parallel == true ? "parallel" : "radial") ) + std::string("_") +
             (conf.rational == true ? std::string("q") : std::string("s") + std::to_string(conf.prime) ) + std::string("_") +
             std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
-        for( int32_t p = 2; p < monocomplex.basis_complex.cbegin()->first; ++p )
+        for( int32_t p = 2; p < ehrcomplex.basis_complex.cbegin()->first; ++p )
         {
             // Check if file may be overwritten
             if( file_exists(check_writable_prefix + std::to_string(p) ) == false )
             {
-                save_to_file_bz2<MonoBasis>( MonoBasis() , path_prefix + std::to_string(p) );
+                save_to_file_bz2<EhrBasis>( EhrBasis() , path_prefix + std::to_string(p) );
             }
             if( file_exists(check_writable_prefix_diff + std::to_string(p) + std::string("_base_changes") ) == false )
             {
-                typename MonoComplexT::MatrixType m;
+                typename EhrComplexT::MatrixType m;
                 save_to_file_bz2( m, path_prefix_diff + std::to_string(p) + std::string("_base_changes") );
             }
             if( file_exists(check_writable_prefix_diff + std::to_string(p) + std::string("_triangular") ) == false )
             {
-                typename MonoComplexT::MatrixType m;
+                typename EhrComplexT::MatrixType m;
                 save_to_file_bz2( m, path_prefix_diff + std::to_string(p) + std::string("_triangular") );
             }
             if( file_exists(check_writable_prefix_diff + std::to_string(p) + std::string("_diagonal") ) == false )
             {
-                typename MonoComplexT::MatrixType::DiagonalType d;
+                typename EhrComplexT::MatrixType::DiagonalType d;
                 save_to_file_bz2( d, path_prefix_diff + std::to_string(p) + std::string("_diagonal") );
             }
         }
@@ -146,7 +146,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     ofs << "-------- Computing Homology --------" << std::endl;
 
     // Compute all differentials and homology consecutively.
-    for( auto& it : boost::adaptors::reverse( monocomplex.basis_complex ) )
+    for( auto& it : boost::adaptors::reverse( ehrcomplex.basis_complex ) )
     {
         int32_t p = it.first;
         if ( p < conf.start_p || p > conf.end_p + 2 )
@@ -155,12 +155,12 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         }
 
         // Generate a single differential.
-        std::cout << "Constructing the " << p << "-th differential of size " << ( monocomplex.basis_complex.count(p+1) ? monocomplex.basis_complex.at(p+1).size() : 0 ) << " x " << ( monocomplex.basis_complex.count(p) ? monocomplex.basis_complex.at(p).size() : 0 );
+        std::cout << "Constructing the " << p << "-th differential of size " << ( ehrcomplex.basis_complex.count(p+1) ? ehrcomplex.basis_complex.at(p+1).size() : 0 ) << " x " << ( ehrcomplex.basis_complex.count(p) ? ehrcomplex.basis_complex.at(p).size() : 0 );
         std::cout.flush();
-        ofs << "Constructing the " << p << "-th differential of size " << ( monocomplex.basis_complex.count(p+1) ? monocomplex.basis_complex.at(p+1).size() : 0 ) << " x " << ( monocomplex.basis_complex.count(p) ? monocomplex.basis_complex.at(p).size() : 0 );
+        ofs << "Constructing the " << p << "-th differential of size " << ( ehrcomplex.basis_complex.count(p+1) ? ehrcomplex.basis_complex.at(p+1).size() : 0 ) << " x " << ( ehrcomplex.basis_complex.count(p) ? ehrcomplex.basis_complex.at(p).size() : 0 );
 
         measure_duration = Clock();
-        monocomplex.gen_differential(p+1);
+        ehrcomplex.gen_differential(p+1);
         std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         if( conf.apply_base_changes == true )
@@ -169,7 +169,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             std::cout << "Applying base changes";
             std::cout.flush();
             ofs << "Applying base changes";
-            monocomplex.apply_base_changes();
+            ehrcomplex.apply_base_changes();
             std::cout << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
             ofs << " done. Duration: " << measure_duration.duration() << " seconds." << std::endl;
         }
@@ -178,12 +178,12 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
 
         // Diagoanlize differetnial and save results.
         measure_duration = Clock();
-        uint32_t max_possible_rank( std::min( monocomplex.num_rows(), monocomplex.num_cols() ) );
+        uint32_t max_possible_rank( std::min( ehrcomplex.num_rows(), ehrcomplex.num_cols() ) );
         if( (uint32_t)homology.get_kern(p+1) > 0 )
         {
             max_possible_rank = std::min( max_possible_rank, (uint32_t)homology.get_kern(p+1) );
         }
-        auto partial_homology = monocomplex.diagonalize_current_differential( p, max_possible_rank, true );
+        auto partial_homology = ehrcomplex.diagonalize_current_differential( p, max_possible_rank, true );
         homology.set_kern( p, partial_homology.get_kern(p) );
         homology.set_tors( p+1, partial_homology.get_tors(p-1) );
 
@@ -203,7 +203,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         if( conf.create_cache == true ) // Save base changes and triangular shape.
         {
             // The prefix is cache/differentials_(parallel|radial)/(coeff)_(genus)_(punctures)_(p)
-            const auto & cur_differential = monocomplex.get_current_differential();
+            const auto & cur_differential = ehrcomplex.get_current_differential();
             std::string path_prefix =
                 "./cache/differentials_" + std::string( ( conf.parallel == true ? "parallel" : "radial") ) + std::string("/") +
                 (conf.rational == true ? std::string("q") : std::string("s") + std::to_string(conf.prime) ) + std::string("_") +
@@ -299,15 +299,15 @@ int main(int argc, char** argv)
     // We may start with the computations.
     if(conf.rational == true)
     {
-        compute_homology< MonoComplexQ >( conf, argc, argv );
+        compute_homology< EhrComplexQ >( conf, argc, argv );
     }
 //    else if (conf.prime == 2)
 //    {
-//        compute_homology< MonoComplexBool > ( conf, argc, argv);
+//        compute_homology< EhrComplexBool > ( conf, argc, argv);
 //    }
     else
     {
-        compute_homology< MonoComplexZm >( conf, argc, argv );
+        compute_homology< EhrComplexZm >( conf, argc, argv );
     }
 
     return 0;

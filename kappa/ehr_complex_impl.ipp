@@ -18,15 +18,15 @@
 // along with kappa.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "monocomplex.hpp"
+#include "ehr_complex.hpp"
 
 /*
  *
- *   MonoComplex
+ *   EhrComplex
  *
  */
 template< class MatrixComplex >
-MonoComplex< MatrixComplex > :: MonoComplex(
+EhrComplex< MatrixComplex > :: EhrComplex(
         const uint32_t          genus,
         const uint32_t          num_punctures,
         const SignConvention    sgn,
@@ -72,7 +72,7 @@ MonoComplex< MatrixComplex > :: MonoComplex(
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: show_basis( const int32_t p ) const
+void EhrComplex< MatrixComplex > :: show_basis( const int32_t p ) const
 {
     if( basis_complex.count(p) )
     {
@@ -90,9 +90,9 @@ void MonoComplex< MatrixComplex > :: show_basis( const int32_t p ) const
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t s, const uint32_t p, const uint32_t start_symbol, SymGrpTuple& tuple )
+void EhrComplex< MatrixComplex > :: gen_bases( const uint32_t s, const uint32_t p, const uint32_t start_symbol, SymGrpTuple& tuple )
 {
-    /* Up to now we have determined all monotonic tuples of s transpositions containing the
+    /* Up to now we have determined all fully unstable tuples of s transpositions containing the
        symbols 1, ..., p, each at least once. We now add an (s+1)-th transposition and continue
        recursively.*/
     if(s < h) // There are h-s transpositions left to be determined.
@@ -102,7 +102,7 @@ void MonoComplex< MatrixComplex > :: gen_bases( const uint32_t s, const uint32_t
 
         /* p -> p
            In this case we use the same number of symbols. Since we only
-           enumerate monotonic tuples, the height of the (s+1)-th transposition needs to be p.
+           enumerate fully unstable tuples, the height of the (s+1)-th transposition needs to be p.
            We try out all possibilities for the second symbol in the (s+1)-th transposition. */
         tuple.p = p;
         for(uint32_t i = start_symbol; i < p; ++i)
@@ -204,7 +204,7 @@ void update_differential(MatrixType &           differential,
 }
 
 template< class MatrixComplex >
-void MonoComplex<MatrixComplex>::compute_boundary( SymGrpTuple & tuple, const uint32_t p, typename MatrixComplex::MatrixType & differential )
+void EhrComplex<MatrixComplex>::compute_boundary( SymGrpTuple & tuple, const uint32_t p, typename MatrixComplex::MatrixType & differential )
 {
     int32_t parity = 0;
     SymGrpTuple boundary;
@@ -259,20 +259,20 @@ void MonoComplex<MatrixComplex>::compute_boundary( SymGrpTuple & tuple, const ui
 }
 
 template< class MatrixComplex >
-void monocomplex_work(
-        MonoComplex<MatrixComplex> &            monocomplex,
-        MonocomplexWork &                       work,
-        const uint32_t                          p,
-        typename MatrixComplex::MatrixType &    differential)
+void ehr_complex_work(
+        EhrComplex<MatrixComplex> &ehrcomplex,
+        EhrComplexWork &work,
+        const uint32_t p,
+        typename MatrixComplex::MatrixType &differential)
 {
     for ( auto it : work)
     {
-        monocomplex.compute_boundary( it, p, differential );
+        ehrcomplex.compute_boundary( it, p, differential );
     }
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
+void EhrComplex< MatrixComplex > :: gen_differential( const int32_t p )
 {
     /**
      *  Instead of implementing the differential recursively, we use a direct formula to enumerate
@@ -312,7 +312,7 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
 
     // For each tuple t in the basis, we compute all basis elements that
     // occur in kappa(t).
-    std::vector<MonocomplexWork> elements_per_threads (num_threads);
+    std::vector<EhrComplexWork> elements_per_threads (num_threads);
     uint32_t num_elements_per_thread = basis_complex.at(p).size() / num_threads;
     
     if (basis_complex.at(p).size() % num_threads != 0)
@@ -333,7 +333,8 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
     std::vector<std::thread> workers(num_threads);
     for (uint32_t t = 0; t < num_threads; ++t)
     {
-        workers[t] = std::thread(monocomplex_work<MatrixComplex>, std::ref(*this), std::ref(elements_per_threads[t]), p, std::ref(differential));
+        workers[t] = std::thread(ehr_complex_work<MatrixComplex>, std::ref(*this), std::ref(elements_per_threads[t]), p,
+                                 std::ref(differential));
     }
     for (uint32_t t = 0; t < num_threads; ++t)
     {
@@ -342,13 +343,13 @@ void MonoComplex< MatrixComplex > :: gen_differential( const int32_t p )
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: apply_base_changes()
+void EhrComplex< MatrixComplex > :: apply_base_changes()
 {
     diff_complex.apply_base_changes();
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex > :: homchain(int32_t p, bool homology, int32_t maxdimension)
+void EhrComplex< MatrixComplex > :: homchain(int32_t p, bool homology, int32_t maxdimension)
 {
     if( homology == false )
     {
@@ -447,7 +448,7 @@ void MonoComplex< MatrixComplex > :: homchain(int32_t p, bool homology, int32_t 
 
 
 template< class MatrixComplex >
-typename MonoComplex< MatrixComplex >::HomologyType MonoComplex< MatrixComplex > :: diagonalize_current_differential( const int32_t p, uint32_t max_possible_rank, const bool print_duration )
+typename EhrComplex< MatrixComplex >::HomologyType EhrComplex< MatrixComplex > :: diagonalize_current_differential( const int32_t p, uint32_t max_possible_rank, const bool print_duration )
 {
     if( max_possible_rank == 0 )
     {
@@ -493,49 +494,49 @@ typename MonoComplex< MatrixComplex >::HomologyType MonoComplex< MatrixComplex >
 }
 
 template< class MatrixComplex >
-typename MonoComplex< MatrixComplex >::MatrixType & MonoComplex< MatrixComplex > :: get_current_differential()
+typename EhrComplex< MatrixComplex >::MatrixType & EhrComplex< MatrixComplex > :: get_current_differential()
 {
     return diff_complex.get_current_differential();
 }
 
 template< class MatrixComplex >
-const typename MonoComplex< MatrixComplex >::MatrixType & MonoComplex< MatrixComplex > :: get_current_differential() const
+const typename EhrComplex< MatrixComplex >::MatrixType & EhrComplex< MatrixComplex > :: get_current_differential() const
 {
     return diff_complex.get_current_differential();
 }
 
 template< class MatrixComplex >
-size_t MonoComplex< MatrixComplex > :: num_rows() const
+size_t EhrComplex< MatrixComplex > :: num_rows() const
 {
     return diff_complex.num_rows();
 }
 
 template< class MatrixComplex >
-size_t MonoComplex< MatrixComplex > :: num_cols() const
+size_t EhrComplex< MatrixComplex > :: num_cols() const
 {
     return diff_complex.num_cols();
 }
 
 template< class MatrixComplex >
-typename MonoComplex< MatrixComplex >::DiagonalizerType & MonoComplex< MatrixComplex > :: get_diagonalizer()
+typename EhrComplex< MatrixComplex >::DiagonalizerType & EhrComplex< MatrixComplex > :: get_diagonalizer()
 {
     return diff_complex.get_diagonalizer();
 }
 
 template< class MatrixComplex >
-const typename MonoComplex< MatrixComplex >::DiagonalizerType & MonoComplex< MatrixComplex > :: get_diagonalizer() const
+const typename EhrComplex< MatrixComplex >::DiagonalizerType & EhrComplex< MatrixComplex > :: get_diagonalizer() const
 {
     return diff_complex.get_diagonalizer();
 }
 
 template< class MatrixComplex >
-void MonoComplex< MatrixComplex >::erase_current_differential()
+void EhrComplex< MatrixComplex >::erase_current_differential()
 {
     diff_complex.erase();
 }
 
 template< class MatrixComplex >
-typename MonoComplex< MatrixComplex >::HomologyType MonoComplex< MatrixComplex > :: compute_current_kernel_and_torsion( const int32_t n )
+typename EhrComplex< MatrixComplex >::HomologyType EhrComplex< MatrixComplex > :: compute_current_kernel_and_torsion( const int32_t n )
 {
     return diff_complex.compute_current_kernel_and_torsion(n);
 }

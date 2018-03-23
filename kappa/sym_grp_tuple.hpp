@@ -189,7 +189,7 @@ public:
      */
     bool phi( const uint32_t q, const uint32_t i);
     
-    /** Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} and the projection on the monotonous cells.
+    /** Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} and the projection on the fully unstable cells.
      *  Returns an empty SymGrpTuple if the boundary is degenerate (with respect to the Ehrenfriedcomplex), the boundary
      *  SymGrpTuple otherwise.
      *  \note The parameter i has to fulfill 0 < i < p.
@@ -201,7 +201,7 @@ public:
      */
     SymGrpTuple d_hor_reduced( const uint8_t i ) const;
 
-    /** Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} without the projection on the monotonous cells.
+    /** Applies the i-th horizontal boundary  \f$ \partial_i^{\prime \prime} without the projection on the fully unstable cells.
      *  Returns an empty SymGrpTuple if the boundary is degenerate (with respect to the double complex), the boundary
      *  SymGrpTuple otherwise.
      *  \note The parameter i has to fulfill 0 < i < p.
@@ -256,7 +256,7 @@ public:
     const std::vector< Transposition >& get_data_rep() const;
     
     uint32_t p; ///< The maximum of the symbols \f$ min_symbol \le p \f$ to be permuted.
-    size_t id;  ///< The index of this SymGrpTuple in the basis of the MonoComplex.
+    size_t id;  ///< The index of this SymGrpTuple in the basis of the EhrComplex.
 
 protected:
     /**
@@ -309,7 +309,7 @@ std::ostream& operator<< (std::ostream& stream, const SymGrpTuple& tuple);
 SymGrpTuple operator*( const SymGrpTuple& v_2, const SymGrpTuple& v_1 );
 
 /**
- *  In order to save SymGrpTuples in a hash table (e.g. in MonoBasis) we need a function object, that hashes SymGrpTuples.
+ *  In order to save SymGrpTuples in a hash table (e.g. in EhrBasis) we need a function object, that hashes SymGrpTuples.
  */ 
 class HashSymGrpTuple
 {
