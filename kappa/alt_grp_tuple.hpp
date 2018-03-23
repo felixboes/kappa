@@ -203,6 +203,12 @@ protected:
     }
 };
 
+/**
+ *  Create a SymGrpTuple consisting of num_entries transpositions \f$\tau_{num_entries} \ldots \tau_1\f$.
+ */
+AltGrpTuple create_alt_grp_tuple( const size_t num_entries, ... );
+
+std::ostream& operator<< (std::ostream& stream, const AltGrpTuple& tuple);
 
 /**
  *  In order to save AltGrpTuples in a hash table (e.g. in EhrBasis) we need a function object, that hashes

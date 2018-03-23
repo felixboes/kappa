@@ -380,6 +380,26 @@ Permutation AltGrpTuple::sigma_out() const
     return PermutationManager::inverse(sigma_out_inv());
 }
 
+AltGrpTuple create_alt_grp_tuple( const size_t num_entries, ... )
+{
+    AltGrpTuple t(num_entries);
+    t.p = 0;
+    va_list args;
+    va_start(args, num_entries);
+
+    for ( size_t i = num_entries; i > 0; --i )
+    {
+        const uint8_t a = va_arg(args, int);
+        const uint8_t b = va_arg(args, int);
+        const uint8_t c = va_arg(args, int);
+        const uint8_t d = va_arg(args, int);
+        t[i] = Norm2Permutation(Transposition(a,b), Transposition(c,d));
+        t.p = std::max( t.p, std::max(a,b) );
+    }
+    va_end(args);
+    return t;
+}
+
 size_t HashAltGrpTuple :: operator ()( const AltGrpTuple &tuple ) const
 {
     size_t hashvalue = 0;

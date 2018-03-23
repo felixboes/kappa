@@ -372,5 +372,15 @@ BOOST_AUTO_TEST_SUITE(test_suit_alt_grp_tuple)
         BOOST_CHECK(T.has_correct_num_cycles(1));
     }
 
+    BOOST_FIXTURE_TEST_CASE(test_create_alt_Grp_tuple, TestNorm2Permutations)
+    {
+        AltGrpTuple T1 = create_alt_grp_tuple(3, 3,5,6,1, 1,2,3,4, 1,3,2,3);
+        AltGrpTuple T2(6,3);
+        T2.at(1)=t1;
+        T2.at(2)=t2;
+        T2.at(3)=t3;
+        BOOST_CHECK(T1 == T2);
+    }
+
 
 BOOST_AUTO_TEST_SUITE_END()
