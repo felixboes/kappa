@@ -18,10 +18,10 @@
 // along with kappa.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "generators.hpp"
+#include "ehr_generators.hpp"
 
 template< class CoefficientT >
-MonoCochainField< CoefficientT > create_cochain( const Generator& name )
+MonoCochainField< CoefficientT > create_cochain( const EhrGenerator& name )
 {
     typedef MonoCochainField< CoefficientT > CochainType;
     switch( name )
@@ -213,7 +213,7 @@ MonoCochainField< CoefficientT > create_cochain( const Generator& name )
     }
     case Q_alpha_inv_c:
     {
-        CochainType cochain( create_cochain<CoefficientT>( Generator::Qc ) );
+        CochainType cochain( create_cochain<CoefficientT>( EhrGenerator::Qc ) );
         cochain.set_name("Q_alpha^{-1}(c)");
         return cochain;
     }
@@ -253,7 +253,7 @@ MonoCochainField< CoefficientT > create_cochain( const Generator& name )
     }
     case Q_alpha_inv_d:
     {
-        CochainType cochain( create_cochain<CoefficientT>( Generator::Qd ) );
+        CochainType cochain( create_cochain<CoefficientT>( EhrGenerator::Qd ) );
         cochain.set_name("Q_alpha^{-1}(d)");
         return cochain;
     }

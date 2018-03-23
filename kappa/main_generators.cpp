@@ -141,92 +141,92 @@ void verify_known_generators()
 
     // Classes for g = 0:
     // m = 1
-    test_( create_cochain<Zm>( Generator::a ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) );
     // m = 2
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) );
-    test_( create_cochain<Zm>( Generator::b ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) );
+    test_( create_cochain<Zm>( EhrGenerator::b ) );
     // m = 4
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) );
-    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) );
-    test_( create_cochain<Zm>( Generator::Qb ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::b ) );
+    test_( create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::b ) );
+    test_( create_cochain<Zm>( EhrGenerator::Qb ) );
     // m = 6
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Qb ) );
-    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) );
-    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::Qb ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::b ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::b ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::Qb ) );
+    test_( create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::b ) );
+    test_( create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::Qb ) );
 
     // Classes for g = 1:
     // m = 0:
-    test_( create_cochain<Zm>( Generator::c ) );
-    test_( create_cochain<Zm>( Generator::d ) );
+    test_( create_cochain<Zm>( EhrGenerator::c ) );
+    test_( create_cochain<Zm>( EhrGenerator::d ) );
     // m = 1:
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) );
-    test_( create_cochain<Zm>( Generator::e ) );
-    test_( create_cochain<Zm>( Generator::Eb ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::c ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::d ) );
+    test_( create_cochain<Zm>( EhrGenerator::e ) );
+    test_( create_cochain<Zm>( EhrGenerator::Eb ) );
     // m = 2:
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) );
-    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::e ) );
-    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
-    test_( create_cochain<Zm>( Generator::f ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Eb ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::c ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::d ) );
+    test_( create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::c ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::e ) );
+    test_( create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::d ) );
+    test_( create_cochain<Zm>( EhrGenerator::f ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::Eb ) );
     // m = 3:
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::e ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
-    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::e ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Eb ) );
-    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::Eb ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::c ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::d ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::c ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::e ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::d ) );
+    test_( create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::e ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::Eb ) );
+    test_( create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::Eb ) );
     // m = 4:
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::e ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
-    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::c ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::e ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Eb ) );
-    test_( create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::d ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::b ) * create_cochain<Zm>( Generator::Eb ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::c ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::d ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::c ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::e ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::d ) );
+    test_( create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::c ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::e ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::Eb ) );
+    test_( create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::d ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::b ) * create_cochain<Zm>( EhrGenerator::Eb ) );
      
     // Classes for g = 2:
     // m = 0:
-    test_( create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::c ) );
-    test_( create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::d ) );
-    test_( create_cochain<Zm>( Generator::Q_alpha_inv_c ) );
-    test_( create_cochain<Zm>( Generator::Q_beta_c ) );
-    test_( create_cochain<Zm>( Generator::Q_gamma_c ) );
+    test_( create_cochain<Zm>( EhrGenerator::c ) * create_cochain<Zm>( EhrGenerator::c ) );
+    test_( create_cochain<Zm>( EhrGenerator::c ) * create_cochain<Zm>( EhrGenerator::d ) );
+    test_( create_cochain<Zm>( EhrGenerator::Q_alpha_inv_c ) );
+    test_( create_cochain<Zm>( EhrGenerator::Q_beta_c ) );
+    test_( create_cochain<Zm>( EhrGenerator::Q_gamma_c ) );
     test_( create_cochain<Zm>( R_alpha_inv_beta_c_c ) );
-    test_( create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::d ) );
-    test_( create_cochain<Zm>( Generator::Te ) );
-    test_( create_cochain<Zm>( Generator::Q_alpha_inv_d ) );
-    test_( create_cochain<Zm>( Generator::Q_beta_d ) );
-    test_( create_cochain<Zm>( Generator::Q_gamma_d ) );
+    test_( create_cochain<Zm>( EhrGenerator::d ) * create_cochain<Zm>( EhrGenerator::d ) );
+    test_( create_cochain<Zm>( EhrGenerator::Te ) );
+    test_( create_cochain<Zm>( EhrGenerator::Q_alpha_inv_d ) );
+    test_( create_cochain<Zm>( EhrGenerator::Q_beta_d ) );
+    test_( create_cochain<Zm>( EhrGenerator::Q_gamma_d ) );
     test_( create_cochain<Zm>( R_alpha_inv_beta_c_d ) );
     test_( create_cochain<Zm>( R_alpha_inv_gamma_inv_c_d ) );
     test_( create_cochain<Zm>( R_alpha_inv_gamma_c_d ) );
     test_( create_cochain<Zm>( R_alpha_inv_beta_inv_c_d ) );
     test_( create_cochain<Zm>( R_alpha_inv_alpha_inv_c_d ) );
-    test_( create_cochain<Zm>( Generator::Te ) );
-    test_( create_cochain<Zm>( Generator::TEb ) );
+    test_( create_cochain<Zm>( EhrGenerator::Te ) );
+    test_( create_cochain<Zm>( EhrGenerator::TEb ) );
     // m = 1:
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::c ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::d ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::d ) );
-    test_( create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::e ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Qd ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::Te ) );
-    test_( create_cochain<Zm>( Generator::c ) * create_cochain<Zm>( Generator::Eb ) );
-    test_( create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::e ) );
-    test_( create_cochain<Zm>( Generator::a ) * create_cochain<Zm>( Generator::TEb ) );
-    test_( create_cochain<Zm>( Generator::d ) * create_cochain<Zm>( Generator::Eb ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::c ) * create_cochain<Zm>( EhrGenerator::c ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::c ) * create_cochain<Zm>( EhrGenerator::d ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::d ) * create_cochain<Zm>( EhrGenerator::d ) );
+    test_( create_cochain<Zm>( EhrGenerator::c ) * create_cochain<Zm>( EhrGenerator::e ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::Qd ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::Te ) );
+    test_( create_cochain<Zm>( EhrGenerator::c ) * create_cochain<Zm>( EhrGenerator::Eb ) );
+    test_( create_cochain<Zm>( EhrGenerator::d ) * create_cochain<Zm>( EhrGenerator::e ) );
+    test_( create_cochain<Zm>( EhrGenerator::a ) * create_cochain<Zm>( EhrGenerator::TEb ) );
+    test_( create_cochain<Zm>( EhrGenerator::d ) * create_cochain<Zm>( EhrGenerator::Eb ) );
 }
 
 int main( int argc, char** argv )
@@ -244,23 +244,23 @@ int main( int argc, char** argv )
 
 //      std::cout << "Rational computations." << std::endl;
 //      std::cout << "--------------------------------" << std::endl;
-//      test_( create_cochain<Q>( Generator::R_alpha_inv_alpha_inv_c_d ) );
+//      test_( create_cochain<Q>( EhrGenerator::R_alpha_inv_alpha_inv_c_d ) );
 
 //      std::cout << "Mod 2 computations." << std::endl;
 //      std::cout << "--------------------------------" << std::endl;
 //      Zm::set_modulus(2);
-//      test_( create_cochain<Zm>( Generator::radial_a ) );
-//      test_( create_cochain<Zm>( Generator::radial_b ) );
-//      test_( create_cochain<Zm>( Generator::radial_Srad_Te) );
-//      test_( create_cochain<Zm>( Generator::T_1_f ) );
-//      test_( create_cochain<Zm>( Generator::T_2_f ) );
+//      test_( create_cochain<Zm>( EhrGenerator::radial_a ) );
+//      test_( create_cochain<Zm>( EhrGenerator::radial_b ) );
+//      test_( create_cochain<Zm>( EhrGenerator::radial_Srad_Te) );
+//      test_( create_cochain<Zm>( EhrGenerator::T_1_f ) );
+//      test_( create_cochain<Zm>( EhrGenerator::T_2_f ) );
 
 //      std::cout << "Mod 5 computations." << std::endl;
 //      std::cout << "--------------------------------" << std::endl;
 //      Zm::set_modulus(5);
-//      test_( create_cochain<Zm>( Generator::Q_beta_c ) );
-//      test_( create_cochain<Zm>( Generator::Q_gamma_c ) );
-//      test_( create_cochain<Zm>( Generator::R_alpha_inv_alpha_inv_c_d ) );
+//      test_( create_cochain<Zm>( EhrGenerator::Q_beta_c ) );
+//      test_( create_cochain<Zm>( EhrGenerator::Q_gamma_c ) );
+//      test_( create_cochain<Zm>( EhrGenerator::R_alpha_inv_alpha_inv_c_d ) );
     }
 
     return 0;

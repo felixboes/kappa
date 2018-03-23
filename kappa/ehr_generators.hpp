@@ -18,15 +18,15 @@
 // along with kappa.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef GENERATORS_HPP
-#define GENERATORS_HPP
+#ifndef EHR_GENERATORS_HPP
+#define EHR_GENERATORS_HPP
 
 #include <string>
 
 #include "monocomplex.hpp"
 #include "monocochain_field.hpp"
 
-enum Generator
+enum EhrGenerator
 {
     a,
     b,
@@ -65,6 +65,6 @@ enum Generator
 };
 
 template< class CoefficientT >
-MonoCochainField< CoefficientT > create_cochain( const Generator& );
+MonoCochainField< CoefficientT > create_cochain( const EhrGenerator& );
 
-#endif // GENERATORS_HPP
+#endif // EHR_GENERATORS_HPP
