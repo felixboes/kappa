@@ -382,5 +382,13 @@ BOOST_AUTO_TEST_SUITE(test_suit_alt_grp_tuple)
         BOOST_CHECK(T1 == T2);
     }
 
+    BOOST_AUTO_TEST_CASE(test_has_no_fixed_points_except_zero)
+    {
+        AltGrpTuple T1 = create_alt_grp_tuple(3, 3,5,6,1, 1,2,3,4, 1,3,2,3);
+        AltGrpTuple T2 = create_alt_grp_tuple(3, 3,5,6,0, 0,2,3,4, 0,3,2,3);
+        BOOST_CHECK(T1.has_no_common_fixed_points_except_zero());
+        BOOST_CHECK(not T2.has_no_common_fixed_points_except_zero());
+    }
+
 
 BOOST_AUTO_TEST_SUITE_END()

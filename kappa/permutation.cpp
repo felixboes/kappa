@@ -118,3 +118,11 @@ Permutation Permutation::long_cycle_inv(uint8_t p)
     sigma[0] = p;
     return sigma;
 }
+
+std::ostream& operator<< (std::ostream& stream, const Norm2Permutation& tau)
+{
+    stream << "(" << std::to_string(tau.first.first) << "," <<  std::to_string(tau.first.second) << ")"
+           << "(" << std::to_string(tau.second.first) << "," <<  std::to_string(tau.second.second) << ")"
+           << std::endl;
+    return stream;
+}

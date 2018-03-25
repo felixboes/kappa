@@ -63,7 +63,7 @@ bool AltGrpTuple::operator==(const AltGrpTuple &t) const
     // Operations == and != are performed by first comparing sizes, and if they match, the elements are compared
     // sequentially using algorithm equal, which stops at the first mismatch.
     // Source: http://www.cplusplus.com/reference/vector/vector/operators/
-    return (this->rep == t.rep);
+    return ((this->rep == t.rep) and (this->p == t.p));
 }
 
 bool AltGrpTuple::operator!=(const AltGrpTuple &t) const
@@ -116,10 +116,10 @@ std::ostream& operator<< (std::ostream& stream, const AltGrpTuple& tuple)
     stream << "( ";
     for( auto it = tuple.rep.crbegin(); it != tuple.rep.crend(); ++it )
     {
-        stream << "(" << (uint8_t)it->first.first << "," <<  (uint8_t)it->first.second << ")"
-               << "(" << (uint8_t)it->second.first << "," <<  (uint8_t)it->second.second << ")";
+        stream << "(" << std::to_string(it->first.first) << "," <<  std::to_string(it->first.second) << ")"
+               << "(" << std::to_string(it->second.first) << "," <<  std::to_string(it->second.second) << ") ";
     }
-    stream << " )";
+    stream << ")";
     return stream;
 }
 
@@ -395,6 +395,7 @@ AltGrpTuple create_alt_grp_tuple( const size_t num_entries, ... )
         const uint8_t d = va_arg(args, int);
         t[i] = Norm2Permutation(Transposition(a,b), Transposition(c,d));
         t.p = std::max( t.p, std::max(a,b) );
+        t.p = std::max( t.p, std::max(c,d) );
     }
     va_end(args);
     return t;
@@ -410,4 +411,26 @@ size_t HashAltGrpTuple :: operator ()( const AltGrpTuple &tuple ) const
         offset *= 256;
     }
     return hashvalue;
+}
+
+bool AltGrpTuple::has_no_common_fixed_points_except_zero()
+{
+    std::vector< bool > contained_in_support(p + 1);
+    for(uint8_t perm_index=1; perm_index <= num_entries(); perm_index++)
+    {
+        Norm2Permutation t = at(perm_index) ;
+        contained_in_support.at(t.first.first)=true;
+        contained_in_support.at(t.first.second)=true;
+        contained_in_support.at(t.second.first)=true;
+        contained_in_support.at(t.second.second)=true;
+    }
+
+    for(uint8_t symbol = 1; symbol <=p; symbol++)
+    {
+        if(not contained_in_support[symbol])
+        {
+            return false;
+        }
+    }
+    return true;
 }

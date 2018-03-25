@@ -89,10 +89,14 @@ public:
      */
     static Permutation long_cycle_inv(uint8_t p);
 
+    friend std::ostream& operator<< (std::ostream& stream, const Norm2Permutation& tau);
+
 protected:
     std::vector<uint8_t> data; ///< stores the Permutation
     operator size_t() = delete;
 };
+
+std::ostream& operator<< (std::ostream& stream, const Norm2Permutation& tau);
 
 
 #endif //KAPPA_PERMUTATION_HPP

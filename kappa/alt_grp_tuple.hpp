@@ -56,7 +56,7 @@ public:
     bool has_correct_norm() const;
 
     /**
-     *  @return Returns true iff both AltGrpTuples are elementwise equal.
+     *  @return Returns true iff both AltGrpTuples are elementwise equal and their p agrees.
      */
     bool operator==(const AltGrpTuple& t) const;
 
@@ -170,6 +170,12 @@ public:
      *  \note: this is easier to compute than sigma_out().
      */
     Permutation sigma_out_inv() const;
+
+    /**
+     * Checks whether tuple contains all symbols 1,...,p at least once (not necessarily 0).
+     * Note: the AltGrpTuple must not contain symbols apart from 0,1,...,p.
+     */
+    bool has_no_common_fixed_points_except_zero();
 
 
     uint8_t p; ///< The maximum of the symbols \f$ min_symbol() \le p \f$ to be permuted.
