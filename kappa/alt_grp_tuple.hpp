@@ -177,6 +177,13 @@ public:
      */
     bool has_no_common_fixed_points_except_zero();
 
+    /**
+     * @return: the i-th entry is a vector of all basis elements of the i-th module in the Ehrenfried complex associated
+     * to genus g and m punctures
+     * @note: radial resp. parallel case according to AltGrpTuple::is_radial
+     */
+    static std::vector< std::vector< AltGrpTuple>>& gen_ehr_bases(uint8_t g, uint8_t m);
+
 
     uint8_t p; ///< The maximum of the symbols \f$ min_symbol() \le p \f$ to be permuted.
     size_t id;  ///< The index of this AltGrpTuple in the basis of the EhrComplex.

@@ -1,4 +1,5 @@
 #include "alt_grp_tuple.hpp"
+#include "alt_grp_ehr_bases_generator.hpp"
 
 bool AltGrpTuple::radial = false;
 uint8_t AltGrpTuple::min_symbol = 1;
@@ -378,6 +379,12 @@ Permutation AltGrpTuple::sigma_out_inv() const
 Permutation AltGrpTuple::sigma_out() const
 {
     return PermutationManager::inverse(sigma_out_inv());
+}
+
+std::vector<std::vector<AltGrpTuple>>& AltGrpTuple::gen_ehr_bases(uint8_t g, uint8_t m)
+{
+    AltGrpEhrBasesGenerator bases_generator(g, m);
+    return bases_generator.generate_bases();
 }
 
 AltGrpTuple create_alt_grp_tuple( const size_t num_entries, ... )
