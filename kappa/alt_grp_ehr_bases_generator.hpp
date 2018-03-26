@@ -1,7 +1,6 @@
 #ifndef KAPPA_ALT_GRP_EHR_BASES_GENERATOR_H
 #define KAPPA_ALT_GRP_EHR_BASES_GENERATOR_H
 
-#include "sym_grp_tuple.hpp"
 #include "ehr_basis.hpp"
 #include "alt_grp_tuple.hpp"
 
@@ -37,7 +36,7 @@ public:
      * @note: k=0 is allowed.
      *
      * If k<h/2, computes all possibilities for the (k+1)-th entry st. the tuple is unstable at this position (k, k+1).
-     * If k=h/2, adds curr_tuple to the according bases if it is a cell.
+     * If k=h/2, adds curr_tuple to the according basis if it is a cell.
      */
     void generate_bases_recursively(uint8_t curr_num_entries, uint8_t curr_max_symbol, AltGrpTuple& curr_tuple);
 
