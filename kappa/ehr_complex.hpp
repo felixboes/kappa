@@ -104,16 +104,6 @@ public:
             const SignConvention    sgn,
             const uint32_t          number_working_threads,
             const uint32_t          number_remaining_threads );
-    /** Recursive function initializing the basis_complex.
-        In the call of gen_bases with the parameters s, p and tuple, we assume that the first s transpositions
-        containing symbols 1, ..., p are fixed and append all possible transpositions at position s+1, applying
-        the function recursively in an appropriate way.
-        If s == h, we don't append another transposition since we have completed a possible basis element.
-        We check whether its number of cycles is appropriate for it to be a basis element, and if this is
-        the case, we add it to the basis in degree p. Thereby, basis elements are sorted according to the number
-        of clusters.
-    **/
-    void gen_bases( const uint32_t l, const uint32_t p, const uint32_t start_symbol, SymGrpTuple& tuple);
     
     /**
      *  computes the boundary of a given Tuple and saves the result in the differential.
