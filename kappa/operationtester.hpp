@@ -181,7 +181,7 @@ public:
 
 //protected:
     std::string coefficient_prefix;
-    std::map< EhrIndex, EhrBasis > basis;
+    std::map< EhrIndex, EhrBasis<SymGrpTuple> > basis;
     std::map< EhrIndex, MatrixType > base_changes;
     std::map< EhrIndex, MatrixType > triangular;
     std::map< EhrIndex, DiagonalType > diagonal;
@@ -191,10 +191,11 @@ public:
  *  compute and add \f$\kappa^\ast\f$ of a single tuple to a given vector.
 **/
 template< class VectorT, class CoefficientT >
-VectorT kappa_dual( const CoefficientT& c, const SymGrpTuple& t, const EhrBasis& b );
+VectorT kappa_dual( const CoefficientT& c, const SymGrpTuple& t, const EhrBasis<SymGrpTuple>& b );
 
 template< class VectorT, class CoefficientT >
-void compute_and_add_kappa_dual_rec( const CoefficientT& c, const SymGrpTuple& t, const EhrBasis& b, VectorT& v, const std::vector<size_t> s, const size_t i );
+void compute_and_add_kappa_dual_rec( const CoefficientT& c, const SymGrpTuple& t, const EhrBasis<SymGrpTuple>& b,
+                                     VectorT& v, const std::vector<size_t> s, const size_t i );
 
 
 

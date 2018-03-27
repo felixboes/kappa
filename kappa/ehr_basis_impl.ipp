@@ -20,11 +20,13 @@
 
 #include "ehr_basis.hpp"
 
-EhrBasis::EhrBasis() : basis()
+template <class TupleT>
+EhrBasis<TupleT>::EhrBasis() : basis()
 {
 }
  
-uint32_t EhrBasis :: add_basis_element ( SymGrpTuple t )
+template <class TupleT>
+uint32_t EhrBasis<TupleT> :: add_basis_element ( TupleT t )
 {
     uint32_t id = basis.size();
     t.id = id;
@@ -33,7 +35,8 @@ uint32_t EhrBasis :: add_basis_element ( SymGrpTuple t )
     return id;
 }
 
-uint EhrBasis :: add_basis_element_reduced( SymGrpTuple t )
+template <class TupleT>
+uint EhrBasis<TupleT> :: add_basis_element_reduced( TupleT t )
 {
     if( t.is_multiple_of_a() )
     {
@@ -45,12 +48,14 @@ uint EhrBasis :: add_basis_element_reduced( SymGrpTuple t )
     }
 }
 
-uint64_t EhrBasis :: size() const
+template <class TupleT>
+uint64_t EhrBasis<TupleT> :: size() const
 {
     return basis.size();
 }
 
-int64_t EhrBasis :: id_of(const SymGrpTuple &t) const
+template <class TupleT>
+int64_t EhrBasis<TupleT> :: id_of(const TupleT &t) const
 {
     auto it = basis.find(t);
     if( it == basis.end() )
@@ -63,7 +68,8 @@ int64_t EhrBasis :: id_of(const SymGrpTuple &t) const
     }
 }
 
-EhrBasis load_ehr_basis(const uint32_t g, const uint32_t m, const int32_t p, const bool radial)
+template <class TupleT>
+EhrBasis<TupleT> load_ehr_basis(const uint32_t g, const uint32_t m, const int32_t p, const bool radial)
 {
     std::string filename =
             "./cache/bases_" + std::string(radial == true ? "radial" : "parallel") + "/" +
@@ -71,10 +77,11 @@ EhrBasis load_ehr_basis(const uint32_t g, const uint32_t m, const int32_t p, con
             std::to_string(m) + "_" +
             std::to_string(p);
 
-    return load_from_file_bz2< EhrBasis >( filename, false );
+    return load_from_file_bz2< EhrBasis<TupleT> >( filename, false );
 }
 
-std::ostream& operator<< ( std::ostream& os, const EhrBasis& mb )
+template <class TupleT>
+std::ostream& operator<< ( std::ostream& os, const EhrBasis<TupleT>& mb )
 {
     for( const auto it : mb.basis )
     {

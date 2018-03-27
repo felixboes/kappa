@@ -101,7 +101,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             else
             {
                 // Store the p-th basis.
-                save_to_file_bz2<EhrBasis>(it.second, path_prefix + std::to_string(p));
+                save_to_file_bz2<EhrBasis<SymGrpTuple>>(it.second, path_prefix + std::to_string(p));
                 touch( check_writable_prefix + std::to_string(p) );
             }
         }
@@ -119,7 +119,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             // Check if file may be overwritten
             if( file_exists(check_writable_prefix + std::to_string(p) ) == false )
             {
-                save_to_file_bz2<EhrBasis>( EhrBasis() , path_prefix + std::to_string(p) );
+                save_to_file_bz2<EhrBasis<SymGrpTuple>>( EhrBasis<SymGrpTuple>() , path_prefix + std::to_string(p) );
             }
             if( file_exists(check_writable_prefix_diff + std::to_string(p) + std::string("_base_changes") ) == false )
             {

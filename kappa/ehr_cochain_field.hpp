@@ -61,14 +61,14 @@ public:
 
     std::string get_name() const;
 
-    const EhrBasis& get_basis_reference() const;
+    const EhrBasis<SymGrpTuple>& get_basis_reference() const;
 
     // grant std::ostream access in order to print matrices to ostreams.
     template< class T >
     friend std::ostream& operator<< ( std::ostream& stream, const EhrCochainField<T> & cochain );
 
 protected:
-    EhrBasis basis;
+    EhrBasis<SymGrpTuple> basis;
     uint32_t g;
     uint32_t m;
     uint32_t p;

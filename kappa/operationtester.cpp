@@ -21,14 +21,14 @@
 #include "operationtester.hpp"
 #include "operationtester_impl.ipp"
 
-#define force_template_instantiation( CoefficientType, MatrixComplex, VectorType  )\
+#define force_template_instantiation( CoefficientType, MatrixComplex, VectorType, TupleType  )\
     template class OperationTester< MatrixComplex,  VectorType  >;\
-    template VectorType kappa_dual( const CoefficientType& c, const SymGrpTuple& t, const EhrBasis& b );\
-    template void compute_and_add_kappa_dual_rec( const CoefficientType& c, const SymGrpTuple& t, const EhrBasis& b, VectorType& v, const std::vector<size_t> s, const size_t i );
+    template VectorType kappa_dual( const CoefficientType& c, const TupleType& t, const EhrBasis<TupleType>& b );\
+    template void compute_and_add_kappa_dual_rec( const CoefficientType& c, const TupleType& t,const EhrBasis<TupleType>& b, VectorType& v, const std::vector<size_t> s, const size_t i );
 
 
-force_template_instantiation(Q, ChainComplexQ, VectorQ)
-force_template_instantiation(Zm, ChainComplexZm, VectorZm)
+force_template_instantiation(Q, ChainComplexQ, VectorQ, SymGrpTuple)
+force_template_instantiation(Zm, ChainComplexZm, VectorZm, SymGrpTuple)
 
 #undef force_template_instantiation
 

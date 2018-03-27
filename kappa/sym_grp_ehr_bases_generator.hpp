@@ -18,7 +18,7 @@ public:
 
     SymGrpEhrBasesGenerator(uint8_t _g, uint8_t _m);
 
-    std::map< int32_t, EhrBasis >& generate_bases();
+    std::map< int32_t, EhrBasis<SymGrpTuple> >& generate_bases();
 
 
 private:
@@ -40,7 +40,7 @@ private:
 
     // basis_complex[p] is the basis of the p-th module in the EhrComplex associated to g, m, radial.
     // computed only when generate_bases() is called beforehand.
-    std::map< int32_t, EhrBasis > basis_complex;
+    std::map< int32_t, EhrBasis<SymGrpTuple> > basis_complex;
 };
 
 

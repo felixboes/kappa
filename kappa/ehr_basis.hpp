@@ -26,33 +26,37 @@
 #include <string>
 
 #include "libhomology/serialization.hpp"
-
 #include "sym_grp_tuple.hpp"
 
 /**
     The EhrBasis keeps track of the basis elements of a module in a EhrComplex.
 **/
+template <class TupleT>
 struct EhrBasis
 {
+    typedef TupleT TupleType;
+    typedef EhrBasis< TupleT > ThisType;
+
     EhrBasis();
     
     /// Add a basis element.
-    uint32_t add_basis_element ( SymGrpTuple t );
+    uint32_t add_basis_element ( TupleT t );
 
     /// Add a basis element that is not a multiple of a.
-    uint32_t add_basis_element_reduced ( SymGrpTuple t );
+    uint32_t add_basis_element_reduced ( TupleT t );
     
     /// output stream
-    friend std::ostream& operator<< (std::ostream& stream, const EhrBasis& mb);
-    
+    template <class T>
+    friend std::ostream& operator<< (std::ostream& stream, const EhrBasis< T >& mb);
+
     /// Returns the number of basis elements.
     uint64_t size() const;
 
     /// Returns the index of the Tuple that is stored in the EhrBasis or -1.
-    int64_t id_of( const SymGrpTuple& t ) const;
+    int64_t id_of( const TupleT& t ) const;
     
     /// Stores the orderd basis.
-    std::unordered_set< SymGrpTuple, HashSymGrpTuple > basis;
+    std::unordered_set< TupleT, HashSymGrpTuple > basis;
     
     friend class boost::serialization::access;
     
@@ -75,7 +79,7 @@ struct EhrBasis
     void load(Archive & ar, const unsigned int)
     {
         size_t size;
-        SymGrpTuple t;
+        TupleT t;
         
         ar & size;
         for( size_t i = 0; i < size; ++i )
@@ -89,8 +93,10 @@ struct EhrBasis
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
-EhrBasis load_ehr_basis(const uint32_t g, const uint32_t m, const int32_t p, const bool radial);
+template< class TupleT >
+EhrBasis< TupleT > load_ehr_basis(const uint32_t g, const uint32_t m, const int32_t p, const bool radial);
 
-std::ostream& operator<< (std::ostream& stream, const EhrBasis& basis);
+template< class TupleT >
+std::ostream& operator<< (std::ostream& stream, const EhrBasis< TupleT >& basis);
 
 #endif // EHR_BASIS_HPP

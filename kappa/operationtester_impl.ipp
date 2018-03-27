@@ -39,7 +39,7 @@ bool OperationTester< MatrixComplex, VectorT >::load_basis( const EhrIndex& idx,
     {
         if( basis.count( idx ) == 0 )
         {
-            basis.insert( std::make_pair( idx, load_from_file_bz2< EhrBasis >( filename, print_status_messages ) ) );
+            basis.insert( std::make_pair( idx, load_from_file_bz2< EhrBasis<SymGrpTuple> >( filename, print_status_messages ) ) );
         }
         else if( print_status_messages == true )
         {
@@ -468,7 +468,7 @@ typename OperationTester< MatrixComplex, VectorT >::VectorType OperationTester< 
 //}
 
 template< class VectorT, class CoefficientT >
-VectorT kappa_dual( const CoefficientT& c, const SymGrpTuple& t, const EhrBasis& b)
+VectorT kappa_dual( const CoefficientT& c, const SymGrpTuple& t, const EhrBasis<SymGrpTuple>& b)
 {
     if( c == CoefficientT(0) )
     {
@@ -514,7 +514,7 @@ template< class VectorT, class CoefficientT >
 void compute_and_add_kappa_dual_rec(
     const CoefficientT& c,
     const SymGrpTuple& t,
-    const EhrBasis& b,
+    const EhrBasis<SymGrpTuple>& b,
     VectorT& v,
     const std::vector<size_t> s,
     const size_t i )

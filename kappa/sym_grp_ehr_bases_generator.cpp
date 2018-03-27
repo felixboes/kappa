@@ -111,7 +111,7 @@ void SymGrpEhrBasesGenerator::gen_bases(const uint32_t s, const uint32_t p, cons
     }
 }
 
-std::map< int32_t, EhrBasis >& SymGrpEhrBasesGenerator::generate_bases()
+std::map< int32_t, EhrBasis<SymGrpTuple> >& SymGrpEhrBasesGenerator::generate_bases()
 {
     // Generate all tuples with h transpositions containing the symbols 1, ..., p,
     // each at least once, with the correct number of cycles.

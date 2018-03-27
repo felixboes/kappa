@@ -38,7 +38,7 @@ template< typename CoefficientT >
 EhrCochainField< CoefficientT >::EhrCochainField( const uint32_t genus, const uint32_t num_punct, const uint32_t cohom_deg, const bool radial_model_used, const std::string& the_name ) :
         VectorType(), g(genus), m(num_punct), p(cohom_deg), radial(radial_model_used), name(the_name)
 {
-    basis = load_ehr_basis(g, m, p, radial);
+    basis = load_ehr_basis<SymGrpTuple>(g, m, p, radial);
     VectorType::resize( basis.size() );
 }
 
@@ -102,7 +102,7 @@ std::string EhrCochainField< CoefficientT >::get_name() const
 }
 
 template< typename CoefficientT >
-const EhrBasis& EhrCochainField< CoefficientT >::get_basis_reference() const
+const EhrBasis<SymGrpTuple>& EhrCochainField< CoefficientT >::get_basis_reference() const
 {
     return basis;
 }
