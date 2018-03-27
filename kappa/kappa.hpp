@@ -37,9 +37,9 @@
 // In order to use chain complexes with rational and Zm coefficients in other projects,
 // we have to use instanciate the templates explicitly.
 
-typedef EhrComplex<ChainComplexQ> EhrComplexQ;
-typedef EhrComplex<ChainComplexZm> EhrComplexZm;
-typedef EhrComplex<ChainComplexZStorageOnly> EhrComplexZStorageOnly;
+typedef EhrComplex<ChainComplexQ, SymGrpTuple> EhrComplexQ;
+typedef EhrComplex<ChainComplexZm, SymGrpTuple> EhrComplexZm;
+typedef EhrComplex<ChainComplexZStorageOnly, SymGrpTuple> EhrComplexZStorageOnly;
 
 typedef EhrCochainField< Q > EhrCochainFieldQ;
 typedef EhrCochainField< Zm > EhrCochainFieldZm;

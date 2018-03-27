@@ -88,7 +88,7 @@ void update_differential(MatrixBoolCSS &        differential,
     The EhrComplex can either consist of parallel or of radial cells, which is marked by a flag.
     One can generate its bases and differentials.
 **/
-template< class MatrixComplex >
+template< class MatrixComplex, class TupleT >
 class EhrComplex
 {
 public:
@@ -96,7 +96,8 @@ public:
     typedef typename MatrixComplex::MatrixType MatrixType;
     typedef typename MatrixComplex::HomologyType HomologyType;
     typedef typename MatrixComplex::DiagonalizerType DiagonalizerType;
-    typedef EhrComplex< MatrixComplex > ThisType;
+    typedef TupleT TupleType;
+    typedef EhrComplex< MatrixComplex, TupleT > ThisType;
 
     EhrComplex(
             const uint32_t          genus,
@@ -108,7 +109,7 @@ public:
     /**
      *  computes the boundary of a given Tuple and saves the result in the differential.
      */ 
-    void compute_boundary( SymGrpTuple & tuple, const uint32_t p, MatrixType & differential);
+    void compute_boundary( TupleT & tuple, const uint32_t p, MatrixType & differential);
     
     /**
      *  Generates the p-th differential.
@@ -183,15 +184,16 @@ public:
 
     SignConvention sign_conv;                    ///< The sign convention.
     MatrixComplex diff_complex;                  ///< Due to RAM limitations, we are working with at most two matrices at a time. Therefore we do not model the whole spectral sequence.
-    std::map< int32_t, EhrBasis<SymGrpTuple> > basis_complex; ///< basis_complex[n] is the n-th EhrBasis.
+    std::map< int32_t, EhrBasis<TupleT> > basis_complex; ///< basis_complex[n] is the n-th EhrBasis.
     std::ofstream homchain_homology_file;
     std::ofstream homchain_cohomology_file;
 };
 
-typedef std::vector<SymGrpTuple> EhrComplexWork;
+template<class TupleT>
+using EhrComplexWork = std::vector<TupleT>;
 
-template< class MatrixComplex >
-void ehr_complex_work(EhrComplex<MatrixComplex> &ehrcomplex, EhrComplexWork &work, const uint32_t p,
+template< class MatrixComplex, class TupleT >
+void ehr_complex_work(EhrComplex<MatrixComplex, TupleT> &ehrcomplex, EhrComplexWork<TupleT> &work, const uint32_t p,
                       typename MatrixComplex::MatrixType &differential);
 
 /**

@@ -50,20 +50,20 @@ void update_differential(MatrixBoolCSS &        differential,
 
 // We do not store homchains for Zm right now.
 template<>
-void EhrComplex< ChainComplexZm > :: homchain(int32_t p, bool homology, int32_t maxdimension)
+void EhrComplex< ChainComplexZm, SymGrpTuple > :: homchain(int32_t p, bool homology, int32_t maxdimension)
 {
     (void)p;
     (void)homology;
     (void)maxdimension;
 }
-#define force_template_instantiation(MatrixComplex) \
-    template class EhrComplex<MatrixComplex>;\
+#define force_template_instantiation(MatrixComplex, TupleType) \
+    template class EhrComplex<MatrixComplex, TupleType>;\
     template void update_differential(MatrixComplex &differential, const size_t row, const size_t column, const int32_t, const int8_t, const int8_t, const SignConvention &);\
-    template void ehr_complex_work(EhrComplex<MatrixComplex> & ehrcomplex, EhrComplexWork & work, const uint32_t p, MatrixComplex::MatrixType & differential);
+    template void ehr_complex_work(EhrComplex<MatrixComplex, TupleType> & ehrcomplex, EhrComplexWork<TupleType> & work, const uint32_t p, MatrixComplex::MatrixType & differential);
 
-force_template_instantiation(ChainComplexQ)
-force_template_instantiation(ChainComplexZm)
-force_template_instantiation(ChainComplexZStorageOnly)
+force_template_instantiation(ChainComplexQ, SymGrpTuple)
+force_template_instantiation(ChainComplexZm, SymGrpTuple)
+force_template_instantiation(ChainComplexZStorageOnly, SymGrpTuple)
 
 #undef force_template_instantiation\
 

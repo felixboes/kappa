@@ -60,14 +60,14 @@ void css_work_1(ClusterSpectralSequence< ChainComplexBoolCSS >& css,
     }
 }
 
-#define force_template_instantiation( MatrixComplex )\
+#define force_template_instantiation( MatrixComplex, TupleType )\
     template class ClusterSpectralSequence<MatrixComplex>;\
     template void update_differential(MatrixComplex &differential, const size_t row, const size_t column, const int32_t, const int8_t, const int8_t, const SignConvention &);\
-    template void ehr_complex_work(EhrComplex<MatrixComplex> & ehrcomplex, EhrComplexWork & work, const uint32_t p, MatrixComplex::MatrixType & differential);\
+    template void ehr_complex_work(EhrComplex<MatrixComplex, TupleType> & ehrcomplex, EhrComplexWork<TupleType> & work, const uint32_t p, MatrixComplex::MatrixType & differential);\
     template void css_work_0(ClusterSpectralSequence< MatrixComplex > & css, CSSWork & work, const int32_t p, const int32_t l, typename MatrixComplex::MatrixType & differential );\
     template void css_work_1(ClusterSpectralSequence< MatrixComplex > & css, CSSWork & work, const int32_t p, const int32_t l, typename MatrixComplex::MatrixType & differential, const size_t num_cols, const std::vector< size_t >& offset );
 
-force_template_instantiation( ChainComplexQCSS )
-force_template_instantiation( ChainComplexZmCSS )
+force_template_instantiation( ChainComplexQCSS, SymGrpTuple )
+force_template_instantiation( ChainComplexZmCSS, SymGrpTuple )
 
 #undef force_template_instantiation
