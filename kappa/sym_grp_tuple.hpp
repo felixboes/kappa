@@ -35,6 +35,8 @@
 #include "permutation.hpp"
 #include "permutation_manager.hpp"
 
+class HashSymGrpTuple; //forward declaration
+
 /**
  *  A Tuple of Transpositions \f$ ( \tau_{num_entries} \mid \ldots \mid \tau_1 ) \f$.
  *
@@ -49,7 +51,8 @@ class SymGrpTuple
 {
 public:
     friend class HashSymGrpTuple;
-    
+    using HashTuple = HashSymGrpTuple;
+
     /**
      *  Data structure to store the connected components.
      *  The zeroth entry stores the number of connected components.

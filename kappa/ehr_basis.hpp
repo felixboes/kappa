@@ -35,6 +35,7 @@ template <class TupleT>
 struct EhrBasis
 {
     typedef TupleT TupleType;
+    typedef typename TupleT::HashTuple HashTupleType;
     typedef EhrBasis< TupleT > ThisType;
 
     EhrBasis();
@@ -56,7 +57,7 @@ struct EhrBasis
     int64_t id_of( const TupleT& t ) const;
     
     /// Stores the orderd basis.
-    std::unordered_set< TupleT, HashSymGrpTuple > basis;
+    std::unordered_set< TupleT, HashTupleType > basis;
     
     friend class boost::serialization::access;
     

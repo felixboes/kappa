@@ -4,6 +4,8 @@
 #include <algorithm>
 #include "sym_grp_tuple.hpp"
 
+class HashAltGrpTuple; //forward declaration
+
 /**
  *  A tuple of Norm2Permutations \f$ ( \tau_{num_entries} \mid \ldots \mid \tau_1 ) \f$.
  *
@@ -16,6 +18,7 @@ class AltGrpTuple
 
 public:
     friend class HashAltGrpTuple;
+    using HashTuple = HashAltGrpTuple;
 
      /**
      *  Construct an AltGrpTuple of norm zero.
