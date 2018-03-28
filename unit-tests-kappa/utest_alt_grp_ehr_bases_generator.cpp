@@ -13,13 +13,13 @@ BOOST_AUTO_TEST_SUITE(test_suit_alt_grp_ehr_bases_generator)
         AltGrpEhrBasesGenerator generator_par(5,1);                                 // g=5, m=1, h=11
         BOOST_CHECK(generator_par.h == 11);
         BOOST_CHECK(generator_par.possible_norm2permutations.size() == 23);         // = 2*h+1
-        BOOST_CHECK(generator_par.bases.size() == 23);
+        BOOST_CHECK(generator_par.bases.size() == 0);
 
         AltGrpTuple::radial_case();
         AltGrpEhrBasesGenerator generator_rad(5,1);                                 // g=5, m=1, h=10
         BOOST_CHECK(generator_rad.h == 10);
         BOOST_CHECK(generator_rad.possible_norm2permutations.size() == 21);         // = 2*h+1
-        BOOST_CHECK(generator_rad.bases.size() == 21);
+        BOOST_CHECK(generator_rad.bases.size() == 0);
     }
 
     BOOST_AUTO_TEST_CASE(test_possible_norm2permutations)
@@ -71,22 +71,22 @@ BOOST_AUTO_TEST_SUITE(test_suit_alt_grp_ehr_bases_generator)
         AltGrpTuple::radial_case();
         AltGrpEhrBasesGenerator generator_rad(1, 1);     // g=1, m=1, h=2
         auto bases_rad = generator_rad.generate_bases();
-        BOOST_CHECK(bases_rad.size() == 5);
+        BOOST_CHECK(bases_rad.size() == 3);
         BOOST_CHECK(bases_rad[0].size() == 0);
         BOOST_CHECK(bases_rad[1].size() == 0);
         BOOST_CHECK(bases_rad[2].size() == 1);
         BOOST_CHECK(bases_rad[3].size() == 2);
         BOOST_CHECK(bases_rad[4].size() == 1);
-        BOOST_CHECK(bases_rad[2][0] == create_alt_grp_tuple(1, 1, 0, 2, 1));
-        BOOST_CHECK(bases_rad[3][0] == create_alt_grp_tuple(1, 2, 1, 3, 2));
-        BOOST_CHECK(bases_rad[3][1] == create_alt_grp_tuple(1, 2, 0, 3, 1));
-        BOOST_CHECK(bases_rad[4][0] == create_alt_grp_tuple(1, 3, 1, 4, 2));
+        BOOST_CHECK(bases_rad[2].basis.count( create_alt_grp_tuple(1, 1, 0, 2, 1) ) == 1);
+        BOOST_CHECK(bases_rad[3].basis.count( create_alt_grp_tuple(1, 2, 1, 3, 2) ) == 1);
+        BOOST_CHECK(bases_rad[3].basis.count( create_alt_grp_tuple(1, 2, 0, 3, 1) ) == 1);
+        BOOST_CHECK(bases_rad[4].basis.count( create_alt_grp_tuple(1, 3, 1, 4, 2) ) == 1);
         //generator_rad.print_bases();
 
 
         AltGrpEhrBasesGenerator generator_rad2(1, 3);     // g=1, m=3, h=4
         auto bases_rad2 = generator_rad2.generate_bases();
-        BOOST_CHECK(bases_rad2.size() == 9);
+        BOOST_CHECK(bases_rad2.size() == 7);
         BOOST_CHECK(bases_rad2[0].size() == 0);
         BOOST_CHECK(bases_rad2[1].size() == 0);
         BOOST_CHECK(bases_rad2[2].size() == 1);
@@ -96,10 +96,10 @@ BOOST_AUTO_TEST_SUITE(test_suit_alt_grp_ehr_bases_generator)
         BOOST_CHECK(bases_rad2[6].size() == 1950);
         BOOST_CHECK(bases_rad2[7].size() == 1330);
         BOOST_CHECK(bases_rad2[8].size() == 350);
-        BOOST_CHECK(bases_rad2[2][0] == create_alt_grp_tuple(2, 1, 0, 2, 1, 1, 0, 2, 1));
+        BOOST_CHECK(bases_rad2[2].basis.count( create_alt_grp_tuple(2, 1, 0, 2, 1, 1, 0, 2, 1) ) == 1);
         for(uint8_t ht=0; ht<bases_rad2.size();ht++)
         {
-            for(auto tuple : bases_rad2[ht])
+            for(auto tuple : bases_rad2[ht].basis)
             {
                 for(uint8_t i=1; i<=tuple.num_entries(); i++)
                 {
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_SUITE(test_suit_alt_grp_ehr_bases_generator)
         AltGrpTuple::parallel_case();
         AltGrpEhrBasesGenerator generator_par(1,2);     // g=1, m=2, h=4
         auto bases_par = generator_par.generate_bases();
-        BOOST_CHECK(bases_par.size() == 9);
+        BOOST_CHECK(bases_par.size() == 6);
         BOOST_CHECK(bases_par[0].size()==0);
         BOOST_CHECK(bases_par[1].size()==0);
         BOOST_CHECK(bases_par[2].size()==0);
@@ -125,10 +125,10 @@ BOOST_AUTO_TEST_SUITE(test_suit_alt_grp_ehr_bases_generator)
         BOOST_CHECK(bases_par[6].size()==970);
         BOOST_CHECK(bases_par[7].size()==980);
         BOOST_CHECK(bases_par[8].size()==350);
-        BOOST_CHECK(bases_par[3][0] == create_alt_grp_tuple(2, 2,1,3,2, 2,1,3,2));
+        BOOST_CHECK(bases_par[3].basis.count( create_alt_grp_tuple(2, 2,1,3,2, 2,1,3,2) ) == 1);
         for(uint8_t ht=0; ht<bases_par.size();ht++)
         {
-            for(auto tuple : bases_par[ht])
+            for(auto tuple : bases_par[ht].basis)
             {
                 for(uint8_t i=1; i<=tuple.num_entries(); i++)
                 {

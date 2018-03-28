@@ -5,6 +5,7 @@
 #include "sym_grp_tuple.hpp"
 
 class HashAltGrpTuple; //forward declaration
+class AltGrpEhrBasesGenerator;
 
 /**
  *  A tuple of Norm2Permutations \f$ ( \tau_{num_entries} \mid \ldots \mid \tau_1 ) \f$.
@@ -19,6 +20,7 @@ class AltGrpTuple
 public:
     friend class HashAltGrpTuple;
     using HashTuple = HashAltGrpTuple;
+    using EhrBasesGenerator = AltGrpEhrBasesGenerator;
 
      /**
      *  Construct an AltGrpTuple of norm zero.
@@ -179,13 +181,6 @@ public:
      * Note: the AltGrpTuple must not contain symbols apart from 0,1,...,p.
      */
     bool has_no_common_fixed_points_except_zero();
-
-    /**
-     * @return: the i-th entry is a vector of all basis elements of the i-th module in the Ehrenfried complex associated
-     * to genus g and m punctures
-     * @note: radial resp. parallel case according to AltGrpTuple::is_radial
-     */
-    static std::vector< std::vector< AltGrpTuple>>& gen_ehr_bases(uint8_t g, uint8_t m);
 
 
     uint8_t p; ///< The maximum of the symbols \f$ min_symbol() \le p \f$ to be permuted.

@@ -4,8 +4,7 @@ AltGrpEhrBasesGenerator::AltGrpEhrBasesGenerator(uint8_t _g, uint8_t _m) :
     g(_g),
     m(_m),
     h(2*_g+_m-1+AltGrpTuple::get_min_symbol()),
-    possible_norm2permutations(2*h+1, std::vector< Norm2Permutation >()),
-    bases(2*h+1, std::vector< AltGrpTuple >())
+    possible_norm2permutations(2*h+1, std::vector< Norm2Permutation >())
 {
     h=2*g+m;
     if(AltGrpTuple::is_radial())
@@ -14,7 +13,7 @@ AltGrpEhrBasesGenerator::AltGrpEhrBasesGenerator(uint8_t _g, uint8_t _m) :
     }
 }
 
-std::vector< std::vector< AltGrpTuple >>& AltGrpEhrBasesGenerator::generate_bases()
+std::map< int32_t, EhrBasis<AltGrpTuple> >& AltGrpEhrBasesGenerator::generate_bases()
 {
     if(h % 2)
     {
@@ -22,11 +21,11 @@ std::vector< std::vector< AltGrpTuple >>& AltGrpEhrBasesGenerator::generate_base
                  << std::to_string(h) << " is odd." << std::endl;
         return bases;
     }
-    if( (possible_norm2permutations.size() != (unsigned)2*h+1) or (bases.size() != (unsigned)2*h+1) )
+    if( possible_norm2permutations.size() != (unsigned)2*h+1 )
     {
         std::cerr << "Error in std::vector< std::vector< AltGrpTuple >>& AltGrpEhrBasesGenerator::generate_bases(): "
                  << " possible_norm2permutations.size()=" << std::to_string(possible_norm2permutations.size())
-                 << " and bases.size()= " << std::to_string(bases.size()) << " but both should equal 2*h + 1 = "
+                  << " but should equal 2*h + 1 = "
                  << std::to_string(2*h+1) << std::endl;
         return bases;
     }
@@ -120,7 +119,7 @@ void AltGrpEhrBasesGenerator::generate_bases_recursively(uint8_t curr_num_entrie
         if( curr_tuple.has_correct_num_cycles(m)
             and curr_tuple.has_no_common_fixed_points_except_zero())
         {
-            bases.at(curr_max_symbol).push_back(curr_tuple);
+            bases[curr_max_symbol].add_basis_element( curr_tuple );
         }
     }
 }
@@ -128,16 +127,13 @@ void AltGrpEhrBasesGenerator::generate_bases_recursively(uint8_t curr_num_entrie
 void AltGrpEhrBasesGenerator::print_bases()
 {
     std::cout << "Bases of th Ehrenfried complex for g=" << std::to_string(g) << ", m=" << std::to_string(m) << ", h="
-              << std::to_string(h) << "in the " << ( AltGrpTuple::is_radial() ? "radial" : "parallel") << " case."
+              << std::to_string(h) << "in the " << ( AltGrpTuple::is_radial() ? "radial" : "parallel") << " case:"
               << std::endl;
     for(uint8_t p=0; p < bases.size(); p++)
     {
         std::cout << std::endl << "The " << std::to_string(p) << "-th module has dimension "
                   << std::to_string(bases[p].size()) << " and the following basis elements:" << std::endl;
-        for(auto tuple : bases[p])
-        {
-            std::cout << tuple << std::endl;
-        }
+        std::cout << bases[p];
     }
 }
 

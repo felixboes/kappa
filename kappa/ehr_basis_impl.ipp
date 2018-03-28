@@ -38,14 +38,11 @@ uint32_t EhrBasis<TupleT> :: add_basis_element ( TupleT t )
 template <class TupleT>
 uint EhrBasis<TupleT> :: add_basis_element_reduced( TupleT t )
 {
-    if( t.is_multiple_of_a() )
-    {
-        return 0;
-    }
-    else
-    {
-        return add_basis_element(t);
-    }
+    std::cerr << "Error in 'template <class TupleT> uint EhrBasis<TupleT> :: add_basis_element_reduced( TupleT t )': "
+                 "this function should not be called for TupleT unequal to SymGrpTuple! This function was called for "
+                 "TupleT t = " << t
+              << std::endl;
+    return 0;
 }
 
 template <class TupleT>

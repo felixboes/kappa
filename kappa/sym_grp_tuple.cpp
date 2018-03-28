@@ -19,6 +19,7 @@
 
 
 #include "sym_grp_tuple.hpp"
+#include "sym_grp_ehr_bases_generator.hpp"
 
 bool SymGrpTuple::radial = false;
 uint32_t SymGrpTuple::min_symbol = 1;

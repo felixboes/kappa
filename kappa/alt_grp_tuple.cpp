@@ -381,12 +381,6 @@ Permutation AltGrpTuple::sigma_out() const
     return PermutationManager::inverse(sigma_out_inv());
 }
 
-std::vector<std::vector<AltGrpTuple>>& AltGrpTuple::gen_ehr_bases(uint8_t g, uint8_t m)
-{
-    AltGrpEhrBasesGenerator bases_generator(g, m);
-    return bases_generator.generate_bases();
-}
-
 AltGrpTuple create_alt_grp_tuple( const size_t num_entries, ... )
 {
     AltGrpTuple t(num_entries);

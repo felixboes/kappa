@@ -97,6 +97,8 @@ public:
     typedef typename MatrixComplex::HomologyType HomologyType;
     typedef typename MatrixComplex::DiagonalizerType DiagonalizerType;
     typedef TupleT TupleType;
+    typedef typename TupleT::HashTuple HashTupleType;
+    typedef typename TupleT::EhrBasesGenerator EhrBasesGeneratorType;
     typedef EhrComplex< MatrixComplex, TupleT > ThisType;
 
     EhrComplex(

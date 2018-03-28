@@ -27,6 +27,7 @@
 
 #include "libhomology/serialization.hpp"
 #include "sym_grp_tuple.hpp"
+#include "alt_grp_tuple.hpp"
 
 /**
     The EhrBasis keeps track of the basis elements of a module in a EhrComplex.
@@ -44,6 +45,7 @@ struct EhrBasis
     uint32_t add_basis_element ( TupleT t );
 
     /// Add a basis element that is not a multiple of a.
+    /// Only implemented for TupleT = SymGrpTuple with the parallel case.
     uint32_t add_basis_element_reduced ( TupleT t );
     
     /// output stream
@@ -93,6 +95,9 @@ struct EhrBasis
     // This is required as saving and loading are different methods.
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
+
+template <>
+uint EhrBasis<SymGrpTuple> :: add_basis_element_reduced( SymGrpTuple t );
 
 template< class TupleT >
 EhrBasis< TupleT > load_ehr_basis(const uint32_t g, const uint32_t m, const int32_t p, const bool radial);

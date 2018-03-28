@@ -36,6 +36,7 @@
 #include "permutation_manager.hpp"
 
 class HashSymGrpTuple; //forward declaration
+class SymGrpEhrBasesGenerator;
 
 /**
  *  A Tuple of Transpositions \f$ ( \tau_{num_entries} \mid \ldots \mid \tau_1 ) \f$.
@@ -52,6 +53,7 @@ class SymGrpTuple
 public:
     friend class HashSymGrpTuple;
     using HashTuple = HashSymGrpTuple;
+    using EhrBasesGenerator = SymGrpEhrBasesGenerator;
 
     /**
      *  Data structure to store the connected components.

@@ -18,8 +18,9 @@ public:
 
     AltGrpEhrBasesGenerator(uint8_t _g, uint8_t _m);
 
-    // only possible if h is even, where h = 2*_g+_m-1 + AlgGrpTuple::get_min_symbol().
-    std::vector< std::vector< AltGrpTuple> >& generate_bases();
+    // Returns a map which stores with key p=0,...,2*h the basis of the p-th EhrComplex module.
+    // Note: only possible if h is even, where h = 2*_g+_m-1 + AlgGrpTuple::get_min_symbol().
+    std::map< int32_t, EhrBasis<AltGrpTuple> >& generate_bases();
 
     void print_bases();
 
@@ -51,7 +52,7 @@ public:
 
     // bases[p] is the basis of the p-th module in the EhrenfriedComplex associated to g, m, radial.
     // computed only when generate_bases() is called beforehand.
-    std::vector< std::vector< AltGrpTuple > > bases;
+    std::map< int32_t, EhrBasis<AltGrpTuple> > bases;
 };
 
 

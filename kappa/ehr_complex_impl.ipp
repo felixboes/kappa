@@ -55,7 +55,7 @@ EhrComplex< MatrixComplex, TupleT > :: EhrComplex(
         return;
     }
 
-    SymGrpEhrBasesGenerator bases_generator(g,m);
+    EhrBasesGeneratorType bases_generator(g,m);
     basis_complex = bases_generator.generate_bases();
 }
 
