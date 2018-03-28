@@ -19,7 +19,7 @@
 
 
 #include "ehr_generators.hpp"
-#include "generators_impl.ipp"
+#include "ehr_generators_impl.ipp"
 
 #include "kappa.hpp"
 
