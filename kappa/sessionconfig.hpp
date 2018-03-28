@@ -43,6 +43,12 @@ enum SignConvention
     no_signs                ///< use the constant coefficients system and assume that we use a \f$ \mathbb F_2\f$ algebra
 };
 
+enum FactorableGroup
+{
+    sym_grp,                ///< use the symmetric group
+    alt_grp                 ///< use the alternating group
+};
+
 /**
  *  The SessionConfig struct is used derive a configuration from a given set of command line arguments.
  *  Doing so, we can write several main()s more compact.
@@ -69,6 +75,7 @@ struct SessionConfig
     bool rational;      ///< True iff we work over the field \f$ \mathbb Q\f$.
     uint32_t prime;     ///< The prime \f$ s \f$ if we work over $\mathbb Z / s \mathbb Z$.
     bool parallel;      ///< True iff we use the parallel model.
+    FactorableGroup fact_grp; ///< The factorable group we use.
     uint32_t num_threads;   ///< The number of total threads in use.
     uint32_t num_remaining_threads; ///< The number of threads that collect work in the diagonalizing process.
     int32_t start_p;        ///< The homological degree we want to start at.
