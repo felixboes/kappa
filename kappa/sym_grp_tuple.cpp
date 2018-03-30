@@ -754,3 +754,13 @@ SymGrpTuple operator*( const SymGrpTuple& v_2, const SymGrpTuple& v_1 )
     
     return prod;
 }
+
+uint8_t SymGrpTuple::num_entries_in_ehr_generators(uint8_t g, uint8_t m)
+{
+    uint8_t h = 2*g + m;
+    if(radial)
+    {
+        --h;
+    }
+    return h;
+}

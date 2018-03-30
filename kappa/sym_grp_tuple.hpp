@@ -254,6 +254,12 @@ public:
      *  @returns the product of two SymGrpTuples in the sense of the product of two slit domains.
      */
     friend SymGrpTuple operator*( const SymGrpTuple& v_2, const SymGrpTuple& v_1 );
+
+    /**
+     * @returns the number of entries tthat each generator in the Ehrenfried Complex has for genus g and number of
+     * punctures m.
+     */
+    static uint8_t num_entries_in_ehr_generators(uint8_t g, uint8_t m);
     
     /**
      *  @returns the data representation.

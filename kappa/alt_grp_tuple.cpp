@@ -444,3 +444,18 @@ bool AltGrpTuple::has_no_common_fixed_points_except_zero()
     }
     return true;
 }
+
+uint8_t AltGrpTuple::num_entries_in_ehr_generators(uint8_t g, uint8_t m)
+{
+    uint8_t h = 2*g +m;
+    if(radial)
+    {
+        --h;
+    }
+
+    if(h % 2)
+    {
+        return 0;
+    }
+    return h/2;
+}

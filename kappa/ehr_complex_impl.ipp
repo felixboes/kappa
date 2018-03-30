@@ -36,7 +36,6 @@ EhrComplex< MatrixComplex, TupleT > :: EhrComplex(
         const uint32_t          number_remaining_threads)
     : g(genus),
       m(num_punctures),
-      h(2*genus + num_punctures),
       num_threads(number_working_threads + number_remaining_threads),
       sign_conv(sgn),
       diff_complex(false)
@@ -46,11 +45,7 @@ EhrComplex< MatrixComplex, TupleT > :: EhrComplex(
     diago.num_working_threads = number_working_threads;
     diago.num_remaining_threads = number_remaining_threads;
 
-    // Get parameter right.
-    if (TupleT::is_radial() ) // For radial cells, we have h = 2g + m - 1.
-    {
-        --h;
-    }
+    h = TupleT::num_entries_in_ehr_generators(g,m);
     if ( h == 0 )
     {
         return;

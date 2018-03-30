@@ -187,6 +187,12 @@ public:
      */
     bool has_no_common_fixed_points_except_zero();
 
+    /**
+     * @returns the number of entries that each generator in the Ehrenfried Complex has for genus g and number of
+     * punctures m.
+     */
+    static uint8_t num_entries_in_ehr_generators(uint8_t g, uint8_t m);
+
 
     uint8_t p; ///< The maximum of the symbols \f$ min_symbol() \le p \f$ to be permuted.
     size_t id;  ///< The index of this AltGrpTuple in the basis of the EhrComplex.
