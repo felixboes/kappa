@@ -69,7 +69,7 @@ SessionConfig::SessionConfig( const int argc, char **argv ) :
             ("rat,q", "uses rational numbers as coefficients")
             ("fin,s", boost::program_options::value(&prime), "uses the finite field F_s with s a prime number")
             ("parallel", "uses radial or parallel slit configurations")
-            ("alternating_group,alt_grp", "uses the alternating group for the Ehrenfried complex")
+            ("alternating_group,a", "uses the alternating group for the Ehrenfried complex")
             ("num_working_threads,t", boost::program_options::value(&num_threads), "the number of threads used for work in matrix computations")
             ("num_remaining_threads", boost::program_options::value(&num_remaining_threads), "the number of additional threads used in diagonalization")
             ("apply_base_changes", "applies base changes to the matrices.")

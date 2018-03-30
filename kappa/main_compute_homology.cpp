@@ -49,14 +49,18 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
     std::cout << kappa_version( argc, argv )
               << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
-              << "Cohomological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
-              << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
+              << "Cohomological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial")
+              << " model and the " << (conf.fact_grp==sym_grp ? "symmetric" : "alternating") << " group" << std::endl
+              << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = "
+              << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
               << std::endl;
     ofs       << kappa_version( argc, argv )
               << std::endl
               << "------------  Performing computations with the following parameters   ------------" << std::endl
-              << "Cohomological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial") << " model" << std::endl
-              << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = " << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
+              << "Cohomological Ehrenfried complex associated with the " << (conf.parallel == true ? "parallel" : "radial")
+              << " model and the " << (conf.fact_grp==sym_grp ? "symmetric" : "alternating") << " group" << std::endl
+              << "genus = " << conf.genus << " punctures = " << conf.num_punctures << " coefficients = "
+              << ( conf.rational == true ? "Q" : ("Z/" + std::to_string(conf.prime) + "Z") ) << std::endl
               << std::endl;
     
     std::cout << "-------- Constructing bases --------" << std::endl;
@@ -82,11 +86,14 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
         ofs       << "-------- Caching bases --------" << std::endl;
 
         std::string path_prefix = 
-            std::string("./cache/bases_") + std::string( (conf.parallel == true ? "parallel" : "radial") ) + std::string("/") + 
+            std::string("./cache/bases_") + std::string( (conf.parallel == true ? "parallel" : "radial") ) + std::string("/") +
+            std::string( ( conf.fact_grp == sym_grp ? "sym" : "alt") ) + std::string("_") +
             std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
         std::string check_writable_prefix = 
             std::string("./cache/list_of_files_that_should_not_be_overwritten/bases_") +
-            std::string( (conf.parallel == true) ? "parallel_" : "radial_" ) + std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
+            std::string( (conf.parallel == true) ? "parallel_" : "radial_" ) +
+            std::string( ( conf.fact_grp == sym_grp ? "sym" : "alt") ) + std::string("_") +
+            std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
         
         // Store bases.
         for( const auto& it : ehrcomplex.basis_complex )
@@ -101,17 +108,19 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             else
             {
                 // Store the p-th basis.
-                save_to_file_bz2<EhrBasis<SymGrpTuple>>(it.second, path_prefix + std::to_string(p));
+                save_to_file_bz2<EhrBasis<typename EhrComplexT::TupleType>>(it.second, path_prefix + std::to_string(p));
                 touch( check_writable_prefix + std::to_string(p) );
             }
         }
-        // Store empty onjects which are going to be used by testing possible generators.
+        // Store empty objects which are going to be used by testing possible generators.
         std::string path_prefix_diff =
             "./cache/differentials_" + std::string( ( conf.parallel == true ? "parallel" : "radial") ) + std::string("/") +
+            std::string( ( conf.fact_grp == sym_grp ? "sym" : "alt") ) + std::string("_") +
             (conf.rational == true ? std::string("q") : std::string("s") + std::to_string(conf.prime) ) + std::string("_") +
             std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
         std::string check_writable_prefix_diff =
             "./cache/list_of_files_that_should_not_be_overwritten/differentials_" + std::string( ( conf.parallel == true ? "parallel" : "radial") ) + std::string("_") +
+            std::string( ( conf.fact_grp == sym_grp ? "sym" : "alt") ) + std::string("_") +
             (conf.rational == true ? std::string("q") : std::string("s") + std::to_string(conf.prime) ) + std::string("_") +
             std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_";
         for( int32_t p = 2; p < ehrcomplex.basis_complex.cbegin()->first; ++p )
@@ -119,7 +128,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
             // Check if file may be overwritten
             if( file_exists(check_writable_prefix + std::to_string(p) ) == false )
             {
-                save_to_file_bz2<EhrBasis<SymGrpTuple>>( EhrBasis<SymGrpTuple>() , path_prefix + std::to_string(p) );
+                save_to_file_bz2<EhrBasis<typename EhrComplexT::TupleType>>( EhrBasis<typename EhrComplexT::TupleType>() , path_prefix + std::to_string(p) );
             }
             if( file_exists(check_writable_prefix_diff + std::to_string(p) + std::string("_base_changes") ) == false )
             {
@@ -176,7 +185,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
 
         
 
-        // Diagoanlize differetnial and save results.
+        // Diagonalize differential and save results.
         measure_duration = Clock();
         uint32_t max_possible_rank( std::min( ehrcomplex.num_rows(), ehrcomplex.num_cols() ) );
         if( (uint32_t)homology.get_kern(p+1) > 0 )
@@ -210,6 +219,7 @@ void compute_homology( SessionConfig conf, int argc, char** argv )
                 std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_" + std::to_string(p) + std::string("_");
             std::string check_writable_prefix =
                 "./cache/list_of_files_that_should_not_be_overwritten/differentials_" + std::string( ( conf.parallel == true ? "parallel" : "radial") ) + std::string("_") +
+                std::string( ( conf.fact_grp == sym_grp ? "sym" : "alt") ) + std::string("_") +
                 (conf.rational == true ? std::string("q") : std::string("s") + std::to_string(conf.prime) ) + std::string("_") +
                 std::to_string(conf.genus) + "_" + std::to_string(conf.num_punctures) + "_" + std::to_string(p) + std::string("_");
             
@@ -288,10 +298,12 @@ int main(int argc, char** argv)
     if (conf.parallel == true)
     {
         SymGrpTuple::parallel_case();
+        AltGrpTuple::parallel_case();
     }
     else
     {
         SymGrpTuple::radial_case();
+        AltGrpTuple::radial_case();
     }
     
     create_working_directories();
@@ -299,7 +311,14 @@ int main(int argc, char** argv)
     // We may start with the computations.
     if(conf.rational == true)
     {
-        compute_homology< EhrComplexQ<SymGrpTuple> >( conf, argc, argv );
+        if(conf.fact_grp == sym_grp)
+        {
+            compute_homology< EhrComplexQ<SymGrpTuple> >( conf, argc, argv );
+        }
+        else
+        {
+            compute_homology< EhrComplexQ<AltGrpTuple> >( conf, argc, argv );
+        }
     }
 //    else if (conf.prime == 2)
 //    {
@@ -307,7 +326,14 @@ int main(int argc, char** argv)
 //    }
     else
     {
-        compute_homology< EhrComplexZm<SymGrpTuple> >( conf, argc, argv );
+        if(conf.fact_grp == sym_grp)
+        {
+            compute_homology< EhrComplexZm<SymGrpTuple> >( conf, argc, argv );
+        }
+        else
+        {
+            compute_homology< EhrComplexZm<AltGrpTuple> >( conf, argc, argv );
+        }
     }
 
     return 0;
