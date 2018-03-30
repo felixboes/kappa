@@ -71,6 +71,11 @@ public:
     bool operator!=(const AltGrpTuple& t) const;
 
     /**
+     *  @return Returns true iff the AltGrpTuple is not marked as degenerate, ie. iff its size is nonzero.
+     */
+    operator bool() const;
+
+    /**
      *  Consider all AltGrpTuples as radial cells.
      */
     static void radial_case();

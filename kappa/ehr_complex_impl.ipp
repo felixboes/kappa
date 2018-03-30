@@ -20,6 +20,7 @@
 
 #include "ehr_complex.hpp"
 #include "sym_grp_ehr_bases_generator.hpp"
+#include "alt_grp_ehr_bases_generator.hpp"
 
 /*
  *

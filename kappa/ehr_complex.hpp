@@ -38,6 +38,7 @@
 #include "ehr_basis.hpp"
 #include "sessionconfig.hpp"
 #include "sym_grp_tuple.hpp"
+#include "alt_grp_tuple.hpp"
 
 
 /**

@@ -48,7 +48,7 @@ void update_differential(MatrixBoolCSS &        differential,
 
 /* Force template instantiation for used types */
 
-// We do not store homchains for Zm right now.
+// We do not store homchains for Zm right now (for both the SymGrp and the AltGrp).
 template<>
 void EhrComplex< ChainComplexZm, SymGrpTuple > :: homchain(int32_t p, bool homology, int32_t maxdimension)
 {
@@ -56,16 +56,37 @@ void EhrComplex< ChainComplexZm, SymGrpTuple > :: homchain(int32_t p, bool homol
     (void)homology;
     (void)maxdimension;
 }
+
+template<>
+void EhrComplex< ChainComplexZm, AltGrpTuple > :: homchain(int32_t p, bool homology, int32_t maxdimension)
+{
+    (void)p;
+    (void)homology;
+    (void)maxdimension;
+}
+
 #define force_template_instantiation(MatrixComplex, TupleType) \
     template class EhrComplex<MatrixComplex, TupleType>;\
-    template void update_differential(MatrixComplex &differential, const size_t row, const size_t column, const int32_t, const int8_t, const int8_t, const SignConvention &);\
     template void ehr_complex_work(EhrComplex<MatrixComplex, TupleType> & ehrcomplex, EhrComplexWork<TupleType> & work, const uint32_t p, MatrixComplex::MatrixType & differential);
 
 force_template_instantiation(ChainComplexQ, SymGrpTuple)
 force_template_instantiation(ChainComplexZm, SymGrpTuple)
 force_template_instantiation(ChainComplexZStorageOnly, SymGrpTuple)
+force_template_instantiation(ChainComplexQ, AltGrpTuple)
+force_template_instantiation(ChainComplexZm, AltGrpTuple)
+force_template_instantiation(ChainComplexZStorageOnly, AltGrpTuple)
 
 #undef force_template_instantiation\
+
+
+#define force_template_instantiation_upd_diff(MatrixComplex) \
+    template void update_differential(MatrixComplex &differential, const size_t row, const size_t column, const int32_t, const int8_t, const int8_t, const SignConvention &);\
+
+force_template_instantiation_upd_diff(ChainComplexQ)
+force_template_instantiation_upd_diff(ChainComplexZm)
+force_template_instantiation_upd_diff(ChainComplexZStorageOnly)
+
+#undef force_template_instantiation_upd_diff\
 
 int32_t sign(const int32_t          parity,
              const int8_t           i,

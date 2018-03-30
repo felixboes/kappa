@@ -76,6 +76,15 @@ bool AltGrpTuple::operator!=(const AltGrpTuple &t) const
     return (this->rep != t.rep);
 }
 
+AltGrpTuple :: operator bool() const
+{
+    if (rep.size() == 0)
+    {
+        return false;
+    }
+    return true;
+}
+
 void AltGrpTuple::radial_case()
 {
     radial = true;

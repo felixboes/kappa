@@ -96,6 +96,7 @@ struct EhrBasis
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
+// template specialization of member fct.
 template <>
 uint EhrBasis<SymGrpTuple> :: add_basis_element_reduced( SymGrpTuple t );
 
