@@ -33,13 +33,19 @@
 #include "ehr_cochain_field.hpp"
 #include "sessionconfig.hpp"
 #include "sym_grp_tuple.hpp"
+#include "alt_grp_tuple.hpp"
 
 // In order to use chain complexes with rational and Zm coefficients in other projects,
 // we have to use instanciate the templates explicitly.
 
-typedef EhrComplex<ChainComplexQ, SymGrpTuple> EhrComplexQ;
-typedef EhrComplex<ChainComplexZm, SymGrpTuple> EhrComplexZm;
-typedef EhrComplex<ChainComplexZStorageOnly, SymGrpTuple> EhrComplexZStorageOnly;
+template<class TupleT>
+using EhrComplexQ = EhrComplex<ChainComplexQ, TupleT>;
+
+template<class TupleT>
+using EhrComplexZm = EhrComplex<ChainComplexZm, TupleT>;
+
+template<class TupleT>
+using EhrComplexZStorageOnly = EhrComplex<ChainComplexZStorageOnly, TupleT>;
 
 typedef EhrCochainField< Q > EhrCochainFieldQ;
 typedef EhrCochainField< Zm > EhrCochainFieldZm;

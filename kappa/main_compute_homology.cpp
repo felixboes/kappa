@@ -299,7 +299,7 @@ int main(int argc, char** argv)
     // We may start with the computations.
     if(conf.rational == true)
     {
-        compute_homology< EhrComplexQ >( conf, argc, argv );
+        compute_homology< EhrComplexQ<SymGrpTuple> >( conf, argc, argv );
     }
 //    else if (conf.prime == 2)
 //    {
@@ -307,7 +307,7 @@ int main(int argc, char** argv)
 //    }
     else
     {
-        compute_homology< EhrComplexZm >( conf, argc, argv );
+        compute_homology< EhrComplexZm<SymGrpTuple> >( conf, argc, argv );
     }
 
     return 0;
