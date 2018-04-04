@@ -127,7 +127,7 @@ void AltGrpEhrBasesGenerator::generate_bases_recursively(uint8_t curr_num_entrie
 void AltGrpEhrBasesGenerator::print_bases()
 {
     std::cout << "Bases of th Ehrenfried complex for g=" << std::to_string(g) << ", m=" << std::to_string(m) << ", h="
-              << std::to_string(h) << "in the " << ( AltGrpTuple::is_radial() ? "radial" : "parallel") << " case:"
+              << std::to_string(h) << " in the " << ( AltGrpTuple::is_radial() ? "radial" : "parallel") << " case:"
               << std::endl;
     for(uint8_t p=0; p < bases.size(); p++)
     {

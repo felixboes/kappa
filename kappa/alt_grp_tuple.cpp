@@ -73,7 +73,7 @@ bool AltGrpTuple::operator!=(const AltGrpTuple &t) const
     // Operations == and != are performed by first comparing sizes, and if they match, the elements are compared sequentially
     // using algorithm equal, which stops at the first mismatch.
     // Source: http://www.cplusplus.com/reference/vector/vector/operators/
-    return (this->rep != t.rep);
+    return ((this->rep != t.rep) or (this->p != t.p));
 }
 
 AltGrpTuple :: operator bool() const

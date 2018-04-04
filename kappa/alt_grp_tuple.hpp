@@ -66,7 +66,7 @@ public:
     bool operator==(const AltGrpTuple& t) const;
 
     /**
-     *  @return Returns false iff both AltGrpTuples are elementwise equal.
+     *  @return Returns true iff the AltGrpTuples are not elementwise equal or their p disagrees.
      */
     bool operator!=(const AltGrpTuple& t) const;
 

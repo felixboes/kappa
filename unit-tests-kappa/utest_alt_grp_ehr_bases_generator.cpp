@@ -139,6 +139,81 @@ BOOST_AUTO_TEST_SUITE(test_suit_alt_grp_ehr_bases_generator)
         //generator_par.print_bases();
     }
 
+    BOOST_AUTO_TEST_CASE(test_compare_radial_and_parallel_bases)
+    {
+        // this test should run without errors for arbitrary g any arbitrary even m!
+        int g=1, m=2;
+        int h=2*g+m;
+
+        AltGrpTuple::parallel_case();
+        AltGrpEhrBasesGenerator generator_par(g,m);
+        auto bases_par = generator_par.generate_bases();
+
+        AltGrpTuple::radial_case();
+        AltGrpEhrBasesGenerator generator_rad(g,m+1);
+        auto bases_rad = generator_rad.generate_bases();
+
+        //check whether all parallel cells are also
+        // - radial cells as they are,
+        // - radial cells with one symbol less after index shift down
+        for(int p=1;p<=2*h;p++)
+        {
+            for(auto tau : bases_par[p].basis)
+            {
+                BOOST_CHECK(bases_rad[p].basis.count(tau)==1);
+                AltGrpTuple t(tau.num_entries());
+                for(uint i=1;i<=tau.num_entries();i++)
+                {
+                    t.at(i).first.first = tau.at(i).first.first-1;
+                    t.at(i).first.second = tau.at(i).first.second-1;
+                    t.at(i).second.first = tau.at(i).second.first-1;
+                    t.at(i).second.second = tau.at(i).second.second-1;
+                    t.p = p-1;
+                }
+                BOOST_CHECK(bases_rad[p-1].basis.count(t)==1);
+            }
+        }
+
+        //check whether all radial cells are also
+        // - parallel cells as they are, if they do not touch the symbol 0
+        // - parallel cells after index shift up with one symbol more
+        for(int p=1; p<=2*h; p++)
+        {
+            for(auto tau : bases_rad[p].basis)
+            {
+                bool tau_contains_zero = false;
+                for(uint i=1; i<=tau.num_entries();i++)
+                {
+                    if(tau.at(i).first.first==0 or tau.at(i).first.second==0 or tau.at(i).second.first==0
+                       or tau.at(i).second.second==0)
+                    {
+                        tau_contains_zero =true;
+                    }
+                }
+
+                //if tau does not contain zero, it should be a radial cell
+                if(not tau_contains_zero)
+                {
+                    BOOST_CHECK(bases_par[p].basis.count(tau)==1);
+                }
+                else  //else tau should be a radial cell after index shifts
+                {
+                    AltGrpTuple t(tau.num_entries());
+                    for(uint i=1;i<=tau.num_entries();i++)
+                    {
+                        t.at(i).first.first = tau.at(i).first.first+1;
+                        t.at(i).first.second = tau.at(i).first.second+1;
+                        t.at(i).second.first = tau.at(i).second.first+1;
+                        t.at(i).second.second = tau.at(i).second.second+1;
+                        t.p = p+1;
+                    }
+                    BOOST_CHECK(bases_par[p+1].basis.count(t)==1);
+                }
+            }
+        }
+
+    }
+
 
 
 BOOST_AUTO_TEST_SUITE_END()
